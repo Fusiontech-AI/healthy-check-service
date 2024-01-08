@@ -12,7 +12,7 @@
     <artifactId>fxkc-common-dubbo</artifactId>
 
     <description>
-        ruoyi-common-dubbo
+        fxkc-common-dubbo
     </description>
 
     <dependencies>

@@ -12,7 +12,7 @@
     <artifactId>fxkc-common-web</artifactId>
 
     <description>
-        ruoyi-common-web web服务
+        fxkc-common-web web服务
     </description>
 
 	<dependencies>

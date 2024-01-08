@@ -10,7 +10,7 @@
     <packaging>pom</packaging>
 
     <description>
-        ruoyi-common-alibaba-bom alibaba依赖项
+        fxkc-common-alibaba-bom alibaba依赖项
     </description>
 
     <properties>

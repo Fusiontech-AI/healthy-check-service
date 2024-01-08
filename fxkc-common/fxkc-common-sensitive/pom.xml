@@ -12,7 +12,7 @@
     <artifactId>fxkc-common-sensitive</artifactId>
 
     <description>
-        ruoyi-common-sensitive 脱敏模块
+        fxkc-common-sensitive 脱敏模块
     </description>
 
     <dependencies>

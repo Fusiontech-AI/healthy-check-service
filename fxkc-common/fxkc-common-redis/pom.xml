@@ -12,7 +12,7 @@
     <artifactId>fxkc-common-redis</artifactId>
 
     <description>
-        ruoyi-common-redis 缓存服务
+        fxkc-common-redis 缓存服务
     </description>
 
     <dependencies>

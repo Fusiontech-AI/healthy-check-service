@@ -12,7 +12,7 @@
     <artifactId>fxkc-common-websocket</artifactId>
 
     <description>
-        ruoyi-common-websocket 模块
+        fxkc-common-websocket 模块
     </description>
 
     <dependencies>

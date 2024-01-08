@@ -12,7 +12,7 @@
     <artifactId>fxkc-common-satoken</artifactId>
 
     <description>
-        ruoyi-common-satoken
+        fxkc-common-satoken
     </description>
 
     <dependencies>

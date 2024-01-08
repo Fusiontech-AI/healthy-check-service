@@ -8,9 +8,8 @@
     <artifactId>fxkc-cloud-plus</artifactId>
     <version>${revision}</version>
 
-    <name>RuoYi-Cloud-Plus</name>
-    <url>https://gitee.com/dromara/RuoYi-Cloud-Plus</url>
-    <description>RuoYi-Cloud-Plus微服务系统</description>
+    <name>Fxkc-Cloud-Plus</name>
+    <description>Fxkc-Cloud-Plus微服务系统</description>
 
     <properties>
         <revision>2.1.2</revision>

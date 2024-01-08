@@ -12,7 +12,7 @@
     <artifactId>fxkc-common-loadbalancer</artifactId>
 
     <description>
-        ruoyi-common-loadbalancer 自定义负载均衡(多团队开发使用)
+        fxkc-common-loadbalancer 自定义负载均衡(多团队开发使用)
     </description>
 
     <dependencies>

@@ -12,7 +12,7 @@
     <artifactId>fxkc-common-mail</artifactId>
 
     <description>
-        ruoyi-common-mail 邮件模块
+        fxkc-common-mail 邮件模块
     </description>
 
     <dependencies>

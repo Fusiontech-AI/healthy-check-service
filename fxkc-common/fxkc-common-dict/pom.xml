@@ -12,7 +12,7 @@
     <artifactId>fxkc-common-dict</artifactId>
 
     <description>
-        ruoyi-common-dict 字典
+        fxkc-common-dict 字典
     </description>
 
     <dependencies>

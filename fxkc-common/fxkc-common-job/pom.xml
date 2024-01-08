@@ -12,7 +12,7 @@
     <artifactId>fxkc-common-job</artifactId>
 
     <description>
-        ruoyi-common-job 定时任务
+        fxkc-common-job 定时任务
     </description>
 
 	<dependencies>

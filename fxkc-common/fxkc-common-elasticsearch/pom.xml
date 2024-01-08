@@ -12,7 +12,7 @@
     <artifactId>fxkc-common-elasticsearch</artifactId>
 
     <description>
-        ruoyi-common-elasticsearch ES搜索引擎服务
+        fxkc-common-elasticsearch ES搜索引擎服务
     </description>
 
 	<dependencies>

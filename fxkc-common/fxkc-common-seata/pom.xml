@@ -12,7 +12,7 @@
     <artifactId>fxkc-common-seata</artifactId>
 
     <description>
-        ruoyi-common-seata 分布式事务
+        fxkc-common-seata 分布式事务
     </description>
 
 	<dependencies>

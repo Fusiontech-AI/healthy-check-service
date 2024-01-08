@@ -12,7 +12,7 @@
     <artifactId>fxkc-common-mybatis</artifactId>
 
     <description>
-        ruoyi-common-mybatis 数据库服务
+        fxkc-common-mybatis 数据库服务
     </description>
 
     <dependencies>

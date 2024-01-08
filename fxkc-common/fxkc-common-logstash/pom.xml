@@ -12,7 +12,7 @@
     <artifactId>fxkc-common-logstash</artifactId>
 
     <description>
-        ruoyi-common-logstash logstash日志推送模块
+        fxkc-common-logstash logstash日志推送模块
     </description>
 
     <dependencies>

@@ -12,7 +12,7 @@
     <artifactId>fxkc-common-skylog</artifactId>
 
     <description>
-        ruoyi-common-skylog skywalking日志收集模块
+        fxkc-common-skylog skywalking日志收集模块
     </description>
 
     <dependencies>

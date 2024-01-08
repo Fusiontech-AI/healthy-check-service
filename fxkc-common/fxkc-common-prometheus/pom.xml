@@ -12,7 +12,7 @@
     <artifactId>fxkc-common-prometheus</artifactId>
 
     <description>
-        ruoyi-common-prometheus prometheus监控
+        fxkc-common-prometheus prometheus监控
     </description>
 
 	<dependencies>

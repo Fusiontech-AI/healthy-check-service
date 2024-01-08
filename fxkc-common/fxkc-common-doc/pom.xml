@@ -12,7 +12,7 @@
     <artifactId>fxkc-common-doc</artifactId>
 
     <description>
-        ruoyi-common-doc 系统接口
+        fxkc-common-doc 系统接口
     </description>
 
     <dependencies>
