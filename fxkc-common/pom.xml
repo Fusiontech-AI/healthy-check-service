@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>org.fxkc</groupId>
+        <artifactId>fxkc-cloud-plus</artifactId>
+        <version>${revision}</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <modules>
+        <module>fxkc-common-bom</module>
+        <module>fxkc-common-alibaba-bom</module>
+        <module>fxkc-common-log</module>
+        <module>fxkc-common-dict</module>
+        <module>fxkc-common-excel</module>
+        <module>fxkc-common-core</module>
+        <module>fxkc-common-redis</module>
+        <module>fxkc-common-doc</module>
+        <module>fxkc-common-security</module>
+        <module>fxkc-common-satoken</module>
+        <module>fxkc-common-web</module>
+        <module>fxkc-common-mybatis</module>
+        <module>fxkc-common-job</module>
+        <module>fxkc-common-dubbo</module>
+        <module>fxkc-common-seata</module>
+        <module>fxkc-common-loadbalancer</module>
+        <module>fxkc-common-oss</module>
+        <module>fxkc-common-ratelimiter</module>
+        <module>fxkc-common-idempotent</module>
+        <module>fxkc-common-mail</module>
+        <module>fxkc-common-sms</module>
+        <module>fxkc-common-logstash</module>
+        <module>fxkc-common-elasticsearch</module>
+        <module>fxkc-common-sentinel</module>
+        <module>fxkc-common-skylog</module>
+        <module>fxkc-common-prometheus</module>
+        <module>fxkc-common-translation</module>
+        <module>fxkc-common-sensitive</module>
+        <module>fxkc-common-json</module>
+        <module>fxkc-common-encrypt</module>
+        <module>fxkc-common-tenant</module>
+        <module>fxkc-common-websocket</module>
+        <module>fxkc-common-social</module>
+    </modules>
+
+    <artifactId>fxkc-common</artifactId>
+    <packaging>pom</packaging>
+
+    <description>
+        ruoyi-common通用模块
+    </description>
+
+</project>

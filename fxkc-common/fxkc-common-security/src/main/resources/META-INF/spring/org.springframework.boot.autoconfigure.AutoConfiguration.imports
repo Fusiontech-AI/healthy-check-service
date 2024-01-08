@@ -1,0 +1,2 @@
+org.fxkc.common.security.handler.GlobalExceptionHandler
+org.fxkc.common.security.config.SecurityConfiguration

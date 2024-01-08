@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>org.fxkc</groupId>
+        <artifactId>fxkc-modules</artifactId>
+        <version>${revision}</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>fxkc-peis</artifactId>
+
+    <description>
+        peis业务模块
+    </description>
+
+    <dependencies>
+
+        <!-- SpringCloud Alibaba Nacos -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+
+        <!-- SpringCloud Alibaba Nacos Config -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.fxkc</groupId>
+            <artifactId>fxkc-common-sentinel</artifactId>
+        </dependency>
+
+        <!-- RuoYi Common Log -->
+        <dependency>
+            <groupId>org.fxkc</groupId>
+            <artifactId>fxkc-common-log</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.fxkc</groupId>
+            <artifactId>fxkc-common-dict</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.fxkc</groupId>
+            <artifactId>fxkc-common-doc</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.fxkc</groupId>
+            <artifactId>fxkc-common-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.fxkc</groupId>
+            <artifactId>fxkc-common-mybatis</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.fxkc</groupId>
+            <artifactId>fxkc-common-dubbo</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.fxkc</groupId>
+            <artifactId>fxkc-common-seata</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.fxkc</groupId>
+            <artifactId>fxkc-common-idempotent</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.fxkc</groupId>
+            <artifactId>fxkc-common-tenant</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.fxkc</groupId>
+            <artifactId>fxkc-common-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.fxkc</groupId>
+            <artifactId>fxkc-common-translation</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.fxkc</groupId>
+            <artifactId>fxkc-common-sensitive</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.fxkc</groupId>
+            <artifactId>fxkc-common-encrypt</artifactId>
+        </dependency>
+
+        <!-- RuoYi Api System -->
+        <dependency>
+            <groupId>org.fxkc</groupId>
+            <artifactId>fxkc-api-system</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.fxkc</groupId>
+            <artifactId>fxkc-api-resource</artifactId>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

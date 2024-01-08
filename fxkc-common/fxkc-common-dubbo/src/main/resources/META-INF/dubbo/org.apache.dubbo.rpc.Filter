@@ -1,0 +1,1 @@
+dubboRequestFilter=org.fxkc.common.dubbo.filter.DubboRequestFilter

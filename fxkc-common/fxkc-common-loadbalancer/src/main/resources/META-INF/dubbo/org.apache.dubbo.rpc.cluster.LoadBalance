@@ -1,0 +1,1 @@
+customDubboLoadBalancer=org.fxkc.common.loadbalance.core.CustomDubboLoadBalancer

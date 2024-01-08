@@ -1,0 +1,6 @@
+org.fxkc.common.translation.config.TranslationConfig
+org.fxkc.common.translation.core.impl.DeptNameTranslationImpl
+org.fxkc.common.translation.core.impl.DictTypeTranslationImpl
+org.fxkc.common.translation.core.impl.OssUrlTranslationImpl
+org.fxkc.common.translation.core.impl.UserNameTranslationImpl
+org.fxkc.common.translation.core.impl.NicknameTranslationImpl

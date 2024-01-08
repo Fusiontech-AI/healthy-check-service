@@ -1,0 +1,1 @@
+dubboDataPermissionFilter=org.fxkc.common.mybatis.filter.DubboDataPermissionFilter

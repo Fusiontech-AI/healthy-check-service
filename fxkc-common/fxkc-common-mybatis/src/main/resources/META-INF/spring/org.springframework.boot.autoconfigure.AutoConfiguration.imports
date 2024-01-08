@@ -1,0 +1,3 @@
+org.fxkc.common.mybatis.config.MybatisPlusConfiguration
+org.fxkc.common.mybatis.handler.MybatisExceptionHandler
+org.fxkc.common.mybatis.service.SysDataScopeService

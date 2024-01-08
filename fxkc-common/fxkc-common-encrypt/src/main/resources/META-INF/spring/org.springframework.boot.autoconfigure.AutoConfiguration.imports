@@ -1,0 +1,2 @@
+org.fxkc.common.encrypt.config.EncryptorAutoConfiguration
+org.fxkc.common.encrypt.config.ApiDecryptAutoConfiguration
