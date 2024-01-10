@@ -63,7 +63,7 @@ public class TjTjksVo implements Serializable {
     private Long ksSort;
 
     /**
-     * 角色状态（0正常 1停用）
+     * 科室状态（0正常 1停用）
      */
     @ExcelProperty(value = "科室状态", converter = ExcelDictConvert.class)
     @ExcelDictFormat(readConverterExp = "0=正常,1=停用")

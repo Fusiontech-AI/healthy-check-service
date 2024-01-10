@@ -1,10 +1,14 @@
 package org.fxkc.peis.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.fxkc.common.core.constant.CommonConstants;
+import org.fxkc.common.core.exception.ServiceException;
 import org.fxkc.common.core.utils.MapstructUtils;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
@@ -27,6 +31,7 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class TjTjksServiceImpl implements ITjTjksService {
 
     private final TjTjksMapper baseMapper;
@@ -98,9 +103,46 @@ public class TjTjksServiceImpl implements ITjTjksService {
      * 保存前的数据校验
      */
     private void validEntityBeforeSave(TjTjks entity){
-        //TODO 做一些数据校验,如唯一约束
+        if(StringUtils.isNotEmpty(entity.getKsCode()) && !checkKsCodeUnique(entity)){
+            throw new ServiceException("科室编码'" + entity.getKsCode() + "'已存在!");
+        }
+
+        if(StringUtils.isNotEmpty(entity.getKsName()) && !checkKsNameUnique(entity)){
+            throw new ServiceException("科室名称'" + entity.getKsName() + "'已存在!");
+        }
     }
 
+    /**
+     * 判断科室编码是否唯一
+     */
+    private boolean checkKsCodeUnique(TjTjks entity) {
+        long ksId = ObjectUtil.isNull(entity.getId()) ? -1L : entity.getId();
+        TjTjks tjTjks = baseMapper.selectOne(new LambdaQueryWrapper<TjTjks>()
+            .eq(TjTjks::getDelFlag, CommonConstants.NORMAL)
+            .eq(TjTjks::getKsCode, entity.getKsCode())
+
+        );
+        if (ObjectUtil.isNotNull(tjTjks) && tjTjks.getId() != ksId) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 判断科室名称是否唯一
+     */
+    private boolean checkKsNameUnique(TjTjks entity) {
+        long ksId = ObjectUtil.isNull(entity.getId()) ? -1L : entity.getId();
+        TjTjks tjTjks = baseMapper.selectOne(new LambdaQueryWrapper<TjTjks>()
+            .eq(TjTjks::getDelFlag, CommonConstants.NORMAL)
+            .eq(TjTjks::getKsName, entity.getKsName())
+
+        );
+        if (ObjectUtil.isNotNull(tjTjks) && tjTjks.getId() != ksId) {
+            return false;
+        }
+        return true;
+    }
     /**
      * 批量删除体检科室
      */

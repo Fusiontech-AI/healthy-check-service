@@ -57,7 +57,7 @@ public class TjTjksBo extends BaseEntity {
     private Long ksSort;
 
     /**
-     * 角色状态（0正常 1停用）
+     * 科室状态（0正常 1停用）
      */
     @NotBlank(message = "科室状态（0正常 1停用）不能为空", groups = { AddGroup.class, EditGroup.class })
     private String status;
