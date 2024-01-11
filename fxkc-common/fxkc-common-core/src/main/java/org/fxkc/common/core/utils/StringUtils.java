@@ -318,4 +318,16 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
             .collect(Collectors.toList());
     }
 
+    /***
+     * 字符串补0
+     * @param source 源字符串
+     * @param targetLength 字符串位数
+     */
+    public static String zeroPrefix(String source, int targetLength){
+        StringBuilder sb = new StringBuilder(source);
+        while (sb.length() < targetLength){
+            sb.insert(0,"0");
+        }
+        return sb.toString();
+    }
 }
