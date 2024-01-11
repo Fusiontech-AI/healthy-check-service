@@ -2,6 +2,7 @@ package org.fxkc.peis.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.tree.Tree;
+import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -27,6 +28,7 @@ import org.fxkc.peis.service.ITjTeamDeptService;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -56,19 +58,23 @@ public class TjTeamDeptServiceImpl extends ServiceImpl<TjTeamDeptMapper, TjTeamD
     @Override
     public TableDataInfo<TjTeamDeptVo> queryPageList(TjTeamDeptBo bo, PageQuery pageQuery) {
         Page<TjTeamDeptVo> result = baseMapper.selectVoPage(pageQuery.build(), buildQueryWrapper(bo));
-        List<Long> teamIdList = result.getRecords().stream().map(TjTeamDeptVo::getTeamId).toList();
-        if(CollUtil.isNotEmpty(teamIdList)) {
-            List<TjTeamInfo> infoList = tjTeamInfoMapper.selectBatchIds(teamIdList);
-            result.getRecords().forEach(k -> {
+        List<TjTeamInfo> infoList = tjTeamInfoMapper.selectList();
+        //递归查询上级单位存入map
+        Map<Long, String> map = MapUtil.newHashMap();
+        result.getRecords().forEach(k -> {
+            if(map.containsKey(k.getTeamId())) {
+                k.setTeamName(map.get(k.getTeamId()));
+            }else {
                 Optional<TjTeamInfo> tjTeamInfo = infoList.stream().filter(e -> Objects.equals(k.getTeamId(), e.getId())).findFirst();
                 if(tjTeamInfo.isPresent()) {
                     List<TjTeamInfo> nodeList = findSuperTeamName(infoList, tjTeamInfo.get());
                     String teamName = nodeList.stream().sorted(Comparator.comparing(TjTeamInfo::getCreateTime)).map(TjTeamInfo::getTeamName)
                         .collect(Collectors.joining(StrUtil.SLASH));
                     k.setTeamName(teamName);
+                    map.put(k.getTeamId(), teamName);
                 }
-            });
-        }
+            }
+        });
         return TableDataInfo.build(result);
     }
 
