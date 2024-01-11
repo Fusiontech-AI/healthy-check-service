@@ -104,6 +104,10 @@ public class TjTeamDeptController extends BaseController {
         return toAjax(tjTeamDeptService.deleteWithValidByIds(List.of(ids), true));
     }
 
+    /**
+     * 获取部门编号
+     * @param id 所选上级单位Id
+     */
     @GetMapping("/getDeptNoById/{id}")
     public R<String> getDeptNoById(@NotNull(message = "所选上级单位Id不能为空") @PathVariable Long id) {
         return R.ok(tjTeamDeptService.getDeptNoById(id));

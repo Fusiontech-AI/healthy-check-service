@@ -103,6 +103,11 @@ public class TjTeamInfoController extends BaseController {
         return toAjax(tjTeamInfoService.deleteWithValidByIds(List.of(ids), true));
     }
 
+    /**
+     * 获取体检单位编号
+     *
+     * @param id 所选上级单位Id
+     */
     @GetMapping("/getTeamNoById/{id}")
     public R<String> getTeamNoById(@NotNull(message = "所选上级单位Id不能为空") @PathVariable Long id) {
         return R.ok(tjTeamInfoService.getTeamNoById(id));

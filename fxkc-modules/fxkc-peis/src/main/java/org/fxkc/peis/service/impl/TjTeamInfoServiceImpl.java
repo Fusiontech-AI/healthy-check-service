@@ -79,11 +79,11 @@ public class TjTeamInfoServiceImpl extends ServiceImpl<TjTeamInfoMapper, TjTeamI
     public TjTeamInfo insertByBo(TjTeamInfoBo bo) {
         TjTeamInfo add = MapstructUtils.convert(bo, TjTeamInfo.class);
         if(Objects.equals(TeamLevelEnum.ONE.getCode(), bo.getTeamLevel())) {
-            bo.setParentId(0L);
+            add.setParentId(0L);
         }
         validEntityBeforeSave(add);
         boolean flag = baseMapper.insert(add) > 0;
-        return add;
+        return baseMapper.selectById(add.getId());
     }
 
     /**
@@ -93,11 +93,11 @@ public class TjTeamInfoServiceImpl extends ServiceImpl<TjTeamInfoMapper, TjTeamI
     public TjTeamInfo updateByBo(TjTeamInfoBo bo) {
         TjTeamInfo update = MapstructUtils.convert(bo, TjTeamInfo.class);
         if(Objects.equals(TeamLevelEnum.ONE.getCode(), bo.getTeamLevel())) {
-            bo.setParentId(0L);
+            update.setParentId(0L);
         }
         validEntityBeforeSave(update);
         boolean flag = baseMapper.updateById(update) > 0;
-        return update;
+        return baseMapper.selectById(update.getId());
     }
 
     /**
