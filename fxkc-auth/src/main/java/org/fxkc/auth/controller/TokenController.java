@@ -35,7 +35,6 @@ import org.fxkc.system.api.RemoteSocialService;
 import org.fxkc.system.api.RemoteTenantService;
 import org.fxkc.system.api.domain.vo.RemoteClientVo;
 import org.fxkc.system.api.domain.vo.RemoteTenantVo;
-import org.fxkc.common.core.utils.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URL;
@@ -99,7 +98,7 @@ public class TokenController {
         Long userId = LoginHelper.getUserId();
         scheduledExecutorService.schedule(() -> {
             try {
-                remoteMessageService.sendMessage(userId, "欢迎登录RuoYi-Cloud-Plus微服务管理系统");
+                remoteMessageService.sendMessage(userId, "欢迎登录Fxkc-Cloud-Plus微服务管理系统");
             } catch (Exception ignored) {
             }
         }, 3, TimeUnit.SECONDS);

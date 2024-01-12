@@ -1,0 +1,65 @@
+package org.fxkc.peis.domain.vo;
+
+import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
+import com.alibaba.excel.annotation.ExcelProperty;
+import io.github.linpeilie.annotations.AutoMapper;
+import lombok.Data;
+import org.fxkc.peis.domain.TjPackageInfo;
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.math.BigDecimal;
+
+
+/**
+ * 体检组合项目详细信息视图对象 tj_package_info
+ *
+ * @author JunBaiChen
+ * @date 2024-01-10
+ */
+@Data
+@ExcelIgnoreUnannotated
+@AutoMapper(target = TjPackageInfo.class)
+public class TjPackageInfoVo implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 主键id
+     */
+    @ExcelProperty(value = "主键id")
+    private Long id;
+
+    /**
+     * 套餐主键id
+     */
+    @ExcelProperty(value = "套餐主键id")
+    private Long packageId;
+
+    /**
+     * 组合项目主键id
+     */
+    @ExcelProperty(value = "组合项目主键id")
+    private Long combinProjectId;
+
+    /**
+     * 标准价格
+     */
+    @ExcelProperty(value = "标准价格")
+    private BigDecimal standardAmount;
+
+    /**
+     * 折扣
+     */
+    @ExcelProperty(value = "折扣")
+    private BigDecimal discount;
+
+    /**
+     * 应收金额
+     */
+    @ExcelProperty(value = "应收金额")
+    private BigDecimal receivableAmount;
+
+
+}

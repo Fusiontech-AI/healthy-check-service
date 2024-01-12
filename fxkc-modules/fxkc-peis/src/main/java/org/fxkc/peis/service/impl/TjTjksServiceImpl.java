@@ -66,6 +66,7 @@ public class TjTjksServiceImpl implements ITjTjksService {
     private LambdaQueryWrapper<TjTjks> buildQueryWrapper(TjTjksBo bo) {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<TjTjks> lqw = Wrappers.lambdaQuery();
+        lqw.eq(TjTjks::getDelFlag,CommonConstants.NORMAL);
         lqw.eq(StringUtils.isNotBlank(bo.getKsCode()), TjTjks::getKsCode, bo.getKsCode());
         lqw.like(StringUtils.isNotBlank(bo.getKsName()), TjTjks::getKsName, bo.getKsName());
         lqw.eq(StringUtils.isNotBlank(bo.getKsSimplePy()), TjTjks::getKsSimplePy, bo.getKsSimplePy());
