@@ -1,10 +1,11 @@
 package org.fxkc.peis.service;
 
-import org.fxkc.peis.domain.TjPackage;
-import org.fxkc.peis.domain.vo.TjPackageVo;
-import org.fxkc.peis.domain.bo.TjPackageBo;
-import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.mybatis.core.page.PageQuery;
+import org.fxkc.common.mybatis.core.page.TableDataInfo;
+import org.fxkc.peis.domain.bo.TjPackageAddBo;
+import org.fxkc.peis.domain.bo.TjPackageBillBo;
+import org.fxkc.peis.domain.bo.TjPackageBo;
+import org.fxkc.peis.domain.vo.TjPackageVo;
 
 import java.util.Collection;
 import java.util.List;
@@ -35,15 +36,20 @@ public interface ITjPackageService {
     /**
      * 新增体检套餐
      */
-    Boolean insertByBo(TjPackageBo bo);
+    Boolean insertByBo(TjPackageAddBo bo);
 
     /**
      * 修改体检套餐
      */
-    Boolean updateByBo(TjPackageBo bo);
+    Boolean updateByBo(TjPackageAddBo bo);
 
     /**
      * 校验并批量删除体检套餐信息
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+
+    /**
+     * 体检套餐动态算费(可复用)
+     */
+    TjPackageBillBo dynamicBilling(TjPackageBillBo bo);
 }

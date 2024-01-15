@@ -64,7 +64,6 @@ public class TjBasicProjectServiceImpl implements ITjBasicProjectService {
     private LambdaQueryWrapper<TjBasicProject> buildQueryWrapper(TjBasicProjectBo bo) {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<TjBasicProject> lqw = Wrappers.lambdaQuery();
-        lqw.eq(TjBasicProject::getDelFlag, CommonConstants.NORMAL);
         lqw.eq(StringUtils.isNotBlank(bo.getBasicProjectCode()), TjBasicProject::getBasicProjectCode, bo.getBasicProjectCode());
         lqw.like(StringUtils.isNotBlank(bo.getBasicProjectName()), TjBasicProject::getBasicProjectName, bo.getBasicProjectName());
         lqw.like(StringUtils.isNotBlank(bo.getBasicSimpleName()), TjBasicProject::getBasicSimpleName, bo.getBasicSimpleName());

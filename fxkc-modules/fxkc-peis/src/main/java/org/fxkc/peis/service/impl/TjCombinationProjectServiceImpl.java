@@ -89,7 +89,6 @@ public class TjCombinationProjectServiceImpl implements ITjCombinationProjectSer
     private LambdaQueryWrapper<TjCombinationProject> buildQueryWrapper(TjCombinationProjectBo bo) {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<TjCombinationProject> lqw = Wrappers.lambdaQuery();
-        lqw.eq(TjCombinationProject::getDelFlag, CommonConstants.NORMAL);
         lqw.eq(StringUtils.isNotBlank(bo.getCombinProjectCode()), TjCombinationProject::getCombinProjectCode, bo.getCombinProjectCode());
         lqw.like(StringUtils.isNotBlank(bo.getCombinProjectName()), TjCombinationProject::getCombinProjectName, bo.getCombinProjectName());
         lqw.like(StringUtils.isNotBlank(bo.getCombinSimpleName()), TjCombinationProject::getCombinSimpleName, bo.getCombinSimpleName());
@@ -116,6 +115,7 @@ public class TjCombinationProjectServiceImpl implements ITjCombinationProjectSer
         lqw.eq(StringUtils.isNotBlank(bo.getProjectClinicalMean()), TjCombinationProject::getProjectClinicalMean, bo.getProjectClinicalMean());
         lqw.eq(StringUtils.isNotBlank(bo.getProjectDescribe()), TjCombinationProject::getProjectDescribe, bo.getProjectDescribe());
         lqw.eq(StringUtils.isNotBlank(bo.getStatus()), TjCombinationProject::getStatus, bo.getStatus());
+        lqw.orderByAsc(TjCombinationProject::getProjectSort).orderByDesc(TjCombinationProject::getCreateTime);
         return lqw;
     }
 

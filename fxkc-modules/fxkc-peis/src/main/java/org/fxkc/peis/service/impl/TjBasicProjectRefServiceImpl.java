@@ -64,7 +64,6 @@ public class TjBasicProjectRefServiceImpl implements ITjBasicProjectRefService {
     private LambdaQueryWrapper<TjBasicProjectRef> buildQueryWrapper(TjBasicProjectRefBo bo) {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<TjBasicProjectRef> lqw = Wrappers.lambdaQuery();
-        lqw.eq(TjBasicProjectRef::getDelFlag, CommonConstants.NORMAL);
         lqw.eq(bo.getBasicProjectId() != null, TjBasicProjectRef::getBasicProjectId, bo.getBasicProjectId());
         lqw.eq(StringUtils.isNotBlank(bo.getSex()), TjBasicProjectRef::getSex, bo.getSex());
         lqw.eq(bo.getAgeStart() != null, TjBasicProjectRef::getAgeStart, bo.getAgeStart());

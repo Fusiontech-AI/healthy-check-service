@@ -72,7 +72,6 @@ public class TjSampleServiceImpl implements ITjSampleService {
     private LambdaQueryWrapper<TjSample> buildQueryWrapper(TjSampleBo bo) {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<TjSample> lqw = Wrappers.lambdaQuery();
-        lqw.eq(TjSample::getDelFlag, CommonConstants.NORMAL);
         lqw.eq(StringUtils.isNotBlank(bo.getSampleCode()), TjSample::getSampleCode, bo.getSampleCode());
         lqw.like(StringUtils.isNotBlank(bo.getSampleName()), TjSample::getSampleName, bo.getSampleName());
         lqw.eq(StringUtils.isNotBlank(bo.getSampleCategory()), TjSample::getSampleCategory, bo.getSampleCategory());
@@ -83,6 +82,7 @@ public class TjSampleServiceImpl implements ITjSampleService {
         lqw.eq(StringUtils.isNotBlank(bo.getPrintFlag()), TjSample::getPrintFlag, bo.getPrintFlag());
         lqw.eq(StringUtils.isNotBlank(bo.getPrintApplyFlag()), TjSample::getPrintApplyFlag, bo.getPrintApplyFlag());
         lqw.eq(bo.getPrintApplyNumber() != null, TjSample::getPrintApplyNumber, bo.getPrintApplyNumber());
+        lqw.orderByAsc(TjSample::getPrintSort).orderByDesc(TjSample::getCreateTime);
         return lqw;
     }
 

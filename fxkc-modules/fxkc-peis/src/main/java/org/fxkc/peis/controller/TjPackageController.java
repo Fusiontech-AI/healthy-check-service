@@ -2,6 +2,7 @@ package org.fxkc.peis.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,8 @@ import org.fxkc.common.log.enums.BusinessType;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.web.core.BaseController;
+import org.fxkc.peis.domain.bo.TjPackageAddBo;
+import org.fxkc.peis.domain.bo.TjPackageBillBo;
 import org.fxkc.peis.domain.bo.TjPackageBo;
 import org.fxkc.peis.domain.vo.TjPackageVo;
 import org.fxkc.peis.service.ITjPackageService;
@@ -77,7 +80,7 @@ public class TjPackageController extends BaseController {
     @Log(title = "体检套餐", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
-    public R<Void> add(@Validated(AddGroup.class) @RequestBody TjPackageBo bo) {
+    public R<Void> add(@Validated(AddGroup.class) @RequestBody TjPackageAddBo bo) {
         return toAjax(tjPackageService.insertByBo(bo));
     }
 
@@ -88,7 +91,7 @@ public class TjPackageController extends BaseController {
     @Log(title = "体检套餐", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
-    public R<Void> edit(@Validated(EditGroup.class) @RequestBody TjPackageBo bo) {
+    public R<Void> edit(@Validated(EditGroup.class) @RequestBody TjPackageAddBo bo) {
         return toAjax(tjPackageService.updateByBo(bo));
     }
 
@@ -103,5 +106,14 @@ public class TjPackageController extends BaseController {
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
         return toAjax(tjPackageService.deleteWithValidByIds(List.of(ids), true));
+    }
+
+
+    /**
+     * 体检套餐动态算费(可复用)
+     */
+    @PostMapping("dynamicBilling")
+    public R<TjPackageBillBo> dynamicBilling(@Valid @RequestBody TjPackageBillBo bo) {
+        return R.ok(tjPackageService.dynamicBilling(bo));
     }
 }
