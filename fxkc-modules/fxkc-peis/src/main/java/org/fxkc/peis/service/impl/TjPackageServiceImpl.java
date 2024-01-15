@@ -194,7 +194,7 @@ public class TjPackageServiceImpl implements ITjPackageService {
             }
 
             //根据合计的折扣 去计算除了标准金额最高的单项信息
-            List<TjPackageBillItemBo> collect = tjPackageBillItemBos.stream().sorted(Comparator.comparing(TjPackageBillItemBo::getStandardAmount).reversed()).collect(Collectors.toList());
+            List<TjPackageBillItemBo> collect = tjPackageBillItemBos.stream().sorted(Comparator.comparing(TjPackageBillItemBo::getStandardAmount)).collect(Collectors.toList());
             BigDecimal addAmount = new BigDecimal("0");
             for (int i = 0; i <collect.size() ; i++) {
                 if(i==collect.size()-1){
