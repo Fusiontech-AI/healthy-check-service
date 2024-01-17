@@ -1,12 +1,13 @@
 package org.fxkc.peis.domain.vo;
 
-import org.fxkc.peis.domain.TjCombinationProject;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
+import io.github.linpeilie.annotations.AutoMapper;
+import io.github.linpeilie.annotations.AutoMappers;
+import lombok.Data;
 import org.fxkc.common.excel.annotation.ExcelDictFormat;
 import org.fxkc.common.excel.convert.ExcelDictConvert;
-import io.github.linpeilie.annotations.AutoMapper;
-import lombok.Data;
+import org.fxkc.peis.domain.TjCombinationProject;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -21,7 +22,10 @@ import java.math.BigDecimal;
  */
 @Data
 @ExcelIgnoreUnannotated
-@AutoMapper(target = TjCombinationProject.class)
+@AutoMappers({
+    @AutoMapper(target = TjCombinationProject.class),
+    @AutoMapper(target = TjCombinationProjectListVo.class)
+})
 public class TjCombinationProjectVo implements Serializable {
 
     @Serial
