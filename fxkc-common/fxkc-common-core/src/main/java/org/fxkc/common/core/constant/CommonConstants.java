@@ -12,4 +12,10 @@ public interface CommonConstants {
      */
     String NORMAL = "0";
 
+
+
+    /**
+     * 禁用状态
+     */
+    String DISABLE = "1";
 }

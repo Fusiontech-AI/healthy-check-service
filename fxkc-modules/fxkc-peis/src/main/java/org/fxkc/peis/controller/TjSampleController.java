@@ -16,7 +16,9 @@ import org.fxkc.common.log.enums.BusinessType;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.web.core.BaseController;
+import org.fxkc.peis.domain.bo.TjSampleBatchUpdateBo;
 import org.fxkc.peis.domain.bo.TjSampleBo;
+import org.fxkc.peis.domain.bo.TjSamplePageBo;
 import org.fxkc.peis.domain.bo.TjSampleUpdateBo;
 import org.fxkc.peis.domain.vo.TjSampleInfoListVo;
 import org.fxkc.peis.domain.vo.TjSampleVo;
@@ -46,7 +48,7 @@ public class TjSampleController extends BaseController {
      */
     @SaCheckPermission("peis:sample:list")
     @GetMapping("/list")
-    public TableDataInfo<TjSampleVo> list(TjSampleBo bo, PageQuery pageQuery) {
+    public TableDataInfo<TjSampleVo> list(TjSamplePageBo bo, PageQuery pageQuery) {
         return tjSampleService.queryPageList(bo, pageQuery);
     }
 
@@ -125,5 +127,27 @@ public class TjSampleController extends BaseController {
     @PostMapping("/updateCombinProjectBySampleId")
     public R<Void> updateCombinProjectBySampleId(@RequestBody @Valid TjSampleUpdateBo tjSampleUpdateBo) {
         return toAjax(tjSampleService.updateCombinProjectBySampleId(tjSampleUpdateBo));
+    }
+
+
+    /**
+     * 批量禁用体检样本
+     *
+     * @param ids 主键串
+     */
+    @GetMapping("batchDisable/{ids}")
+    public R<Void> batchDisable(@NotEmpty(message = "主键不能为空")
+                          @PathVariable Long[] ids) {
+        return toAjax(tjSampleService.batchDisable(List.of(ids)));
+    }
+
+
+    /**
+     * 批量修改体检样本类别
+     *
+     */
+    @PostMapping("batchUpdateCategory")
+    public R<Void> batchUpdateCategory(@RequestBody @Valid TjSampleBatchUpdateBo bo) {
+        return toAjax(tjSampleService.batchUpdateCategory(bo));
     }
 }

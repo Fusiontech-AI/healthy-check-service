@@ -1,5 +1,6 @@
 package org.fxkc.peis.domain.vo;
 
+import org.fxkc.common.mybatis.core.domain.BaseEntity;
 import org.fxkc.peis.domain.TjPackage;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
@@ -22,7 +23,7 @@ import java.math.BigDecimal;
 @Data
 @ExcelIgnoreUnannotated
 @AutoMapper(target = TjPackage.class)
-public class TjPackageVo implements Serializable {
+public class TjPackageVo extends BaseEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

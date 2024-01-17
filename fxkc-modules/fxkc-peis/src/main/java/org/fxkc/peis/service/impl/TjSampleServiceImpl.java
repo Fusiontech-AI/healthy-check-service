@@ -14,7 +14,9 @@ import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.peis.domain.TjSample;
 import org.fxkc.peis.domain.TjSampleInfo;
+import org.fxkc.peis.domain.bo.TjSampleBatchUpdateBo;
 import org.fxkc.peis.domain.bo.TjSampleBo;
+import org.fxkc.peis.domain.bo.TjSamplePageBo;
 import org.fxkc.peis.domain.bo.TjSampleUpdateBo;
 import org.fxkc.peis.domain.vo.TjSampleInfoListVo;
 import org.fxkc.peis.domain.vo.TjSampleVo;
@@ -54,9 +56,8 @@ public class TjSampleServiceImpl implements ITjSampleService {
      * 查询体检样本列表
      */
     @Override
-    public TableDataInfo<TjSampleVo> queryPageList(TjSampleBo bo, PageQuery pageQuery) {
-        LambdaQueryWrapper<TjSample> lqw = buildQueryWrapper(bo);
-        Page<TjSampleVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
+    public TableDataInfo<TjSampleVo> queryPageList(TjSamplePageBo bo, PageQuery pageQuery) {
+        Page<TjSampleVo> result = baseMapper.selectSamplePage(pageQuery.build(), bo);
         return TableDataInfo.build(result);
     }
 
@@ -190,5 +191,29 @@ public class TjSampleServiceImpl implements ITjSampleService {
             tjSampleInfoMapper.insertBatch(tjSampleInfos);
         }
         return true;
+    }
+
+    @Override
+    public Boolean batchDisable(List<Long> ids) {
+        List<TjSample> buidList = ids.stream().map(m -> {
+            TjSample tjSample = new TjSample();
+            tjSample.setId(m);
+            tjSample.setStatus(CommonConstants.DISABLE);
+            return tjSample;
+        }).collect(Collectors.toList());
+        return baseMapper.updateBatchById(buidList);
+    }
+
+    @Override
+    public Boolean batchUpdateCategory(TjSampleBatchUpdateBo bo) {
+        List<Long> ids = bo.getIds();
+        String sampleCategory = bo.getSampleCategory();
+        List<TjSample> buidList = ids.stream().map(m -> {
+            TjSample tjSample = new TjSample();
+            tjSample.setId(m);
+            tjSample.setSampleCategory(sampleCategory);
+            return tjSample;
+        }).collect(Collectors.toList());
+        return baseMapper.updateBatchById(buidList);
     }
 }

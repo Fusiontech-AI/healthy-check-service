@@ -4,4 +4,40 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.fxkc.peis.mapper.TjSampleMapper">
 
+    <select id="selectSamplePage" resultType="org.fxkc.peis.domain.vo.TjSampleVo">
+        select t1.*
+        from tj_sample t1
+        left join tj_sample_info t2
+        on t1.id = t2.sample_id  and t2.del_flag = '0'
+        where t1.del_flag = '0'
+        <if test="bo.sampleCode != null and bo.sampleCode != '' ">
+            and t1.sample_code = #{bo.sampleCode}
+        </if>
+        <if test="bo.sampleName != null and bo.sampleName != '' ">
+            and t1.sample_name = #{bo.sampleName}
+        </if>
+        <if test="bo.sampleType != null and bo.sampleType != '' ">
+            and t1.sample_type = #{bo.sampleType}
+        </if>
+        <if test="bo.sampleCategory != null and bo.sampleCategory != '' ">
+            and t1.sample_category = #{bo.sampleCategory}
+        </if>
+        <if test="bo.status != null and bo.status != '' ">
+            and t1.status = #{bo.status}
+        </if>
+        <if test="bo.combinProjectCode != null and bo.combinProjectCode != '' ">
+            and exists (select 1
+            from tj_combination_project m
+            where m.id = t2.combin_project_id
+            and m.combin_project_code = #{bo.combinProjectCode})
+        </if>
+        <if test="bo.combinProjectName != null and bo.combinProjectName != '' ">
+            and exists (select 1
+            from tj_combination_project m
+            where m.id = t2.combin_project_id
+            and m.combin_project_name = #{bo.combinProjectName})
+        </if>
+        order by t1.print_sort  ,t1.create_time desc
+    </select>
+
 </mapper>

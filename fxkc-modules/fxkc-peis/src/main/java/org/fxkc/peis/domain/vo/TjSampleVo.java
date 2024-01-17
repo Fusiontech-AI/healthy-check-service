@@ -4,6 +4,9 @@ import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
+import org.fxkc.common.excel.annotation.ExcelDictFormat;
+import org.fxkc.common.excel.convert.ExcelDictConvert;
+import org.fxkc.common.mybatis.core.domain.BaseEntity;
 import org.fxkc.peis.domain.TjSample;
 
 import java.io.Serial;
@@ -19,7 +22,7 @@ import java.io.Serializable;
 @Data
 @ExcelIgnoreUnannotated
 @AutoMapper(target = TjSample.class)
-public class TjSampleVo implements Serializable {
+public class TjSampleVo extends BaseEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -97,4 +100,10 @@ public class TjSampleVo implements Serializable {
     private String remark;
 
 
+    /**
+     * 样本状态（0正常 1停用）
+     */
+    @ExcelProperty(value = "样本状态", converter = ExcelDictConvert.class)
+    @ExcelDictFormat(readConverterExp = "0=正常,1=停用")
+    private String status;
 }
