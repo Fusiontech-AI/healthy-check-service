@@ -33,4 +33,9 @@ public interface TransConstant {
      */
     String OSS_ID_TO_URL = "oss_id_to_url";
 
+    /**
+     * 体检单位id转名称
+     */
+    String TEAM_ID_TO_NAME = "team_id_to_name";
+
 }

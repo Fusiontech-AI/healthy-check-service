@@ -128,7 +128,6 @@ public class TjTeamDeptServiceImpl extends ServiceImpl<TjTeamDeptMapper, TjTeamD
     @Override
     public Boolean updateByBo(TjTeamDeptBo bo) {
         TjTeamDept update = MapstructUtils.convert(bo, TjTeamDept.class);
-        validEntityBeforeSave(update);
         return baseMapper.updateById(update) > 0;
     }
 
@@ -137,6 +136,12 @@ public class TjTeamDeptServiceImpl extends ServiceImpl<TjTeamDeptMapper, TjTeamD
      */
     private void validEntityBeforeSave(TjTeamDept entity){
         //TODO 做一些数据校验,如唯一约束
+        long count = baseMapper.selectCount(Wrappers.lambdaQuery(TjTeamDept.class)
+            .eq(TjTeamDept::getTeamId, entity.getTeamId())
+            .eq(TjTeamDept::getDeptName, entity.getDeptName()));
+        if(count > 0) {
+            throw new PeisException(ErrorCodeConstants.PEIS_DEPTNAME_ISEXIST, entity.getDeptName());
+        }
     }
 
     /**

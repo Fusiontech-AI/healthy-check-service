@@ -48,4 +48,6 @@ public interface ITjTeamInfoService {
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
 
     String getTeamNoById(Long id);
+
+    String selectTeamNameById(Long id);
 }

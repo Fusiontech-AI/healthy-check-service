@@ -37,6 +37,10 @@
             <artifactId>fxkc-api-resource</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.fxkc</groupId>
+            <artifactId>fxkc-api-peis</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

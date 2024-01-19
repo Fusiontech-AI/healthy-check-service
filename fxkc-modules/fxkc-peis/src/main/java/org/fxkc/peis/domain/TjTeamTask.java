@@ -1,0 +1,83 @@
+package org.fxkc.peis.domain;
+
+import com.baomidou.mybatisplus.annotation.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.fxkc.common.tenant.core.TenantEntity;
+import org.fxkc.common.translation.annotation.Translation;
+import org.fxkc.common.translation.constant.TransConstant;
+import org.fxkc.peis.constant.DictTypeConstants;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.Serial;
+
+/**
+ * 团检任务管理对象 tj_team_task
+ *
+ * @author JunBaiChen
+ * @date 2024-01-17
+ */
+@Data
+@EqualsAndHashCode(callSuper = true)
+@TableName("tj_team_task")
+public class TjTeamTask extends TenantEntity {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 主键id
+     */
+    @TableId(value = "id")
+    private Long id;
+
+    /**
+     * 单位id
+     */
+    private Long teamId;
+
+    /**
+     * 任务名称
+     */
+    private String taskName;
+
+    /**
+     * 体检类型sys_dict_type(bus_physical_type)
+     */
+    private String physicalType;
+
+    /**
+     * 签订日期
+     */
+    private Date signDate;
+
+    /**
+     * 开始日期
+     */
+    private Date beginDate;
+
+    /**
+     * 结束日期
+     */
+    private Date endDate;
+
+    /**
+     * 收费类型sys_dict_type(bus_charge_type)
+     */
+    private Integer chargeType;
+
+    /**
+     * 是否审核(1:是0:否)
+     */
+    private String isReview;
+
+    /**
+     * 删除标志（0代表存在 2代表删除）
+     */
+    @TableLogic
+    private String delFlag;
+
+
+}

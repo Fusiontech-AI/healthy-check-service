@@ -40,7 +40,7 @@ public class TjTeamInfoController extends BaseController {
     /**
      * 查询体检单位信息列表
      */
-    @SaCheckPermission("peis:teamInfo:list")
+        @SaCheckPermission("peis:teamInfo:list")
     @GetMapping("/list")
     public R<List<TjTeamInfoVo>> list(TjTeamInfoBo bo) {
         return R.ok(tjTeamInfoService.queryList(bo));

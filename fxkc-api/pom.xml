@@ -12,6 +12,7 @@
         <module>fxkc-api-bom</module>
         <module>fxkc-api-system</module>
         <module>fxkc-api-resource</module>
+        <module>fxkc-api-peis</module>
     </modules>
 
     <artifactId>fxkc-api</artifactId>

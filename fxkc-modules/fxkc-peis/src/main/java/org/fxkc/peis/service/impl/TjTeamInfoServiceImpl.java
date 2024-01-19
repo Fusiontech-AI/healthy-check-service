@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.fxkc.common.core.constant.CacheNames;
 import org.fxkc.common.core.utils.MapstructUtils;
 import org.fxkc.common.core.utils.StringUtils;
 import org.fxkc.common.mybatis.core.page.PageQuery;
@@ -19,6 +20,7 @@ import org.fxkc.peis.enums.TeamLevelEnum;
 import org.fxkc.peis.exception.PeisException;
 import org.fxkc.peis.mapper.TjTeamInfoMapper;
 import org.fxkc.peis.service.ITjTeamInfoService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -81,7 +83,7 @@ public class TjTeamInfoServiceImpl extends ServiceImpl<TjTeamInfoMapper, TjTeamI
         if(Objects.equals(TeamLevelEnum.ONE.getCode(), bo.getTeamLevel())) {
             add.setParentId(0L);
         }
-        validEntityBeforeSave(add);
+        validEntityBeforeSave(add, Boolean.TRUE);
         boolean flag = baseMapper.insert(add) > 0;
         return baseMapper.selectById(add.getId());
     }
@@ -95,7 +97,7 @@ public class TjTeamInfoServiceImpl extends ServiceImpl<TjTeamInfoMapper, TjTeamI
         if(Objects.equals(TeamLevelEnum.ONE.getCode(), bo.getTeamLevel())) {
             update.setParentId(0L);
         }
-        validEntityBeforeSave(update);
+        validEntityBeforeSave(update, Boolean.FALSE);
         boolean flag = baseMapper.updateById(update) > 0;
         return baseMapper.selectById(update.getId());
     }
@@ -103,7 +105,14 @@ public class TjTeamInfoServiceImpl extends ServiceImpl<TjTeamInfoMapper, TjTeamI
     /**
      * 保存前的数据校验
      */
-    private void validEntityBeforeSave(TjTeamInfo entity){
+    private void validEntityBeforeSave(TjTeamInfo entity, Boolean isAdd){
+        if(isAdd) {
+            long count = baseMapper.selectCount(Wrappers.lambdaQuery(TjTeamInfo.class)
+                .eq(TjTeamInfo::getTeamName, entity.getTeamName()));
+            if(count > 0) {
+                throw new PeisException(ErrorCodeConstants.PEIS_TEAMNAME_ISEXIST, entity.getTeamName());
+            }
+        }
         if(Objects.equals(TeamLevelEnum.TWO.getCode(), entity.getTeamLevel())
             && Objects.isNull(entity.getParentId())) {
             throw new PeisException(ErrorCodeConstants.PEIS_PARENTID_NOT_BLANK);
@@ -139,6 +148,12 @@ public class TjTeamInfoServiceImpl extends ServiceImpl<TjTeamInfoMapper, TjTeamI
                 .concat(StringUtils.zeroPrefix(String.valueOf(count + 1), 2));
         }
         return maxNo;
+    }
+
+    @Override
+    public String selectTeamNameById(Long teamId) {
+        TjTeamInfo tjTeamInfo = baseMapper.selectById(teamId);
+        return Objects.isNull(tjTeamInfo) ? null : tjTeamInfo.getTeamName();
     }
 
 }
