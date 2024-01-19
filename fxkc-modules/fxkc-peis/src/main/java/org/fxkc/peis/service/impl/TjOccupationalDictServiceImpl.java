@@ -1,6 +1,7 @@
 package org.fxkc.peis.service.impl;
 
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.fxkc.common.core.constant.CacheConstants;
 import org.fxkc.common.core.constant.CacheNames;
 import org.fxkc.common.core.utils.MapstructUtils;
@@ -11,6 +12,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import org.fxkc.common.redis.utils.CacheUtils;
+import org.fxkc.peis.service.ITjOccupationalDictCacheService;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -35,9 +37,9 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 @Service
-public class TjOccupationalDictServiceImpl implements ITjOccupationalDictService {
+public class TjOccupationalDictServiceImpl extends ServiceImpl<TjOccupationalDictMapper, TjOccupationalDict> implements ITjOccupationalDictService {
 
-    private final TjOccupationalDictMapper baseMapper;
+    private final ITjOccupationalDictCacheService iTjOccupationalDictCacheService;
 
     /**
      * 查询职业病字典
@@ -53,7 +55,7 @@ public class TjOccupationalDictServiceImpl implements ITjOccupationalDictService
     @Override
     public TableDataInfo<TjOccupationalDictVo> queryPageList(TjOccupationalDictBo bo, PageQuery pageQuery) {
         Page<TjOccupationalDictVo> page = pageQuery.build();
-        List<TjOccupationalDictVo> result = queryList(bo);
+        List<TjOccupationalDictVo> result = iTjOccupationalDictCacheService.queryList(bo);
         page.setTotal(result.size());
         page.setRecords(result.stream().skip((page.getCurrent() - 1) * page.getSize())
             .limit(page.getSize())
@@ -61,21 +63,9 @@ public class TjOccupationalDictServiceImpl implements ITjOccupationalDictService
         return TableDataInfo.build(page);
     }
 
-    /**
-     * 查询职业病字典列表
-     */
-    @Override
-    @Cacheable(value = CacheNames.TJ_OCCUPATIONAL_DICT_KEY, key = "#bo.type", unless = "#result == null")
-    public List<TjOccupationalDictVo> queryList(TjOccupationalDictBo bo) {
-        LambdaQueryWrapper<TjOccupationalDict> lqw = buildQueryWrapper(bo);
-        return baseMapper.selectVoList(lqw);
-    }
 
-    private LambdaQueryWrapper<TjOccupationalDict> buildQueryWrapper(TjOccupationalDictBo bo) {
-        LambdaQueryWrapper<TjOccupationalDict> lqw = Wrappers.lambdaQuery();
-        lqw.eq(StrUtil.isNotBlank(bo.getType()), TjOccupationalDict::getType, bo.getType());
-        return lqw;
-    }
+
+
 
     /**
      * 新增职业病字典

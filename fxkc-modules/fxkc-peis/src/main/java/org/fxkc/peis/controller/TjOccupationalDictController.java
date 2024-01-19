@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import org.fxkc.peis.service.ITjOccupationalDictCacheService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 import org.fxkc.common.idempotent.annotation.RepeatSubmit;
@@ -37,6 +38,10 @@ public class TjOccupationalDictController extends BaseController {
 
     private final ITjOccupationalDictService tjOccupationalDictService;
 
+    private final ITjOccupationalDictCacheService iTjOccupationalDictCacheService;
+
+
+
     /**
      * 查询职业病字典列表(分页字典)
      */
@@ -52,7 +57,7 @@ public class TjOccupationalDictController extends BaseController {
      */
     @GetMapping("/dictList")
     public List<TjOccupationalDictVo> dictList(TjOccupationalDictBo bo) {
-        return tjOccupationalDictService.queryList(bo);
+        return iTjOccupationalDictCacheService.queryList(bo);
     }
 
     /**
@@ -62,7 +67,7 @@ public class TjOccupationalDictController extends BaseController {
     @Log(title = "职业病字典", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(TjOccupationalDictBo bo, HttpServletResponse response) {
-        List<TjOccupationalDictVo> list = tjOccupationalDictService.queryList(bo);
+        List<TjOccupationalDictVo> list = iTjOccupationalDictCacheService.queryList(bo);
         ExcelUtil.exportExcel(list, "职业病字典", TjOccupationalDictVo.class, response);
     }
 

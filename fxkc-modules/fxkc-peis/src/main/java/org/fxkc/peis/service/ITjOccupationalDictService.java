@@ -27,10 +27,7 @@ public interface ITjOccupationalDictService {
      */
     TableDataInfo<TjOccupationalDictVo> queryPageList(TjOccupationalDictBo bo, PageQuery pageQuery);
 
-    /**
-     * 查询职业病字典列表
-     */
-    List<TjOccupationalDictVo> queryList(TjOccupationalDictBo bo);
+
 
     /**
      * 新增职业病字典
