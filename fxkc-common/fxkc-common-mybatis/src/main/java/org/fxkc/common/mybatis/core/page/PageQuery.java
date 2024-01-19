@@ -29,12 +29,12 @@ public class PageQuery implements Serializable {
     /**
      * 分页大小
      */
-    private Integer pageSize = 10;
+    private Integer pageSize;
 
     /**
      * 当前页数
      */
-    private Integer pageNum = 1;
+    private Integer pageNum;
 
     /**
      * 排序列

@@ -52,11 +52,11 @@ public class TjOccupationalDictServiceImpl implements ITjOccupationalDictService
      */
     @Override
     public TableDataInfo<TjOccupationalDictVo> queryPageList(TjOccupationalDictBo bo, PageQuery pageQuery) {
-        Page<TjOccupationalDictVo> page = new Page<>();
+        Page<TjOccupationalDictVo> page = pageQuery.build();
         List<TjOccupationalDictVo> result = queryList(bo);
         page.setTotal(result.size());
-        page.setRecords(result.stream().skip((long) (pageQuery.getPageNum() - 1) * pageQuery.getPageSize())
-            .limit(pageQuery.getPageSize())
+        page.setRecords(result.stream().skip((page.getCurrent() - 1) * page.getSize())
+            .limit(page.getSize())
             .collect(Collectors.toList()));
         return TableDataInfo.build(page);
     }
