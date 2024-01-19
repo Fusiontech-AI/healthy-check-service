@@ -65,4 +65,9 @@ public interface CacheNames {
      */
     String ONLINE_TOKEN = "online_tokens";
 
+    /**
+     * 职业病
+     */
+    String TJ_OCCUPATIONAL_DICT_KEY = "tj_occupational_dict";
+
 }
