@@ -1,11 +1,13 @@
 package org.fxkc.peis.domain.bo;
 
+import io.github.linpeilie.annotations.AutoMapper;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.fxkc.common.core.validate.AddGroup;
 import org.fxkc.common.core.validate.EditGroup;
+import org.fxkc.peis.domain.TjCombinationProject;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,6 +19,7 @@ import java.util.List;
  * @date 2024-01-10
  */
 @Data
+@AutoMapper(target = TjCombinationProject.class, reverseConvertGenerate = false)
 public class TjCombinationProjectAddBo {
 
     /**
