@@ -1,8 +1,10 @@
 package org.fxkc.peis.enums;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public enum GroupTypeEnum {
 
     ITEM(1, "项目分组"),
@@ -14,8 +16,4 @@ public enum GroupTypeEnum {
 
     private final String desc;
 
-    GroupTypeEnum(Integer code, String desc) {
-        this.code = code;
-        this.desc = desc;
-    }
 }

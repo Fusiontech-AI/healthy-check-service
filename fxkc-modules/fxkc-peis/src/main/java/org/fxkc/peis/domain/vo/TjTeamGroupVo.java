@@ -43,7 +43,7 @@ public class TjTeamGroupVo implements Serializable {
      * 在岗状态sys_dict_type(bus_duty_status)
      */
     @ExcelProperty(value = "在岗状态sys_dict_type(bus_duty_status)")
-    private Integer dutyStatus;
+    private String dutyStatus;
 
     /**
      * 分组方式sys_dict_type(bus_group_type)

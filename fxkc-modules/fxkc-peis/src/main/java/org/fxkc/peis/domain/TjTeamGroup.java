@@ -7,6 +7,7 @@ import lombok.experimental.Accessors;
 import org.fxkc.common.tenant.core.TenantEntity;
 
 import java.io.Serial;
+import java.math.BigDecimal;
 
 /**
  * 团检分组信息对象 tj_team_group
@@ -37,12 +38,12 @@ public class TjTeamGroup extends TenantEntity {
     /**
      * 在岗状态sys_dict_type(bus_duty_status)
      */
-    private Long dutyStatus;
+    private String dutyStatus;
 
     /**
      * 分组方式sys_dict_type(bus_group_type)
      */
-    private Long groupType;
+    private Integer groupType;
 
     /**
      * 性别
@@ -52,12 +53,12 @@ public class TjTeamGroup extends TenantEntity {
     /**
      * 年龄开始段
      */
-    private Long startAge;
+    private Integer startAge;
 
     /**
      * 年龄结束段
      */
-    private Long endAge;
+    private Integer endAge;
 
     /**
      * 婚姻状况sys_dict_type(bus_marriage_status)
@@ -67,7 +68,7 @@ public class TjTeamGroup extends TenantEntity {
     /**
      * 金额
      */
-    private Long price;
+    private BigDecimal price;
 
     /**
      * 分组支付方式sys_dict_type(bus_group_pay_type)0:个人1:单位
@@ -82,12 +83,12 @@ public class TjTeamGroup extends TenantEntity {
     /**
      * 项目折扣
      */
-    private Long itemDiscount;
+    private BigDecimal itemDiscount;
 
     /**
      * 加项折扣
      */
-    private Long addDiscount;
+    private BigDecimal addDiscount;
 
     /**
      * 是否同步项目(1:是0:否)
@@ -97,12 +98,12 @@ public class TjTeamGroup extends TenantEntity {
     /**
      * 标准价格
      */
-    private Long standardPrice;
+    private BigDecimal standardPrice;
 
     /**
      * 实际价格
      */
-    private Long actualPrice;
+    private BigDecimal actualPrice;
 
     /**
      * 单位ID

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.fxkc.peis.mapper.HazardFactorsRequireMapper">
+
+    <select id="hazardFactorsQueryPage"
+            resultType="org.fxkc.peis.domain.vo.HazardFactorsRequireVo$HazardFactorsRequireQueryVo">
+        select a.id,
+        a.hazard_factors_name as hazardFactorsName,
+        a.hazard_factors_code as hazardFactorsCode,
+        a.duty_status as dutyStatus,
+        d.dict_label as dutyStatusName,
+        case when a.association_type = '1' then wm_concat(c.zyb_code || c.basic_project_name)
+        when a.association_type in ('2', '3') then wm_concat(e.code || e.value) end as itemName,
+        a.enable_status as enableStatus,
+        a.update_time as updateTime,
+        a.update_user as updateUser,
+        a.association_type as associationType,
+        a.symptom_focus as symptomFocus,
+        a.physical_examination as physicalExamination,
+        a.inspection_cycle as inspectionCycle,
+        a.evaluation_criterion as evaluationCriterion
+        from hazard_factors_require a left join hazard_factors_item b on a.id = b.factors_id and b.del_flag = '0'
+        left join tj_basic_project c on b.item_id = c.id
+        left join sys_dict_data d on a.duty_status = d.dict_value and d.dict_type = 'bus_duty_status'
+        left join tj_occupational_dict e on b.item_id = e.id
+        where a.del_flag = '0'
+        <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.dutyStatus)">
+            and a.duty_status = #{bo.dutyStatus}
+        </if>
+        <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.hazardFactorsCode)">
+            and a.hazard_factors_code = #{bo.hazardFactorsCode}
+        </if>
+        <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.associationType)">
+            and a.association_type = #{bo.associationType}
+        </if>
+        <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.hazardFactorsName)">
+            and a.hazard_factors_name like '%' || #{bo.hazardFactorsName} || '%'
+        </if>
+        group by a.id,
+        a.hazard_factors_name,
+        a.hazard_factors_code,
+        a.duty_status,
+        d.label,
+        a.enable_status,
+        a.update_time,
+        a.update_user,
+        a.association_type,
+        a.symptom_focus,
+        a.physical_examination,
+        a.inspection_cycle,
+        a.evaluation_criterion
+        order by a.update_time desc
+    </select>
+</mapper>

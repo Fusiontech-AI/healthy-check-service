@@ -1,27 +1,29 @@
 package org.fxkc.peis.controller;
 
-import java.util.List;
-
-import lombok.RequiredArgsConstructor;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import org.fxkc.peis.service.ITjOccupationalDictCacheService;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.validation.annotation.Validated;
-import org.fxkc.common.idempotent.annotation.RepeatSubmit;
-import org.fxkc.common.log.annotation.Log;
-import org.fxkc.common.web.core.BaseController;
-import org.fxkc.common.mybatis.core.page.PageQuery;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 import org.fxkc.common.core.domain.R;
 import org.fxkc.common.core.validate.AddGroup;
 import org.fxkc.common.core.validate.EditGroup;
-import org.fxkc.common.log.enums.BusinessType;
 import org.fxkc.common.excel.utils.ExcelUtil;
-import org.fxkc.peis.domain.vo.TjOccupationalDictVo;
-import org.fxkc.peis.domain.bo.TjOccupationalDictBo;
-import org.fxkc.peis.service.ITjOccupationalDictService;
+import org.fxkc.common.idempotent.annotation.RepeatSubmit;
+import org.fxkc.common.log.annotation.Log;
+import org.fxkc.common.log.enums.BusinessType;
+import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
+import org.fxkc.common.web.core.BaseController;
+import org.fxkc.peis.domain.bo.TjOccupationalDictBo;
+import org.fxkc.peis.domain.vo.TjOccupationalDictTreeVo;
+import org.fxkc.peis.domain.vo.TjOccupationalDictVo;
+import org.fxkc.peis.service.ITjOccupationalDictCacheService;
+import org.fxkc.peis.service.ITjOccupationalDictService;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 职业病字典
@@ -56,8 +58,8 @@ public class TjOccupationalDictController extends BaseController {
      * 查询职业病字典列表(非分页字典)
      */
     @GetMapping("/dictList")
-    public List<TjOccupationalDictVo> dictList(TjOccupationalDictBo bo) {
-        return iTjOccupationalDictCacheService.queryList(bo);
+    public R<List<TjOccupationalDictVo>> dictList(TjOccupationalDictBo bo) {
+        return R.ok(iTjOccupationalDictCacheService.queryList(bo));
     }
 
     /**
@@ -116,5 +118,14 @@ public class TjOccupationalDictController extends BaseController {
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
         return toAjax(tjOccupationalDictService.deleteWithValidByIds(List.of(ids), true));
+    }
+
+    /**
+     * 获取职业病字典树形
+     * @param value 危害因素名称
+     */
+    @GetMapping("/getHazardFactorsTree")
+    public R<List<TjOccupationalDictTreeVo>> getHazardFactorsTree(String value) {
+        return R.ok(tjOccupationalDictService.getHazardFactorsTree(value));
     }
 }

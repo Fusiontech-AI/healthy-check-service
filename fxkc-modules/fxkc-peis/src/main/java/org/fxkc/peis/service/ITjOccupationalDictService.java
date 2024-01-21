@@ -1,6 +1,7 @@
 package org.fxkc.peis.service;
 
 import org.fxkc.peis.domain.TjOccupationalDict;
+import org.fxkc.peis.domain.vo.TjOccupationalDictTreeVo;
 import org.fxkc.peis.domain.vo.TjOccupationalDictVo;
 import org.fxkc.peis.domain.bo.TjOccupationalDictBo;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
@@ -43,4 +44,6 @@ public interface ITjOccupationalDictService {
      * 校验并批量删除职业病字典信息
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+
+    List<TjOccupationalDictTreeVo> getHazardFactorsTree(String value);
 }

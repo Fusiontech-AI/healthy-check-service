@@ -1,5 +1,6 @@
 package org.fxkc.peis.domain.bo;
 
+import lombok.experimental.Accessors;
 import org.fxkc.common.core.validate.AddGroup;
 import org.fxkc.common.core.validate.EditGroup;
 import org.fxkc.peis.domain.TjOccupationalDict;
@@ -18,6 +19,7 @@ import jakarta.validation.constraints.*;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @AutoMapper(target = TjOccupationalDict.class, reverseConvertGenerate = false)
+@Accessors(chain = true)
 public class TjOccupationalDictBo extends BaseEntity {
 
     /**

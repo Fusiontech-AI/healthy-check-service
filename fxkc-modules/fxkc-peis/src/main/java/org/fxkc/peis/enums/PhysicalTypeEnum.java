@@ -1,8 +1,10 @@
 package org.fxkc.peis.enums;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public enum PhysicalTypeEnum {
 
     JKTJ("健康体检"),
@@ -15,7 +17,4 @@ public enum PhysicalTypeEnum {
 
     private final String desc;
 
-    PhysicalTypeEnum(String desc) {
-        this.desc = desc;
-    }
 }

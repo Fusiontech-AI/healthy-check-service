@@ -1,32 +1,29 @@
 package org.fxkc.peis.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.fxkc.common.core.constant.CacheConstants;
+import lombok.RequiredArgsConstructor;
 import org.fxkc.common.core.constant.CacheNames;
 import org.fxkc.common.core.utils.MapstructUtils;
-import org.fxkc.common.mybatis.core.page.TableDataInfo;
+import org.fxkc.common.core.utils.StreamUtils;
 import org.fxkc.common.mybatis.core.page.PageQuery;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import lombok.RequiredArgsConstructor;
+import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.redis.utils.CacheUtils;
-import org.fxkc.peis.service.ITjOccupationalDictCacheService;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
-import org.fxkc.peis.domain.bo.TjOccupationalDictBo;
-import org.fxkc.peis.domain.vo.TjOccupationalDictVo;
 import org.fxkc.peis.domain.TjOccupationalDict;
+import org.fxkc.peis.domain.bo.TjOccupationalDictBo;
+import org.fxkc.peis.domain.vo.TjOccupationalDictTreeVo;
+import org.fxkc.peis.domain.vo.TjOccupationalDictVo;
+import org.fxkc.peis.enums.OccupationalDictEnum;
 import org.fxkc.peis.mapper.TjOccupationalDictMapper;
+import org.fxkc.peis.service.ITjOccupationalDictCacheService;
 import org.fxkc.peis.service.ITjOccupationalDictService;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Collection;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -113,5 +110,24 @@ public class TjOccupationalDictServiceImpl extends ServiceImpl<TjOccupationalDic
             CacheUtils.evict(CacheNames.TJ_OCCUPATIONAL_DICT_KEY, dict.getType());
         });
         return baseMapper.deleteBatchIds(ids) > 0;
+    }
+
+    @Override
+    public List<TjOccupationalDictTreeVo> getHazardFactorsTree(String value) {
+        List<TjOccupationalDictVo> dictVoList = iTjOccupationalDictCacheService.queryList(
+            new TjOccupationalDictBo().setType(OccupationalDictEnum.WHYS.getCode()));
+        if(StrUtil.isNotBlank(value)) {
+            dictVoList = StreamUtils.filter(dictVoList, e -> e.getValue().contains(value));
+        }
+        dictVoList = StreamUtils.sorted(dictVoList, Comparator.comparing(TjOccupationalDictVo::getId));
+        Map<String, List<TjOccupationalDictVo>> groups = StreamUtils.groupByKey(dictVoList, e -> String.format("%s_%s", e.getSortCode(), e.getSort()));
+        List<TjOccupationalDictTreeVo> voList = CollUtil.newArrayList();
+        groups.forEach((k, v) -> {
+            String[] str = k.split("_");
+            voList.add(new TjOccupationalDictTreeVo().setCode(str[0])
+                .setValue(str[1])
+                .setChildren(BeanUtil.copyToList(v, TjOccupationalDictTreeVo.class)));
+        });
+        return voList;
     }
 }
