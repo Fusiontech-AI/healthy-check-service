@@ -73,6 +73,7 @@ public class TjTeamGroupBo extends BaseEntity {
     /**
      * 分组支付方式sys_dict_type(bus_group_pay_type)0:个人1:单位
      */
+    @NotBlank(message = "分组支付方式不能为空", groups = { AddGroup.class, EditGroup.class })
     private String groupPayType;
 
     /**
@@ -83,6 +84,7 @@ public class TjTeamGroupBo extends BaseEntity {
     /**
      * 项目折扣
      */
+    @NotBlank(message = "项目折扣不能为空", groups = { AddGroup.class, EditGroup.class })
     private BigDecimal itemDiscount;
 
     /**

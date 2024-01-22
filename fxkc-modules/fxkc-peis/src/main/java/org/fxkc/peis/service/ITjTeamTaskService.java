@@ -2,11 +2,13 @@ package org.fxkc.peis.service;
 
 import org.fxkc.peis.domain.TjTeamTask;
 import org.fxkc.peis.domain.bo.TjTeamTaskQueryBo;
+import org.fxkc.peis.domain.bo.VerifyGroupBo;
 import org.fxkc.peis.domain.vo.TjTeamTaskDetailVo;
 import org.fxkc.peis.domain.vo.TjTeamTaskVo;
 import org.fxkc.peis.domain.bo.TjTeamTaskBo;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.mybatis.core.page.PageQuery;
+import org.fxkc.peis.domain.vo.VerifyMessageVo;
 
 import java.util.Collection;
 import java.util.List;
@@ -48,4 +50,6 @@ public interface ITjTeamTaskService {
      * 校验并批量删除团检任务管理信息
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+
+    VerifyMessageVo verifyGroupData(VerifyGroupBo bo);
 }

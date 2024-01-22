@@ -2,12 +2,15 @@ package org.fxkc.peis.controller;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.fxkc.peis.domain.bo.TjTeamTaskQueryBo;
+import org.fxkc.peis.domain.bo.VerifyGroupBo;
 import org.fxkc.peis.domain.vo.TjTeamTaskDetailVo;
+import org.fxkc.peis.domain.vo.VerifyMessageVo;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 import org.fxkc.common.idempotent.annotation.RepeatSubmit;
@@ -104,5 +107,14 @@ public class TjTeamTaskController extends BaseController {
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
         return toAjax(tjTeamTaskService.deleteWithValidByIds(List.of(ids), true));
+    }
+
+    /**
+     * 团检任务校验分组数据
+     */
+    @PostMapping("/verifyGroupData")
+    @Log(title = "团检任务校验分组数据", businessType = BusinessType.OTHER)
+    public R<VerifyMessageVo> verifyGroupData(@RequestBody @Valid VerifyGroupBo bo) {
+        return R.ok(tjTeamTaskService.verifyGroupData(bo));
     }
 }

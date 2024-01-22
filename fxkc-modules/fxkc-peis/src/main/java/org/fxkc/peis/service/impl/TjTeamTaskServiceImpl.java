@@ -16,8 +16,10 @@ import org.fxkc.peis.constant.ErrorCodeConstants;
 import org.fxkc.peis.domain.TjTeamGroup;
 import org.fxkc.peis.domain.bo.TjTeamGroupBo;
 import org.fxkc.peis.domain.bo.TjTeamTaskQueryBo;
+import org.fxkc.peis.domain.bo.VerifyGroupBo;
 import org.fxkc.peis.domain.vo.TjTeamGroupVo;
 import org.fxkc.peis.domain.vo.TjTeamTaskDetailVo;
+import org.fxkc.peis.domain.vo.VerifyMessageVo;
 import org.fxkc.peis.enums.GroupTypeEnum;
 import org.fxkc.peis.enums.PhysicalTypeEnum;
 import org.fxkc.peis.exception.PeisException;
@@ -153,27 +155,17 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
         List<TjTeamGroupBo> boList = bo.getGroupList().stream().filter(e -> Objects.equals(e.getGroupType(), GroupTypeEnum.ITEM.getCode()) ||
             Objects.equals(e.getGroupType(), GroupTypeEnum.PRICE.getCode())).toList();
         //项目分组、金额分组折扣校验
-        if(boList.stream().anyMatch(e -> Objects.isNull(e.getItemDiscount()) || Objects.isNull(e.getAddDiscount()))) {
+        if(boList.stream().anyMatch(e -> Objects.isNull(e.getAddDiscount()))) {
             throw new PeisException(ErrorCodeConstants.PEIS_ITEM_DISCOUNT_NOT_EMPTY);
         }
         //项目分组、金额分组支付方式校验
-        if(boList.stream().anyMatch(e -> StrUtil.isBlank(e.getGroupPayType()) || StrUtil.isBlank(e.getAddPayType()))) {
-            throw new PeisException(ErrorCodeConstants.PEIS_PAY_TYPE_NOT_EMPTY);
+        if(boList.stream().anyMatch(e -> StrUtil.isBlank(e.getAddPayType()))) {
+            throw new PeisException(ErrorCodeConstants.PEIS_ADD_PAY_TYPE_NOT_EMPTY);
         }
         //金额分组金额校验
         if(bo.getGroupList().stream().anyMatch(e -> (Objects.isNull(e.getPrice()) || e.getPrice().compareTo(BigDecimal.ZERO) <= 0) &&
             Objects.equals(e.getGroupType(), GroupTypeEnum.PRICE.getCode()))) {
             throw new PeisException(ErrorCodeConstants.PEIS_PRICE_NOT_EMPTY);
-        }
-        //折扣分组折扣校验
-        if(bo.getGroupList().stream().anyMatch(e -> Objects.isNull(e.getItemDiscount()) &&
-            Objects.equals(e.getGroupType(), GroupTypeEnum.DISCOUNT.getCode()))) {
-            throw new PeisException(ErrorCodeConstants.PEIS_DISCOUNT_NOT_EMPTY);
-        }
-        //折扣分组支付方式校验
-        if(bo.getGroupList().stream().anyMatch(e -> StrUtil.isBlank(e.getGroupPayType()) &&
-            Objects.equals(e.getGroupType(), GroupTypeEnum.DISCOUNT.getCode()))) {
-            throw new PeisException(ErrorCodeConstants.PEIS_DISCOUNT_PAY_TYPE_NOT_EMPTY);
         }
     }
 
@@ -186,5 +178,10 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteBatchIds(ids) > 0;
+    }
+
+    @Override
+    public VerifyMessageVo verifyGroupData(VerifyGroupBo bo) {
+        return null;
     }
 }

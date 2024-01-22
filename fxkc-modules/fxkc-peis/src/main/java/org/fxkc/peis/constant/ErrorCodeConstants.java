@@ -24,9 +24,9 @@ public interface ErrorCodeConstants {
 
     String PEIS_DUTY_STATUS_NOT_EMPTY = "peis.duty.status.not.empty";
 
-    String PEIS_ITEM_DISCOUNT_NOT_EMPTY = "peis.item.discount.not.empty";
+    String PEIS_ITEM_DISCOUNT_NOT_EMPTY = "peis.add.discount.not.empty";
 
-    String PEIS_PAY_TYPE_NOT_EMPTY = "peis.paytype.not.empty";
+    String PEIS_ADD_PAY_TYPE_NOT_EMPTY = "peis.add.paytype.not.empty";
 
     String PEIS_PRICE_NOT_EMPTY = "peis.price.not.empty";
 
