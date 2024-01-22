@@ -2,11 +2,12 @@ package org.fxkc.peis.service;
 
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
-import org.fxkc.peis.domain.bo.TjPackageAddBo;
-import org.fxkc.peis.domain.bo.TjPackageBillBo;
-import org.fxkc.peis.domain.bo.TjPackageBo;
+import org.fxkc.peis.domain.TjTeamGroup;
+import org.fxkc.peis.domain.bo.*;
+import org.fxkc.peis.domain.vo.AmountCalculationVo;
 import org.fxkc.peis.domain.vo.TjPackageVo;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 
@@ -52,4 +53,15 @@ public interface ITjPackageService {
      * 体检套餐动态算费(可复用)
      */
     TjPackageBillBo dynamicBilling(TjPackageBillBo bo);
-}
+
+    AmountCalculationVo commonDynamicBilling(AmountCalculationBo bo);
+
+    BigDecimal getReceivableAmountByDiscount(BigDecimal standardAmount, BigDecimal discount);
+
+    BigDecimal getDiscountByReceivableAmount(BigDecimal standardAmount,BigDecimal receivableAmount);
+
+    void calCulPayType(List<AmountCalculationItemBo> addItems, List<AmountCalculationItemBo> haveItems,TjTeamGroup tjTeamGroup);
+
+    void fillSingle(AmountCalculationItemBo bo);
+
+    }
