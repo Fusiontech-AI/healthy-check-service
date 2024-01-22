@@ -62,21 +62,21 @@ public class TjRegisterVo implements Serializable {
      * 性别（0：男，1：女，2：未知）,见字典sys_user_sex
      */
     @ExcelProperty(value = "性别", converter = ExcelDictConvert.class)
-    @ExcelDictFormat(readConverterExp = "0=：男，1：女，2：未知")
+    @ExcelDictFormat(dictType = "sys_user_sex")
     private String gender;
 
     /**
      * 婚姻状况（0：未婚，1：已婚，2：不限）,见字典bus_marriage_status
      */
     @ExcelProperty(value = "婚姻状况", converter = ExcelDictConvert.class)
-    @ExcelDictFormat(readConverterExp = "0=：未婚，1：已婚，2：不限")
+    @ExcelDictFormat(dictType = "bus_marriage_status")
     private String marriageStatus;
 
     /**
      * 证件类型（0：身份证，1：驾驶证，2：军官证，3：市民卡，4：学生卡，5：香港身份证，6：港澳通行证，7：台湾通行证，8：护照，9：澳门通行证，10：台湾通行证，11：电子健康卡）,见字典bus_credential_type
      */
     @ExcelProperty(value = "证件类型", converter = ExcelDictConvert.class)
-    @ExcelDictFormat(readConverterExp = "0=：身份证，1：驾驶证，2：军官证，3：市民卡，4：学生卡，5：香港身份证，6：港澳通行证，7：台湾通行证，8：护照，9：澳门通行证，10：台湾通行证，11：电子健康卡")
+    @ExcelDictFormat(dictType = "bus_credential_type")
     private String credentialType;
 
     /**
@@ -100,7 +100,8 @@ public class TjRegisterVo implements Serializable {
     /**
      * 体检类型，见字典bus_physical_type
      */
-    @ExcelProperty(value = "体检类型，见字典bus_physical_type")
+    @ExcelProperty(value = "体检类型，见字典bus_physical_type", converter = ExcelDictConvert.class)
+    @ExcelDictFormat(dictType = "bus_physical_type")
     private String physicalType;
 
     /**
@@ -119,7 +120,7 @@ public class TjRegisterVo implements Serializable {
      * 是否需要总检（0：需要总检，1：无需总检）见字典bus_need_general_review
      */
     @ExcelProperty(value = "是否需要总检", converter = ExcelDictConvert.class)
-    @ExcelDictFormat(readConverterExp = "0=：需要总检，1：无需总检")
+    @ExcelDictFormat(dictType = "bus_need_general_review")
     private String needGeneralReview;
 
     /**
