@@ -16,9 +16,11 @@ import org.fxkc.common.log.enums.BusinessType;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.web.core.BaseController;
+import org.fxkc.peis.domain.bo.AmountCalculationBo;
 import org.fxkc.peis.domain.bo.TjPackageAddBo;
 import org.fxkc.peis.domain.bo.TjPackageBillBo;
 import org.fxkc.peis.domain.bo.TjPackageBo;
+import org.fxkc.peis.domain.vo.AmountCalculationVo;
 import org.fxkc.peis.domain.vo.TjPackageVo;
 import org.fxkc.peis.service.ITjPackageService;
 import org.springframework.validation.annotation.Validated;
@@ -116,4 +118,14 @@ public class TjPackageController extends BaseController {
     public R<TjPackageBillBo> dynamicBilling(@Valid @RequestBody TjPackageBillBo bo) {
         return R.ok(tjPackageService.dynamicBilling(bo));
     }
+
+
+    /**
+     * 体检套餐动态算费(通用版)
+     */
+    @PostMapping("commonDynamicBilling")
+    public R<AmountCalculationVo> commonDynamicBilling(@Valid @RequestBody AmountCalculationBo bo) {
+        return R.ok(tjPackageService.commonDynamicBilling(bo));
+    }
+
 }

@@ -5,7 +5,10 @@ import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.yomahub.liteflow.core.FlowExecutor;
+import com.yomahub.liteflow.flow.LiteflowResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.fxkc.common.core.exception.ServiceException;
 import org.fxkc.common.core.utils.MapstructUtils;
@@ -13,8 +16,11 @@ import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.peis.domain.TjPackage;
 import org.fxkc.peis.domain.TjPackageInfo;
+import org.fxkc.peis.domain.TjTeamGroup;
 import org.fxkc.peis.domain.bo.*;
+import org.fxkc.peis.domain.vo.AmountCalculationVo;
 import org.fxkc.peis.domain.vo.TjPackageVo;
+import org.fxkc.peis.liteflow.context.AmountCalculationContext;
 import org.fxkc.peis.mapper.TjPackageInfoMapper;
 import org.fxkc.peis.mapper.TjPackageMapper;
 import org.fxkc.peis.service.ITjPackageService;
@@ -32,12 +38,14 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class TjPackageServiceImpl implements ITjPackageService {
 
     private final TjPackageMapper baseMapper;
 
     private final TjPackageInfoMapper tjPackageInfoMapper;
 
+    private final FlowExecutor flowExecutor;
 
     /**
      * 查询体检套餐
@@ -214,6 +222,17 @@ public class TjPackageServiceImpl implements ITjPackageService {
         return bo;
     }
 
+    @Override
+    public AmountCalculationVo commonDynamicBilling(AmountCalculationBo bo) {
+        LiteflowResponse response = flowExecutor.execute2Resp("charging", bo, AmountCalculationContext.class);
+        Exception cause = response.getCause();
+        if(cause!=null){
+            log.error("动态算费时出现异常:",cause);
+            throw new RuntimeException(cause.getMessage());
+        }
+        return response.getContextBean(AmountCalculationContext.class).getAmountCalculationVo();
+    }
+
 
     /**
      * 根据标准金额和折扣 计算应收金额
@@ -221,7 +240,7 @@ public class TjPackageServiceImpl implements ITjPackageService {
      * @param discount
      * @return
      */
-    private BigDecimal getReceivableAmountByDiscount(BigDecimal standardAmount,BigDecimal discount){
+    public BigDecimal getReceivableAmountByDiscount(BigDecimal standardAmount,BigDecimal discount){
         return standardAmount.multiply(discount).divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP);
     }
 
@@ -232,13 +251,67 @@ public class TjPackageServiceImpl implements ITjPackageService {
      * @param receivableAmount
      * @return
      */
-    private BigDecimal getDiscountByReceivableAmount(BigDecimal standardAmount,BigDecimal receivableAmount){
+    public BigDecimal getDiscountByReceivableAmount(BigDecimal standardAmount,BigDecimal receivableAmount){
         if(standardAmount.compareTo(new BigDecimal("0"))==0){
             return new BigDecimal("0");
         }
         return receivableAmount.divide(standardAmount, 2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100"));
     }
 
+    /**
+     * 根据加项 已有项目 分组信息 计算加项的支付方式和折扣
+     * @param addItems
+     * @param haveItems
+     * @param tjTeamGroup
+     */
+    @Override
+    public void calCulPayType(List<AmountCalculationItemBo> addItems, List<AmountCalculationItemBo> haveItems, TjTeamGroup tjTeamGroup) {
+        //首先比较已有记录的应收金额 和 分组金额的大小关系
+        //获取默认分组支付方式应收金额累加的总和
+        BigDecimal reduce = new BigDecimal("0");
+        if(CollUtil.isNotEmpty(haveItems)){
+           reduce = haveItems.stream().filter(m -> Objects.equals(tjTeamGroup.getGroupPayType(), m.getPayType())).map(m -> m.getReceivableAmount()).reduce(BigDecimal.ZERO, BigDecimal::add);
+        }
+        for (int i = 0; i < addItems.size() ; i++) {
+            AmountCalculationItemBo bo = addItems.get(i);
+            if(reduce.compareTo(tjTeamGroup.getPrice())>=0){
+                //初始化计算前就超过了分组金额  当前和之后的全部走加项
+                addItems.get(i).setPayType(tjTeamGroup.getAddPayType());
+                addItems.get(i).setDiscount(tjTeamGroup.getAddDiscount());
+            }else{
+                reduce = reduce.add(bo.getReceivableAmount());
+                //存量的金额已超过了分组内金额 从当前和后续的支付方式 全部为加项支付方式,加项折扣
+                if(reduce.compareTo(tjTeamGroup.getPrice())<=0){
+                    addItems.get(i).setPayType(tjTeamGroup.getGroupPayType());
+                    addItems.get(i).setDiscount(tjTeamGroup.getItemDiscount());
+                }else{
+                    if(i==0){
+                        addItems.get(i).setPayType("2");
+                    }else{
+                        addItems.get(i).setPayType(tjTeamGroup.getAddPayType());
+                    }
+                    addItems.get(i).setDiscount(tjTeamGroup.getAddDiscount());
+                }
+            }
+
+        }
+
+    }
+
+
+    /**
+     * 处理个费 和 团费的金额
+     * @param bo
+     */
+    public void fillSingle(AmountCalculationItemBo bo){
+        if(Objects.equals("0",bo.getPayType())){
+            bo.setPersonAmount(bo.getReceivableAmount());
+            bo.setTeamAmount(new BigDecimal("0"));
+        }else{
+            bo.setTeamAmount(bo.getReceivableAmount());
+            bo.setPersonAmount(new BigDecimal("0"));
+        }
+    }
 
     public void insertPackageInfo(List<TjPackageInfoItemBo> infoItemBos, TjPackageAddBo bo){
         List<TjPackageInfo> convert = MapstructUtils.convert(infoItemBos, TjPackageInfo.class);

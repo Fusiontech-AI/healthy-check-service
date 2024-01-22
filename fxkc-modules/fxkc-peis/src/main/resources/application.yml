@@ -30,3 +30,14 @@ spring:
       - optional:nacos:application-common.yml
       - optional:nacos:datasource.yml
       - optional:nacos:${spring.application.name}.yml
+
+
+liteflow:
+  rule-source-ext-data-map:
+    serverAddr: @nacos.server@
+    dataId: peis_rule
+    group: @nacos.discovery.group@
+    namespace: ${spring.profiles.active}
+    username: nacos
+    password: nacos
+  print-banner: false
