@@ -30,7 +30,7 @@ import org.fxkc.peis.service.ITjHazardFactorsRequireService;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/factorsRequire")
-public class HazardFactorsRequireController extends BaseController {
+public class TjHazardFactorsRequireController extends BaseController {
 
     private final ITjHazardFactorsRequireService tjHazardFactorsRequireService;
 

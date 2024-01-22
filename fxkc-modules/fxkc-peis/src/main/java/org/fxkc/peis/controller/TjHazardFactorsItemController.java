@@ -34,7 +34,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/factorsItem")
-public class HazardFactorsItemController extends BaseController {
+public class TjHazardFactorsItemController extends BaseController {
 
     private final ITjHazardFactorsItemService tjHazardFactorsItemService;
 
