@@ -130,5 +130,107 @@ public class TjRegisterBo extends BaseEntity {
     @NotBlank(message = "收件地址不能为空", groups = { AddGroup.class, EditGroup.class })
     private String postAddress;
 
+    /**
+     * 业务类型（1：个检，2：团检）见字典bus_category
+     */
+    @NotBlank(message = "业务类型（1：个检，2：团检）见字典bus_category不能为空", groups = { AddGroup.class, EditGroup.class })
+    private String businessType;
+
+    /**
+     * 是否回收指引单（0：是，1：否）
+     */
+    @NotBlank(message = "是否回收指引单（0：是，1：否）不能为空", groups = { AddGroup.class, EditGroup.class })
+    private String guideSheetRecived;
+
+    /**
+     * 是否冻结（0：是，1：否）
+     */
+    @NotBlank(message = "是否冻结（0：是，1：否）不能为空", groups = { AddGroup.class, EditGroup.class })
+    private String freezeStatus;
+
+    /**
+     * 体检状态（0：预约，1：登记，2：科室分检，3：分检完成，4：待总检，5：已终检）见字典bus_healthy_check_status
+     */
+    @NotBlank(message = "体检状态（0：预约，1：登记，2：科室分检，3：分检完成，4：待总检，5：已终检）见字典bus_healthy_check_status不能为空", groups = { AddGroup.class, EditGroup.class })
+    private String healthyCheckStatus;
+
+    /**
+     * 单位id
+     */
+    @NotNull(message = "单位id不能为空", groups = { AddGroup.class, EditGroup.class })
+    private Long teamId;
+
+    /**
+     * 单位分组id
+     */
+    @NotNull(message = "单位分组id不能为空", groups = { AddGroup.class, EditGroup.class })
+    private Long teamGroupId;
+
+    /**
+     * 单位部门id
+     */
+    @NotNull(message = "单位部门id不能为空", groups = { AddGroup.class, EditGroup.class })
+    private Long teamDeptId;
+
+    /**
+     * 介绍人
+     */
+    @NotNull(message = "介绍人不能为空", groups = { AddGroup.class, EditGroup.class })
+    private Long introducer;
+
+    /**
+     * 报到人
+     */
+    @NotNull(message = "报到人不能为空", groups = { AddGroup.class, EditGroup.class })
+    private Long reporter;
+
+    /**
+     * 总检医生
+     */
+    @NotNull(message = "总检医生不能为空", groups = { AddGroup.class, EditGroup.class })
+    private Long generalReviewDoctor;
+
+    /**
+     * 总检时间
+     */
+    @NotNull(message = "总检时间不能为空", groups = { AddGroup.class, EditGroup.class })
+    private Date generalReviewTime;
+
+    /**
+     * 体检日期
+     */
+    @NotNull(message = "体检日期不能为空", groups = { AddGroup.class, EditGroup.class })
+    private Date healthyCheckTime;
+
+    /**
+     * 审核医生
+     */
+    @NotNull(message = "审核医生不能为空", groups = { AddGroup.class, EditGroup.class })
+    private Long auditDoctor;
+
+    /**
+     * 审核时间
+     */
+    @NotNull(message = "审核时间不能为空", groups = { AddGroup.class, EditGroup.class })
+    private Date auditTime;
+
+    /**
+     * 完成时间
+     */
+    @NotNull(message = "完成时间不能为空", groups = { AddGroup.class, EditGroup.class })
+    private Date finishTime;
+
+    /**
+     * 取消登记时间
+     */
+    @NotNull(message = "取消登记时间不能为空", groups = { AddGroup.class, EditGroup.class })
+    private Date cancelRegisterTime;
+
+    /**
+     * 取消登记操作人
+     */
+    @NotNull(message = "取消登记操作人不能为空", groups = { AddGroup.class, EditGroup.class })
+    private Long cancelRegisterOperator;
+
 
 }
