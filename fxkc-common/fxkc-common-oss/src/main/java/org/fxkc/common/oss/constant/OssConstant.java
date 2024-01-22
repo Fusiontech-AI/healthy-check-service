@@ -37,4 +37,9 @@ public interface OssConstant {
      */
     String IS_HTTPS = "Y";
 
+    /**
+     * 导检单桶
+     */
+    String GUIDE_SHEET_BUKET = "guideSheet";
+
 }

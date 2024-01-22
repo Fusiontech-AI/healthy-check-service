@@ -115,6 +115,11 @@
             <groupId>org.fxkc</groupId>
             <artifactId>fxkc-api-peis</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.fxkc</groupId>
+            <artifactId>fxkc-common-oss</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
