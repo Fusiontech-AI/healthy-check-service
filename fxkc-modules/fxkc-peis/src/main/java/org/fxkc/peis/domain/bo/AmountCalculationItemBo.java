@@ -1,0 +1,80 @@
+package org.fxkc.peis.domain.bo;
+
+import io.github.linpeilie.annotations.AutoMapper;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import org.fxkc.peis.domain.vo.AmountCalculationItemVo;
+
+import java.math.BigDecimal;
+
+/**
+ * 体检套餐算费单项业务对象 AmountCalculationItemBo
+ *
+ * @author JunBaiChen
+ * @date 2024-01-10
+ */
+@Data
+@AutoMapper(target = AmountCalculationItemVo.class, reverseConvertGenerate = false)
+public class AmountCalculationItemBo {
+
+    /**
+     * 排列序号
+     */
+    @NotNull(message = "排列序号不能为空")
+    private Integer sort;
+
+    /**
+     * 标准价格
+     */
+    @NotNull(message = "标准金额不能为空")
+    private BigDecimal standardAmount;
+
+    /**
+     * 折扣
+     */
+    @NotNull(message = "折扣不能为空")
+    private BigDecimal discount;
+
+    /**
+     * 应收金额
+     */
+    @NotNull(message = "应收金额不能为空")
+    private BigDecimal receivableAmount;
+
+    /**
+     * 个人应收金额
+     */
+    @NotNull(message = "个人应收金额不能为空")
+    private BigDecimal personAmount;
+
+    /**
+     * 单位应收金额
+     */
+    @NotNull(message = "单位应收金额不能为空")
+    private BigDecimal teamAmount;
+
+    /**
+     * 变更类型(0个人 1单位 2混合支付)
+     */
+    @NotBlank(message = "支付方式不能为空")
+    private String payType;
+
+    /**
+     * 组合项目编码
+     */
+    @NotBlank(message = "组合项目编码不能为空")
+    private String combinProjectCode;
+
+    /**
+     * 组合项目名称
+     */
+    @NotBlank(message = "组合项目名称不能为空")
+    private String combinProjectName;
+
+    /**
+     * 是否套餐项目标志
+     */
+    @NotBlank(message = "是否套餐项目标志不能为空")
+    private String tcFlag;
+}

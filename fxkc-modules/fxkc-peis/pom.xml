@@ -115,6 +115,18 @@
             <groupId>org.fxkc</groupId>
             <artifactId>fxkc-api-peis</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.yomahub</groupId>
+            <artifactId>liteflow-spring-boot-starter</artifactId>
+            <version>2.11.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.yomahub</groupId>
+            <artifactId>liteflow-rule-nacos</artifactId>
+            <version>2.11.4</version>
+        </dependency>
     </dependencies>
 
     <build>
