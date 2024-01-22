@@ -66,7 +66,7 @@ public class HazardFactorsRequireVo implements Serializable {
         /**
          * 项目id
          */
-        private String itemId;
+        private Long itemId;
 
         /**
          * 名称

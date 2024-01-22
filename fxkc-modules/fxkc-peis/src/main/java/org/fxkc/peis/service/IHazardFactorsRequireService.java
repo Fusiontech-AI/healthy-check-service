@@ -1,6 +1,8 @@
 package org.fxkc.peis.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import org.fxkc.peis.domain.HazardFactorsRequire;
+import org.fxkc.peis.domain.bo.HazardFactorsRequireSaveBo;
 import org.fxkc.peis.domain.vo.HazardFactorsRequireVo;
 import org.fxkc.peis.domain.bo.HazardFactorsRequireBo;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
@@ -15,37 +17,15 @@ import java.util.List;
  * @author JunBaiChen
  * @date 2024-01-21
  */
-public interface IHazardFactorsRequireService {
-
-    /**
-     * 查询危害因素必检项目主
-     */
-    HazardFactorsRequireVo queryById(Long id);
-
-    /**
-     * 查询危害因素必检项目主列表
-     */
-    TableDataInfo<HazardFactorsRequireVo> queryPageList(HazardFactorsRequireBo bo, PageQuery pageQuery);
-
-    /**
-     * 查询危害因素必检项目主列表
-     */
-    List<HazardFactorsRequireVo> queryList(HazardFactorsRequireBo bo);
-
-    /**
-     * 新增危害因素必检项目主
-     */
-    Boolean insertByBo(HazardFactorsRequireBo bo);
-
-    /**
-     * 修改危害因素必检项目主
-     */
-    Boolean updateByBo(HazardFactorsRequireBo bo);
-
-    /**
-     * 校验并批量删除危害因素必检项目主信息
-     */
-    Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+public interface IHazardFactorsRequireService extends IService<HazardFactorsRequire> {
 
     HazardFactorsRequireVo hazardFactorsQuery(HazardFactorsRequireBo bo, PageQuery pageQuery);
+
+    void saveOrUpdate(HazardFactorsRequireSaveBo bo);
+
+    HazardFactorsRequireVo hazardFactorsDetail(String id);
+
+    Boolean deleteById(Long id);
+
+    Boolean batchDeleteByIds(List<Long> list);
 }
