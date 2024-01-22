@@ -1,42 +1,28 @@
-package org.fxkc.peis.domain;
+package org.fxkc.peis.domain.bo;
 
-import com.baomidou.mybatisplus.annotation.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
-import org.fxkc.common.tenant.core.TenantEntity;
 
-import java.io.Serial;
+import java.util.List;
 
-/**
- * 危害因素必检项目主对象 hazard_factors_require
- *
- * @author JunBaiChen
- * @date 2024-01-21
- */
 @Data
-@EqualsAndHashCode(callSuper = true)
-@TableName("hazard_factors_require")
-@Accessors(chain = true)
-public class HazardFactorsRequire extends TenantEntity {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
+public class HazardFactorsRequireSaveBo {
 
     /**
-     * 主键id
+     * 主键id(编辑传入)
      */
-    @TableId(value = "id")
-    private Long id;
+    private String id;
 
     /**
      * 危害因素名称
      */
+    @NotBlank(message = "危害因素名称不能为空")
     private String hazardFactorsName;
 
     /**
      * 危害因素编码
      */
+    @NotBlank(message = "危害因素编码不能为空")
     private String hazardFactorsCode;
 
     /**
@@ -50,8 +36,14 @@ public class HazardFactorsRequire extends TenantEntity {
     private String enableStatus;
 
     /**
+     * 必检项目或目标职业病或职业禁忌症
+     */
+    private List<Long> itemList;
+
+    /**
      * 关联类型(1:必检项目2:目标类型3:职业禁忌症4:症状询问重点5:体格检查6:检查周期7:评价标准)
      */
+    @NotBlank(message = "关联类型不能为空")
     private String associationType;
 
     /**
@@ -85,10 +77,8 @@ public class HazardFactorsRequire extends TenantEntity {
     private String shineType;
 
     /**
-     * 删除标志（0代表存在 2代表删除）
+     * 放射小类编码
      */
-    @TableLogic
-    private String delFlag;
-
+    private String sortCode;
 
 }

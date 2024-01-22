@@ -86,5 +86,20 @@ public class TjPackage extends TenantEntity {
     @TableLogic
     private String delFlag;
 
+    /**
+     * 照射源sys_dict_type(bus_duty_status)
+     */
+    private String dutyStatus;
+
+    /**
+     * 照射源sys_dict_type(bus_shine_source)
+     */
+    private String shineSource;
+
+    /**
+     * 照射源种类tj_occupational_dict(type=99)
+     */
+    private String shineType;
+
 
 }

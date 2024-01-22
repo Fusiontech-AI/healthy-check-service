@@ -10,14 +10,19 @@ import java.util.List;
 public class TjOccupationalDictTreeVo {
 
     /**
+     * 编码
+     */
+    private String code;
+
+    /**
      * 名称
      */
     private String value;
 
     /**
-     * 编码
+     * 小类编码
      */
-    private String code;
+    private String sortCode;
 
     /**
      * 子类

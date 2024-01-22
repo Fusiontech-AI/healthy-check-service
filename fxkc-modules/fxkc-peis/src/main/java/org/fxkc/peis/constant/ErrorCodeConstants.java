@@ -33,4 +33,10 @@ public interface ErrorCodeConstants {
     String PEIS_DISCOUNT_NOT_EMPTY = "peis.discount.not.empty";
 
     String PEIS_DISCOUNT_PAY_TYPE_NOT_EMPTY = "peis.discount.paytype.not.empty";
+
+    String PEIS_HAZARD_STATUS_NOT_EMPTY = "peis.hazard.status.not.empty";
+
+    String PEIS_HAZARD_STATUS_ISEXIST = "peis.hazard.status.isexist";
+
+    String PEIS_HAZARD_PACKAGE_ISEXIST = "peis.hazard.package.isexist";
 }

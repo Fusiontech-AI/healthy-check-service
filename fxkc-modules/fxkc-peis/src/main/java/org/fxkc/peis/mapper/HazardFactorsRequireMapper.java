@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Param;
 import org.fxkc.peis.domain.HazardFactorsRequire;
 import org.fxkc.peis.domain.bo.HazardFactorsRequireBo;
+import org.fxkc.peis.domain.bo.HazardFactorsRequireSaveBo;
 import org.fxkc.peis.domain.vo.HazardFactorsRequireVo;
 import org.fxkc.common.mybatis.core.mapper.BaseMapperPlus;
 
@@ -18,4 +19,5 @@ public interface HazardFactorsRequireMapper extends BaseMapperPlus<HazardFactors
     Page<HazardFactorsRequireVo.HazardFactorsRequireQueryVo> hazardFactorsQueryPage(@Param("page") Page<?> page,
                                                                                     @Param("bo") HazardFactorsRequireBo bo);
 
+    long queryIsExistRequiredItem(HazardFactorsRequireSaveBo bo);
 }

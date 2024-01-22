@@ -15,12 +15,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         when a.association_type in ('2', '3') then wm_concat(e.code || e.value) end as itemName,
         a.enable_status as enableStatus,
         a.update_time as updateTime,
-        a.update_user as updateUser,
+        a.update_by as updateBy,
         a.association_type as associationType,
         a.symptom_focus as symptomFocus,
         a.physical_examination as physicalExamination,
         a.inspection_cycle as inspectionCycle,
-        a.evaluation_criterion as evaluationCriterion
+        a.evaluation_criterion as evaluationCriterion,
+        a.shine_source as shineSource,
+        a.shine_type as shineType
         from hazard_factors_require a left join hazard_factors_item b on a.id = b.factors_id and b.del_flag = '0'
         left join tj_basic_project c on b.item_id = c.id
         left join sys_dict_data d on a.duty_status = d.dict_value and d.dict_type = 'bus_duty_status'
@@ -50,7 +52,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         a.symptom_focus,
         a.physical_examination,
         a.inspection_cycle,
-        a.evaluation_criterion
+        a.evaluation_criterion,
+        a.shine_source,
+        a.shine_type
         order by a.update_time desc
+    </select>
+
+    <select id="queryIsExistRequiredItem" resultType="java.lang.Long">
+        select count(1) from tj_package a , tj_package_hazards b
+        where a.sfqy = '0'
+          and a.del_flag = '0'
+          and b.del_flag = '0'
+          and b.hazard_factors_code = #{hazardFactorsCode}
+          and a.id = b.package_id
+          and a.duty_status = #{dutyStatus}
+        <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(shineSource)">
+            and a.shine_source = #{shineSource}
+        </if>
+        <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(shineType)">
+            and a.shine_type = #{shineType}
+        </if>
     </select>
 </mapper>

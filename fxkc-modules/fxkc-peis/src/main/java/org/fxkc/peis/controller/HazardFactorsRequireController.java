@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import org.fxkc.peis.domain.HazardFactorsRequire;
+import org.fxkc.peis.domain.bo.HazardFactorsRequireSaveBo;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 import org.fxkc.common.idempotent.annotation.RepeatSubmit;
@@ -47,14 +49,14 @@ public class HazardFactorsRequireController extends BaseController {
     }
 
     /**
-     * 导出危害因素必检项目主列表
+     * 危害因素必检项目新增或修改
      */
-    @SaCheckPermission("peis:factorsRequire:export")
-    @Log(title = "危害因素必检项目主", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
-    public void export(HazardFactorsRequireBo bo, HttpServletResponse response) {
-        List<HazardFactorsRequireVo> list = hazardFactorsRequireService.queryList(bo);
-        ExcelUtil.exportExcel(list, "危害因素必检项目主", HazardFactorsRequireVo.class, response);
+    @PostMapping(value = "/saveOrUpdate")
+    @Log(title = "危害因素必检项目主", businessType = BusinessType.INSERTORUPDATE)
+    @RepeatSubmit()
+    public R<?> saveOrUpdate(@RequestBody @Valid HazardFactorsRequireSaveBo bo)  {
+        hazardFactorsRequireService.saveOrUpdate(bo);
+        return R.ok();
     }
 
     /**
@@ -62,45 +64,46 @@ public class HazardFactorsRequireController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("peis:factorsRequire:query")
-    @GetMapping("/{id}")
-    public R<HazardFactorsRequireVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long id) {
-        return R.ok(hazardFactorsRequireService.queryById(id));
+    @GetMapping(value = "/hazardFactorsDetail")
+    public R<HazardFactorsRequireVo> hazardFactorsDetail(@NotBlank(message = "主键id不能为空") String id)  {
+        return R.ok(hazardFactorsRequireService.hazardFactorsDetail(id));
     }
 
     /**
-     * 新增危害因素必检项目主
+     * 危害因素必检项目删除
+     *
+     * @param id 主键
      */
-    @SaCheckPermission("peis:factorsRequire:add")
-    @Log(title = "危害因素必检项目主", businessType = BusinessType.INSERT)
-    @RepeatSubmit()
-    @PostMapping()
-    public R<Void> add(@Validated(AddGroup.class) @RequestBody HazardFactorsRequireBo bo) {
-        return toAjax(hazardFactorsRequireService.insertByBo(bo));
-    }
-
-    /**
-     * 修改危害因素必检项目主
-     */
-    @SaCheckPermission("peis:factorsRequire:edit")
-    @Log(title = "危害因素必检项目主", businessType = BusinessType.UPDATE)
-    @RepeatSubmit()
-    @PutMapping()
-    public R<Void> edit(@Validated(EditGroup.class) @RequestBody HazardFactorsRequireBo bo) {
-        return toAjax(hazardFactorsRequireService.updateByBo(bo));
+    @GetMapping(value = "/deleteById")
+    @Log(title = "删除危害因素必检项目", businessType = BusinessType.DELETE)
+    public R<Void> deleteById(@NotBlank(message = "主键id不能为空") Long id)  {
+        return toAjax(hazardFactorsRequireService.deleteById(id));
     }
 
     /**
      * 删除危害因素必检项目主
      *
-     * @param ids 主键串
+     * @param list 主键集合
      */
-    @SaCheckPermission("peis:factorsRequire:remove")
-    @Log(title = "危害因素必检项目主", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{ids}")
-    public R<Void> remove(@NotEmpty(message = "主键不能为空")
-                          @PathVariable Long[] ids) {
-        return toAjax(hazardFactorsRequireService.deleteWithValidByIds(List.of(ids), true));
+    @Log(title = "批量删除危害因素必检项目", businessType = BusinessType.DELETE)
+    @PostMapping(value = "/batchDeleteByIds")
+    public R<Void> batchDeleteByIds(@RequestBody @NotEmpty(message = "请选择要删除项") List<Long> list) {
+        return toAjax(hazardFactorsRequireService.batchDeleteByIds(list));
+    }
+
+    /**
+     * 危害因素必检项目启用禁用
+     *
+     * @param id 主键
+     * @param enableStatus 启用状态(0:启用1:不启用)
+     */
+    @GetMapping(value = "/isEnableById")
+    @Log(title = "危害因素必检项目启用禁用", businessType = BusinessType.UPDATE)
+    @RepeatSubmit()
+    public R<Void> isEnableById(@NotBlank(message = "主键id不能为空") Long id,
+                             @NotBlank(message = "启用状态不能为空") String enableStatus)  {
+        return toAjax( hazardFactorsRequireService.updateById(new HazardFactorsRequire()
+            .setId(id)
+            .setEnableStatus(enableStatus)));
     }
 }
