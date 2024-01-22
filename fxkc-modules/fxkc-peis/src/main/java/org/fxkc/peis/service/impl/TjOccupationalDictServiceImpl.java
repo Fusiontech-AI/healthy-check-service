@@ -60,10 +60,6 @@ public class TjOccupationalDictServiceImpl extends ServiceImpl<TjOccupationalDic
         return TableDataInfo.build(page);
     }
 
-
-
-
-
     /**
      * 新增职业病字典
      */
@@ -123,7 +119,7 @@ public class TjOccupationalDictServiceImpl extends ServiceImpl<TjOccupationalDic
         Map<String, List<TjOccupationalDictVo>> groups = StreamUtils.groupByKey(dictVoList, e -> String.format("%s_%s", e.getSortCode(), e.getSort()));
         List<TjOccupationalDictTreeVo> voList = CollUtil.newArrayList();
         groups.forEach((k, v) -> {
-            String[] str = k.split("_");
+            String[] str = k.split(StrUtil.UNDERLINE);
             voList.add(new TjOccupationalDictTreeVo().setCode(str[0])
                 .setValue(str[1])
                 .setChildren(BeanUtil.copyToList(v, TjOccupationalDictTreeVo.class)));

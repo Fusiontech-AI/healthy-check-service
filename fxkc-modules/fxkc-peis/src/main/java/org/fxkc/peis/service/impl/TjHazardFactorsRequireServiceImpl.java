@@ -6,6 +6,7 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections4.CollectionUtils;
+import org.fxkc.common.core.constant.CommonConstants;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -16,6 +17,7 @@ import org.fxkc.peis.constant.ErrorCodeConstants;
 import org.fxkc.peis.domain.TjHazardFactorsItem;
 import org.fxkc.peis.domain.TjBasicProject;
 import org.fxkc.peis.domain.TjOccupationalDict;
+import org.fxkc.peis.domain.bo.TjHazardFactorsCodeBo;
 import org.fxkc.peis.domain.bo.TjHazardFactorsRequireSaveBo;
 import org.fxkc.peis.enums.AssociationTypeEnum;
 import org.fxkc.peis.exception.PeisException;
@@ -171,5 +173,29 @@ public class TjHazardFactorsRequireServiceImpl extends ServiceImpl<TjHazardFacto
         list.forEach(k -> tjHazardFactorsItemMapper.delete(Wrappers.lambdaUpdate(TjHazardFactorsItem.class)
                 .eq(TjHazardFactorsItem::getFactorsId, k)));
         return baseMapper.deleteBatchIds(list) > 0;
+    }
+
+    @Override
+    public List<TjHazardFactorsRequireVo.ItemBody> queryItemByFactorsCodeAndDutyStatus(TjHazardFactorsCodeBo bo) {
+        List<TjHazardFactorsRequire> list = baseMapper.selectList(Wrappers.lambdaQuery(TjHazardFactorsRequire.class)
+            .in(TjHazardFactorsRequire::getHazardFactorsCode, bo.getCodeList())
+            .eq(TjHazardFactorsRequire::getDutyStatus,bo.getDutyStatus())
+            .eq(TjHazardFactorsRequire::getEnableStatus, CommonConstants.NORMAL)
+            .eq(StrUtil.isNotBlank(bo.getShineSource()), TjHazardFactorsRequire::getShineSource, bo.getShineSource())
+            .eq(StrUtil.isNotBlank(bo.getShineType()), TjHazardFactorsRequire::getShineType, bo.getShineType()));
+        List<TjHazardFactorsRequireVo.ItemBody> bodyList = new ArrayList<>();
+        if(CollUtil.isNotEmpty(list)) {
+            List<TjHazardFactorsItem> itemList = tjHazardFactorsItemMapper.selectList(Wrappers.lambdaQuery(TjHazardFactorsItem.class)
+                .in(TjHazardFactorsItem::getFactorsId, list.stream()
+                    .map(TjHazardFactorsRequire::getId).collect(Collectors.toList())));
+            if(CollUtil.isNotEmpty(itemList)) {
+                List<TjBasicProject> respList = tjBasicProjectMapper.selectBatchIds(itemList.stream().map(TjHazardFactorsItem::getItemId)
+                    .collect(Collectors.toList()));
+                respList.forEach(k -> bodyList.add(new TjHazardFactorsRequireVo.ItemBody()
+                    .setItemId(k.getId())
+                    .setName(k.getZybCode().concat(k.getBasicProjectName()))));
+            }
+        }
+        return bodyList;
     }
 }

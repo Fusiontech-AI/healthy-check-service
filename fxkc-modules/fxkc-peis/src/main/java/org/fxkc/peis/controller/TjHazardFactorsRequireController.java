@@ -1,23 +1,25 @@
 package org.fxkc.peis.controller;
 
-import java.util.List;
-
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
-import jakarta.validation.constraints.*;
-import org.fxkc.peis.domain.TjHazardFactorsRequire;
-import org.fxkc.peis.domain.bo.TjHazardFactorsRequireSaveBo;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.validation.annotation.Validated;
+import org.fxkc.common.core.domain.R;
 import org.fxkc.common.idempotent.annotation.RepeatSubmit;
 import org.fxkc.common.log.annotation.Log;
-import org.fxkc.common.web.core.BaseController;
-import org.fxkc.common.mybatis.core.page.PageQuery;
-import org.fxkc.common.core.domain.R;
 import org.fxkc.common.log.enums.BusinessType;
-import org.fxkc.peis.domain.vo.TjHazardFactorsRequireVo;
+import org.fxkc.common.mybatis.core.page.PageQuery;
+import org.fxkc.common.web.core.BaseController;
+import org.fxkc.peis.domain.TjHazardFactorsRequire;
+import org.fxkc.peis.domain.bo.TjHazardFactorsCodeBo;
 import org.fxkc.peis.domain.bo.TjHazardFactorsRequireBo;
+import org.fxkc.peis.domain.bo.TjHazardFactorsRequireSaveBo;
+import org.fxkc.peis.domain.vo.TjHazardFactorsRequireVo;
 import org.fxkc.peis.service.ITjHazardFactorsRequireService;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 危害因素必检项目主
@@ -99,5 +101,13 @@ public class TjHazardFactorsRequireController extends BaseController {
         return toAjax(tjHazardFactorsRequireService.updateById(new TjHazardFactorsRequire()
             .setId(id)
             .setEnableStatus(enableStatus)));
+    }
+
+    /**
+     * 根据危害因素编码、在岗状态查询必检项目
+     */
+    @PostMapping(value = "/queryItemByFactorsCodeAndDutyStauts")
+    public R<List<TjHazardFactorsRequireVo.ItemBody>> queryItemByFactorsCodeAndDutyStatus(@RequestBody @Valid TjHazardFactorsCodeBo bo)  {
+        return R.ok(tjHazardFactorsRequireService.queryItemByFactorsCodeAndDutyStatus(bo));
     }
 }

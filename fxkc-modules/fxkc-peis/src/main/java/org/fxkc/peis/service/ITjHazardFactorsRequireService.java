@@ -2,6 +2,7 @@ package org.fxkc.peis.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.fxkc.peis.domain.TjHazardFactorsRequire;
+import org.fxkc.peis.domain.bo.TjHazardFactorsCodeBo;
 import org.fxkc.peis.domain.bo.TjHazardFactorsRequireSaveBo;
 import org.fxkc.peis.domain.vo.TjHazardFactorsRequireVo;
 import org.fxkc.peis.domain.bo.TjHazardFactorsRequireBo;
@@ -26,4 +27,6 @@ public interface ITjHazardFactorsRequireService extends IService<TjHazardFactors
     Boolean deleteById(Long id);
 
     Boolean batchDeleteByIds(List<Long> list);
+
+    List<TjHazardFactorsRequireVo.ItemBody> queryItemByFactorsCodeAndDutyStatus(TjHazardFactorsCodeBo bo);
 }
