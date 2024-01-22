@@ -1,12 +1,8 @@
 package org.fxkc.peis.domain.bo;
 
-import org.fxkc.common.core.validate.AddGroup;
-import org.fxkc.common.core.validate.EditGroup;
-import org.fxkc.peis.domain.HazardFactorsRequire;
-import org.fxkc.common.mybatis.core.domain.BaseEntity;
+import org.fxkc.peis.domain.TjHazardFactorsRequire;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import jakarta.validation.constraints.*;
 
 /**
@@ -16,8 +12,8 @@ import jakarta.validation.constraints.*;
  * @date 2024-01-21
  */
 @Data
-@AutoMapper(target = HazardFactorsRequire.class, reverseConvertGenerate = false)
-public class HazardFactorsRequireBo {
+@AutoMapper(target = TjHazardFactorsRequire.class, reverseConvertGenerate = false)
+public class TjHazardFactorsRequireBo {
 
     /**
      * 危害因素名称

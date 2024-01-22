@@ -1,8 +1,10 @@
 package org.fxkc.peis.domain.bo;
 
 import com.alibaba.excel.annotation.ExcelProperty;
+import io.github.linpeilie.annotations.AutoMapper;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.fxkc.peis.domain.TjCombinationProjectInfo;
 
 /**
  * 体检组合项目详细信息请求对象 TjCombinationProjectInfoItemBo
@@ -11,6 +13,7 @@ import lombok.Data;
  * @date 2024-01-10
  */
 @Data
+@AutoMapper(target = TjCombinationProjectInfo.class, reverseConvertGenerate = false)
 public class TjCombinationProjectInfoItemBo {
 
     /**

@@ -1,13 +1,9 @@
 package org.fxkc.peis.domain.vo;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.experimental.Accessors;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
-import org.fxkc.peis.domain.HazardFactorsRequire;
+import org.fxkc.peis.domain.TjHazardFactorsRequire;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
-import com.alibaba.excel.annotation.ExcelProperty;
-import org.fxkc.common.excel.annotation.ExcelDictFormat;
-import org.fxkc.common.excel.convert.ExcelDictConvert;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 
@@ -24,9 +20,9 @@ import java.util.List;
  */
 @Data
 @ExcelIgnoreUnannotated
-@AutoMapper(target = HazardFactorsRequire.class)
+@AutoMapper(target = TjHazardFactorsRequire.class)
 @Accessors(chain = true)
-public class HazardFactorsRequireVo implements Serializable {
+public class TjHazardFactorsRequireVo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -42,7 +38,7 @@ public class HazardFactorsRequireVo implements Serializable {
     private HazardFactorsRequireQueryVo vo;
 
     @Data
-    public static class HazardFactorsRequireQueryVo extends HazardFactorsRequire{
+    public static class HazardFactorsRequireQueryVo extends TjHazardFactorsRequire {
 
         /**
          * 在岗状态名称

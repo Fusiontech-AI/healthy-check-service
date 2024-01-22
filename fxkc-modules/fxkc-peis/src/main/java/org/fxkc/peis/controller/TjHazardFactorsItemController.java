@@ -1,26 +1,27 @@
 package org.fxkc.peis.controller;
 
-import java.util.List;
-
-import lombok.RequiredArgsConstructor;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.validation.annotation.Validated;
-import org.fxkc.common.idempotent.annotation.RepeatSubmit;
-import org.fxkc.common.log.annotation.Log;
-import org.fxkc.common.web.core.BaseController;
-import org.fxkc.common.mybatis.core.page.PageQuery;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 import org.fxkc.common.core.domain.R;
 import org.fxkc.common.core.validate.AddGroup;
 import org.fxkc.common.core.validate.EditGroup;
-import org.fxkc.common.log.enums.BusinessType;
 import org.fxkc.common.excel.utils.ExcelUtil;
-import org.fxkc.peis.domain.vo.HazardFactorsItemVo;
-import org.fxkc.peis.domain.bo.HazardFactorsItemBo;
-import org.fxkc.peis.service.IHazardFactorsItemService;
+import org.fxkc.common.idempotent.annotation.RepeatSubmit;
+import org.fxkc.common.log.annotation.Log;
+import org.fxkc.common.log.enums.BusinessType;
+import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
+import org.fxkc.common.web.core.BaseController;
+import org.fxkc.peis.domain.bo.TjHazardFactorsItemBo;
+import org.fxkc.peis.domain.vo.TjHazardFactorsItemVo;
+import org.fxkc.peis.service.ITjHazardFactorsItemService;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 危害因素必检项目关联
@@ -33,17 +34,17 @@ import org.fxkc.common.mybatis.core.page.TableDataInfo;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/factorsItem")
-public class HazardFactorsItemController extends BaseController {
+public class TjHazardFactorsItemController extends BaseController {
 
-    private final IHazardFactorsItemService hazardFactorsItemService;
+    private final ITjHazardFactorsItemService tjHazardFactorsItemService;
 
     /**
      * 查询危害因素必检项目关联列表
      */
     @SaCheckPermission("peis:factorsItem:list")
     @GetMapping("/list")
-    public TableDataInfo<HazardFactorsItemVo> list(HazardFactorsItemBo bo, PageQuery pageQuery) {
-        return hazardFactorsItemService.queryPageList(bo, pageQuery);
+    public TableDataInfo<TjHazardFactorsItemVo> list(TjHazardFactorsItemBo bo, PageQuery pageQuery) {
+        return tjHazardFactorsItemService.queryPageList(bo, pageQuery);
     }
 
     /**
@@ -52,9 +53,9 @@ public class HazardFactorsItemController extends BaseController {
     @SaCheckPermission("peis:factorsItem:export")
     @Log(title = "危害因素必检项目关联", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HazardFactorsItemBo bo, HttpServletResponse response) {
-        List<HazardFactorsItemVo> list = hazardFactorsItemService.queryList(bo);
-        ExcelUtil.exportExcel(list, "危害因素必检项目关联", HazardFactorsItemVo.class, response);
+    public void export(TjHazardFactorsItemBo bo, HttpServletResponse response) {
+        List<TjHazardFactorsItemVo> list = tjHazardFactorsItemService.queryList(bo);
+        ExcelUtil.exportExcel(list, "危害因素必检项目关联", TjHazardFactorsItemVo.class, response);
     }
 
     /**
@@ -64,9 +65,9 @@ public class HazardFactorsItemController extends BaseController {
      */
     @SaCheckPermission("peis:factorsItem:query")
     @GetMapping("/{id}")
-    public R<HazardFactorsItemVo> getInfo(@NotNull(message = "主键不能为空")
+    public R<TjHazardFactorsItemVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
-        return R.ok(hazardFactorsItemService.queryById(id));
+        return R.ok(tjHazardFactorsItemService.queryById(id));
     }
 
     /**
@@ -76,8 +77,8 @@ public class HazardFactorsItemController extends BaseController {
     @Log(title = "危害因素必检项目关联", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
-    public R<Void> add(@Validated(AddGroup.class) @RequestBody HazardFactorsItemBo bo) {
-        return toAjax(hazardFactorsItemService.insertByBo(bo));
+    public R<Void> add(@Validated(AddGroup.class) @RequestBody TjHazardFactorsItemBo bo) {
+        return toAjax(tjHazardFactorsItemService.insertByBo(bo));
     }
 
     /**
@@ -87,8 +88,8 @@ public class HazardFactorsItemController extends BaseController {
     @Log(title = "危害因素必检项目关联", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
-    public R<Void> edit(@Validated(EditGroup.class) @RequestBody HazardFactorsItemBo bo) {
-        return toAjax(hazardFactorsItemService.updateByBo(bo));
+    public R<Void> edit(@Validated(EditGroup.class) @RequestBody TjHazardFactorsItemBo bo) {
+        return toAjax(tjHazardFactorsItemService.updateByBo(bo));
     }
 
     /**
@@ -101,6 +102,6 @@ public class HazardFactorsItemController extends BaseController {
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
-        return toAjax(hazardFactorsItemService.deleteWithValidByIds(List.of(ids), true));
+        return toAjax(tjHazardFactorsItemService.deleteWithValidByIds(List.of(ids), true));
     }
 }

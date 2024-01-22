@@ -16,9 +16,9 @@ import java.io.Serial;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("hazard_factors_require")
+@TableName("tj_hazard_factors_require")
 @Accessors(chain = true)
-public class HazardFactorsRequire extends TenantEntity {
+public class TjHazardFactorsRequire extends TenantEntity {
 
     @Serial
     private static final long serialVersionUID = 1L;

@@ -1,10 +1,8 @@
 package org.fxkc.peis.domain.vo;
 
-import org.fxkc.peis.domain.HazardFactorsItem;
+import org.fxkc.peis.domain.TjHazardFactorsItem;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
-import org.fxkc.common.excel.annotation.ExcelDictFormat;
-import org.fxkc.common.excel.convert.ExcelDictConvert;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 
@@ -20,8 +18,8 @@ import java.io.Serializable;
  */
 @Data
 @ExcelIgnoreUnannotated
-@AutoMapper(target = HazardFactorsItem.class)
-public class HazardFactorsItemVo implements Serializable {
+@AutoMapper(target = TjHazardFactorsItem.class)
+public class TjHazardFactorsItemVo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
