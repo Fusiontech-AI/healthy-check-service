@@ -1,8 +1,8 @@
 package org.fxkc.peis.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
+
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.fxkc.common.tenant.core.TenantEntity;
@@ -18,6 +18,9 @@ import java.io.Serial;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("tj_register")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class TjRegister extends TenantEntity {
 
     @Serial
@@ -205,5 +208,9 @@ public class TjRegister extends TenantEntity {
      */
     private Long cancelRegisterOperator;
 
+    /**
+     * 人员状态（0：正常，1：取消登记）
+     */
+    private String status;
 
 }

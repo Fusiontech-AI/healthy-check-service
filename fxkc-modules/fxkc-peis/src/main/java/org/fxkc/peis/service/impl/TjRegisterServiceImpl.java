@@ -1,5 +1,9 @@
 package org.fxkc.peis.service.impl;
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
+import org.fxkc.common.core.constant.CommonConstants;
+import org.fxkc.common.core.exception.ServiceException;
 import org.fxkc.common.core.utils.MapstructUtils;
 import org.fxkc.common.core.utils.StringUtils;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
@@ -8,6 +12,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
+import org.fxkc.common.satoken.utils.LoginHelper;
+import org.fxkc.peis.enums.HealthyCheckTypeEnum;
+import org.fxkc.peis.enums.RegisterStatusEnum;
 import org.springframework.stereotype.Service;
 import org.fxkc.peis.domain.bo.TjRegisterBo;
 import org.fxkc.peis.domain.vo.TjRegisterVo;
@@ -15,6 +22,7 @@ import org.fxkc.peis.domain.TjRegister;
 import org.fxkc.peis.mapper.TjRegisterMapper;
 import org.fxkc.peis.service.ITjRegisterService;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Collection;
@@ -138,5 +146,39 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteBatchIds(ids) > 0;
+    }
+
+    /**
+     * 批量取消体检人员登记
+     * @param ids
+     * @return
+     */
+    @Override
+    public Boolean cancelRegistration(Collection<Long> ids) {
+        LambdaQueryWrapper<TjRegister> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(TjRegister::getId,ids)
+            .eq(TjRegister::getDelFlag, CommonConstants.NORMAL)
+            .in(TjRegister::getHealthyCheckStatus, Arrays.asList(HealthyCheckTypeEnum.预约.getCode(),HealthyCheckTypeEnum.登记.getCode()));
+        Long actualCount = baseMapper.selectCount(wrapper);
+        if(ids.size() - actualCount != 0){
+            throw new ServiceException("仅限预约、登记状态人员可取消登记，请重新选择！");
+        }
+        //TODO 逻辑删除该人员登记时的项目信息
+
+        return baseMapper.update(TjRegister.builder()
+                .status(RegisterStatusEnum.取消登记.getCode())
+                .delFlag(CommonConstants.DISABLE)
+            .cancelRegisterOperator(LoginHelper.getLoginUser().getUserId())
+            .cancelRegisterTime(DateUtil.date()).build()
+            ,Wrappers.lambdaQuery(TjRegister.class).in(TjRegister::getId,ids))>0;
+    }
+
+    @Override
+    public Boolean reRegistration(Collection<Long> ids) {
+        //TODO 恢复该人员登记时的项目信息
+
+        return baseMapper.update(TjRegister.builder()
+                .status(RegisterStatusEnum.正常.getCode()).delFlag(CommonConstants.NORMAL).build()
+            ,Wrappers.lambdaQuery(TjRegister.class).in(TjRegister::getId,ids))>0;
     }
 }

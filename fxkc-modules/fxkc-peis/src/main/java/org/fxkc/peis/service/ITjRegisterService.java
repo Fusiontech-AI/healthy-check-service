@@ -46,4 +46,8 @@ public interface ITjRegisterService {
      * 校验并批量删除体检人员登记信息信息
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+
+    Boolean cancelRegistration(Collection<Long> ids);
+
+    Boolean reRegistration(Collection<Long> ids);
 }

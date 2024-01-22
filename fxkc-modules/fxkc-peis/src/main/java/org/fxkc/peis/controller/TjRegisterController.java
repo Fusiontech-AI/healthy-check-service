@@ -103,4 +103,30 @@ public class TjRegisterController extends BaseController {
                           @PathVariable Long[] ids) {
         return toAjax(tjRegisterService.deleteWithValidByIds(List.of(ids), true));
     }
+
+    /**
+     * 取消体检人员登记
+     *
+     * @param ids 主键串
+     */
+    @Log(title = "取消体检人员登记", businessType = BusinessType.UPDATE)
+    @PutMapping("/cancelRegister/{ids}")
+    @RepeatSubmit()
+    public R<Void> cancelRegistration(@NotEmpty(message = "主键不能为空")
+                                      @PathVariable Long[] ids){
+        return toAjax(tjRegisterService.cancelRegistration(List.of(ids)));
+    }
+
+    /**
+     * 体检人员再次登记
+     *
+     * @param ids 主键串
+     */
+    @Log(title = "体检人员再次登记", businessType = BusinessType.UPDATE)
+    @PutMapping("/reRegistration/{ids}")
+    @RepeatSubmit()
+    public R<Void> reRegistration(@NotEmpty(message = "主键不能为空")
+                                      @PathVariable Long[] ids){
+        return toAjax(tjRegisterService.reRegistration(List.of(ids)));
+    }
 }

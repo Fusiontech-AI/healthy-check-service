@@ -232,5 +232,8 @@ public class TjRegisterBo extends BaseEntity {
     @NotNull(message = "取消登记操作人不能为空", groups = { AddGroup.class, EditGroup.class })
     private Long cancelRegisterOperator;
 
-
+    /**
+     * 人员状态（0：正常，1：取消登记）
+     */
+    private String status;
 }

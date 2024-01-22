@@ -247,5 +247,10 @@ public class TjRegisterVo implements Serializable {
     @ExcelProperty(value = "取消登记操作人")
     private Long cancelRegisterOperator;
 
-
+    /**
+     * 人员状态（0：正常，1：取消登记）
+     */
+    @ExcelProperty(value = "人员状态", converter = ExcelDictConvert.class)
+    @ExcelDictFormat(readConverterExp = "0=：正常，1：取消登记")
+    private String status;
 }
