@@ -126,6 +126,29 @@ public class TjCombinationProject extends TenantEntity {
     private String financialType;
 
     /**
+     * 检查地址
+     */
+    private String checkAddress;
+
+
+    /**
+     * 是否进入隐私报告 0是
+     */
+    private String privacyFlag;
+
+
+    /**
+     * 是否进入指引单 0是
+     */
+    private String guideFlag;
+
+
+    /**
+     * 是否进入工作站 0是
+     */
+    private String workerFlag;
+
+    /**
      * 是否外送 0是
      */
     private String outFlag;
