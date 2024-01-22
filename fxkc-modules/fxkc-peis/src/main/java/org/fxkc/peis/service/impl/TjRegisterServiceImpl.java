@@ -61,23 +61,40 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
     private LambdaQueryWrapper<TjRegister> buildQueryWrapper(TjRegisterBo bo) {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<TjRegister> lqw = Wrappers.lambdaQuery();
-        lqw.like(StringUtils.isNotBlank(bo.getHealthyCheckCode()), TjRegister::getHealthyCheckCode, bo.getHealthyCheckCode());
-        lqw.like(StringUtils.isNotBlank(bo.getRecordCode()), TjRegister::getRecordCode, bo.getRecordCode());
+        lqw.eq(StringUtils.isNotBlank(bo.getHealthyCheckCode()), TjRegister::getHealthyCheckCode, bo.getHealthyCheckCode());
+        lqw.eq(StringUtils.isNotBlank(bo.getRecordCode()), TjRegister::getRecordCode, bo.getRecordCode());
         lqw.like(StringUtils.isNotBlank(bo.getName()), TjRegister::getName, bo.getName());
         lqw.eq(bo.getAge() != null, TjRegister::getAge, bo.getAge());
         lqw.eq(StringUtils.isNotBlank(bo.getGender()), TjRegister::getGender, bo.getGender());
         lqw.eq(StringUtils.isNotBlank(bo.getMarriageStatus()), TjRegister::getMarriageStatus, bo.getMarriageStatus());
         lqw.eq(StringUtils.isNotBlank(bo.getCredentialType()), TjRegister::getCredentialType, bo.getCredentialType());
-        lqw.like(StringUtils.isNotBlank(bo.getCredentialNumber()), TjRegister::getCredentialNumber, bo.getCredentialNumber());
+        lqw.eq(StringUtils.isNotBlank(bo.getCredentialNumber()), TjRegister::getCredentialNumber, bo.getCredentialNumber());
         lqw.eq(bo.getBirthday() != null, TjRegister::getBirthday, bo.getBirthday());
         lqw.eq(StringUtils.isNotBlank(bo.getNation()), TjRegister::getNation, bo.getNation());
         lqw.eq(StringUtils.isNotBlank(bo.getPhysicalType()), TjRegister::getPhysicalType, bo.getPhysicalType());
-        lqw.like(StringUtils.isNotBlank(bo.getPhone()), TjRegister::getPhone, bo.getPhone());
+        lqw.eq(StringUtils.isNotBlank(bo.getPhone()), TjRegister::getPhone, bo.getPhone());
         lqw.eq(StringUtils.isNotBlank(bo.getUserImage()), TjRegister::getUserImage, bo.getUserImage());
         lqw.eq(StringUtils.isNotBlank(bo.getNeedGeneralReview()), TjRegister::getNeedGeneralReview, bo.getNeedGeneralReview());
         lqw.eq(StringUtils.isNotBlank(bo.getRecipient()), TjRegister::getRecipient, bo.getRecipient());
         lqw.eq(StringUtils.isNotBlank(bo.getReceiptPhone()), TjRegister::getReceiptPhone, bo.getReceiptPhone());
         lqw.eq(StringUtils.isNotBlank(bo.getPostAddress()), TjRegister::getPostAddress, bo.getPostAddress());
+        lqw.eq(StringUtils.isNotBlank(bo.getBusinessType()), TjRegister::getBusinessType, bo.getBusinessType());
+        lqw.eq(StringUtils.isNotBlank(bo.getGuideSheetRecived()), TjRegister::getGuideSheetRecived, bo.getGuideSheetRecived());
+        lqw.eq(StringUtils.isNotBlank(bo.getFreezeStatus()), TjRegister::getFreezeStatus, bo.getFreezeStatus());
+        lqw.eq(StringUtils.isNotBlank(bo.getHealthyCheckStatus()), TjRegister::getHealthyCheckStatus, bo.getHealthyCheckStatus());
+        lqw.eq(bo.getTeamId() != null, TjRegister::getTeamId, bo.getTeamId());
+        lqw.eq(bo.getTeamGroupId() != null, TjRegister::getTeamGroupId, bo.getTeamGroupId());
+        lqw.eq(bo.getTeamDeptId() != null, TjRegister::getTeamDeptId, bo.getTeamDeptId());
+        lqw.eq(bo.getIntroducer() != null, TjRegister::getIntroducer, bo.getIntroducer());
+        lqw.eq(bo.getReporter() != null, TjRegister::getReporter, bo.getReporter());
+        lqw.eq(bo.getGeneralReviewDoctor() != null, TjRegister::getGeneralReviewDoctor, bo.getGeneralReviewDoctor());
+        lqw.eq(bo.getGeneralReviewTime() != null, TjRegister::getGeneralReviewTime, bo.getGeneralReviewTime());
+        lqw.eq(bo.getHealthyCheckTime() != null, TjRegister::getHealthyCheckTime, bo.getHealthyCheckTime());
+        lqw.eq(bo.getAuditDoctor() != null, TjRegister::getAuditDoctor, bo.getAuditDoctor());
+        lqw.eq(bo.getAuditTime() != null, TjRegister::getAuditTime, bo.getAuditTime());
+        lqw.eq(bo.getFinishTime() != null, TjRegister::getFinishTime, bo.getFinishTime());
+        lqw.eq(bo.getCancelRegisterTime() != null, TjRegister::getCancelRegisterTime, bo.getCancelRegisterTime());
+        lqw.eq(bo.getCancelRegisterOperator() != null, TjRegister::getCancelRegisterOperator, bo.getCancelRegisterOperator());
         return lqw;
     }
 
