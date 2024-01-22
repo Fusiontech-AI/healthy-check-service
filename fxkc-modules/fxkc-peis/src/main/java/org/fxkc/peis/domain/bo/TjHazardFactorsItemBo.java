@@ -2,7 +2,7 @@ package org.fxkc.peis.domain.bo;
 
 import org.fxkc.common.core.validate.AddGroup;
 import org.fxkc.common.core.validate.EditGroup;
-import org.fxkc.peis.domain.HazardFactorsItem;
+import org.fxkc.peis.domain.TjHazardFactorsItem;
 import org.fxkc.common.mybatis.core.domain.BaseEntity;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
@@ -17,8 +17,8 @@ import jakarta.validation.constraints.*;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@AutoMapper(target = HazardFactorsItem.class, reverseConvertGenerate = false)
-public class HazardFactorsItemBo extends BaseEntity {
+@AutoMapper(target = TjHazardFactorsItem.class, reverseConvertGenerate = false)
+public class TjHazardFactorsItemBo extends BaseEntity {
 
     /**
      * 主键id

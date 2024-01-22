@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class HazardFactorsRequireSaveBo {
+public class TjHazardFactorsRequireSaveBo {
 
     /**
      * 主键id(编辑传入)
