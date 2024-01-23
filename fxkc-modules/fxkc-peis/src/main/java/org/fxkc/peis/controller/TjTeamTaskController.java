@@ -9,6 +9,8 @@ import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.fxkc.peis.domain.bo.TjTeamTaskQueryBo;
 import org.fxkc.peis.domain.bo.VerifyGroupBo;
+import org.fxkc.peis.domain.bo.VerifyGroupPackageBo;
+import org.fxkc.peis.domain.vo.TjTeamGroupVo;
 import org.fxkc.peis.domain.vo.TjTeamTaskDetailVo;
 import org.fxkc.peis.domain.vo.VerifyMessageVo;
 import org.springframework.web.bind.annotation.*;
@@ -81,8 +83,8 @@ public class TjTeamTaskController extends BaseController {
     @Log(title = "团检任务管理", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
-    public R<Void> add(@Validated(AddGroup.class) @RequestBody TjTeamTaskBo bo) {
-        return toAjax(tjTeamTaskService.insertByBo(bo));
+    public R<List<TjTeamGroupVo>> add(@Validated(AddGroup.class) @RequestBody TjTeamTaskBo bo) {
+        return R.ok(tjTeamTaskService.insertByBo(bo));
     }
 
     /**
@@ -92,8 +94,8 @@ public class TjTeamTaskController extends BaseController {
     @Log(title = "团检任务管理", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
-    public R<Void> edit(@Validated(EditGroup.class) @RequestBody TjTeamTaskBo bo) {
-        return toAjax(tjTeamTaskService.updateByBo(bo));
+    public R<List<TjTeamGroupVo>> edit(@Validated(EditGroup.class) @RequestBody TjTeamTaskBo bo) {
+        return R.ok(tjTeamTaskService.updateByBo(bo));
     }
 
     /**
@@ -116,5 +118,14 @@ public class TjTeamTaskController extends BaseController {
     @Log(title = "团检任务校验分组数据", businessType = BusinessType.OTHER)
     public R<VerifyMessageVo> verifyGroupData(@RequestBody @Valid List<VerifyGroupBo> list) {
         return R.ok(tjTeamTaskService.verifyGroupData(list));
+    }
+
+    /**
+     * 团检任务校验分组数据
+     */
+    @PostMapping("/verifyGroupPackageData")
+    @Log(title = "团检任务校验分组套餐数据", businessType = BusinessType.OTHER)
+    public R<VerifyMessageVo> verifyGroupPackageData(@RequestBody @Valid List<VerifyGroupPackageBo> list) {
+        return R.ok(tjTeamTaskService.verifyGroupPackageData(list));
     }
 }

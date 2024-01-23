@@ -118,6 +118,9 @@ public class TjBasicProjectBo extends BaseEntity {
      * 基础项目状态（0正常 1停用）
      */
     private String status;
-
+    /**
+     * 是否职业病
+     */
+    private Boolean isOccupational;
 
 }

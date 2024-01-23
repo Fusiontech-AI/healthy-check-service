@@ -13,12 +13,16 @@ import org.fxkc.common.core.utils.StringUtils;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.peis.constant.ErrorCodeConstants;
+import org.fxkc.peis.domain.TjTeamDept;
 import org.fxkc.peis.domain.TjTeamInfo;
+import org.fxkc.peis.domain.TjTeamTask;
 import org.fxkc.peis.domain.bo.TjTeamInfoBo;
 import org.fxkc.peis.domain.vo.TjTeamInfoVo;
 import org.fxkc.peis.enums.TeamLevelEnum;
 import org.fxkc.peis.exception.PeisException;
+import org.fxkc.peis.mapper.TjTeamDeptMapper;
 import org.fxkc.peis.mapper.TjTeamInfoMapper;
+import org.fxkc.peis.mapper.TjTeamTaskMapper;
 import org.fxkc.peis.service.ITjTeamInfoService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -36,6 +40,10 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Service
 public class TjTeamInfoServiceImpl extends ServiceImpl<TjTeamInfoMapper, TjTeamInfo> implements ITjTeamInfoService {
+
+    private final TjTeamTaskMapper tjTeamTaskMapper;
+
+    private final TjTeamDeptMapper tjTeamDeptMapper;
 
     /**
      * 查询体检单位信息
@@ -126,7 +134,14 @@ public class TjTeamInfoServiceImpl extends ServiceImpl<TjTeamInfoMapper, TjTeamI
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
         if(isValid){
             //TODO 做一些业务上的校验,判断是否需要校验
+            long count = tjTeamTaskMapper.selectCount(Wrappers.lambdaQuery(TjTeamTask.class)
+                .in(TjTeamTask::getTeamId, ids));
+            if(count > 0) {
+                throw new PeisException(ErrorCodeConstants.PEIS_TEAM_TASK_ISEXIST);
+            }
         }
+        tjTeamDeptMapper.delete(Wrappers.lambdaQuery(TjTeamDept.class)
+            .in(TjTeamDept::getTeamId, ids));
         return baseMapper.deleteBatchIds(ids) > 0;
     }
 

@@ -84,7 +84,7 @@ public class TjTeamGroupBo extends BaseEntity {
     /**
      * 项目折扣
      */
-    @NotBlank(message = "项目折扣不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotNull(message = "项目折扣不能为空", groups = { AddGroup.class, EditGroup.class })
     private BigDecimal itemDiscount;
 
     /**

@@ -17,9 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.fxkc.peis.constant.ErrorCodeConstants;
 import org.fxkc.peis.domain.TjRegister;
 import org.fxkc.peis.domain.TjTeamGroup;
-import org.fxkc.peis.domain.bo.TjTeamGroupBo;
-import org.fxkc.peis.domain.bo.TjTeamTaskQueryBo;
-import org.fxkc.peis.domain.bo.VerifyGroupBo;
+import org.fxkc.peis.domain.bo.*;
 import org.fxkc.peis.domain.vo.TjTeamGroupVo;
 import org.fxkc.peis.domain.vo.TjTeamTaskDetailVo;
 import org.fxkc.peis.domain.vo.VerifyMessageVo;
@@ -31,7 +29,6 @@ import org.fxkc.peis.mapper.TjRegisterMapper;
 import org.fxkc.peis.mapper.TjTeamGroupMapper;
 import org.fxkc.peis.service.ITjTeamInfoService;
 import org.springframework.stereotype.Service;
-import org.fxkc.peis.domain.bo.TjTeamTaskBo;
 import org.fxkc.peis.domain.vo.TjTeamTaskVo;
 import org.fxkc.peis.domain.TjTeamTask;
 import org.fxkc.peis.mapper.TjTeamTaskMapper;
@@ -104,7 +101,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
      * 新增团检任务管理
      */
     @Override
-    public Boolean insertByBo(TjTeamTaskBo bo) {
+    public List<TjTeamGroupVo> insertByBo(TjTeamTaskBo bo) {
         validEntityBeforeSave(bo, Boolean.TRUE);
         TjTeamTask add = MapstructUtils.convert(bo, TjTeamTask.class);
         boolean flag = baseMapper.insert(add) > 0;
@@ -113,14 +110,16 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
         groupList.forEach(k -> k.setTaskId(add.getId()).setTaskName(add.getTaskName())
             .setTeamId(add.getTeamId()).setTeamName(teamName));
         tjTeamGroupMapper.insertBatch(groupList);
-        return flag;
+        return tjTeamGroupMapper.selectVoList(Wrappers.lambdaQuery(TjTeamGroup.class)
+            .eq(TjTeamGroup::getTaskId, add.getId())
+            .eq(TjTeamGroup::getGroupType, GroupTypeEnum.ITEM.getCode()));
     }
 
     /**
      * 修改团检任务管理
      */
     @Override
-    public Boolean updateByBo(TjTeamTaskBo bo) {
+    public List<TjTeamGroupVo> updateByBo(TjTeamTaskBo bo) {
         validEntityBeforeSave(bo, Boolean.FALSE);
         TjTeamTask update = MapstructUtils.convert(bo, TjTeamTask.class);
         boolean flag = baseMapper.updateById(update) > 0;
@@ -129,7 +128,9 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
         groupList.forEach(k -> k.setTaskId(update.getId()).setTaskName(update.getTaskName())
             .setTeamId(update.getTeamId()).setTeamName(teamName));
         tjTeamGroupMapper.insertOrUpdateBatch(groupList);
-        return flag;
+        return tjTeamGroupMapper.selectVoList(Wrappers.lambdaQuery(TjTeamGroup.class)
+            .eq(TjTeamGroup::getTaskId, update.getId())
+            .eq(TjTeamGroup::getGroupType, GroupTypeEnum.ITEM.getCode()));
     }
 
     /**
@@ -191,6 +192,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
 
     @Override
     public VerifyMessageVo verifyGroupData(List<VerifyGroupBo> list) {
+        VerifyMessageVo vo = new VerifyMessageVo();
         List<TjTeamGroupBo> boList = BeanUtil.copyToList(list, TjTeamGroupBo.class);
         validEntityBeforeSave(new TjTeamTaskBo().setGroupList(boList), Boolean.FALSE);
         List<Long> idList = StreamUtils.toList(list, VerifyGroupBo::getId);
@@ -202,41 +204,114 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
             TjRegister::getTeamGroupId, Collectors.counting()));
         StringBuffer buffer = new StringBuffer();
         AtomicInteger index = new AtomicInteger(1);
-        AtomicBoolean isPrompt = new AtomicBoolean(Boolean.FALSE);
-        boList.forEach(k -> {
-            groupList.forEach(s -> {
-                if(Objects.equals(k.getId(), s.getId())) {
-                    buffer.append(index.getAndIncrement()).append(StrUtil.DOT).append(k.getGroupName());
-                    if(k.getItemDiscount().compareTo(s.getItemDiscount()) != 0) {
-                        isPrompt.set(Boolean.TRUE);
-                        buffer.append("【折扣调整为<span style='color:red'>").append(k.getItemDiscount())
+        list.forEach(k -> groupList.forEach(s -> {
+            if(Objects.equals(k.getId(), s.getId())) {
+                boolean isPrompt = Boolean.FALSE;
+                Long count = tjRegisterMap.getOrDefault(k.getId(), 0L);
+                buffer.append(index.getAndIncrement()).append(StrUtil.DOT).append("【").append(k.getGroupName()).append("】");
+                if(k.getItemDiscount().compareTo(s.getItemDiscount()) != 0) {
+                    isPrompt = Boolean.TRUE;
+                    buffer.append("【折扣调整为<span style='color:red'>").append(k.getItemDiscount())
+                        .append("</span>】、");
+                }
+                if(ObjectUtil.notEqual(k.getGroupType(), GroupTypeEnum.DISCOUNT.getCode())) {
+                    if(k.getAddDiscount().compareTo(s.getAddDiscount()) != 0) {
+                        isPrompt = Boolean.TRUE;
+                        buffer.append("【加项折扣调整为<span style='color:red'>").append(k.getAddDiscount())
                             .append("</span>】、");
                     }
-                    if(ObjectUtil.notEqual(k.getGroupType(), GroupTypeEnum.DISCOUNT.getCode())) {
-                        if(k.getAddDiscount().compareTo(s.getAddDiscount()) != 0) {
-                            isPrompt.set(Boolean.TRUE);
-                            buffer.append("【加项折扣调整为<span style='color:red'>").append(k.getAddDiscount())
-                                .append("</span>】、");
-                        }
-                        if(ObjectUtil.notEqual(k.getAddPayType(), s.getAddPayType())) {
-                            isPrompt.set(Boolean.TRUE);
-                            buffer.append("【加项支付方式调整为<span style='color:red'>")
-                                .append(Objects.equals("0", k.getAddPayType()) ? "个人" : "单位")
-                                .append("</span>】、");
-                        }
-                    }
-                    if(ObjectUtil.notEqual(k.getGroupPayType(), s.getGroupPayType())) {
-                        isPrompt.set(Boolean.TRUE);
-                        buffer.append("【分组内支付方式调整为<span style='color:red'>")
-                            .append(Objects.equals("0", k.getGroupPayType()) ? "个人" : "单位")
+                    if(ObjectUtil.notEqual(k.getAddPayType(), s.getAddPayType())) {
+                        isPrompt = Boolean.TRUE;
+                        buffer.append("【加项支付方式调整为<span style='color:red'>")
+                            .append(Objects.equals("0", k.getAddPayType()) ? "个人" : "单位")
                             .append("</span>】、");
-                    }
-                    if(ObjectUtil.equal(k.getGroupType(), GroupTypeEnum.PRICE.getCode())) {
-
                     }
                 }
-            });
-        });
-        return null;
+                if(ObjectUtil.notEqual(k.getGroupPayType(), s.getGroupPayType())) {
+                    isPrompt = Boolean.TRUE;
+                    buffer.append("【分组内支付方式调整为<span style='color:red'>")
+                        .append(Objects.equals("0", k.getGroupPayType()) ? "个人" : "单位")
+                        .append("</span>】、");
+                }
+                if(ObjectUtil.equal(k.getGroupType(), GroupTypeEnum.PRICE.getCode()) &&
+                    k.getPrice().compareTo(s.getPrice()) != 0) {
+                    isPrompt = Boolean.TRUE;
+                    BigDecimal difference = k.getPrice().subtract(s.getPrice());
+                    buffer.append("【金额调整为<span style='color:red'>").append(k.getPrice())
+                        .append("</span>，较原分组").append(difference.signum() > 0 ? "增加" : "减少").append("<span style='color:red'>")
+                        .append(difference.abs()).append("</span>").append(count > 0 ? "，同步分组内预约状态人员后，总差额<span style='color:red'>"
+                        .concat(difference.abs().multiply(new BigDecimal(count)).toPlainString()).concat("</span>元】、") : "】、");
+                }
+                if(!isPrompt && ObjectUtil.notEqual(k.getIsSyncProject(), s.getIsSyncProject())) {
+                    buffer.append(ObjectUtil.equal("1", k.getIsSyncProject()) ?
+                        "确认后将此分组信息同步本至分组内预约状态的未检人员<span style='color:red'>".concat(String.valueOf(count))
+                            .concat("</span>人。") : "确认后新入组人员将按照此规则执行。").append("</br>");
+                }else if(isPrompt) {
+                    buffer.deleteCharAt(buffer.length() - 1).append("，")
+                        .append(ObjectUtil.equal("1", k.getIsSyncProject()) ?
+                            "确认后将同步本分组内预约状态的未检人员<span style='color:red'>".concat(String.valueOf(count))
+                                .concat("</span>人。") : "新入组人员将按照此规则执行。").append("</br>");
+                }
+            }
+        }));
+        if(buffer.length() > 0) {
+            vo.setPromptMessage(buffer.toString());
+            vo.setIsPrompt(Boolean.TRUE);
+        }
+        return vo;
+    }
+
+    @Override
+    public VerifyMessageVo verifyGroupPackageData(List<VerifyGroupPackageBo> list) {
+        VerifyMessageVo vo = new VerifyMessageVo();
+        List<Long> idList = StreamUtils.toList(list, VerifyGroupPackageBo::getId);
+        List<TjTeamGroup> groupList = tjTeamGroupMapper.selectBatchIds(idList);
+        List<TjRegister> tjRegisterList = tjRegisterMapper.selectList(Wrappers.lambdaQuery(TjRegister.class)
+            .in(TjRegister::getTeamGroupId, idList)
+            .eq(TjRegister::getHealthyCheckStatus, HealthyCheckTypeEnum.预约.getCode()));
+        Map<Long, Long> tjRegisterMap = tjRegisterList.stream().collect(Collectors.groupingBy(
+            TjRegister::getTeamGroupId, Collectors.counting()));
+        StringBuffer buffer = new StringBuffer();
+        AtomicInteger index = new AtomicInteger(1);
+        list.forEach(k -> groupList.forEach(s -> {
+            if(Objects.equals(k.getId(), s.getId())) {
+                boolean isPrompt = Boolean.FALSE;
+                Long count = tjRegisterMap.getOrDefault(k.getId(), 0L);
+                buffer.append(index.getAndIncrement()).append(StrUtil.DOT).append("【").append(k.getGroupName()).append("】");
+                if(k.getItemDiscount().compareTo(s.getItemDiscount()) != 0) {
+                    isPrompt = Boolean.TRUE;
+                    buffer.append("【折扣调整为<span style='color:red'>").append(k.getItemDiscount())
+                        .append("</span>】、");
+                }
+                if(k.getAddDiscount().compareTo(s.getAddDiscount()) != 0) {
+                    isPrompt = Boolean.TRUE;
+                    buffer.append("【加项折扣调整为<span style='color:red'>").append(k.getAddDiscount())
+                        .append("</span>】、");
+                }
+                if(k.getActualPrice().compareTo(s.getActualPrice()) != 0) {
+                    isPrompt = Boolean.TRUE;
+                    BigDecimal difference = k.getActualPrice().subtract(s.getActualPrice());
+                    buffer.append("【实际价格调整为<span style='color:red'>").append(k.getActualPrice())
+                        .append("</span>，较原分组").append(difference.signum() > 0 ? "增加" : "减少").append("<span style='color:red'>")
+                        .append(difference.abs()).append("</span>").append(count > 0 ? "，同步分组内预约状态人员后，总差额<span style='color:red'>"
+                        .concat(difference.abs().multiply(new BigDecimal(count)).toPlainString()).concat("</span>元】、") : "】、");
+                }
+                if(!isPrompt && ObjectUtil.notEqual(k.getIsSyncProject(), s.getIsSyncProject())) {
+                    buffer.append(ObjectUtil.equal("1", k.getIsSyncProject()) ?
+                        "确认后将此分组信息同步本至分组内预约状态的未检人员<span style='color:red'>".concat(String.valueOf(count))
+                            .concat("</span>人。") : "确认后新入组人员将按照此规则执行。").append("</br>");
+                }else if(isPrompt) {
+                    buffer.deleteCharAt(buffer.length() - 1).append("，")
+                        .append(ObjectUtil.equal("1", k.getIsSyncProject()) ?
+                            "确认后将同步本分组内预约状态的未检人员<span style='color:red'>".concat(String.valueOf(count))
+                                .concat("</span>人。") : "新入组人员将按照此规则执行。").append("</br>");
+                }
+            }
+        }));
+        if(buffer.length() > 0) {
+            vo.setPromptMessage(buffer.toString());
+            vo.setIsPrompt(Boolean.TRUE);
+        }
+        return vo;
     }
 }

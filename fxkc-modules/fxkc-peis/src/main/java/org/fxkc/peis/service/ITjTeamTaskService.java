@@ -1,13 +1,14 @@
 package org.fxkc.peis.service;
 
-import org.fxkc.peis.domain.TjTeamTask;
+import org.fxkc.common.mybatis.core.page.PageQuery;
+import org.fxkc.common.mybatis.core.page.TableDataInfo;
+import org.fxkc.peis.domain.bo.TjTeamTaskBo;
 import org.fxkc.peis.domain.bo.TjTeamTaskQueryBo;
 import org.fxkc.peis.domain.bo.VerifyGroupBo;
+import org.fxkc.peis.domain.bo.VerifyGroupPackageBo;
+import org.fxkc.peis.domain.vo.TjTeamGroupVo;
 import org.fxkc.peis.domain.vo.TjTeamTaskDetailVo;
 import org.fxkc.peis.domain.vo.TjTeamTaskVo;
-import org.fxkc.peis.domain.bo.TjTeamTaskBo;
-import org.fxkc.common.mybatis.core.page.TableDataInfo;
-import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.peis.domain.vo.VerifyMessageVo;
 
 import java.util.Collection;
@@ -39,12 +40,12 @@ public interface ITjTeamTaskService {
     /**
      * 新增团检任务管理
      */
-    Boolean insertByBo(TjTeamTaskBo bo);
+    List<TjTeamGroupVo> insertByBo(TjTeamTaskBo bo);
 
     /**
      * 修改团检任务管理
      */
-    Boolean updateByBo(TjTeamTaskBo bo);
+    List<TjTeamGroupVo> updateByBo(TjTeamTaskBo bo);
 
     /**
      * 校验并批量删除团检任务管理信息
@@ -52,4 +53,6 @@ public interface ITjTeamTaskService {
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
 
     VerifyMessageVo verifyGroupData(List<VerifyGroupBo> list);
+
+    VerifyMessageVo verifyGroupPackageData(List<VerifyGroupPackageBo> list);
 }

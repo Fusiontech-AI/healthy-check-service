@@ -51,47 +51,6 @@ public class TjTeamGroupVo implements Serializable {
     @ExcelProperty(value = "分组方式sys_dict_type(bus_group_type)")
     private Integer groupType;
 
-    /**
-     * 性别
-     */
-    @ExcelProperty(value = "性别")
-    private String gender;
-
-    /**
-     * 年龄开始段
-     */
-    @ExcelProperty(value = "年龄开始段")
-    private Integer startAge;
-
-    /**
-     * 年龄结束段
-     */
-    @ExcelProperty(value = "年龄结束段")
-    private Integer endAge;
-
-    /**
-     * 婚姻状况sys_dict_type(bus_marriage_status)
-     */
-    @ExcelProperty(value = "婚姻状况sys_dict_type(bus_marriage_status)")
-    private String marriage;
-
-    /**
-     * 金额
-     */
-    @ExcelProperty(value = "金额")
-    private BigDecimal price;
-
-    /**
-     * 分组支付方式sys_dict_type(bus_group_pay_type)0:个人1:单位
-     */
-    @ExcelProperty(value = "分组支付方式sys_dict_type(bus_group_pay_type)0:个人1:单位")
-    private String groupPayType;
-
-    /**
-     * 加项支付方式sys_dict_type(bus_group_pay_type)0:个人1:单位
-     */
-    @ExcelProperty(value = "加项支付方式sys_dict_type(bus_group_pay_type)0:个人1:单位")
-    private String addPayType;
 
     /**
      * 项目折扣
@@ -123,47 +82,6 @@ public class TjTeamGroupVo implements Serializable {
     @ExcelProperty(value = "实际价格")
     private BigDecimal actualPrice;
 
-    /**
-     * 单位ID
-     */
-    @ExcelProperty(value = "单位ID")
-    private Long teamId;
-
-    /**
-     * 单位名称
-     */
-    @ExcelProperty(value = "单位名称")
-    private String teamName;
-
-    /**
-     * 分组编号
-     */
-    @ExcelProperty(value = "分组编号")
-    private String groupNumber;
-
-    /**
-     * 任务id
-     */
-    @ExcelProperty(value = "任务id")
-    private Long taskId;
-
-    /**
-     * 任务名称
-     */
-    @ExcelProperty(value = "任务名称")
-    private String taskName;
-
-    /**
-     * 套餐id
-     */
-    @ExcelProperty(value = "套餐id")
-    private Long packageId;
-
-    /**
-     * 套餐名称
-     */
-    @ExcelProperty(value = "套餐名称")
-    private String packageName;
 
 
 }

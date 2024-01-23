@@ -1,0 +1,111 @@
+package org.fxkc.peis.domain;
+
+import com.baomidou.mybatisplus.annotation.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+import java.io.Serial;
+
+/**
+ * 体检分组人员历史对象 tj_team_group_history
+ *
+ * @author JunBaiChen
+ * @date 2024-01-23
+ */
+@Data
+@EqualsAndHashCode(callSuper = true)
+@TableName("tj_team_group_history")
+public class TjTeamGroupHistory extends TenantEntity {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 主键id
+     */
+    @TableId(value = "id")
+    private Long id;
+
+    /**
+     * 体检人员id
+     */
+    private Long regId;
+
+    /**
+     * 分组id
+     */
+    private Long groupId;
+
+    /**
+     * 分组名称
+     */
+    private String groupName;
+
+    /**
+     * 在岗状态sys_dict_type(bus_duty_status)
+     */
+    private String dutyStatus;
+
+    /**
+     * 性别sys_dict_type(bus_gender)
+     */
+    private String gender;
+
+    /**
+     * 年龄开始段
+     */
+    private Long startAge;
+
+    /**
+     * 年龄结束段
+     */
+    private Long endAge;
+
+    /**
+     * 婚姻状况sys_dict_type(bus_marriage_status)
+     */
+    private String marriage;
+
+    /**
+     * 金额
+     */
+    private Long price;
+
+    /**
+     * 分组支付方式sys_dict_type(bus_group_pay_type)0:个人1:单位
+     */
+    private String groupPayType;
+
+    /**
+     * 加项支付方式sys_dict_type(bus_group_pay_type)0:个人1:单位
+     */
+    private String addPayType;
+
+    /**
+     * 项目折扣
+     */
+    private Long itemDiscount;
+
+    /**
+     * 加项折扣
+     */
+    private Long addDiscount;
+
+    /**
+     * 标准价格
+     */
+    private Long standardPrice;
+
+    /**
+     * 实际价格
+     */
+    private Long actualPrice;
+
+    /**
+     * 删除标志（0代表存在 2代表删除）
+     */
+    @TableLogic
+    private String delFlag;
+
+
+}

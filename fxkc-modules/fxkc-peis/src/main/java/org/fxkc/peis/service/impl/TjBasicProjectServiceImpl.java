@@ -81,6 +81,7 @@ public class TjBasicProjectServiceImpl implements ITjBasicProjectService {
         lqw.eq(StringUtils.isNotBlank(bo.getHisCode()), TjBasicProject::getHisCode, bo.getHisCode());
         lqw.eq(StringUtils.isNotBlank(bo.getZybCode()), TjBasicProject::getZybCode, bo.getZybCode());
         lqw.eq(StringUtils.isNotBlank(bo.getStatus()), TjBasicProject::getStatus, bo.getStatus());
+        lqw.isNotNull(bo.getIsOccupational(), TjBasicProject::getZybCode);
         return lqw;
     }
 

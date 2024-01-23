@@ -1,13 +1,15 @@
 package org.fxkc.peis.domain.bo;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
-public class VerifyGroupBo {
+public class VerifyGroupPackageBo {
 
     /**
      * 主键id
@@ -22,28 +24,6 @@ public class VerifyGroupBo {
     private String groupName;
 
     /**
-     * 分组方式
-     */
-    @NotNull(message = "分组方式不能为空")
-    private Integer groupType;
-
-    /**
-     * 金额
-     */
-    private BigDecimal price;
-
-    /**
-     * 分组支付方式sys_dict_type(bus_group_pay_type)0:个人1:单位
-     */
-    @NotBlank(message = "分组支付方式不能为空")
-    private String groupPayType;
-
-    /**
-     * 加项支付方式sys_dict_type(bus_group_pay_type)0:个人1:单位
-     */
-    private String addPayType;
-
-    /**
      * 项目折扣
      */
     @NotNull(message = "项目折扣不能为空")
@@ -52,6 +32,7 @@ public class VerifyGroupBo {
     /**
      * 加项折扣
      */
+    @NotNull(message = "加项折扣不能为空")
     private BigDecimal addDiscount;
 
     /**
@@ -60,5 +41,17 @@ public class VerifyGroupBo {
     @NotBlank(message = "是否同步项目不能为空")
     private String isSyncProject;
 
+    /**
+     * 项目id集合
+     */
+    @NotEmpty(message = "项目id集合不能为空")
+    private List<String> itemList;
+
+
+    /**
+     * 实际价格
+     */
+    @NotNull(message = "实际价格不能为空")
+    private BigDecimal actualPrice;
 
 }
