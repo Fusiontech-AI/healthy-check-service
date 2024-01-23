@@ -1,13 +1,13 @@
 package org.fxkc.peis.domain;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
-
-import java.util.Date;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import org.fxkc.common.tenant.core.TenantEntity;
 
 import java.io.Serial;
+import java.util.Date;
 
 /**
  * 体检人员登记信息对象 tj_register
@@ -213,4 +213,228 @@ public class TjRegister extends TenantEntity {
      */
     private String status;
 
+    /**
+     * 证件图片
+     */
+    private String credentialImage;
+
+    /**
+     * 人员类别,字典类型bus_person_category
+     */
+    private String personCategory;
+
+    /**
+     * 费别,字典类型bus_cost_type
+     */
+    private String costType;
+
+    /**
+     * 付费类型,字典类型bus_pay_type
+     */
+    private String payType;
+
+    /**
+     * 总费用
+     */
+    private Long totalAmount;
+
+    /**
+     * 个人费用
+     */
+    private Long personAmount;
+
+    /**
+     * 单位费用
+     */
+    private Long teamAmount;
+
+    /**
+     * 已缴总费用
+     */
+    private Long paidTotalAmount;
+
+    /**
+     * 已缴个人费用
+     */
+    private Long paidPersonAmount;
+
+    /**
+     * 已缴单位费用
+     */
+    private Long paidTeamAmount;
+
+    /**
+     * 体检登记(报道)时间
+     */
+    private Date registerTime;
+
+    /**
+     * 体检登记(报道)医生id
+     */
+    private Long registerDoctorId;
+
+    /**
+     * 体检支付方式(渠道),字典类型bus_pay_way
+     */
+    private String payWay;
+
+    /**
+     * 体检收费状态,字典类型bus_pay_status
+     */
+    private String chargeStatus;
+
+    /**
+     * 体检收费时间
+     */
+    private Date chargeTime;
+
+    /**
+     * 体检流程状态,字典类型bus_process_status
+     */
+    private String processStatus;
+
+    /**
+     * 体检次数
+     */
+    private Long peTimes;
+
+    /**
+     * 总检完成标志(0待总检 1 已总检)
+     */
+    private String insMark;
+
+    /**
+     * 套餐id
+     */
+    private Long packageId;
+
+    /**
+     * 指引单打印次数
+     */
+    private Long guidePrintTimes;
+
+    /**
+     * 报告是否打印(0是 1否)
+     */
+    private String reportPrintFlag;
+
+    /**
+     * 报告打印时间
+     */
+    private Date reportPrintTime;
+
+    /**
+     * 报告打印次数
+     */
+    private Long reportPrintTimes;
+
+    /**
+     * 报告领取时间
+     */
+    private Date reportReceiverTime;
+
+    /**
+     * 团检预约到期时间
+     */
+    private Date teamCheckExpireTime;
+
+    /**
+     * 体检预约时间
+     */
+    private Date healthyReserveTime;
+
+    /**
+     * 单位是否收费(0是 1否)
+     */
+    private String teamChargeStatus;
+
+    /**
+     * 患者id
+     */
+    private String patientId;
+
+    /**
+     * 就诊流水号
+     */
+    private String visitSerialNo;
+
+    /**
+     * 姓名拼音
+     */
+    private String namePy;
+
+    /**
+     * 登记来源,字典类型bus_register_source
+     */
+    private String registerSource;
+
+    /**
+     * 体检综述
+     */
+    private String peConclusion;
+
+    /**
+     * 总检建议
+     */
+    private String peAdvice;
+
+    /**
+     * 替检标志 0是 1否
+     */
+    private String replaceFlag;
+
+    /**
+     * 被替检人姓名
+     */
+    private String replaceName;
+
+    /**
+     * 被替检人证件类型,见字典bus_credential_type
+     */
+    private String replaceCredentialType;
+
+    /**
+     * 被替检人证件号码
+     */
+    private String replaceCredentialNumber;
+
+    /**
+     * 被替检人生日
+     */
+    private Date replaceBirthday;
+
+    /**
+     * 被替检人性别
+     */
+    private String replaceGender;
+
+    /**
+     * 被替检人年龄
+     */
+    private Long replaceAge;
+
+    /**
+     * 排班id
+     */
+    private Long schedulingId;
+
+    /**
+     * 体检检查类型1初检 2复检,见字典bus_tj_check_type
+     */
+    private String checkType;
+
+    /**
+     * 备注
+     */
+    private String remark;
+
+    /**
+     * 联系人地址
+     */
+    private String contactAddress;
+
+    /**
+     * 联系人邮箱
+     */
+    private String contactEmail;
 }
