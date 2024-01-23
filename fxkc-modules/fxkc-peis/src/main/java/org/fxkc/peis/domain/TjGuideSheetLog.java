@@ -1,8 +1,8 @@
 package org.fxkc.peis.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
+
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.fxkc.common.tenant.core.TenantEntity;
@@ -18,6 +18,9 @@ import java.io.Serial;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("tj_guide_sheet_log")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class TjGuideSheetLog extends TenantEntity {
 
     @Serial
