@@ -114,7 +114,7 @@ public class TjTeamTaskController extends BaseController {
      */
     @PostMapping("/verifyGroupData")
     @Log(title = "团检任务校验分组数据", businessType = BusinessType.OTHER)
-    public R<VerifyMessageVo> verifyGroupData(@RequestBody @Valid VerifyGroupBo bo) {
-        return R.ok(tjTeamTaskService.verifyGroupData(bo));
+    public R<VerifyMessageVo> verifyGroupData(@RequestBody @Valid List<VerifyGroupBo> list) {
+        return R.ok(tjTeamTaskService.verifyGroupData(list));
     }
 }

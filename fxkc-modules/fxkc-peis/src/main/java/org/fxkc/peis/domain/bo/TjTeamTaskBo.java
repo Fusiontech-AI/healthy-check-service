@@ -1,6 +1,7 @@
 package org.fxkc.peis.domain.bo;
 
 import cn.hutool.core.date.DatePattern;
+import lombok.experimental.Accessors;
 import org.fxkc.common.core.validate.AddGroup;
 import org.fxkc.common.core.validate.EditGroup;
 import org.fxkc.peis.domain.TjTeamTask;
@@ -23,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @AutoMapper(target = TjTeamTask.class, reverseConvertGenerate = false)
+@Accessors(chain = true)
 public class TjTeamTaskBo extends BaseEntity {
 
     /**

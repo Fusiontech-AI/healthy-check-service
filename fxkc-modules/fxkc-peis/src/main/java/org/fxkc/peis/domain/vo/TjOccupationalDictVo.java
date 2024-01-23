@@ -68,5 +68,11 @@ public class TjOccupationalDictVo implements Serializable {
     @ExcelProperty(value = "分类编号")
     private String sortCode;
 
+    /**
+     * 职业照射种类
+     */
+    @ExcelProperty(value = "职业照射种类")
+    private String shineSource;
+
 
 }

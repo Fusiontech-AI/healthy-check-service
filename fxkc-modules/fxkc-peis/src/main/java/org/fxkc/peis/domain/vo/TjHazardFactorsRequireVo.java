@@ -2,6 +2,9 @@ package org.fxkc.peis.domain.vo;
 
 import lombok.experimental.Accessors;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
+import org.fxkc.common.translation.annotation.Translation;
+import org.fxkc.common.translation.annotation.TranslationType;
+import org.fxkc.common.translation.constant.TransConstant;
 import org.fxkc.peis.domain.TjHazardFactorsRequire;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import io.github.linpeilie.annotations.AutoMapper;
@@ -54,6 +57,12 @@ public class TjHazardFactorsRequireVo implements Serializable {
          * 必检项目集合
          */
         private List<ItemBody> itemList;
+
+        /**
+         * 更新人名称
+         */
+        @Translation(type = TransConstant.USER_ID_TO_NAME, mapper = "updateBy")
+        private String updateByName;
     }
 
     @Data

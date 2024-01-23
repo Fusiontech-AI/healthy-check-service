@@ -58,6 +58,11 @@ public class TjOccupationalDict extends TenantEntity {
     private String sortCode;
 
     /**
+     * 职业照射种类
+     */
+    private String shineSource;
+
+    /**
      * 删除标志（0代表存在 2代表删除）
      */
     @TableLogic

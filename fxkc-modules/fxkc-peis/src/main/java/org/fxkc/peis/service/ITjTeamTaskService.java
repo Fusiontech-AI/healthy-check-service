@@ -51,5 +51,5 @@ public interface ITjTeamTaskService {
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
 
-    VerifyMessageVo verifyGroupData(VerifyGroupBo bo);
+    VerifyMessageVo verifyGroupData(List<VerifyGroupBo> list);
 }

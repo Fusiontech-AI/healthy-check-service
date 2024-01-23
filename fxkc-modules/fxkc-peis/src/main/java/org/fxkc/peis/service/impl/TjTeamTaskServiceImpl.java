@@ -3,9 +3,11 @@ package org.fxkc.peis.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.EnumUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.fxkc.common.core.utils.MapstructUtils;
+import org.fxkc.common.core.utils.StreamUtils;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -13,6 +15,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import org.fxkc.peis.constant.ErrorCodeConstants;
+import org.fxkc.peis.domain.TjRegister;
 import org.fxkc.peis.domain.TjTeamGroup;
 import org.fxkc.peis.domain.bo.TjTeamGroupBo;
 import org.fxkc.peis.domain.bo.TjTeamTaskQueryBo;
@@ -21,8 +24,10 @@ import org.fxkc.peis.domain.vo.TjTeamGroupVo;
 import org.fxkc.peis.domain.vo.TjTeamTaskDetailVo;
 import org.fxkc.peis.domain.vo.VerifyMessageVo;
 import org.fxkc.peis.enums.GroupTypeEnum;
+import org.fxkc.peis.enums.HealthyCheckTypeEnum;
 import org.fxkc.peis.enums.PhysicalTypeEnum;
 import org.fxkc.peis.exception.PeisException;
+import org.fxkc.peis.mapper.TjRegisterMapper;
 import org.fxkc.peis.mapper.TjTeamGroupMapper;
 import org.fxkc.peis.service.ITjTeamInfoService;
 import org.springframework.stereotype.Service;
@@ -34,6 +39,8 @@ import org.fxkc.peis.service.ITjTeamTaskService;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -49,6 +56,8 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
     private final TjTeamGroupMapper tjTeamGroupMapper;
 
     private final ITjTeamInfoService iTjTeamInfoService;
+
+    private final TjRegisterMapper tjRegisterMapper;
 
     /**
      * 查询团检任务管理
@@ -154,11 +163,11 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
         }
         List<TjTeamGroupBo> boList = bo.getGroupList().stream().filter(e -> Objects.equals(e.getGroupType(), GroupTypeEnum.ITEM.getCode()) ||
             Objects.equals(e.getGroupType(), GroupTypeEnum.PRICE.getCode())).toList();
-        //项目分组、金额分组折扣校验
+        //项目分组、金额加项折扣校验
         if(boList.stream().anyMatch(e -> Objects.isNull(e.getAddDiscount()))) {
             throw new PeisException(ErrorCodeConstants.PEIS_ITEM_DISCOUNT_NOT_EMPTY);
         }
-        //项目分组、金额分组支付方式校验
+        //项目分组、金额加项支付方式校验
         if(boList.stream().anyMatch(e -> StrUtil.isBlank(e.getAddPayType()))) {
             throw new PeisException(ErrorCodeConstants.PEIS_ADD_PAY_TYPE_NOT_EMPTY);
         }
@@ -181,7 +190,53 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
     }
 
     @Override
-    public VerifyMessageVo verifyGroupData(VerifyGroupBo bo) {
+    public VerifyMessageVo verifyGroupData(List<VerifyGroupBo> list) {
+        List<TjTeamGroupBo> boList = BeanUtil.copyToList(list, TjTeamGroupBo.class);
+        validEntityBeforeSave(new TjTeamTaskBo().setGroupList(boList), Boolean.FALSE);
+        List<Long> idList = StreamUtils.toList(list, VerifyGroupBo::getId);
+        List<TjTeamGroup> groupList = tjTeamGroupMapper.selectBatchIds(idList);
+        List<TjRegister> tjRegisterList = tjRegisterMapper.selectList(Wrappers.lambdaQuery(TjRegister.class)
+            .in(TjRegister::getTeamGroupId, idList)
+            .eq(TjRegister::getHealthyCheckStatus, HealthyCheckTypeEnum.预约.getCode()));
+        Map<Long, Long> tjRegisterMap = tjRegisterList.stream().collect(Collectors.groupingBy(
+            TjRegister::getTeamGroupId, Collectors.counting()));
+        StringBuffer buffer = new StringBuffer();
+        AtomicInteger index = new AtomicInteger(1);
+        AtomicBoolean isPrompt = new AtomicBoolean(Boolean.FALSE);
+        boList.forEach(k -> {
+            groupList.forEach(s -> {
+                if(Objects.equals(k.getId(), s.getId())) {
+                    buffer.append(index.getAndIncrement()).append(StrUtil.DOT).append(k.getGroupName());
+                    if(k.getItemDiscount().compareTo(s.getItemDiscount()) != 0) {
+                        isPrompt.set(Boolean.TRUE);
+                        buffer.append("【折扣调整为<span style='color:red'>").append(k.getItemDiscount())
+                            .append("</span>】、");
+                    }
+                    if(ObjectUtil.notEqual(k.getGroupType(), GroupTypeEnum.DISCOUNT.getCode())) {
+                        if(k.getAddDiscount().compareTo(s.getAddDiscount()) != 0) {
+                            isPrompt.set(Boolean.TRUE);
+                            buffer.append("【加项折扣调整为<span style='color:red'>").append(k.getAddDiscount())
+                                .append("</span>】、");
+                        }
+                        if(ObjectUtil.notEqual(k.getAddPayType(), s.getAddPayType())) {
+                            isPrompt.set(Boolean.TRUE);
+                            buffer.append("【加项支付方式调整为<span style='color:red'>")
+                                .append(Objects.equals("0", k.getAddPayType()) ? "个人" : "单位")
+                                .append("</span>】、");
+                        }
+                    }
+                    if(ObjectUtil.notEqual(k.getGroupPayType(), s.getGroupPayType())) {
+                        isPrompt.set(Boolean.TRUE);
+                        buffer.append("【分组内支付方式调整为<span style='color:red'>")
+                            .append(Objects.equals("0", k.getGroupPayType()) ? "个人" : "单位")
+                            .append("</span>】、");
+                    }
+                    if(ObjectUtil.equal(k.getGroupType(), GroupTypeEnum.PRICE.getCode())) {
+
+                    }
+                }
+            });
+        });
         return null;
     }
 }
