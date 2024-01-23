@@ -4,6 +4,7 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.URLUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.fxkc.common.core.constant.CommonConstants;
 import org.fxkc.common.core.exception.ServiceException;
 import org.fxkc.common.core.utils.MapstructUtils;
 import org.fxkc.common.core.utils.StringUtils;
@@ -128,9 +129,7 @@ public class TjGuideSheetLogServiceImpl implements ITjGuideSheetLogService {
      */
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
-        if(isValid){
-            //TODO 做一些业务上的校验,判断是否需要校验
-        }
-        return baseMapper.deleteBatchIds(ids) > 0;
+        return baseMapper.update(TjGuideSheetLog.builder().delFlag(CommonConstants.DISABLE).build(),
+            Wrappers.lambdaQuery(TjGuideSheetLog.class).in(TjGuideSheetLog::getId,ids)) > 0;
     }
 }
