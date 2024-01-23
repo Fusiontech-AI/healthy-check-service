@@ -44,7 +44,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         a.hazard_factors_name,
         a.hazard_factors_code,
         a.duty_status,
-        d.label,
+        d.dict_label,
         a.enable_status,
         a.update_time,
         a.update_by,
@@ -62,7 +62,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select count(1) from tj_package a , tj_package_hazards b
         where a.status = '0'
           and a.del_flag = '0'
-          and b.del_flag = '0'
           and b.hazard_factors_code = #{hazardFactorsCode}
           and a.id = b.package_id
           and a.duty_status = #{dutyStatus}
