@@ -76,4 +76,9 @@ public class SysDictDataBo extends BaseEntity {
      */
     private String remark;
 
+    /**
+     * 业务类型编码
+     */
+    private String busType;
+
 }

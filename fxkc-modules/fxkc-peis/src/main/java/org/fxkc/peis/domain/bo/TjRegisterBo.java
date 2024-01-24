@@ -447,9 +447,9 @@ public class TjRegisterBo extends BaseEntity {
     private Long schedulingId;
 
     /**
-     * 体检检查类型1初检 2复检,见字典bus_tj_check_type
+     * 体检检查类型11初检 21复检,见字典bus_tj_check_type
      */
-    @NotBlank(message = "体检检查类型1初检 2复检,见字典bus_tj_check_type不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotBlank(message = "体检检查类型11初检 21复检,见字典bus_tj_check_type不能为空", groups = { AddGroup.class, EditGroup.class })
     private String checkType;
 
     /**
