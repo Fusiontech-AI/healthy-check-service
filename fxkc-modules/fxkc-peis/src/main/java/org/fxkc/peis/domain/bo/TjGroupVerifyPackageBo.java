@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-public class VerifyGroupPackageBo {
+public class TjGroupVerifyPackageBo {
 
     /**
      * 主键id

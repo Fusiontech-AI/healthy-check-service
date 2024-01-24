@@ -141,11 +141,11 @@ public class TjHazardFactorsRequireServiceImpl extends ServiceImpl<TjHazardFacto
     @Override
     public TjHazardFactorsRequireVo hazardFactorsDetail(String id) {
         TjHazardFactorsRequire hazardFactorsRequire = baseMapper.selectById(id);
-        TjHazardFactorsRequireVo.HazardFactorsRequireQueryVo vo = MapstructUtils.convert(hazardFactorsRequire, TjHazardFactorsRequireVo.HazardFactorsRequireQueryVo.class);
+        TjHazardFactorsRequireVo.HazardFactorsRequireQueryVo vo = BeanUtil.toBean(hazardFactorsRequire, TjHazardFactorsRequireVo.HazardFactorsRequireQueryVo.class);
         List<TjHazardFactorsItem> list = tjHazardFactorsItemMapper.selectList(Wrappers.lambdaQuery(TjHazardFactorsItem.class)
             .eq(TjHazardFactorsItem::getFactorsId, id));
         if(CollUtil.isNotEmpty(list)) {
-            List<TjHazardFactorsRequireVo.ItemBody>  bodyList = new ArrayList<>();
+            List<TjHazardFactorsRequireVo.ItemBody>  bodyList = CollUtil.newArrayList();
             if(ObjectUtil.equal(hazardFactorsRequire.getAssociationType(), AssociationTypeEnum.REQUIRED_ITEM.getCode())) {
                 List<TjBasicProject> itemList = tjBasicProjectMapper.selectBatchIds(list.stream()
                     .map(TjHazardFactorsItem::getItemId).collect(Collectors.toList()));

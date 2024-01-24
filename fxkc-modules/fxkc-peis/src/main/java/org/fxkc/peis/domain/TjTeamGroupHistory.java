@@ -3,6 +3,7 @@ package org.fxkc.peis.domain;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -21,6 +22,7 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(callSuper = true)
 @TableName("tj_team_group_history")
 @Accessors(chain = true)
+@AutoMapper(target = TjTeamGroup.class)
 public class TjTeamGroupHistory extends TenantEntity {
 
     @Serial

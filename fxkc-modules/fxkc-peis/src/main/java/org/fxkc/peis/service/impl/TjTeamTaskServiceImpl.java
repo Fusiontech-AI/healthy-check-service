@@ -194,11 +194,11 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
     }
 
     @Override
-    public VerifyMessageVo verifyGroupData(List<VerifyGroupBo> list) {
+    public VerifyMessageVo verifyGroupData(List<TjGroupVerifyBo> list) {
         VerifyMessageVo vo = new VerifyMessageVo();
         List<TjTeamGroupBo> boList = MapstructUtils.convert(list, TjTeamGroupBo.class);
         validEntityBeforeSave(new TjTeamTaskBo().setGroupList(boList), Boolean.FALSE);
-        List<Long> idList = StreamUtils.toList(list, VerifyGroupBo::getId);
+        List<Long> idList = StreamUtils.toList(list, TjGroupVerifyBo::getId);
         List<TjTeamGroup> groupList = tjTeamGroupMapper.selectBatchIds(idList);
         List<TjRegister> tjRegisterList = tjRegisterMapper.selectList(Wrappers.lambdaQuery(TjRegister.class)
             .in(TjRegister::getTeamGroupId, idList)
@@ -265,9 +265,9 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
     }
 
     @Override
-    public VerifyMessageVo verifyGroupPackageData(List<VerifyGroupPackageBo> list) {
+    public VerifyMessageVo verifyGroupPackageData(List<TjGroupVerifyPackageBo> list) {
         VerifyMessageVo vo = new VerifyMessageVo();
-        List<Long> idList = StreamUtils.toList(list, VerifyGroupPackageBo::getId);
+        List<Long> idList = StreamUtils.toList(list, TjGroupVerifyPackageBo::getId);
         List<TjTeamGroup> groupList = tjTeamGroupMapper.selectBatchIds(idList);
         List<TjRegister> tjRegisterList = tjRegisterMapper.selectList(Wrappers.lambdaQuery(TjRegister.class)
             .in(TjRegister::getTeamGroupId, idList)

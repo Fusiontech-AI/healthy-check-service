@@ -4,8 +4,8 @@ import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.peis.domain.bo.TjTeamTaskBo;
 import org.fxkc.peis.domain.bo.TjTeamTaskQueryBo;
-import org.fxkc.peis.domain.bo.VerifyGroupBo;
-import org.fxkc.peis.domain.bo.VerifyGroupPackageBo;
+import org.fxkc.peis.domain.bo.TjGroupVerifyBo;
+import org.fxkc.peis.domain.bo.TjGroupVerifyPackageBo;
 import org.fxkc.peis.domain.vo.TjTeamGroupVo;
 import org.fxkc.peis.domain.vo.TjTeamTaskDetailVo;
 import org.fxkc.peis.domain.vo.TjTeamTaskVo;
@@ -52,7 +52,7 @@ public interface ITjTeamTaskService {
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
 
-    VerifyMessageVo verifyGroupData(List<VerifyGroupBo> list);
+    VerifyMessageVo verifyGroupData(List<TjGroupVerifyBo> list);
 
-    VerifyMessageVo verifyGroupPackageData(List<VerifyGroupPackageBo> list);
+    VerifyMessageVo verifyGroupPackageData(List<TjGroupVerifyPackageBo> list);
 }
