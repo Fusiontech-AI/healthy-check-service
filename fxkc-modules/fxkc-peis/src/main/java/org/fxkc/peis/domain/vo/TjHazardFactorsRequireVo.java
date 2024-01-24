@@ -24,6 +24,7 @@ import java.util.List;
 @Data
 @ExcelIgnoreUnannotated
 @Accessors(chain = true)
+@AutoMapper(target = TjHazardFactorsRequire.class)
 public class TjHazardFactorsRequireVo implements Serializable {
 
     @Serial
@@ -40,7 +41,6 @@ public class TjHazardFactorsRequireVo implements Serializable {
     private HazardFactorsRequireQueryVo vo;
 
     @Data
-    @AutoMapper(target = TjHazardFactorsRequire.class)
     public static class HazardFactorsRequireQueryVo extends TjHazardFactorsRequire {
 
         /**
