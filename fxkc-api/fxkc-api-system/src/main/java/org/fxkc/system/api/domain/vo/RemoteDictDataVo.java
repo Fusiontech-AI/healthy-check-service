@@ -73,4 +73,9 @@ public class RemoteDictDataVo implements Serializable {
      */
     private Date createTime;
 
+    /**
+     * 业务类型编码
+     */
+    private String busType;
+
 }

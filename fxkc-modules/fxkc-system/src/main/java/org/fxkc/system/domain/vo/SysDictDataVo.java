@@ -85,4 +85,8 @@ public class SysDictDataVo implements Serializable {
     @ExcelProperty(value = "创建时间")
     private Date createTime;
 
+    /**
+     * 业务类型编码
+     */
+    private String busType;
 }

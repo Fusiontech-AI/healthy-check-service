@@ -97,7 +97,7 @@ public class TjPackage extends TenantEntity {
     private String shineSource;
 
     /**
-     * 照射源种类tj_occupational_dict(type=99)
+     * 照射源种类sys_dict_type(bus_job_illumination_source)
      */
     private String shineType;
 

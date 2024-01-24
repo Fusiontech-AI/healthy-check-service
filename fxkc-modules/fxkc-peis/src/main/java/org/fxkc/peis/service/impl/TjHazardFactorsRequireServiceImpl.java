@@ -1,35 +1,44 @@
 package org.fxkc.peis.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.apache.commons.collections4.CollectionUtils;
-import org.fxkc.common.core.constant.CommonConstants;
-import org.fxkc.common.mybatis.core.page.TableDataInfo;
-import org.fxkc.common.mybatis.core.page.PageQuery;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.fxkc.common.core.constant.CommonConstants;
+import org.fxkc.common.core.utils.MapstructUtils;
+import org.fxkc.common.core.utils.StreamUtils;
+import org.fxkc.common.mybatis.core.page.PageQuery;
+import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.peis.constant.ErrorCodeConstants;
-import org.fxkc.peis.domain.TjHazardFactorsItem;
 import org.fxkc.peis.domain.TjBasicProject;
+import org.fxkc.peis.domain.TjHazardFactorsItem;
+import org.fxkc.peis.domain.TjHazardFactorsRequire;
 import org.fxkc.peis.domain.TjOccupationalDict;
 import org.fxkc.peis.domain.bo.TjHazardFactorsCodeBo;
-import org.fxkc.peis.domain.bo.TjHazardFactorsRequireSaveBo;
-import org.fxkc.peis.enums.AssociationTypeEnum;
-import org.fxkc.peis.exception.PeisException;
-import org.fxkc.peis.mapper.TjHazardFactorsItemMapper;
-import org.fxkc.peis.mapper.TjBasicProjectMapper;
-import org.fxkc.peis.mapper.TjOccupationalDictMapper;
-import org.springframework.stereotype.Service;
 import org.fxkc.peis.domain.bo.TjHazardFactorsRequireBo;
+import org.fxkc.peis.domain.bo.TjHazardFactorsRequireSaveBo;
+import org.fxkc.peis.domain.bo.TjOccupationalDictBo;
 import org.fxkc.peis.domain.vo.TjHazardFactorsRequireVo;
-import org.fxkc.peis.domain.TjHazardFactorsRequire;
+import org.fxkc.peis.domain.vo.TjHazardFactorsTreeVo;
+import org.fxkc.peis.domain.vo.TjOccupationalDictTreeVo;
+import org.fxkc.peis.domain.vo.TjOccupationalDictVo;
+import org.fxkc.peis.enums.AssociationTypeEnum;
+import org.fxkc.peis.enums.OccupationalDictEnum;
+import org.fxkc.peis.exception.PeisException;
+import org.fxkc.peis.mapper.TjBasicProjectMapper;
+import org.fxkc.peis.mapper.TjHazardFactorsItemMapper;
 import org.fxkc.peis.mapper.TjHazardFactorsRequireMapper;
+import org.fxkc.peis.mapper.TjOccupationalDictMapper;
 import org.fxkc.peis.service.ITjHazardFactorsRequireService;
+import org.fxkc.system.api.RemoteDictService;
+import org.fxkc.system.api.domain.vo.RemoteDictDataVo;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -52,6 +61,9 @@ public class TjHazardFactorsRequireServiceImpl extends ServiceImpl<TjHazardFacto
 
     private final TjOccupationalDictMapper tjOccupationalDictMapper;
 
+    @DubboReference
+    private RemoteDictService remoteDictService;
+
 
     @Override
     public TjHazardFactorsRequireVo hazardFactorsQuery(TjHazardFactorsRequireBo bo, PageQuery pageQuery) {
@@ -64,7 +76,7 @@ public class TjHazardFactorsRequireServiceImpl extends ServiceImpl<TjHazardFacto
             TjHazardFactorsRequire hazardFactorsRequire = baseMapper.selectOne(Wrappers.lambdaQuery(TjHazardFactorsRequire.class)
                 .eq(TjHazardFactorsRequire::getHazardFactorsCode, bo.getHazardFactorsCode())
                 .eq(TjHazardFactorsRequire::getAssociationType, bo.getAssociationType()));
-            TjHazardFactorsRequireVo.HazardFactorsRequireQueryVo vo = BeanUtil.toBean(hazardFactorsRequire, TjHazardFactorsRequireVo.HazardFactorsRequireQueryVo.class);
+            TjHazardFactorsRequireVo.HazardFactorsRequireQueryVo vo = MapstructUtils.convert(hazardFactorsRequire, TjHazardFactorsRequireVo.HazardFactorsRequireQueryVo.class);
             hazardFactorsRequireVo.setVo(vo);
         }
         return hazardFactorsRequireVo;
@@ -73,7 +85,7 @@ public class TjHazardFactorsRequireServiceImpl extends ServiceImpl<TjHazardFacto
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveOrUpdate(TjHazardFactorsRequireSaveBo bo) {
-        TjHazardFactorsRequire hazardFactorsRequire = BeanUtil.toBean(bo, TjHazardFactorsRequire.class);
+        TjHazardFactorsRequire hazardFactorsRequire = MapstructUtils.convert(bo, TjHazardFactorsRequire.class);
         if(ObjectUtil.notEqual(AssociationTypeEnum.EVALUATION_CRITERION.getCode(), bo.getAssociationType())
             && StrUtil.isBlank(bo.getDutyStatus())) {
             throw new PeisException(ErrorCodeConstants.PEIS_HAZARD_STATUS_NOT_EMPTY);
@@ -135,7 +147,7 @@ public class TjHazardFactorsRequireServiceImpl extends ServiceImpl<TjHazardFacto
     @Override
     public TjHazardFactorsRequireVo hazardFactorsDetail(String id) {
         TjHazardFactorsRequire hazardFactorsRequire = baseMapper.selectById(id);
-        TjHazardFactorsRequireVo.HazardFactorsRequireQueryVo vo = BeanUtil.toBean(hazardFactorsRequire, TjHazardFactorsRequireVo.HazardFactorsRequireQueryVo.class);
+        TjHazardFactorsRequireVo.HazardFactorsRequireQueryVo vo = MapstructUtils.convert(hazardFactorsRequire, TjHazardFactorsRequireVo.HazardFactorsRequireQueryVo.class);
         List<TjHazardFactorsItem> list = tjHazardFactorsItemMapper.selectList(Wrappers.lambdaQuery(TjHazardFactorsItem.class)
             .eq(TjHazardFactorsItem::getFactorsId, id));
         if(CollUtil.isNotEmpty(list)) {
@@ -170,7 +182,7 @@ public class TjHazardFactorsRequireServiceImpl extends ServiceImpl<TjHazardFacto
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean batchDeleteByIds(List<Long> list) {
-        list.forEach(k -> tjHazardFactorsItemMapper.delete(Wrappers.lambdaUpdate(TjHazardFactorsItem.class)
+        list.forEach(k -> tjHazardFactorsItemMapper.delete(Wrappers.lambdaQuery(TjHazardFactorsItem.class)
                 .eq(TjHazardFactorsItem::getFactorsId, k)));
         return baseMapper.deleteBatchIds(list) > 0;
     }
@@ -197,5 +209,26 @@ public class TjHazardFactorsRequireServiceImpl extends ServiceImpl<TjHazardFacto
             }
         }
         return bodyList;
+    }
+
+    @Override
+    public List<TjHazardFactorsTreeVo> getHazardFactorsTree(String value) {
+        List<RemoteDictDataVo> dictVoList =  remoteDictService.selectDictDataByType(OccupationalDictEnum.WHYS.getCode());
+        if(StrUtil.isNotBlank(value)) {
+            dictVoList = StreamUtils.filter(dictVoList, e -> e.getDictLabel().contains(value));
+        }
+        dictVoList = StreamUtils.sorted(dictVoList, Comparator.comparing(RemoteDictDataVo::getDictValue));
+        Map<String, List<RemoteDictDataVo>> groups = StreamUtils.groupByKey(dictVoList, e -> String.format("%s_%s", e.getBusType(), e.getRemark()));
+        List<TjHazardFactorsTreeVo> voList = CollUtil.newArrayList();
+        groups.forEach((k, v) -> {
+            String[] str = k.split(StrUtil.UNDERLINE);
+            List<TjHazardFactorsTreeVo> childList = CollUtil.newArrayList();
+            v.forEach(s -> childList.add(new TjHazardFactorsTreeVo().setCode(s.getDictValue())
+                .setValue(s.getDictLabel()).setSortCode(s.getBusType())));
+            voList.add(new TjHazardFactorsTreeVo().setCode(str[0])
+                .setValue(str[1])
+                .setChildren(childList));
+        });
+        return voList;
     }
 }

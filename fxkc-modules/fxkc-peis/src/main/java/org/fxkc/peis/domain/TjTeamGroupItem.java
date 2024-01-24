@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import org.fxkc.common.tenant.core.TenantEntity;
 
 import java.io.Serial;
+import java.math.BigDecimal;
 
 /**
  * 团检分组对应项目对象 tj_team_group_item
@@ -45,17 +46,17 @@ public class TjTeamGroupItem extends TenantEntity {
     /**
      * 标准价格
      */
-    private Long standardPrice;
+    private BigDecimal standardPrice;
 
     /**
      * 实际价格
      */
-    private Long actualPrice;
+    private BigDecimal actualPrice;
 
     /**
      * 折扣
      */
-    private Long discount;
+    private BigDecimal discount;
 
     /**
      * 是否套餐包含的项目1是2否
@@ -65,7 +66,7 @@ public class TjTeamGroupItem extends TenantEntity {
     /**
      * 是否必选(1:是0否)
      */
-    private Long isRequired;
+    private Boolean isRequired;
 
 
 }

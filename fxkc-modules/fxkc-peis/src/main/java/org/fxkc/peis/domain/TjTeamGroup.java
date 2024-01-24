@@ -91,7 +91,7 @@ public class TjTeamGroup extends TenantEntity {
     private BigDecimal addDiscount;
 
     /**
-     * 是否同步项目(1:是0:否)
+     * 是否同步项目(0:是1:否)
      */
     private String isSyncProject;
 

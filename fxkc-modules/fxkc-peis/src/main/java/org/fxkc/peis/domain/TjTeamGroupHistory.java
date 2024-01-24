@@ -1,10 +1,15 @@
 package org.fxkc.peis.domain;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
+import org.fxkc.common.tenant.core.TenantEntity;
 
 import java.io.Serial;
+import java.math.BigDecimal;
 
 /**
  * 体检分组人员历史对象 tj_team_group_history
@@ -15,6 +20,7 @@ import java.io.Serial;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("tj_team_group_history")
+@Accessors(chain = true)
 public class TjTeamGroupHistory extends TenantEntity {
 
     @Serial
@@ -54,12 +60,12 @@ public class TjTeamGroupHistory extends TenantEntity {
     /**
      * 年龄开始段
      */
-    private Long startAge;
+    private Integer startAge;
 
     /**
      * 年龄结束段
      */
-    private Long endAge;
+    private Integer endAge;
 
     /**
      * 婚姻状况sys_dict_type(bus_marriage_status)
@@ -69,7 +75,7 @@ public class TjTeamGroupHistory extends TenantEntity {
     /**
      * 金额
      */
-    private Long price;
+    private BigDecimal price;
 
     /**
      * 分组支付方式sys_dict_type(bus_group_pay_type)0:个人1:单位
@@ -84,22 +90,22 @@ public class TjTeamGroupHistory extends TenantEntity {
     /**
      * 项目折扣
      */
-    private Long itemDiscount;
+    private BigDecimal itemDiscount;
 
     /**
      * 加项折扣
      */
-    private Long addDiscount;
+    private BigDecimal addDiscount;
 
     /**
      * 标准价格
      */
-    private Long standardPrice;
+    private BigDecimal standardPrice;
 
     /**
      * 实际价格
      */
-    private Long actualPrice;
+    private BigDecimal actualPrice;
 
     /**
      * 删除标志（0代表存在 2代表删除）
