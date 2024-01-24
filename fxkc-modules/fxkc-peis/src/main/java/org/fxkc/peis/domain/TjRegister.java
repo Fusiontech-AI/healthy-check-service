@@ -419,7 +419,7 @@ public class TjRegister extends TenantEntity {
     private Long schedulingId;
 
     /**
-     * 体检检查类型1初检 2复检,见字典bus_tj_check_type
+     * 体检检查类型11初检 21复检,见字典bus_tj_check_type
      */
     private String checkType;
 
