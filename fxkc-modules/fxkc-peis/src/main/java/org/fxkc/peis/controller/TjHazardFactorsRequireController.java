@@ -16,7 +16,6 @@ import org.fxkc.peis.domain.bo.TjHazardFactorsRequireBo;
 import org.fxkc.peis.domain.bo.TjHazardFactorsRequireSaveBo;
 import org.fxkc.peis.domain.vo.TjHazardFactorsRequireVo;
 import org.fxkc.peis.domain.vo.TjHazardFactorsTreeVo;
-import org.fxkc.peis.domain.vo.TjOccupationalDictTreeVo;
 import org.fxkc.peis.service.ITjHazardFactorsRequireService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
