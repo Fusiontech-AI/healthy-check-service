@@ -38,7 +38,7 @@ public class TjHazardFactorsRequireSaveBo {
     /**
      * 必检项目或目标职业病或职业禁忌症
      */
-    private List<Long> itemList;
+    private List<String> itemList;
 
     /**
      * 关联类型(1:必检项目2:目标类型3:职业禁忌症4:症状询问重点5:体格检查6:检查周期7:评价标准)

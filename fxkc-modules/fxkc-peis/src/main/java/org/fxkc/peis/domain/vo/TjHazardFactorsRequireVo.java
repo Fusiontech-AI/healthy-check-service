@@ -71,7 +71,7 @@ public class TjHazardFactorsRequireVo implements Serializable {
         /**
          * 项目id
          */
-        private Long itemId;
+        private String itemId;
 
         /**
          * 名称

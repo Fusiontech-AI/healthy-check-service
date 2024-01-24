@@ -2,6 +2,7 @@ package org.fxkc.system.api;
 
 import org.fxkc.system.api.domain.vo.RemoteDictDataVo;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -18,4 +19,6 @@ public interface RemoteDictService {
      * @return 字典数据集合信息
      */
     List<RemoteDictDataVo> selectDictDataByType(String dictType);
+
+    List<RemoteDictDataVo> selectDictDataByValueOrType(Collection<String> valueList, Collection<String> typeList);
 }

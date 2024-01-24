@@ -19,22 +19,17 @@ import org.fxkc.peis.constant.ErrorCodeConstants;
 import org.fxkc.peis.domain.TjBasicProject;
 import org.fxkc.peis.domain.TjHazardFactorsItem;
 import org.fxkc.peis.domain.TjHazardFactorsRequire;
-import org.fxkc.peis.domain.TjOccupationalDict;
 import org.fxkc.peis.domain.bo.TjHazardFactorsCodeBo;
 import org.fxkc.peis.domain.bo.TjHazardFactorsRequireBo;
 import org.fxkc.peis.domain.bo.TjHazardFactorsRequireSaveBo;
-import org.fxkc.peis.domain.bo.TjOccupationalDictBo;
 import org.fxkc.peis.domain.vo.TjHazardFactorsRequireVo;
 import org.fxkc.peis.domain.vo.TjHazardFactorsTreeVo;
-import org.fxkc.peis.domain.vo.TjOccupationalDictTreeVo;
-import org.fxkc.peis.domain.vo.TjOccupationalDictVo;
 import org.fxkc.peis.enums.AssociationTypeEnum;
 import org.fxkc.peis.enums.OccupationalDictEnum;
 import org.fxkc.peis.exception.PeisException;
 import org.fxkc.peis.mapper.TjBasicProjectMapper;
 import org.fxkc.peis.mapper.TjHazardFactorsItemMapper;
 import org.fxkc.peis.mapper.TjHazardFactorsRequireMapper;
-import org.fxkc.peis.mapper.TjOccupationalDictMapper;
 import org.fxkc.peis.service.ITjHazardFactorsRequireService;
 import org.fxkc.system.api.RemoteDictService;
 import org.fxkc.system.api.domain.vo.RemoteDictDataVo;
@@ -58,8 +53,6 @@ public class TjHazardFactorsRequireServiceImpl extends ServiceImpl<TjHazardFacto
     private final TjHazardFactorsItemMapper tjHazardFactorsItemMapper;
 
     private final TjBasicProjectMapper tjBasicProjectMapper;
-
-    private final TjOccupationalDictMapper tjOccupationalDictMapper;
 
     @DubboReference
     private RemoteDictService remoteDictService;
@@ -120,7 +113,7 @@ public class TjHazardFactorsRequireServiceImpl extends ServiceImpl<TjHazardFacto
             if(AssociationTypeEnum.getCheckList().contains(bo.getAssociationType())) {
                 List<TjHazardFactorsItem> list = tjHazardFactorsItemMapper.selectList(Wrappers.lambdaQuery(TjHazardFactorsItem.class)
                     .eq(TjHazardFactorsItem::getFactorsId, hazardFactorsRequire.getId()));
-                List<Long> itemIdList = list.stream().map(TjHazardFactorsItem::getItemId).collect(Collectors.toList());
+                List<String> itemIdList = list.stream().map(TjHazardFactorsItem::getItemId).collect(Collectors.toList());
                 if(!CollectionUtils.isEqualCollection(itemIdList, bo.getItemList()) &&
                     ObjectUtil.equal(AssociationTypeEnum.REQUIRED_ITEM.getCode(), bo.getAssociationType())) {
                     long count = baseMapper.queryIsExistRequiredItem(bo);
@@ -129,7 +122,7 @@ public class TjHazardFactorsRequireServiceImpl extends ServiceImpl<TjHazardFacto
                     }
                 }
                 //新增
-                List<Long> insList = bo.getItemList().stream()
+                List<String> insList = bo.getItemList().stream()
                     .filter(e -> !itemIdList.contains(e)).toList();
                 insList.forEach(k -> tjHazardFactorsItemMapper.insert(new TjHazardFactorsItem().setFactorsId(hazardFactorsRequire.getId())
                     .setItemId(k)));
@@ -156,17 +149,19 @@ public class TjHazardFactorsRequireServiceImpl extends ServiceImpl<TjHazardFacto
                 List<TjBasicProject> itemList = tjBasicProjectMapper.selectBatchIds(list.stream()
                     .map(TjHazardFactorsItem::getItemId).collect(Collectors.toList()));
                 itemList.forEach(k -> bodyList.add(new TjHazardFactorsRequireVo.ItemBody()
-                    .setItemId(k.getId())
+                    .setItemId(String.valueOf(k.getId()))
                     .setName(k.getZybCode().concat(k.getBasicProjectName()))));
             }else if(ObjectUtil.equal(hazardFactorsRequire.getAssociationType(),
                 AssociationTypeEnum.TARGET_OCCUPATIONAL.getCode()) ||
                 ObjectUtil.equal(hazardFactorsRequire.getAssociationType(),
                     AssociationTypeEnum.OCCUPATIONAL_CONTRAINDICATIONS.getCode())){
-                List<TjOccupationalDict> dictList = tjOccupationalDictMapper.selectBatchIds(list.stream()
-                    .map(TjHazardFactorsItem::getItemId).collect(Collectors.toList()));
+                List<RemoteDictDataVo> dictList = remoteDictService.selectDictDataByValueOrType(list.stream()
+                    .map(TjHazardFactorsItem::getItemId).toList(),
+                    Collections.singletonList(ObjectUtil.equal(hazardFactorsRequire.getAssociationType(),
+                    AssociationTypeEnum.TARGET_OCCUPATIONAL.getCode()) ? OccupationalDictEnum.YSZYB.getCode() : OccupationalDictEnum.ZYJJZ.getCode()));
                 dictList.forEach(k -> bodyList.add(new TjHazardFactorsRequireVo.ItemBody()
-                    .setItemId(k.getId())
-                    .setName(k.getCode().concat(k.getValue()))));
+                    .setItemId(k.getDictValue())
+                    .setName(k.getDictValue().concat(k.getDictLabel()))));
             }
             vo.setItemList(bodyList);
         }
@@ -204,7 +199,7 @@ public class TjHazardFactorsRequireServiceImpl extends ServiceImpl<TjHazardFacto
                 List<TjBasicProject> respList = tjBasicProjectMapper.selectBatchIds(itemList.stream().map(TjHazardFactorsItem::getItemId)
                     .collect(Collectors.toList()));
                 respList.forEach(k -> bodyList.add(new TjHazardFactorsRequireVo.ItemBody()
-                    .setItemId(k.getId())
+                    .setItemId(String.valueOf(k.getId()))
                     .setName(k.getZybCode().concat(k.getBasicProjectName()))));
             }
         }

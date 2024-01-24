@@ -6,6 +6,7 @@ import org.fxkc.system.domain.bo.SysDictTypeBo;
 import org.fxkc.system.domain.vo.SysDictDataVo;
 import org.fxkc.system.domain.vo.SysDictTypeVo;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -92,4 +93,6 @@ public interface ISysDictTypeService {
      * @return 结果
      */
     boolean checkDictTypeUnique(SysDictTypeBo dictType);
+
+    List<SysDictDataVo> selectDictDataByValueOrType(Collection<String> valueList, Collection<String> typeList);
 }

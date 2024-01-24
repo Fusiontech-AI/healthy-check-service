@@ -9,6 +9,7 @@ import org.fxkc.system.domain.vo.SysDictDataVo;
 import org.fxkc.system.service.ISysDictTypeService;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -27,6 +28,12 @@ public class RemoteDictServiceImpl implements RemoteDictService {
     @Override
     public List<RemoteDictDataVo> selectDictDataByType(String dictType) {
         List<SysDictDataVo> list = sysDictTypeService.selectDictDataByType(dictType);
+        return MapstructUtils.convert(list, RemoteDictDataVo.class);
+    }
+
+    @Override
+    public List<RemoteDictDataVo> selectDictDataByValueOrType(Collection<String> valueList, Collection<String> typeList) {
+        List<SysDictDataVo> list = sysDictTypeService.selectDictDataByValueOrType(valueList, typeList);
         return MapstructUtils.convert(list, RemoteDictDataVo.class);
     }
 

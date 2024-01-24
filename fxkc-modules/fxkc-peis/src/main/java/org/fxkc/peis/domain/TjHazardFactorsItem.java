@@ -37,7 +37,7 @@ public class TjHazardFactorsItem extends TenantEntity {
     /**
      * 基础项目id
      */
-    private Long itemId;
+    private String itemId;
 
     /**
      * 删除标志（0代表存在 2代表删除）

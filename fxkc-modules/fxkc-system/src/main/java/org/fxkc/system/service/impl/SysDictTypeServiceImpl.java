@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
+import org.checkerframework.checker.units.qual.s;
 import org.fxkc.common.core.constant.CacheNames;
 import org.fxkc.common.core.exception.ServiceException;
 import org.fxkc.common.core.utils.MapstructUtils;
@@ -27,10 +28,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 字典 业务层处理
@@ -201,6 +199,13 @@ public class SysDictTypeServiceImpl implements ISysDictTypeService {
             .eq(SysDictType::getDictType, dictType.getDictType())
             .ne(ObjectUtil.isNotNull(dictType.getDictId()), SysDictType::getDictId, dictType.getDictId()));
         return !exist;
+    }
+
+    @Override
+    public List<SysDictDataVo> selectDictDataByValueOrType(Collection<String> valueList, Collection<String> typeList) {
+        return  dictDataMapper.selectVoList(Wrappers.lambdaQuery(SysDictData.class)
+            .in(CollUtil.isNotEmpty(valueList), SysDictData::getDictValue, valueList)
+            .in(CollUtil.isNotEmpty(typeList), SysDictData::getDictType, typeList));
     }
 
 }
