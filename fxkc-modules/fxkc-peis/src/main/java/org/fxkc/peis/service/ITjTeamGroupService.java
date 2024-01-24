@@ -47,5 +47,5 @@ public interface ITjTeamGroupService {
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
 
-    void recordGroupInfo(List<TjTeamGroup> groupList);
+    void recordGroupInfo(List<TjTeamGroupBo> groupList);
 }

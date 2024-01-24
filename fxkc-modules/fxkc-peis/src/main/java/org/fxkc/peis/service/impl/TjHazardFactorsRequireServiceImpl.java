@@ -70,7 +70,7 @@ public class TjHazardFactorsRequireServiceImpl extends ServiceImpl<TjHazardFacto
             TjHazardFactorsRequire hazardFactorsRequire = baseMapper.selectOne(Wrappers.lambdaQuery(TjHazardFactorsRequire.class)
                 .eq(TjHazardFactorsRequire::getHazardFactorsCode, bo.getHazardFactorsCode())
                 .eq(TjHazardFactorsRequire::getAssociationType, bo.getAssociationType()));
-            TjHazardFactorsRequireVo.HazardFactorsRequireQueryVo vo = MapstructUtils.convert(hazardFactorsRequire, TjHazardFactorsRequireVo.HazardFactorsRequireQueryVo.class);
+            TjHazardFactorsRequireVo.HazardFactorsRequireQueryVo vo = BeanUtil.toBean(hazardFactorsRequire, TjHazardFactorsRequireVo.HazardFactorsRequireQueryVo.class);
             hazardFactorsRequireVo.setVo(vo);
         }
         return hazardFactorsRequireVo;

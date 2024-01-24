@@ -146,12 +146,11 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void recordGroupInfo(List<TjTeamGroup> groupList) {
-        List<TjTeamGroupItem> itemList = CollUtil.newArrayList();
+    public void recordGroupInfo(List<TjTeamGroupBo> groupList) {
         List<TjRegCombinationProject> projectList = CollUtil.newArrayList();
         List<TjTeamGroupHistory> groupHistoryList = CollUtil.newArrayList();
         if(CollUtil.isNotEmpty(groupList)) {
-            List<Long> groupIds = StreamUtils.toList(groupList, TjTeamGroup::getId);
+            List<Long> groupIds = StreamUtils.toList(groupList, TjTeamGroupBo::getId);
             List<TjRegister> list = tjRegisterMapper.selectList(Wrappers.lambdaQuery(TjRegister.class)
                 .in(TjRegister::getTeamGroupId, groupIds)
                 .select(TjRegister::getId, TjRegister::getHealthyCheckStatus));
@@ -176,7 +175,7 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
                                 tjRegCombinationProjectMapper.delete(Wrappers.lambdaUpdate(TjRegCombinationProject.class)
                                     .eq(TjRegCombinationProject::getRegisterId, s.getId()));
                                 //todo 缺少套餐id
-                                itemList.forEach(d -> {
+                                k.getGroupItemList().forEach(d -> {
                                     projectList.add(TjRegCombinationProject.builder()
                                         .registerId(s.getId())
                                         .combinationProjectId(d.getItemId())
