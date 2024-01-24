@@ -48,7 +48,7 @@ public class TjRegCombinationProjectVo implements Serializable {
     private Long combinationProjectId;
 
     /**
-     * 项目类型（0：套餐项目，1：加项项目）见字典bus_combination_project_type
+     * 项目类型（1：套餐项目，2：加项项目）见字典bus_combination_project_type
      */
     @ExcelProperty(value = "项目类型", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "bus_combination_project_type")

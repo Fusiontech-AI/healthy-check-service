@@ -78,7 +78,7 @@ public class TjTeamGroupItemVo implements Serializable {
      * 是否必选(1:是0否)
      */
     @ExcelProperty(value = "是否必选(1:是0否)")
-    private Long isRequired;
+    private Boolean isRequired;
 
 
 }

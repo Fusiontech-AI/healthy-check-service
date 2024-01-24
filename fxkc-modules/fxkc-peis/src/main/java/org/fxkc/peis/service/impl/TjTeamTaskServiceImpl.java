@@ -1,25 +1,26 @@
 package org.fxkc.peis.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.fxkc.common.core.utils.MapstructUtils;
-import org.fxkc.common.core.utils.StreamUtils;
-import org.fxkc.common.mybatis.core.page.TableDataInfo;
-import org.fxkc.common.mybatis.core.page.PageQuery;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.fxkc.common.core.utils.MapstructUtils;
+import org.fxkc.common.core.utils.StreamUtils;
+import org.fxkc.common.mybatis.core.page.PageQuery;
+import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.peis.constant.ErrorCodeConstants;
 import org.fxkc.peis.domain.TjRegister;
 import org.fxkc.peis.domain.TjTeamGroup;
+import org.fxkc.peis.domain.TjTeamTask;
 import org.fxkc.peis.domain.bo.*;
 import org.fxkc.peis.domain.vo.TjTeamGroupVo;
 import org.fxkc.peis.domain.vo.TjTeamTaskDetailVo;
+import org.fxkc.peis.domain.vo.TjTeamTaskVo;
 import org.fxkc.peis.domain.vo.VerifyMessageVo;
 import org.fxkc.peis.enums.GroupTypeEnum;
 import org.fxkc.peis.enums.HealthyCheckTypeEnum;
@@ -27,16 +28,13 @@ import org.fxkc.peis.enums.PhysicalTypeEnum;
 import org.fxkc.peis.exception.PeisException;
 import org.fxkc.peis.mapper.TjRegisterMapper;
 import org.fxkc.peis.mapper.TjTeamGroupMapper;
-import org.fxkc.peis.service.ITjTeamInfoService;
-import org.springframework.stereotype.Service;
-import org.fxkc.peis.domain.vo.TjTeamTaskVo;
-import org.fxkc.peis.domain.TjTeamTask;
 import org.fxkc.peis.mapper.TjTeamTaskMapper;
+import org.fxkc.peis.service.ITjTeamInfoService;
 import org.fxkc.peis.service.ITjTeamTaskService;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -62,7 +60,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
     @Override
     public TjTeamTaskDetailVo queryById(Long id){
         TjTeamTask teamTask = baseMapper.selectById(id);
-        TjTeamTaskDetailVo vo = BeanUtil.toBean(teamTask, TjTeamTaskDetailVo.class);
+        TjTeamTaskDetailVo vo = MapstructUtils.convert(teamTask, TjTeamTaskDetailVo.class);
         List<TjTeamGroupVo> groupVoList = tjTeamGroupMapper.selectVoList(Wrappers.lambdaQuery(TjTeamGroup.class)
             .eq(TjTeamGroup::getTaskId, id));
         vo.setGroupList(groupVoList);
@@ -122,11 +120,16 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
     public List<TjTeamGroupVo> updateByBo(TjTeamTaskBo bo) {
         validEntityBeforeSave(bo, Boolean.FALSE);
         TjTeamTask update = MapstructUtils.convert(bo, TjTeamTask.class);
-        boolean flag = baseMapper.updateById(update) > 0;
+        baseMapper.updateById(update);
         List<TjTeamGroup> groupList = MapstructUtils.convert(bo.getGroupList(), TjTeamGroup.class);
         String teamName = iTjTeamInfoService.selectTeamNameById(update.getTeamId());
         groupList.forEach(k -> k.setTaskId(update.getId()).setTaskName(update.getTaskName())
             .setTeamId(update.getTeamId()).setTeamName(teamName));
+        //修改任务分组记录分组人员分组信息
+        List<TjTeamGroup> recordList = StreamUtils.filter(groupList, e -> Objects.nonNull(e.getId()));
+
+
+
         tjTeamGroupMapper.insertOrUpdateBatch(groupList);
         return tjTeamGroupMapper.selectVoList(Wrappers.lambdaQuery(TjTeamGroup.class)
             .eq(TjTeamGroup::getTaskId, update.getId())
@@ -193,7 +196,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
     @Override
     public VerifyMessageVo verifyGroupData(List<VerifyGroupBo> list) {
         VerifyMessageVo vo = new VerifyMessageVo();
-        List<TjTeamGroupBo> boList = BeanUtil.copyToList(list, TjTeamGroupBo.class);
+        List<TjTeamGroupBo> boList = MapstructUtils.convert(list, TjTeamGroupBo.class);
         validEntityBeforeSave(new TjTeamTaskBo().setGroupList(boList), Boolean.FALSE);
         List<Long> idList = StreamUtils.toList(list, VerifyGroupBo::getId);
         List<TjTeamGroup> groupList = tjTeamGroupMapper.selectBatchIds(idList);

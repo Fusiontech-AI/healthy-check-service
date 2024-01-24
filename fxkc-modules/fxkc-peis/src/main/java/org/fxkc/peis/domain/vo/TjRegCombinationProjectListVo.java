@@ -44,7 +44,7 @@ public class TjRegCombinationProjectListVo {
     private String sectionName;
 
     /**
-     * 项目类型（0：套餐项目，1：加项项目）见字典bus_combination_project_type
+     * 项目类型（1：套餐项目，2：加项项目）见字典bus_combination_project_type
      */
     private String projectType;
 

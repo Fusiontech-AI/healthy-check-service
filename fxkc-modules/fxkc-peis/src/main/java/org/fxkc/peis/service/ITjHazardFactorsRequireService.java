@@ -7,6 +7,7 @@ import org.fxkc.peis.domain.bo.TjHazardFactorsRequireSaveBo;
 import org.fxkc.peis.domain.vo.TjHazardFactorsRequireVo;
 import org.fxkc.peis.domain.bo.TjHazardFactorsRequireBo;
 import org.fxkc.common.mybatis.core.page.PageQuery;
+import org.fxkc.peis.domain.vo.TjHazardFactorsTreeVo;
 
 import java.util.List;
 
@@ -29,4 +30,6 @@ public interface ITjHazardFactorsRequireService extends IService<TjHazardFactors
     Boolean batchDeleteByIds(List<Long> list);
 
     List<TjHazardFactorsRequireVo.ItemBody> queryItemByFactorsCodeAndDutyStatus(TjHazardFactorsCodeBo bo);
+
+    List<TjHazardFactorsTreeVo> getHazardFactorsTree(String value);
 }

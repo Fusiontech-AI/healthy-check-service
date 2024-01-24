@@ -55,7 +55,7 @@ public class VerifyGroupBo {
     private BigDecimal addDiscount;
 
     /**
-     * 是否同步项目(1:是0:否)
+     * 是否同步项目(0:是1:否)
      */
     @NotBlank(message = "是否同步项目不能为空")
     private String isSyncProject;

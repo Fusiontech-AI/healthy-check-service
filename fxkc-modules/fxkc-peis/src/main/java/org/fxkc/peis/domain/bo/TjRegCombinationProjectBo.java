@@ -42,9 +42,9 @@ public class TjRegCombinationProjectBo extends BaseEntity {
     private Long combinationProjectId;
 
     /**
-     * 项目类型（0：套餐项目，1：加项项目）见字典bus_combination_project_type
+     * 项目类型（1：套餐项目，2：加项项目）见字典bus_combination_project_type
      */
-    @NotBlank(message = "项目类型（0：套餐项目，1：加项项目）见字典bus_combination_project_type不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotBlank(message = "项目类型（1：套餐项目，2：加项项目）见字典bus_combination_project_type不能为空", groups = { AddGroup.class, EditGroup.class })
     private String projectType;
 
     /**

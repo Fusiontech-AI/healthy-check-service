@@ -1,6 +1,5 @@
 package org.fxkc.peis.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -23,7 +22,10 @@ import org.fxkc.peis.service.ITjOccupationalDictService;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -122,7 +124,7 @@ public class TjOccupationalDictServiceImpl extends ServiceImpl<TjOccupationalDic
             String[] str = k.split(StrUtil.UNDERLINE);
             voList.add(new TjOccupationalDictTreeVo().setCode(str[0])
                 .setValue(str[1])
-                .setChildren(BeanUtil.copyToList(v, TjOccupationalDictTreeVo.class)));
+                .setChildren(MapstructUtils.convert(v, TjOccupationalDictTreeVo.class)));
         });
         return voList;
     }

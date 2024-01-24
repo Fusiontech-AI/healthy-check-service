@@ -46,4 +46,6 @@ public interface ITjTeamGroupService {
      * 校验并批量删除团检分组信息信息
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+
+    void recordGroupInfo(List<TjTeamGroup> groupList);
 }

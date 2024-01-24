@@ -89,5 +89,4 @@ public class SysDictDataVo implements Serializable {
      * 业务类型编码
      */
     private String busType;
-
 }

@@ -12,7 +12,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         a.duty_status as dutyStatus,
         d.dict_label as dutyStatusName,
         case when a.association_type = '1' then wm_concat(c.zyb_code || c.basic_project_name)
-        when a.association_type in ('2', '3') then wm_concat(e.code || e.value) end as itemName,
+        when a.association_type in ('2', '3') then wm_concat(e.dict_value || e.dict_label) end as itemName,
         a.enable_status as enableStatus,
         a.update_time as updateTime,
         a.update_by as updateBy,
@@ -26,7 +26,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from tj_hazard_factors_require a left join tj_hazard_factors_item b on a.id = b.factors_id and b.del_flag = '0'
         left join tj_basic_project c on b.item_id = c.id
         left join sys_dict_data d on a.duty_status = d.dict_value and d.dict_type = 'bus_duty_status'
-        left join tj_occupational_dict e on b.item_id = e.id
+        left join sys_dict_data e on b.item_id = e.dict_value and d.dict_type in ('bus_suspected_zyb', 'bus_zy_contraindications')
         where a.del_flag = '0'
         <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.dutyStatus)">
             and a.duty_status = #{bo.dutyStatus}

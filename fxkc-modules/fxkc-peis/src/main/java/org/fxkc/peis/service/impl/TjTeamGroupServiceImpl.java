@@ -1,23 +1,32 @@
 package org.fxkc.peis.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.fxkc.common.core.constant.CommonConstants;
 import org.fxkc.common.core.utils.MapstructUtils;
+import org.fxkc.common.core.utils.StreamUtils;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
+import org.fxkc.peis.constant.ErrorCodeConstants;
+import org.fxkc.peis.domain.*;
+import org.fxkc.peis.enums.GroupTypeEnum;
+import org.fxkc.peis.enums.HealthyCheckTypeEnum;
+import org.fxkc.peis.exception.PeisException;
+import org.fxkc.peis.mapper.*;
 import org.springframework.stereotype.Service;
 import org.fxkc.peis.domain.bo.TjTeamGroupBo;
 import org.fxkc.peis.domain.vo.TjTeamGroupVo;
-import org.fxkc.peis.domain.TjTeamGroup;
-import org.fxkc.peis.mapper.TjTeamGroupMapper;
 import org.fxkc.peis.service.ITjTeamGroupService;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Collection;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 团检分组信息Service业务层处理
@@ -27,9 +36,17 @@ import java.util.Collection;
  */
 @RequiredArgsConstructor
 @Service
-public class TjTeamGroupServiceImpl implements ITjTeamGroupService {
+public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTeamGroup> implements ITjTeamGroupService {
 
-    private final TjTeamGroupMapper baseMapper;
+    private final TjRegisterMapper tjRegisterMapper;
+
+    private final TjTeamGroupItemMapper tjTeamGroupItemMapper;
+
+    private final TjTeamGroupHazardsMapper tjTeamGroupHazardsMapper;
+
+    private final TjTeamGroupHistoryMapper tjTeamGroupHistoryMapper;
+
+    private final TjRegCombinationProjectMapper tjRegCombinationProjectMapper;
 
     /**
      * 查询团检分组信息
@@ -114,8 +131,84 @@ public class TjTeamGroupServiceImpl implements ITjTeamGroupService {
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
         if(isValid){
-            //TODO 做一些业务上的校验,判断是否需要校验
+            long count = tjRegisterMapper.selectCount(Wrappers.lambdaQuery(TjRegister.class)
+                .in(TjRegister::getTeamGroupId, ids));
+            if(count > 0) {
+                throw new PeisException(ErrorCodeConstants.PEIS_REGISTER_GROUP_ISEXIST);
+            }
         }
+        tjTeamGroupItemMapper.delete(Wrappers.lambdaQuery(TjTeamGroupItem.class)
+            .in(TjTeamGroupItem::getGroupId, ids));
+        tjTeamGroupHazardsMapper.delete(Wrappers.lambdaQuery(TjTeamGroupHazards.class)
+            .in(TjTeamGroupHazards::getGroupId, ids));
         return baseMapper.deleteBatchIds(ids) > 0;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void recordGroupInfo(List<TjTeamGroup> groupList) {
+        List<TjTeamGroupItem> itemList = CollUtil.newArrayList();
+        List<TjRegCombinationProject> projectList = CollUtil.newArrayList();
+        List<TjTeamGroupHistory> groupHistoryList = CollUtil.newArrayList();
+        if(CollUtil.isNotEmpty(groupList)) {
+            List<Long> groupIds = StreamUtils.toList(groupList, TjTeamGroup::getId);
+            List<TjRegister> list = tjRegisterMapper.selectList(Wrappers.lambdaQuery(TjRegister.class)
+                .in(TjRegister::getTeamGroupId, groupIds)
+                .select(TjRegister::getId, TjRegister::getHealthyCheckStatus));
+            List<TjTeamGroup> orgList = baseMapper.selectBatchIds(groupIds);
+            Map<Long, TjTeamGroup> orgMap = StreamUtils.toMap(orgList, TjTeamGroup::getId, e -> e);
+            List<Long> historyList = tjTeamGroupHistoryMapper.selectList(Wrappers.lambdaQuery(TjTeamGroupHistory.class)
+                .in(TjTeamGroupHistory::getGroupId, groupIds)
+                .select(TjTeamGroupHistory::getRegId)).stream().map(TjTeamGroupHistory::getRegId).toList();
+            groupList.forEach(k -> {
+                List<TjRegister> groupRegisters = StreamUtils.filter(list, e -> Objects.equals(k.getId(), e.getTeamGroupId()));
+                if(Objects.equals(CommonConstants.NORMAL, k.getIsSyncProject())) {
+                    boolean isTeamPay = Objects.equals("1", k.getGroupPayType());
+                    groupRegisters.stream().filter(e -> Objects.equals(HealthyCheckTypeEnum.预约.getCode(), e.getHealthyCheckStatus()))
+                        .forEach(s -> {
+                            //todo tjRegisterMapper更新个人金额、团检金额、体检类型
+
+                            //删除已记录的人员分组信息
+                            tjTeamGroupHistoryMapper.delete(Wrappers.lambdaUpdate(TjTeamGroupHistory.class)
+                                .eq(TjTeamGroupHistory::getRegId, s.getId()));
+                            if(Objects.equals(GroupTypeEnum.ITEM.getCode(), k.getGroupType())) {
+                                //删除人员项目信息,新增新分组项目信息
+                                tjRegCombinationProjectMapper.delete(Wrappers.lambdaUpdate(TjRegCombinationProject.class)
+                                    .eq(TjRegCombinationProject::getRegisterId, s.getId()));
+                                //todo 缺少套餐id
+                                itemList.forEach(d -> {
+                                    projectList.add(TjRegCombinationProject.builder()
+                                        .registerId(s.getId())
+                                        .combinationProjectId(d.getItemId())
+                                        .receivableAmount(d.getActualPrice())
+                                        .standardAmount(d.getStandardPrice())
+                                        .payMode(k.getGroupPayType())
+                                        .payStatus(isTeamPay ? "1" : "0")
+                                        .checkStatus("0")
+                                        .projectType(d.getInclude())
+                                        .discount(d.getDiscount())
+                                        .projectRequiredType(d.getIsRequired() ?  "1" : "0")
+                                        .build());
+                                });
+                            }
+                        });
+                    groupRegisters = StreamUtils.filter(groupRegisters, e -> !Objects.equals(HealthyCheckTypeEnum.预约.getCode(), e.getHealthyCheckStatus()));
+                }
+                TjTeamGroup orgGroup = orgMap.get(k.getId());
+                //过滤出未记录的人员记录编辑前分组信息
+                groupRegisters.stream().filter(e -> !historyList.contains(e.getId())).forEach(x ->
+                    groupHistoryList.add(Objects.requireNonNull(MapstructUtils.convert(orgGroup, TjTeamGroupHistory.class))
+                    .setId(null)
+                    .setGroupId(orgGroup.getId())
+                    .setRegId(x.getId())));
+            });
+        }
+        if(CollUtil.isNotEmpty(projectList)) {
+            tjRegCombinationProjectMapper.insertBatch(projectList);
+        }
+        if(CollUtil.isNotEmpty(groupHistoryList)) {
+            tjTeamGroupHistoryMapper.insertBatch(groupHistoryList);
+        }
+
     }
 }

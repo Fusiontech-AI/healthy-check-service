@@ -15,6 +15,8 @@ import org.fxkc.peis.domain.bo.TjHazardFactorsCodeBo;
 import org.fxkc.peis.domain.bo.TjHazardFactorsRequireBo;
 import org.fxkc.peis.domain.bo.TjHazardFactorsRequireSaveBo;
 import org.fxkc.peis.domain.vo.TjHazardFactorsRequireVo;
+import org.fxkc.peis.domain.vo.TjHazardFactorsTreeVo;
+import org.fxkc.peis.domain.vo.TjOccupationalDictTreeVo;
 import org.fxkc.peis.service.ITjHazardFactorsRequireService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -109,5 +111,14 @@ public class TjHazardFactorsRequireController extends BaseController {
     @PostMapping(value = "/queryItemByFactorsCodeAndDutyStauts")
     public R<List<TjHazardFactorsRequireVo.ItemBody>> queryItemByFactorsCodeAndDutyStatus(@RequestBody @Valid TjHazardFactorsCodeBo bo)  {
         return R.ok(tjHazardFactorsRequireService.queryItemByFactorsCodeAndDutyStatus(bo));
+    }
+
+    /**
+     * 获取职业病字典树形
+     * @param value 危害因素名称
+     */
+    @GetMapping("/getHazardFactorsTree")
+    public R<List<TjHazardFactorsTreeVo>> getHazardFactorsTree(String value) {
+        return R.ok(tjHazardFactorsRequireService.getHazardFactorsTree(value));
     }
 }

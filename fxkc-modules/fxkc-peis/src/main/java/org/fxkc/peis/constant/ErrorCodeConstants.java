@@ -41,4 +41,6 @@ public interface ErrorCodeConstants {
     String PEIS_HAZARD_PACKAGE_ISEXIST = "peis.hazard.package.isexist";
 
     String PEIS_TEAM_TASK_ISEXIST = "peis.team.task.isexist";
+
+    String PEIS_REGISTER_GROUP_ISEXIST = "peis.register.group.isexist";
 }
