@@ -522,4 +522,16 @@ public class TjRegisterVo implements Serializable {
      */
     @ExcelProperty(value = "联系人邮箱")
     private String contactEmail;
+
+    /**
+     * 是否职业病(0：是，1：否)
+     */
+    @ExcelProperty(value = "是否职业病(0：是，1：否)")
+    private String occupationalType;
+
+    /**
+     * 任务id
+     */
+    @ExcelProperty(value = "任务id")
+    private Long taskId;
 }

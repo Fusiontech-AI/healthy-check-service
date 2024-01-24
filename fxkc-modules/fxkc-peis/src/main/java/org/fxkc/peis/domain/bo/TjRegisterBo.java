@@ -466,4 +466,14 @@ public class TjRegisterBo extends BaseEntity {
      * 联系人邮箱
      */
     private String contactEmail;
+
+    /**
+     * 是否职业病(0：是，1：否)
+     */
+    private String occupationalType;
+
+    /**
+     * 任务id
+     */
+    private Long taskId;
 }
