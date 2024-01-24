@@ -1,6 +1,7 @@
 package org.fxkc.peis.service;
 
 import org.fxkc.peis.domain.TjRegister;
+import org.fxkc.peis.domain.bo.TjRegisterSingleBo;
 import org.fxkc.peis.domain.vo.TjRegisterVo;
 import org.fxkc.peis.domain.bo.TjRegisterBo;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
@@ -21,6 +22,8 @@ public interface ITjRegisterService {
      * 查询体检人员登记信息
      */
     TjRegisterVo queryById(Long id);
+
+    TjRegisterVo getSingleInfo(TjRegisterSingleBo bo);
 
     /**
      * 查询体检人员登记信息列表

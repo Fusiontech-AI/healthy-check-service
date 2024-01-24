@@ -2,6 +2,9 @@ package org.fxkc.peis.domain.vo;
 
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotBlank;
+import org.fxkc.common.core.validate.AddGroup;
+import org.fxkc.common.core.validate.EditGroup;
 import org.fxkc.peis.domain.TjGuideSheetLog;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
@@ -52,5 +55,10 @@ public class TjGuideSheetLogVo implements Serializable {
     @ExcelProperty(value = "上传时间")
     private Date uploadTime;
 
+    /**
+     * 是否职业病问询单(0：是，1：否)
+     */
+    @NotBlank(message = "是否职业病问询单(0：是，1：否)",groups = {AddGroup.class, EditGroup.class})
+    private String occupationalType;
 
 }

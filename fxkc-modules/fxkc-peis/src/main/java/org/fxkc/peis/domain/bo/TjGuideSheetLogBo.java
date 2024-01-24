@@ -55,4 +55,10 @@ public class TjGuideSheetLogBo extends BaseEntity {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date uploadTime;
 
+    /**
+     * 是否职业病问询单(0：是，1：否)
+     */
+    @NotBlank(message = "是否职业病问询单(0：是，1：否)",groups = {AddGroup.class,EditGroup.class})
+    private String occupationalType;
+
 }

@@ -152,7 +152,7 @@ public class TjRegisterVo implements Serializable {
      */
     @ExcelProperty(value = "是否回收指引单", converter = ExcelDictConvert.class)
     @ExcelDictFormat(readConverterExp = "0=：是，1：否")
-    private String guideSheetRecived;
+    private String guideSheetReceived;
 
     /**
      * 是否冻结（0：是，1：否）

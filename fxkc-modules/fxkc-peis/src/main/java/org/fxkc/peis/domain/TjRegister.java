@@ -131,7 +131,7 @@ public class TjRegister extends TenantEntity {
     /**
      * 是否回收指引单（0：是，1：否）
      */
-    private String guideSheetRecived;
+    private String guideSheetReceived;
 
     /**
      * 是否冻结（0：是，1：否）

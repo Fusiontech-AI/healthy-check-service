@@ -3,6 +3,7 @@ package org.fxkc.peis.domain;
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.fxkc.common.tenant.core.TenantEntity;
 
 import java.io.Serial;
 

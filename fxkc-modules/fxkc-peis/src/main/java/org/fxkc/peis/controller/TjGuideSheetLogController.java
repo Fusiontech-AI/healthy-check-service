@@ -59,4 +59,28 @@ public class TjGuideSheetLogController extends BaseController {
                           @PathVariable Long[] ids) {
         return toAjax(tjGuideSheetLogService.deleteWithValidByIds(List.of(ids), true));
     }
+
+    /**
+     * 获取电子导检单列表
+     * @param registerId 体检人员id
+     * @param occupationalType 是否职业病问询单(0：是，1：否)
+     * @return TjGuideSheetLogVo
+     */
+    @GetMapping("/list")
+    public R<List<TjGuideSheetLogVo>> list(@RequestParam("registerId")Long registerId,
+                                           @RequestParam("occupationalType")String occupationalType){
+        return R.ok(tjGuideSheetLogService.queryList(registerId,occupationalType));
+    }
+
+    /**
+     * 保存或撤回电子导检单
+     * @param registerId 体检人员id
+     * @param guideSheetReceived 是否回收指引单（0：是，1：否）
+     * @return
+     */
+    @PutMapping("/saveOrWithdrawGuideSheet")
+    public R<Void> saveOrWithdrawGuideSheet(@RequestParam("registerId")Long registerId,
+                                            @RequestParam("guideSheetReceived")String  guideSheetReceived){
+        return toAjax(tjGuideSheetLogService.saveOrWithdrawGuideSheet(registerId,guideSheetReceived));
+    }
 }

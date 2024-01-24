@@ -141,7 +141,7 @@ public class TjRegisterBo extends BaseEntity {
      * 是否回收指引单（0：是，1：否）
      */
     @NotBlank(message = "是否回收指引单（0：是，1：否）不能为空", groups = { AddGroup.class, EditGroup.class })
-    private String guideSheetRecived;
+    private String guideSheetReceived;
 
     /**
      * 是否冻结（0：是，1：否）
