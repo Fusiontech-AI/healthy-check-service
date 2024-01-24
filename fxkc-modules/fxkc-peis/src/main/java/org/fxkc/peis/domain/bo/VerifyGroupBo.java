@@ -1,5 +1,6 @@
 package org.fxkc.peis.domain.bo;
 
+import io.github.linpeilie.annotations.AutoMapper;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -7,6 +8,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
+@AutoMapper(target = TjTeamGroupBo.class, reverseConvertGenerate = false)
 public class VerifyGroupBo {
 
     /**

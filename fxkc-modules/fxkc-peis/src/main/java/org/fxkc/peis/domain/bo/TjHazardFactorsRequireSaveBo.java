@@ -1,11 +1,14 @@
 package org.fxkc.peis.domain.bo;
 
+import io.github.linpeilie.annotations.AutoMapper;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import org.fxkc.peis.domain.TjHazardFactorsRequire;
 
 import java.util.List;
 
 @Data
+@AutoMapper(target = TjHazardFactorsRequire.class, reverseConvertGenerate = false)
 public class TjHazardFactorsRequireSaveBo {
 
     /**
