@@ -1,13 +1,16 @@
 package org.fxkc.peis.domain;
 
+import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import org.fxkc.common.tenant.core.TenantEntity;
+import org.fxkc.peis.domain.bo.TjTeamGroupItemBo;
 
 import java.io.Serial;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 团检分组信息对象 tj_team_group
@@ -146,5 +149,9 @@ public class TjTeamGroup extends TenantEntity {
     @TableLogic
     private String delFlag;
 
-
+    /**
+     * 分组项目信息集合
+     */
+    @TableField(exist = false)
+    private List<TjTeamGroupItemBo> groupItemList = CollUtil.newArrayList();
 }

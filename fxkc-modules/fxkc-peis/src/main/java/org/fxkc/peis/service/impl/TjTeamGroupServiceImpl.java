@@ -2,31 +2,32 @@ package org.fxkc.peis.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.RequiredArgsConstructor;
 import org.fxkc.common.core.constant.CommonConstants;
 import org.fxkc.common.core.utils.MapstructUtils;
 import org.fxkc.common.core.utils.StreamUtils;
-import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.mybatis.core.page.PageQuery;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import lombok.RequiredArgsConstructor;
+import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.peis.constant.ErrorCodeConstants;
 import org.fxkc.peis.domain.*;
+import org.fxkc.peis.domain.bo.TjTeamGroupBo;
+import org.fxkc.peis.domain.vo.TjTeamGroupVo;
 import org.fxkc.peis.enums.GroupTypeEnum;
 import org.fxkc.peis.enums.HealthyCheckTypeEnum;
 import org.fxkc.peis.exception.PeisException;
 import org.fxkc.peis.mapper.*;
-import org.springframework.stereotype.Service;
-import org.fxkc.peis.domain.bo.TjTeamGroupBo;
-import org.fxkc.peis.domain.vo.TjTeamGroupVo;
 import org.fxkc.peis.service.ITjTeamGroupService;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * 团检分组信息Service业务层处理
@@ -146,11 +147,11 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void recordGroupInfo(List<TjTeamGroupBo> groupList) {
+    public void recordGroupInfo(List<TjTeamGroup> groupList) {
         List<TjRegCombinationProject> projectList = CollUtil.newArrayList();
         List<TjTeamGroupHistory> groupHistoryList = CollUtil.newArrayList();
         if(CollUtil.isNotEmpty(groupList)) {
-            List<Long> groupIds = StreamUtils.toList(groupList, TjTeamGroupBo::getId);
+            List<Long> groupIds = StreamUtils.toList(groupList, TjTeamGroup::getId);
             List<TjRegister> list = tjRegisterMapper.selectList(Wrappers.lambdaQuery(TjRegister.class)
                 .in(TjRegister::getTeamGroupId, groupIds)
                 .select(TjRegister::getId, TjRegister::getHealthyCheckStatus));

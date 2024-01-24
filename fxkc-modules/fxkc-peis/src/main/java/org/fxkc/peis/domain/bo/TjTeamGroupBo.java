@@ -101,9 +101,6 @@ public class TjTeamGroupBo extends BaseEntity {
     @NotBlank(message = "是否同步项目")
     private String isSyncProject;
 
-    /**
-     * 分组项目信息集合
-     */
-    private List<TjTeamGroupItemBo> groupItemList = CollUtil.newArrayList();
+
 
 }
