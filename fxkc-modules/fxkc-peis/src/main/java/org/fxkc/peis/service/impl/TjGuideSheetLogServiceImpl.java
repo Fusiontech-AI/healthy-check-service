@@ -20,6 +20,7 @@ import org.fxkc.common.oss.entity.UploadResult;
 import org.fxkc.common.oss.factory.OssFactory;
 import org.fxkc.peis.domain.TjRegister;
 import org.fxkc.peis.mapper.TjRegisterMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.fxkc.peis.domain.bo.TjGuideSheetLogBo;
 import org.fxkc.peis.domain.vo.TjGuideSheetLogVo;
@@ -46,6 +47,9 @@ public class TjGuideSheetLogServiceImpl implements ITjGuideSheetLogService {
     private final TjGuideSheetLogMapper baseMapper;
 
     private final TjRegisterMapper registerMapper;
+
+    @Value("${guideSheet.maxCount}")
+    private Integer guideSheetMaxCount;
 
     /**
      * 查询导检单回收记录
@@ -136,7 +140,15 @@ public class TjGuideSheetLogServiceImpl implements ITjGuideSheetLogService {
      * 保存前的数据校验
      */
     private void validEntityBeforeSave(TjGuideSheetLog entity){
-        //TODO 做一些数据校验,如唯一约束
+        LambdaQueryWrapper<TjGuideSheetLog> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(TjGuideSheetLog::getRegisterId,entity.getRegisterId())
+            .eq(TjGuideSheetLog::getDelFlag,CommonConstants.NORMAL)
+            .eq(TjGuideSheetLog::getOccupationalType,entity.getOccupationalType());
+        Long count = baseMapper.selectCount(wrapper);
+        if(count >= guideSheetMaxCount){
+            throw new ServiceException("单人可上传该类指引单数量已超过"+guideSheetMaxCount+"张，无法继续上传！");
+        }
+
     }
 
     /**
