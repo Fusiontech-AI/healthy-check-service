@@ -18,6 +18,8 @@ import org.fxkc.common.oss.constant.OssConstant;
 import org.fxkc.common.oss.core.OssClient;
 import org.fxkc.common.oss.entity.UploadResult;
 import org.fxkc.common.oss.factory.OssFactory;
+import org.fxkc.peis.domain.TjRegister;
+import org.fxkc.peis.mapper.TjRegisterMapper;
 import org.springframework.stereotype.Service;
 import org.fxkc.peis.domain.bo.TjGuideSheetLogBo;
 import org.fxkc.peis.domain.vo.TjGuideSheetLogVo;
@@ -43,6 +45,8 @@ public class TjGuideSheetLogServiceImpl implements ITjGuideSheetLogService {
 
     private final TjGuideSheetLogMapper baseMapper;
 
+    private final TjRegisterMapper registerMapper;
+
     /**
      * 查询导检单回收记录
      */
@@ -65,9 +69,20 @@ public class TjGuideSheetLogServiceImpl implements ITjGuideSheetLogService {
      * 查询导检单回收记录列表
      */
     @Override
-    public List<TjGuideSheetLogVo> queryList(TjGuideSheetLogBo bo) {
-        LambdaQueryWrapper<TjGuideSheetLog> lqw = buildQueryWrapper(bo);
-        return baseMapper.selectVoList(lqw);
+    public List<TjGuideSheetLogVo> queryList(Long registerId,String occupationalType) {
+        LambdaQueryWrapper<TjGuideSheetLog> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(TjGuideSheetLog::getRegisterId,registerId)
+            .eq(TjGuideSheetLog::getDelFlag,CommonConstants.NORMAL)
+            .eq(TjGuideSheetLog::getOccupationalType,occupationalType)
+            .orderByAsc(TjGuideSheetLog::getUploadTime);
+        List<TjGuideSheetLogVo> list = baseMapper.selectVoList(wrapper);
+        OssClient ossClient = OssFactory.instance();
+        list.forEach(vo->{
+            String path = ossClient.getPrivateUrl(vo.getImagePath(),60);
+            vo.setImagePath(path);
+        });
+
+        return list;
     }
 
     private LambdaQueryWrapper<TjGuideSheetLog> buildQueryWrapper(TjGuideSheetLogBo bo) {
@@ -93,8 +108,8 @@ public class TjGuideSheetLogServiceImpl implements ITjGuideSheetLogService {
         String uuid = OssConstant.GUIDE_SHEET_BUKET+ StrUtil.SLASH +IdUtil.fastSimpleUUID()+suffix;
         UploadResult uploadResult;
         try {
-            uploadResult = ossClient.upload(bo.getFile().getBytes(), uuid,bo.getFile().getContentType());
-            add.setImagePath(URLUtil.getPath(uploadResult.getUrl()));
+            ossClient.upload(bo.getFile().getBytes(), uuid,bo.getFile().getContentType());
+            add.setImagePath(uuid);
         } catch (IOException e) {
             log.error("上传导检单失败：{}",e);
             throw new ServiceException("上传导检单失败!");
@@ -129,7 +144,17 @@ public class TjGuideSheetLogServiceImpl implements ITjGuideSheetLogService {
      */
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
-        return baseMapper.update(TjGuideSheetLog.builder().delFlag(CommonConstants.DISABLE).build(),
-            Wrappers.lambdaQuery(TjGuideSheetLog.class).in(TjGuideSheetLog::getId,ids)) > 0;
+        //删除图片
+        List<TjGuideSheetLog> list = baseMapper.selectList(Wrappers.lambdaQuery(TjGuideSheetLog.class).in(TjGuideSheetLog::getId, ids));
+        OssClient ossClient = OssFactory.instance();
+        list.forEach(guideSheet->{
+            ossClient.delete(guideSheet.getImagePath());
+        });
+        return  baseMapper.deleteBatchIds(ids)> 0;
+    }
+
+    @Override
+    public Boolean saveOrWithdrawGuideSheet(Long registerId, String guideSheetReceived) {
+        return registerMapper.updateById(TjRegister.builder().id(registerId).guideSheetReceived(guideSheetReceived).build())>0;
     }
 }

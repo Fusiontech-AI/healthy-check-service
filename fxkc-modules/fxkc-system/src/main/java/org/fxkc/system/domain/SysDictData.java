@@ -64,6 +64,11 @@ public class SysDictData extends TenantEntity {
      */
     private String remark;
 
+    /**
+     * 业务类型编码
+     */
+    private String busType;
+
     public boolean getDefault() {
         return UserConstants.YES.equals(this.isDefault);
     }

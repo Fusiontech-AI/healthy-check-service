@@ -152,7 +152,7 @@ public class TjRegisterVo implements Serializable {
      */
     @ExcelProperty(value = "是否回收指引单", converter = ExcelDictConvert.class)
     @ExcelDictFormat(readConverterExp = "0=：是，1：否")
-    private String guideSheetRecived;
+    private String guideSheetReceived;
 
     /**
      * 是否冻结（0：是，1：否）
@@ -500,9 +500,9 @@ public class TjRegisterVo implements Serializable {
     private Long schedulingId;
 
     /**
-     * 体检检查类型1初检 2复检,见字典bus_tj_check_type
+     * 体检检查类型11初检 21复检,见字典bus_tj_check_type
      */
-    @ExcelProperty(value = "体检检查类型1初检 2复检,见字典bus_tj_check_type")
+    @ExcelProperty(value = "体检检查类型11初检 21复检,见字典bus_tj_check_type")
     private String checkType;
 
     /**

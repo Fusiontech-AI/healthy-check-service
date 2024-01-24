@@ -53,5 +53,10 @@ public class TjGuideSheetLog extends TenantEntity {
     @TableLogic
     private String delFlag;
 
+    /**
+     * 是否职业病问询单(0：是，1：否)
+     */
+    private String occupationalType;
+
 
 }

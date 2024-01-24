@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import org.fxkc.peis.domain.bo.TjRegisterSingleBo;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 import org.fxkc.common.idempotent.annotation.RepeatSubmit;
@@ -128,5 +129,13 @@ public class TjRegisterController extends BaseController {
     public R<Void> reRegistration(@NotEmpty(message = "主键不能为空")
                                       @PathVariable Long[] ids){
         return toAjax(tjRegisterService.reRegistration(List.of(ids)));
+    }
+
+    /**
+     * 根据条件查询单个体检人员信息
+     */
+    @GetMapping("/getSingleInfo")
+    public R<TjRegisterVo> getSingleInfo(TjRegisterSingleBo bo) {
+        return R.ok(tjRegisterService.getSingleInfo(bo));
     }
 }

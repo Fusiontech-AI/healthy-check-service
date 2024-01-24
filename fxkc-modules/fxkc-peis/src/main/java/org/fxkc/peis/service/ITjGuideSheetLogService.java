@@ -5,6 +5,7 @@ import org.fxkc.peis.domain.vo.TjGuideSheetLogVo;
 import org.fxkc.peis.domain.bo.TjGuideSheetLogBo;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.mybatis.core.page.PageQuery;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Collection;
 import java.util.List;
@@ -30,7 +31,7 @@ public interface ITjGuideSheetLogService {
     /**
      * 查询导检单回收记录列表
      */
-    List<TjGuideSheetLogVo> queryList(TjGuideSheetLogBo bo);
+    List<TjGuideSheetLogVo> queryList(Long registerId,String occupationalType);
 
     /**
      * 新增导检单回收记录
@@ -46,4 +47,6 @@ public interface ITjGuideSheetLogService {
      * 校验并批量删除导检单回收记录信息
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+
+    Boolean saveOrWithdrawGuideSheet(Long registerId, String  guideSheetReceived);
 }

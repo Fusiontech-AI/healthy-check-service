@@ -10,12 +10,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             t1.COMBINATION_PROJECT_ID,
             t2.COMBIN_PROJECT_CODE,
             t2.COMBIN_PROJECT_NAME,
+            t3.KS_NAME sectionName,
             t1.PROJECT_TYPE,
-            t1.PROJECT_REQUIRED_TYPE
+            t1.PROJECT_REQUIRED_TYPE,
+            t1.DELAY_TIME,
+            t1.DELAY_REASON
         FROM
             TJ_REG_COMBINATION_PROJECT t1
                 LEFT JOIN TJ_COMBINATION_PROJECT t2 ON t1.COMBINATION_PROJECT_ID = t2.ID
+                LEFT JOIN TJ_TJKS t3 ON t2.KS_ID = t3.ID
         where t1.DEL_FLAG ='0' and t2.DEL_FLAG ='0'
           and t1.CHECK_STATUS = #{bo.checkStatus}
+          and t1.REGISTER_ID = #{bo.registerId}
     </select>
 </mapper>

@@ -1,5 +1,7 @@
 package org.fxkc.peis.domain.bo;
 
+import org.fxkc.common.core.validate.AddGroup;
+import org.fxkc.common.core.validate.EditGroup;
 import org.fxkc.peis.domain.TjTeamGroupHazards;
 import org.fxkc.common.mybatis.core.domain.BaseEntity;
 import io.github.linpeilie.annotations.AutoMapper;

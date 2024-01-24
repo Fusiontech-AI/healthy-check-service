@@ -1,10 +1,13 @@
 package org.fxkc.peis.domain.vo;
 
 import com.alibaba.excel.annotation.ExcelProperty;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.fxkc.common.core.validate.AddGroup;
 import org.fxkc.common.core.validate.EditGroup;
+
+import java.util.Date;
 
 /**
  * @description:
@@ -49,4 +52,15 @@ public class TjRegCombinationProjectListVo {
      * 项目属性（0：选检项目，1：必检项目）见字典bus_project_required_type
      */
     private String projectRequiredType;
+
+    /**
+     * 延期时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date delayTime;
+
+    /**
+     * 延期理由
+     */
+    private String delayReason;
 }

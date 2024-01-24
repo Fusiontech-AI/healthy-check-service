@@ -12,7 +12,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
+import org.fxkc.common.oss.core.OssClient;
+import org.fxkc.common.oss.factory.OssFactory;
 import org.fxkc.common.satoken.utils.LoginHelper;
+import org.fxkc.peis.domain.bo.TjRegisterSingleBo;
 import org.fxkc.peis.enums.HealthyCheckTypeEnum;
 import org.fxkc.peis.enums.RegisterStatusEnum;
 import org.springframework.stereotype.Service;
@@ -87,7 +90,7 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
         lqw.eq(StringUtils.isNotBlank(bo.getReceiptPhone()), TjRegister::getReceiptPhone, bo.getReceiptPhone());
         lqw.eq(StringUtils.isNotBlank(bo.getPostAddress()), TjRegister::getPostAddress, bo.getPostAddress());
         lqw.eq(StringUtils.isNotBlank(bo.getBusinessType()), TjRegister::getBusinessType, bo.getBusinessType());
-        lqw.eq(StringUtils.isNotBlank(bo.getGuideSheetRecived()), TjRegister::getGuideSheetRecived, bo.getGuideSheetRecived());
+        lqw.eq(StringUtils.isNotBlank(bo.getGuideSheetReceived()), TjRegister::getGuideSheetReceived, bo.getGuideSheetReceived());
         lqw.eq(StringUtils.isNotBlank(bo.getFreezeStatus()), TjRegister::getFreezeStatus, bo.getFreezeStatus());
         lqw.eq(StringUtils.isNotBlank(bo.getHealthyCheckStatus()), TjRegister::getHealthyCheckStatus, bo.getHealthyCheckStatus());
         lqw.eq(bo.getTeamId() != null, TjRegister::getTeamId, bo.getTeamId());
@@ -181,5 +184,19 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
         return baseMapper.update(TjRegister.builder()
                 .status(RegisterStatusEnum.正常.getCode()).delFlag(CommonConstants.NORMAL).build()
             ,Wrappers.lambdaQuery(TjRegister.class).in(TjRegister::getId,ids))>0;
+    }
+
+    @Override
+    public TjRegisterVo getSingleInfo(TjRegisterSingleBo bo) {
+        LambdaQueryWrapper<TjRegister> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(bo.getId() != null,TjRegister::getId,bo.getId())
+            .eq(StrUtil.isNotEmpty(bo.getHealthyCheckCode()),TjRegister::getHealthyCheckCode,bo.getHealthyCheckCode())
+            .eq(TjRegister::getDelFlag,CommonConstants.NORMAL);
+        TjRegisterVo vo = baseMapper.selectVoOne(wrapper);
+        if(StrUtil.isNotEmpty(vo.getUserImage())){
+            OssClient ossClient = OssFactory.instance();
+            vo.setUserImage(ossClient.getPrivateUrl(vo.getUserImage(),60));
+        }
+        return vo;
     }
 }

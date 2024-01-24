@@ -1,5 +1,6 @@
 package org.fxkc.peis.domain.bo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -32,6 +33,6 @@ public class TjRegCombinationProjectDelayBo {
      * 延期时间
      */
     @NotNull(message = "延期时间不能为空",groups = {EditGroup.class})
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date delayTime;
 }
