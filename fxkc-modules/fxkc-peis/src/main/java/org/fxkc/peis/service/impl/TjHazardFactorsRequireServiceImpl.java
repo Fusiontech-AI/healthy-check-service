@@ -70,7 +70,7 @@ public class TjHazardFactorsRequireServiceImpl extends ServiceImpl<TjHazardFacto
             TjHazardFactorsRequire hazardFactorsRequire = baseMapper.selectOne(Wrappers.lambdaQuery(TjHazardFactorsRequire.class)
                 .eq(TjHazardFactorsRequire::getHazardFactorsCode, bo.getHazardFactorsCode())
                 .eq(TjHazardFactorsRequire::getAssociationType, bo.getAssociationType()));
-            TjHazardFactorsRequireVo.HazardFactorsRequireQueryVo vo = BeanUtil.toBean(hazardFactorsRequire, TjHazardFactorsRequireVo.HazardFactorsRequireQueryVo.class);
+            TjHazardFactorsRequireVo.HazardFactorsRequireQueryVo vo = MapstructUtils.convert(hazardFactorsRequire, TjHazardFactorsRequireVo.HazardFactorsRequireQueryVo.class);
             hazardFactorsRequireVo.setVo(vo);
         }
         return hazardFactorsRequireVo;
@@ -79,7 +79,7 @@ public class TjHazardFactorsRequireServiceImpl extends ServiceImpl<TjHazardFacto
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveOrUpdate(TjHazardFactorsRequireSaveBo bo) {
-        TjHazardFactorsRequire hazardFactorsRequire = BeanUtil.toBean(bo, TjHazardFactorsRequire.class);
+        TjHazardFactorsRequire hazardFactorsRequire = MapstructUtils.convert(bo, TjHazardFactorsRequire.class);
         if(ObjectUtil.notEqual(AssociationTypeEnum.EVALUATION_CRITERION.getCode(), bo.getAssociationType())
             && StrUtil.isBlank(bo.getDutyStatus())) {
             throw new PeisException(ErrorCodeConstants.PEIS_HAZARD_STATUS_NOT_EMPTY);
@@ -141,7 +141,7 @@ public class TjHazardFactorsRequireServiceImpl extends ServiceImpl<TjHazardFacto
     @Override
     public TjHazardFactorsRequireVo hazardFactorsDetail(String id) {
         TjHazardFactorsRequire hazardFactorsRequire = baseMapper.selectById(id);
-        TjHazardFactorsRequireVo.HazardFactorsRequireQueryVo vo = BeanUtil.toBean(hazardFactorsRequire, TjHazardFactorsRequireVo.HazardFactorsRequireQueryVo.class);
+        TjHazardFactorsRequireVo.HazardFactorsRequireQueryVo vo = MapstructUtils.convert(hazardFactorsRequire, TjHazardFactorsRequireVo.HazardFactorsRequireQueryVo.class);
         List<TjHazardFactorsItem> list = tjHazardFactorsItemMapper.selectList(Wrappers.lambdaQuery(TjHazardFactorsItem.class)
             .eq(TjHazardFactorsItem::getFactorsId, id));
         if(CollUtil.isNotEmpty(list)) {
