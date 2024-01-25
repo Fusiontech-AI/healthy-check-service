@@ -1,5 +1,6 @@
 package org.fxkc.peis.mapper;
 
+import org.apache.ibatis.annotations.Select;
 import org.fxkc.peis.domain.TjTjks;
 import org.fxkc.peis.domain.vo.TjTjksVo;
 import org.fxkc.common.mybatis.core.mapper.BaseMapperPlus;
@@ -12,4 +13,6 @@ import org.fxkc.common.mybatis.core.mapper.BaseMapperPlus;
  */
 public interface TjTjksMapper extends BaseMapperPlus<TjTjks, TjTjksVo> {
 
+    @Select("SELECT tj_tjks_sequence.NEXTVAL FROM DUAL")
+    String nextTjKsCode();
 }

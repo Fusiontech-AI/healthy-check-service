@@ -45,4 +45,6 @@ public interface ITjTjksService {
      * 校验并批量删除体检科室信息
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+
+    String getKsCode();
 }

@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.fxkc.common.core.constant.CommonConstants;
 import org.fxkc.common.core.exception.ServiceException;
 import org.fxkc.common.core.utils.MapstructUtils;
+import org.fxkc.common.core.utils.SequenceNoUtils;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.peis.domain.TjTjks;
@@ -153,5 +154,11 @@ public class TjTjksServiceImpl implements ITjTjksService {
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteBatchIds(ids) > 0;
+    }
+
+    @Override
+    public String getKsCode() {
+        String ksCode = baseMapper.nextTjKsCode();
+        return SequenceNoUtils.padl(ksCode,3,'0');
     }
 }
