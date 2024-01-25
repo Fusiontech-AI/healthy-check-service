@@ -4,6 +4,7 @@ import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.peis.domain.TjTeamGroup;
 import org.fxkc.peis.domain.bo.TjTeamGroupBo;
+import org.fxkc.peis.domain.bo.TjTeamGroupUpdateBo;
 import org.fxkc.peis.domain.vo.TjTeamGroupVo;
 
 import java.util.Collection;
@@ -48,4 +49,6 @@ public interface ITjTeamGroupService {
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
 
     void recordGroupInfo(List<TjTeamGroup> groupList);
+
+    Boolean updateGroupInfo(List<TjTeamGroupUpdateBo> list);
 }

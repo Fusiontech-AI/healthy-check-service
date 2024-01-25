@@ -29,9 +29,11 @@ import org.fxkc.peis.exception.PeisException;
 import org.fxkc.peis.mapper.TjRegisterMapper;
 import org.fxkc.peis.mapper.TjTeamGroupMapper;
 import org.fxkc.peis.mapper.TjTeamTaskMapper;
+import org.fxkc.peis.service.ITjTeamGroupService;
 import org.fxkc.peis.service.ITjTeamInfoService;
 import org.fxkc.peis.service.ITjTeamTaskService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -53,6 +55,8 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
     private final ITjTeamInfoService iTjTeamInfoService;
 
     private final TjRegisterMapper tjRegisterMapper;
+
+    private final ITjTeamGroupService iTjTeamGroupService;
 
     /**
      * 查询团检任务管理
@@ -117,6 +121,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
      * 修改团检任务管理
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public List<TjTeamGroupVo> updateByBo(TjTeamTaskBo bo) {
         validEntityBeforeSave(bo, Boolean.FALSE);
         TjTeamTask update = MapstructUtils.convert(bo, TjTeamTask.class);
@@ -127,9 +132,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
             .setTeamId(update.getTeamId()).setTeamName(teamName));
         //修改任务分组记录分组人员分组信息
         List<TjTeamGroup> recordList = StreamUtils.filter(groupList, e -> Objects.nonNull(e.getId()));
-
-
-
+        iTjTeamGroupService.recordGroupInfo(recordList);
         tjTeamGroupMapper.insertOrUpdateBatch(groupList);
         return tjTeamGroupMapper.selectVoList(Wrappers.lambdaQuery(TjTeamGroup.class)
             .eq(TjTeamGroup::getTaskId, update.getId())

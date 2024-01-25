@@ -20,17 +20,6 @@ import jakarta.validation.constraints.*;
 @AutoMapper(target = TjTeamGroupHazards.class, reverseConvertGenerate = false)
 public class TjTeamGroupHazardsBo extends BaseEntity {
 
-    /**
-     * 主键id
-     */
-    @NotNull(message = "主键id不能为空", groups = { EditGroup.class })
-    private Long id;
-
-    /**
-     * 分组id
-     */
-    @NotNull(message = "分组id不能为空", groups = { AddGroup.class, EditGroup.class })
-    private Long groupId;
 
     /**
      * 危害因素编码

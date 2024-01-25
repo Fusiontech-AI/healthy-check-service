@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 体检基础项目Service业务层处理
@@ -81,7 +82,7 @@ public class TjBasicProjectServiceImpl implements ITjBasicProjectService {
         lqw.eq(StringUtils.isNotBlank(bo.getHisCode()), TjBasicProject::getHisCode, bo.getHisCode());
         lqw.eq(StringUtils.isNotBlank(bo.getZybCode()), TjBasicProject::getZybCode, bo.getZybCode());
         lqw.eq(StringUtils.isNotBlank(bo.getStatus()), TjBasicProject::getStatus, bo.getStatus());
-        lqw.isNotNull(bo.getIsOccupational(), TjBasicProject::getZybCode);
+        lqw.isNotNull(Objects.nonNull(bo.getIsOccupational()) && bo.getIsOccupational(), TjBasicProject::getZybCode);
         return lqw;
     }
 

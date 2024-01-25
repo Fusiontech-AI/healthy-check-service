@@ -20,7 +20,7 @@ import java.util.List;
  * @date 2024-01-17
  */
 @Data
-@AutoMapper(target = TjTeamGroupBo.class)
+@AutoMapper(target = TjTeamGroup.class)
 public class TjTeamGroupUpdateBo {
 
     /**
@@ -63,6 +63,11 @@ public class TjTeamGroupUpdateBo {
      */
     @NotBlank(message = "是否同步项目")
     private String isSyncProject;
+
+    /**
+     * 套餐id
+     */
+    private Long packageId;
 
     /**
      * 分组项目信息集合
