@@ -89,7 +89,7 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
         lqw.eq(StringUtils.isNotBlank(bo.getRecipient()), TjRegister::getRecipient, bo.getRecipient());
         lqw.eq(StringUtils.isNotBlank(bo.getReceiptPhone()), TjRegister::getReceiptPhone, bo.getReceiptPhone());
         lqw.eq(StringUtils.isNotBlank(bo.getPostAddress()), TjRegister::getPostAddress, bo.getPostAddress());
-        lqw.eq(StringUtils.isNotBlank(bo.getBusinessType()), TjRegister::getBusinessType, bo.getBusinessType());
+        lqw.eq(StringUtils.isNotBlank(bo.getBusinessCategory()), TjRegister::getBusinessCategory, bo.getBusinessCategory());
         lqw.eq(StringUtils.isNotBlank(bo.getGuideSheetReceived()), TjRegister::getGuideSheetReceived, bo.getGuideSheetReceived());
         lqw.eq(StringUtils.isNotBlank(bo.getFreezeStatus()), TjRegister::getFreezeStatus, bo.getFreezeStatus());
         lqw.eq(StringUtils.isNotBlank(bo.getHealthyCheckStatus()), TjRegister::getHealthyCheckStatus, bo.getHealthyCheckStatus());

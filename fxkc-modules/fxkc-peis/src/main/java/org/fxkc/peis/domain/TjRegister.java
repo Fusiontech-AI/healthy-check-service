@@ -124,9 +124,9 @@ public class TjRegister extends TenantEntity {
     private String delFlag;
 
     /**
-     * 业务类型（1：个检，2：团检）见字典bus_category
+     * 业务类别（1：个检，2：团检）见字典bus_category
      */
-    private String businessType;
+    private String businessCategory;
 
     /**
      * 是否回收指引单（0：是，1：否）

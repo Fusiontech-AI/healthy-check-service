@@ -132,10 +132,10 @@ public class TjRegisterBo extends BaseEntity {
     private String postAddress;
 
     /**
-     * 业务类型（1：个检，2：团检）见字典bus_category
+     * 业务类别（1：个检，2：团检）见字典bus_category
      */
-    @NotBlank(message = "业务类型（1：个检，2：团检）见字典bus_category不能为空", groups = { AddGroup.class, EditGroup.class })
-    private String businessType;
+    @NotBlank(message = "业务类别（1：个检，2：团检）见字典bus_category不能为空", groups = { AddGroup.class, EditGroup.class })
+    private String businessCategory;
 
     /**
      * 是否回收指引单（0：是，1：否）
