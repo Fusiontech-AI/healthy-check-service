@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import jakarta.validation.constraints.*;
 
+import java.math.BigDecimal;
+
 /**
  * 团检分组对应项目业务对象 tj_team_group_item
  *
@@ -21,57 +23,45 @@ import jakarta.validation.constraints.*;
 public class TjTeamGroupItemBo extends BaseEntity {
 
     /**
-     * 主键id
-     */
-    @NotNull(message = "主键id不能为空", groups = { EditGroup.class })
-    private Long id;
-
-    /**
-     * 分组id
-     */
-    @NotNull(message = "分组id不能为空", groups = { AddGroup.class, EditGroup.class })
-    private Long groupId;
-
-    /**
      * 组合项目id
      */
-    @NotNull(message = "组合项目id不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotNull(message = "组合项目id不能为空")
     private Long itemId;
 
     /**
      * 组合项目名称
      */
-    @NotBlank(message = "组合项目名称不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotBlank(message = "组合项目名称不能为空")
     private String itemName;
 
     /**
      * 标准价格
      */
-    @NotNull(message = "标准价格不能为空", groups = { AddGroup.class, EditGroup.class })
-    private Long standardPrice;
+    @NotNull(message = "标准价格不能为空")
+    private BigDecimal standardPrice;
 
     /**
      * 实际价格
      */
-    @NotNull(message = "实际价格不能为空", groups = { AddGroup.class, EditGroup.class })
-    private Long actualPrice;
+    @NotNull(message = "实际价格不能为空")
+    private BigDecimal actualPrice;
 
     /**
      * 折扣
      */
-    @NotNull(message = "折扣不能为空", groups = { AddGroup.class, EditGroup.class })
-    private Long discount;
+    @NotNull(message = "折扣不能为空")
+    private BigDecimal discount;
 
     /**
      * 是否套餐包含的项目1是2否
      */
-    @NotBlank(message = "是否套餐包含的项目1是2否不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotBlank(message = "是否套餐包含的项目1是2否不能为空")
     private String include;
 
     /**
      * 是否必选(1:是0否)
      */
-    @NotNull(message = "是否必选(1:是0否)不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotNull(message = "是否必选(1:是0否)不能为空")
     private Boolean isRequired;
 
 

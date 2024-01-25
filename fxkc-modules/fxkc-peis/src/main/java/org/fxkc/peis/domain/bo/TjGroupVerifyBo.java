@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 @Data
 @AutoMapper(target = TjTeamGroupBo.class, reverseConvertGenerate = false)
-public class VerifyGroupBo {
+public class TjGroupVerifyBo {
 
     /**
      * 主键id

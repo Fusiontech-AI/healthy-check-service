@@ -2,30 +2,35 @@ package org.fxkc.peis.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.RequiredArgsConstructor;
 import org.fxkc.common.core.constant.CommonConstants;
 import org.fxkc.common.core.utils.MapstructUtils;
 import org.fxkc.common.core.utils.StreamUtils;
-import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.mybatis.core.page.PageQuery;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import lombok.RequiredArgsConstructor;
+import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.peis.constant.ErrorCodeConstants;
 import org.fxkc.peis.domain.*;
+import org.fxkc.peis.domain.bo.TjTeamGroupBo;
+import org.fxkc.peis.domain.bo.TjTeamGroupHazardsBo;
+import org.fxkc.peis.domain.bo.TjTeamGroupItemBo;
+import org.fxkc.peis.domain.bo.TjTeamGroupUpdateBo;
+import org.fxkc.peis.domain.vo.TjTeamGroupVo;
 import org.fxkc.peis.enums.GroupTypeEnum;
 import org.fxkc.peis.enums.HealthyCheckTypeEnum;
 import org.fxkc.peis.exception.PeisException;
 import org.fxkc.peis.mapper.*;
-import org.springframework.stereotype.Service;
-import org.fxkc.peis.domain.bo.TjTeamGroupBo;
-import org.fxkc.peis.domain.vo.TjTeamGroupVo;
 import org.fxkc.peis.service.ITjTeamGroupService;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -47,6 +52,8 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
     private final TjTeamGroupHistoryMapper tjTeamGroupHistoryMapper;
 
     private final TjRegCombinationProjectMapper tjRegCombinationProjectMapper;
+
+    private final TjPackageMapper tjPackageMapper;
 
     /**
      * 查询团检分组信息
@@ -145,9 +152,7 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void recordGroupInfo(List<TjTeamGroup> groupList) {
-        List<TjTeamGroupItem> itemList = CollUtil.newArrayList();
         List<TjRegCombinationProject> projectList = CollUtil.newArrayList();
         List<TjTeamGroupHistory> groupHistoryList = CollUtil.newArrayList();
         if(CollUtil.isNotEmpty(groupList)) {
@@ -176,7 +181,7 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
                                 tjRegCombinationProjectMapper.delete(Wrappers.lambdaUpdate(TjRegCombinationProject.class)
                                     .eq(TjRegCombinationProject::getRegisterId, s.getId()));
                                 //todo 缺少套餐id
-                                itemList.forEach(d -> {
+                                k.getGroupItemList().forEach(d -> {
                                     projectList.add(TjRegCombinationProject.builder()
                                         .registerId(s.getId())
                                         .combinationProjectId(d.getItemId())
@@ -209,6 +214,48 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
         if(CollUtil.isNotEmpty(groupHistoryList)) {
             tjTeamGroupHistoryMapper.insertBatch(groupHistoryList);
         }
+    }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean updateGroupInfo(List<TjTeamGroupUpdateBo> list) {
+        StringBuffer buffer = new StringBuffer();
+        list.forEach(k -> {
+            List<TjTeamGroupItemBo> itemBoList = k.getGroupItemList();
+            Map<Long, Long> itemMap = itemBoList.stream().collect(Collectors.groupingBy(
+                TjTeamGroupItemBo::getItemId, Collectors.counting()));
+            if(itemMap.entrySet().stream().anyMatch(e -> e.getValue() > 1)) {
+                buffer.append(k.getGroupName()).append("、");
+            }
+        });
+        if(buffer.length() > 0) {
+            throw new PeisException(ErrorCodeConstants.PEIS_GROUP_ITEM_ISEXIST, buffer.deleteCharAt(buffer.length() - 1));
+        }
+        List<TjTeamGroup> groupList = MapstructUtils.convert(list, TjTeamGroup.class);
+        //任务分组保存项目信息记录分组人员分组信息
+        recordGroupInfo(groupList);
+        List<Long> packageIds =  StreamUtils.toList(groupList, TjTeamGroup::getPackageId);
+        if(CollUtil.isNotEmpty(packageIds)) {
+            List<TjPackage> packageList = tjPackageMapper.selectBatchIds(packageIds);
+            Map<Long, String> packageMap = StreamUtils.toMap(packageList, TjPackage::getId, TjPackage::getPackageName);
+            groupList.forEach(k -> k.setPackageName(packageMap.getOrDefault(k.getId(), StrUtil.EMPTY)));
+        }
+        //每次保存都先根据groupId删除项目信息、职业病则需多删除危害因素
+        List<Long> groupIds = StreamUtils.toList(groupList, TjTeamGroup::getTeamId);
+        tjTeamGroupItemMapper.delete(Wrappers.lambdaQuery(TjTeamGroupItem.class)
+            .in(TjTeamGroupItem::getGroupId, groupIds));
+        tjTeamGroupHazardsMapper.delete(Wrappers.lambdaQuery(TjTeamGroupHazards.class)
+            .in(TjTeamGroupHazards::getGroupId, groupIds));
+        List<TjTeamGroupItem> itemList = list.stream().flatMap(e -> e.getGroupItemList().stream()
+            .map(s -> Objects.requireNonNull(MapstructUtils.convert(s, TjTeamGroupItem.class)).setGroupId(e.getId()))).toList();
+        List<TjTeamGroupHazards> hazardList = list.stream().flatMap(e -> e.getGroupHazardsList().stream()
+            .map(s -> Objects.requireNonNull(MapstructUtils.convert(s, TjTeamGroupHazards.class)).setGroupId(e.getId()))).toList();
+        if(CollUtil.isNotEmpty(itemList)) {
+            tjTeamGroupItemMapper.insertBatch(itemList);
+        }
+        if(CollUtil.isNotEmpty(hazardList)) {
+            tjTeamGroupHazardsMapper.insertBatch(hazardList);
+        }
+        return baseMapper.updateBatchById(groupList);
     }
 }

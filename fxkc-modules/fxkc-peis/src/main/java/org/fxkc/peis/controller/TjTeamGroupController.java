@@ -2,10 +2,14 @@ package org.fxkc.peis.controller;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import org.fxkc.peis.domain.bo.TjHazardFactorsCodeBo;
+import org.fxkc.peis.domain.bo.TjTeamGroupUpdateBo;
+import org.fxkc.peis.domain.vo.TjHazardFactorsRequireVo;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 import org.fxkc.common.idempotent.annotation.RepeatSubmit;
@@ -102,5 +106,10 @@ public class TjTeamGroupController extends BaseController {
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
         return toAjax(tjTeamGroupService.deleteWithValidByIds(List.of(ids), true));
+    }
+
+    @PostMapping(value = "/updateGroupInfo")
+    public R<Void> updateGroupInfo(@RequestBody @Valid List<TjTeamGroupUpdateBo> list)  {
+        return toAjax(tjTeamGroupService.updateGroupInfo(list));
     }
 }

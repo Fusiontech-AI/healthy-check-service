@@ -8,8 +8,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.fxkc.peis.domain.bo.TjTeamTaskQueryBo;
-import org.fxkc.peis.domain.bo.VerifyGroupBo;
-import org.fxkc.peis.domain.bo.VerifyGroupPackageBo;
+import org.fxkc.peis.domain.bo.TjGroupVerifyBo;
+import org.fxkc.peis.domain.bo.TjGroupVerifyPackageBo;
 import org.fxkc.peis.domain.vo.TjTeamGroupVo;
 import org.fxkc.peis.domain.vo.TjTeamTaskDetailVo;
 import org.fxkc.peis.domain.vo.VerifyMessageVo;
@@ -116,7 +116,7 @@ public class TjTeamTaskController extends BaseController {
      */
     @PostMapping("/verifyGroupData")
     @Log(title = "团检任务校验分组数据", businessType = BusinessType.OTHER)
-    public R<VerifyMessageVo> verifyGroupData(@RequestBody @Valid List<VerifyGroupBo> list) {
+    public R<VerifyMessageVo> verifyGroupData(@RequestBody @Valid List<TjGroupVerifyBo> list) {
         return R.ok(tjTeamTaskService.verifyGroupData(list));
     }
 
@@ -125,7 +125,7 @@ public class TjTeamTaskController extends BaseController {
      */
     @PostMapping("/verifyGroupPackageData")
     @Log(title = "团检任务校验分组套餐数据", businessType = BusinessType.OTHER)
-    public R<VerifyMessageVo> verifyGroupPackageData(@RequestBody @Valid List<VerifyGroupPackageBo> list) {
+    public R<VerifyMessageVo> verifyGroupPackageData(@RequestBody @Valid List<TjGroupVerifyPackageBo> list) {
         return R.ok(tjTeamTaskService.verifyGroupPackageData(list));
     }
 }

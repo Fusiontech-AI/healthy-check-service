@@ -3,6 +3,7 @@ package org.fxkc.peis.domain;
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import org.fxkc.common.tenant.core.TenantEntity;
 
 import java.io.Serial;
@@ -17,6 +18,7 @@ import java.math.BigDecimal;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("tj_team_group_item")
+@Accessors(chain = true)
 public class TjTeamGroupItem extends TenantEntity {
 
     @Serial

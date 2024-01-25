@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import org.fxkc.common.tenant.core.TenantEntity;
 
 import java.io.Serial;
@@ -17,6 +18,7 @@ import java.io.Serial;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("tj_team_group_hazards")
+@Accessors(chain = true)
 public class TjTeamGroupHazards extends TenantEntity {
 
     @Serial
