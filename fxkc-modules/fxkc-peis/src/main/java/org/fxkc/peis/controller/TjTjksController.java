@@ -111,6 +111,6 @@ public class TjTjksController extends BaseController {
      */
     @GetMapping("/getKsCode")
     public R<String> getKsCode() {
-        return R.ok(tjTjksService.getKsCode());
+        return R.ok("操作成功!",tjTjksService.getKsCode());
     }
 }
