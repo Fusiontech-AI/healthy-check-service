@@ -4,4 +4,152 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.fxkc.peis.mapper.TjRegisterMapper">
 
+    <select id="selectPage" resultType="org.fxkc.peis.domain.vo.TjRegisterPageVo">
+        SELECT
+            t1.ID,
+            t1.HEALTHY_CHECK_CODE,
+            t1.RECORD_CODE,
+            t1.CREDENTIAL_TYPE,
+            t1.CREDENTIAL_NUMBER,
+            t1.BUSINESS_CATEGORY,
+            t1.PHYSICAL_TYPE,
+            t1.NAME,
+            t1.MARRIAGE_STATUS,
+            t1.AGE,
+            t1.PHONE,
+            t1.HEALTHY_CHECK_TIME,
+            t1.GUIDE_SHEET_RECEIVED,
+            t1.FREEZE_STATUS,
+            t1.HEALTHY_CHECK_STATUS,
+            t1.NEED_GENERAL_REVIEW,
+            t1.TOTAL_AMOUNT,
+            t1.TEAM_AMOUNT,
+            t1.PERSON_AMOUNT,
+            t1.TEAM_ID,
+            t1.TEAM_GROUP_ID,
+            t1.TEAM_DEPT_ID,
+            t1.INTRODUCER,
+            t1.CREATE_BY,
+            t1.REGISTER_DOCTOR_ID,
+            t1.GENERAL_REVIEW_DOCTOR,
+            t1.GENERAL_REVIEW_TIME,
+            t1.AUDIT_DOCTOR,
+            t1.AUDIT_TIME,
+            t1.FINISH_TIME,
+            t1.CANCEL_REGISTER_TIME,
+            t1.CANCEL_REGISTER_OPERATOR,
+            t1.CHECK_TYPE
+        FROM
+            TJ_REGISTER t1
+        <where>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.delFlag)">
+                AND t1.DEL_FLAG = #{bo.delFlag}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.status)">
+                AND t1.STATUS = #{bo.status}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.healthyCheckCode)">
+                AND t1.HEALTHY_CHECK_CODE LIKE CONCAT('%',CONCAT(#{bo.healthyCheckCode},'%'))
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.recordCode)">
+                AND t1.RECORD_CODE LIKE CONCAT('%',CONCAT(#{bo.recordCode},'%'))
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.name)">
+                AND t1.NAME LIKE CONCAT('%',CONCAT(#{bo.name},'%'))
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.gender)">
+                AND t1.GENDER = #{bo.gender}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.credentialNumber)">
+                AND LOWER(t1.CREDENTIAL_NUMBER) LIKE CONCAT('%',CONCAT(LOWER(#{bo.credentialNumber}),'%'))
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.physicalType)">
+                AND t1.PHYSICAL_TYPE = #{bo.physicalType}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.businessCategory)">
+                AND t1.BUSINESS_CATEGORY = #{bo.businessCategory}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.guideSheetReceived)">
+                AND t1.GUIDE_SHEET_RECEIVED = #{bo.guideSheetReceived}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.healthyCheckStatus)">
+                AND t1.HEALTHY_CHECK_STATUS = #{bo.healthyCheckStatus}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.teamId)">
+                AND t1.TEAM_ID = #{bo.teamId}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.teamGroupId)">
+                AND t1.TEAM_GROUP_ID = #{bo.teamGroupId}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.teamDeptId)">
+                AND t1.TEAM_DEPT_ID = #{bo.teamDeptId}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.generalReviewDoctor)">
+                AND t1.GENERAL_REVIEW_DOCTOR = #{bo.generalReviewDoctor}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.generalReviewTimeStart)">
+                AND t1.GENERAL_REVIEW_TIME >= #{bo.generalReviewTimeStart}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.generalReviewTimeEnd)">
+                AND t1.GENERAL_REVIEW_TIME &lt;= #{bo.generalReviewTimeStart}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.healthyCheckTimeStart)">
+                AND t1.HEALTHY_CHECK_TIME >= #{bo.healthyCheckTimeStart}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.healthyCheckTimeEnd)">
+                AND t1.HEALTHY_CHECK_TIME &lt;= #{bo.healthyCheckTimeEnd}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.auditDoctor)">
+                AND t1.AUDIT_DOCTOR = #{bo.auditDoctor}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.auditTimeStart)">
+                AND t1.AUDIT_TIME >= #{bo.auditTimeStart}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.auditTimeEnd)">
+                AND t1.AUDIT_TIME &lt;= #{bo.auditTimeEnd}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.cancelRegisterTimeStart)">
+                AND t1.CANCEL_REGISTER_TIME >= #{bo.cancelRegisterTimeStart}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.cancelRegisterTimeEnd)">
+                AND t1.CANCEL_REGISTER_TIME &lt;= #{bo.cancelRegisterTimeEnd}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.cancelRegisterOperator)">
+                AND t1.CANCEL_REGISTER_OPERATOR = #{bo.cancelRegisterOperator}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.personCategory)">
+                AND t1.PERSON_CATEGORY = #{bo.personCategory}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.registerTimeStart)">
+                AND t1.REGISTER_TIME >= #{bo.registerTimeStart}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.registerTimeEnd)">
+                AND t1.REGISTER_TIME &lt;= #{bo.registerTimeEnd}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.registerDoctorId)">
+                AND t1.REGISTER_DOCTOR_ID &lt;= #{bo.registerDoctorId}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.chargeTimeStart)">
+                AND t1.CHARGE_TIME >= #{bo.chargeTimeStart}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.chargeTimeEnd)">
+                AND t1.CHARGE_TIME &lt;= #{bo.chargeTimeEnd}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.insMark)">
+                AND t1.INS_MARK = #{bo.insMark}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.packageId)">
+                AND t1.PACKAGE_ID = #{bo.packageId}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.checkType)">
+                AND t1.CHECK_TYPE = #{bo.checkType}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.occupationalType)">
+                AND t1.OCCUPATIONAL_TYPE = #{bo.occupationalType}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.taskId)">
+                AND t1.TASK_ID = #{bo.taskId}
+            </if>
+        </where>
+    </select>
 </mapper>

@@ -15,7 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.fxkc.common.oss.core.OssClient;
 import org.fxkc.common.oss.factory.OssFactory;
 import org.fxkc.common.satoken.utils.LoginHelper;
+import org.fxkc.peis.domain.bo.TjRegisterPageBo;
 import org.fxkc.peis.domain.bo.TjRegisterSingleBo;
+import org.fxkc.peis.domain.vo.TjRegisterPageVo;
 import org.fxkc.peis.enums.HealthyCheckTypeEnum;
 import org.fxkc.peis.enums.RegisterStatusEnum;
 import org.springframework.stereotype.Service;
@@ -54,9 +56,8 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
      * 查询体检人员登记信息列表
      */
     @Override
-    public TableDataInfo<TjRegisterVo> queryPageList(TjRegisterBo bo, PageQuery pageQuery) {
-        LambdaQueryWrapper<TjRegister> lqw = buildQueryWrapper(bo);
-        Page<TjRegisterVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
+    public TableDataInfo<TjRegisterPageVo> queryPageList(TjRegisterPageBo bo, PageQuery pageQuery) {
+        Page<TjRegisterPageVo> result = baseMapper.selectPage(bo, pageQuery.build());
         return TableDataInfo.build(result);
     }
 
