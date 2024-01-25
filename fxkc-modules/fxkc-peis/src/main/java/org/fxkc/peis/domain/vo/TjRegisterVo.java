@@ -193,12 +193,6 @@ public class TjRegisterVo implements Serializable {
     private Long introducer;
 
     /**
-     * 报到人
-     */
-    @ExcelProperty(value = "报到人")
-    private Long reporter;
-
-    /**
      * 总检医生
      */
     @ExcelProperty(value = "总检医生")

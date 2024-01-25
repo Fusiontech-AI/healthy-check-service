@@ -1,7 +1,9 @@
 package org.fxkc.peis.service;
 
 import org.fxkc.peis.domain.TjRegister;
+import org.fxkc.peis.domain.bo.TjRegisterPageBo;
 import org.fxkc.peis.domain.bo.TjRegisterSingleBo;
+import org.fxkc.peis.domain.vo.TjRegisterPageVo;
 import org.fxkc.peis.domain.vo.TjRegisterVo;
 import org.fxkc.peis.domain.bo.TjRegisterBo;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
@@ -28,7 +30,7 @@ public interface ITjRegisterService {
     /**
      * 查询体检人员登记信息列表
      */
-    TableDataInfo<TjRegisterVo> queryPageList(TjRegisterBo bo, PageQuery pageQuery);
+    TableDataInfo<TjRegisterPageVo> queryPageList(TjRegisterPageBo bo, PageQuery pageQuery);
 
     /**
      * 查询体检人员登记信息列表

@@ -6,7 +6,9 @@ import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import org.fxkc.peis.domain.bo.TjRegisterPageBo;
 import org.fxkc.peis.domain.bo.TjRegisterSingleBo;
+import org.fxkc.peis.domain.vo.TjRegisterPageVo;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 import org.fxkc.common.idempotent.annotation.RepeatSubmit;
@@ -41,9 +43,8 @@ public class TjRegisterController extends BaseController {
     /**
      * 查询体检人员登记信息列表
      */
-    @SaCheckPermission("peis:register:list")
-    @GetMapping("/list")
-    public TableDataInfo<TjRegisterVo> list(TjRegisterBo bo, PageQuery pageQuery) {
+    @GetMapping("/page")
+    public TableDataInfo<TjRegisterPageVo> page(TjRegisterPageBo bo, PageQuery pageQuery) {
         return tjRegisterService.queryPageList(bo, pageQuery);
     }
 
@@ -84,9 +85,8 @@ public class TjRegisterController extends BaseController {
     /**
      * 修改体检人员登记信息
      */
-    @SaCheckPermission("peis:register:edit")
     @Log(title = "体检人员登记信息", businessType = BusinessType.UPDATE)
-    @RepeatSubmit()
+    @RepeatSubmit(interval = 2000)
     @PutMapping()
     public R<Void> edit(@Validated(EditGroup.class) @RequestBody TjRegisterBo bo) {
         return toAjax(tjRegisterService.updateByBo(bo));

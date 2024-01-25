@@ -1,6 +1,10 @@
 package org.fxkc.peis.mapper;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.apache.ibatis.annotations.Param;
 import org.fxkc.peis.domain.TjRegister;
+import org.fxkc.peis.domain.bo.TjRegisterPageBo;
+import org.fxkc.peis.domain.vo.TjRegisterPageVo;
 import org.fxkc.peis.domain.vo.TjRegisterVo;
 import org.fxkc.common.mybatis.core.mapper.BaseMapperPlus;
 
@@ -11,5 +15,7 @@ import org.fxkc.common.mybatis.core.mapper.BaseMapperPlus;
  * @date 2024-01-22
  */
 public interface TjRegisterMapper extends BaseMapperPlus<TjRegister, TjRegisterVo> {
+
+    Page<TjRegisterPageVo> selectPage(@Param("bo") TjRegisterPageBo bo,@Param("page") Page<TjRegisterPageVo> page);
 
 }

@@ -62,7 +62,7 @@ public class TjRegisterBo extends BaseEntity {
     /**
      * 婚姻状况（0：未婚，1：已婚，2：不限）,见字典bus_marriage_status
      */
-    @NotBlank(message = "婚姻状况（0：未婚，1：已婚，2：不限）,见字典bus_marriage_status不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotBlank(message = "婚姻状况（0：未婚，1：已婚，2：不限）,见字典bus_marriage_status不能为空", groups = { AddGroup.class })
     private String marriageStatus;
 
     /**
@@ -80,13 +80,13 @@ public class TjRegisterBo extends BaseEntity {
     /**
      * 生日
      */
-    @NotNull(message = "生日不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotNull(message = "生日不能为空", groups = { AddGroup.class})
     private Date birthday;
 
     /**
      * 民族
      */
-    @NotBlank(message = "民族不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotBlank(message = "民族不能为空", groups = { AddGroup.class})
     private String nation;
 
     /**
@@ -104,7 +104,7 @@ public class TjRegisterBo extends BaseEntity {
     /**
      * 用户照片
      */
-    @NotBlank(message = "用户照片不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotBlank(message = "用户照片不能为空", groups = { AddGroup.class})
     private String userImage;
 
     /**
@@ -116,19 +116,19 @@ public class TjRegisterBo extends BaseEntity {
     /**
      * 收件人
      */
-    @NotBlank(message = "收件人不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotBlank(message = "收件人不能为空", groups = { AddGroup.class})
     private String recipient;
 
     /**
      * 收件电话
      */
-    @NotBlank(message = "收件电话不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotBlank(message = "收件电话不能为空", groups = { AddGroup.class})
     private String receiptPhone;
 
     /**
      * 收件地址
      */
-    @NotBlank(message = "收件地址不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotBlank(message = "收件地址不能为空", groups = { AddGroup.class})
     private String postAddress;
 
     /**
@@ -158,79 +158,73 @@ public class TjRegisterBo extends BaseEntity {
     /**
      * 单位id
      */
-    @NotNull(message = "单位id不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotNull(message = "单位id不能为空", groups = { AddGroup.class})
     private Long teamId;
 
     /**
      * 单位分组id
      */
-    @NotNull(message = "单位分组id不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotNull(message = "单位分组id不能为空", groups = { AddGroup.class})
     private Long teamGroupId;
 
     /**
      * 单位部门id
      */
-    @NotNull(message = "单位部门id不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotNull(message = "单位部门id不能为空", groups = { AddGroup.class})
     private Long teamDeptId;
 
     /**
      * 介绍人
      */
-    @NotNull(message = "介绍人不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotNull(message = "介绍人不能为空", groups = { AddGroup.class})
     private Long introducer;
-
-    /**
-     * 报到人
-     */
-    @NotNull(message = "报到人不能为空", groups = { AddGroup.class, EditGroup.class })
-    private Long reporter;
 
     /**
      * 总检医生
      */
-    @NotNull(message = "总检医生不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotNull(message = "总检医生不能为空", groups = { AddGroup.class})
     private Long generalReviewDoctor;
 
     /**
      * 总检时间
      */
-    @NotNull(message = "总检时间不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotNull(message = "总检时间不能为空", groups = { AddGroup.class})
     private Date generalReviewTime;
 
     /**
      * 体检日期
      */
-    @NotNull(message = "体检日期不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotNull(message = "体检日期不能为空", groups = { AddGroup.class})
     private Date healthyCheckTime;
 
     /**
      * 审核医生
      */
-    @NotNull(message = "审核医生不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotNull(message = "审核医生不能为空", groups = { AddGroup.class})
     private Long auditDoctor;
 
     /**
      * 审核时间
      */
-    @NotNull(message = "审核时间不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotNull(message = "审核时间不能为空", groups = { AddGroup.class})
     private Date auditTime;
 
     /**
      * 完成时间
      */
-    @NotNull(message = "完成时间不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotNull(message = "完成时间不能为空", groups = { AddGroup.class})
     private Date finishTime;
 
     /**
      * 取消登记时间
      */
-    @NotNull(message = "取消登记时间不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotNull(message = "取消登记时间不能为空", groups = { AddGroup.class})
     private Date cancelRegisterTime;
 
     /**
      * 取消登记操作人
      */
-    @NotNull(message = "取消登记操作人不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotNull(message = "取消登记操作人不能为空", groups = { AddGroup.class})
     private Long cancelRegisterOperator;
 
     /**
@@ -246,19 +240,19 @@ public class TjRegisterBo extends BaseEntity {
     /**
      * 人员类别,字典类型bus_person_category
      */
-    @NotBlank(message = "人员类别,字典类型bus_person_category不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotBlank(message = "人员类别,字典类型bus_person_category不能为空", groups = { AddGroup.class})
     private String personCategory;
 
     /**
      * 费别,字典类型bus_cost_type
      */
-    @NotBlank(message = "费别,字典类型bus_cost_type不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotBlank(message = "费别,字典类型bus_cost_type不能为空", groups = { AddGroup.class})
     private String costType;
 
     /**
      * 付费类型,字典类型bus_pay_type
      */
-    @NotBlank(message = "付费类型,字典类型bus_pay_type不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotBlank(message = "付费类型,字典类型bus_pay_type不能为空", groups = { AddGroup.class})
     private String payType;
 
     /**
@@ -449,7 +443,7 @@ public class TjRegisterBo extends BaseEntity {
     /**
      * 体检检查类型11初检 21复检,见字典bus_tj_check_type
      */
-    @NotBlank(message = "体检检查类型11初检 21复检,见字典bus_tj_check_type不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotBlank(message = "体检检查类型11初检 21复检,见字典bus_tj_check_type不能为空", groups = { AddGroup.class})
     private String checkType;
 
     /**
