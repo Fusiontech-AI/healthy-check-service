@@ -94,7 +94,7 @@ public class TjHazardFactorsRequireServiceImpl extends ServiceImpl<TjHazardFacto
             if(ObjectUtil.notEqual(bo.getAssociationType(), AssociationTypeEnum.EVALUATION_CRITERION.getCode())) {
                 msg = "在岗状态";
             }
-            if(Objects.equals("14", bo.getSortCode())) {
+            if(Objects.equals("14", bo.getSortCode()) && ObjectUtil.equal(bo.getAssociationType(), AssociationTypeEnum.REQUIRED_ITEM.getCode())) {
                 wrapper.eq(TjHazardFactorsRequire::getShineSource, bo.getShineSource())
                     .eq(TjHazardFactorsRequire::getShineType, bo.getShineType());
                 msg = msg.concat("、照射源、职业照射种类");
