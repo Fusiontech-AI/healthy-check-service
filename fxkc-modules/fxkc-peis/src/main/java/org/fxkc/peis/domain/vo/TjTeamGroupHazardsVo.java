@@ -27,34 +27,20 @@ public class TjTeamGroupHazardsVo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 主键id
-     */
-    @ExcelProperty(value = "主键id")
-    private Long id;
-
-    /**
-     * 分组id
-     */
-    @ExcelProperty(value = "分组id")
-    private Long groupId;
-
-    /**
      * 危害因素编码
      */
-    @ExcelProperty(value = "危害因素编码")
     private String hazardFactorsCode;
 
     /**
      * 危害因素名称
      */
-    @ExcelProperty(value = "危害因素名称")
     private String hazardFactorsName;
 
     /**
      * 其他危害因素名称
      */
-    @ExcelProperty(value = "其他危害因素名称")
     private String hazardFactorsOtherName;
+
 
 
 }

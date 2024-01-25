@@ -150,6 +150,16 @@ public class TjTeamGroup extends TenantEntity {
     private String delFlag;
 
     /**
+     * 照射源sys_dict_type(bus_shine_source)
+     */
+    private String shineSource;
+
+    /**
+     * 照射源种类sys_dict_type(bus_job_illumination_source)
+     */
+    private String shineType;
+
+    /**
      * 分组项目信息集合
      */
     @TableField(exist = false)

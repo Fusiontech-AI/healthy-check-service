@@ -17,26 +17,23 @@ import jakarta.validation.constraints.*;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@AutoMapper(target = TjTeamGroupHazards.class, reverseConvertGenerate = false)
+@AutoMapper(target = TjTeamGroupHazards.class)
 public class TjTeamGroupHazardsBo extends BaseEntity {
 
 
     /**
      * 危害因素编码
      */
-    @NotBlank(message = "危害因素编码不能为空", groups = { AddGroup.class, EditGroup.class })
     private String hazardFactorsCode;
 
     /**
      * 危害因素名称
      */
-    @NotBlank(message = "危害因素名称不能为空", groups = { AddGroup.class, EditGroup.class })
     private String hazardFactorsName;
 
     /**
      * 其他危害因素名称
      */
-    @NotBlank(message = "其他危害因素名称不能为空", groups = { AddGroup.class, EditGroup.class })
     private String hazardFactorsOtherName;
 
 

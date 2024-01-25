@@ -5,6 +5,7 @@ import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.peis.domain.TjTeamGroup;
 import org.fxkc.peis.domain.bo.TjTeamGroupBo;
 import org.fxkc.peis.domain.bo.TjTeamGroupUpdateBo;
+import org.fxkc.peis.domain.vo.TjTeamGroupDetailVo;
 import org.fxkc.peis.domain.vo.TjTeamGroupVo;
 
 import java.util.Collection;
@@ -21,7 +22,7 @@ public interface ITjTeamGroupService {
     /**
      * 查询团检分组信息
      */
-    TjTeamGroupVo queryById(Long id);
+    TjTeamGroupDetailVo queryById(Long id);
 
     /**
      * 查询团检分组信息列表

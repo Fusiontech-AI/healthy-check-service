@@ -32,6 +32,11 @@ public class TjTeamGroupBo extends BaseEntity {
     private Long id;
 
     /**
+     * 单位id
+     */
+    private Long teamId;
+
+    /**
      * 分组名称
      */
     @NotBlank(message = "分组名称不能为空")

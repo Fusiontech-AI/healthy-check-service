@@ -106,7 +106,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
     public List<TjTeamGroupVo> insertByBo(TjTeamTaskBo bo) {
         validEntityBeforeSave(bo, Boolean.TRUE);
         TjTeamTask add = MapstructUtils.convert(bo, TjTeamTask.class);
-        boolean flag = baseMapper.insert(add) > 0;
+        baseMapper.insert(add);
         List<TjTeamGroup> groupList = MapstructUtils.convert(bo.getGroupList(), TjTeamGroup.class);
         String teamName = iTjTeamInfoService.selectTeamNameById(add.getTeamId());
         groupList.forEach(k -> k.setTaskId(add.getId()).setTaskName(add.getTaskName())
@@ -261,7 +261,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
             }
         }));
         if(buffer.length() > 0) {
-            vo.setPromptMessage(buffer.toString());
+            vo.setPromptMessage(buffer.toString().concat("是否确认保存？"));
             vo.setIsPrompt(Boolean.TRUE);
         }
         return vo;
@@ -315,7 +315,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
             }
         }));
         if(buffer.length() > 0) {
-            vo.setPromptMessage(buffer.toString());
+            vo.setPromptMessage(buffer.toString().concat("是否确认保存？"));
             vo.setIsPrompt(Boolean.TRUE);
         }
         return vo;

@@ -10,6 +10,7 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.fxkc.peis.domain.bo.TjHazardFactorsCodeBo;
 import org.fxkc.peis.domain.bo.TjTeamGroupUpdateBo;
 import org.fxkc.peis.domain.vo.TjHazardFactorsRequireVo;
+import org.fxkc.peis.domain.vo.TjTeamGroupDetailVo;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 import org.fxkc.common.idempotent.annotation.RepeatSubmit;
@@ -66,33 +67,10 @@ public class TjTeamGroupController extends BaseController {
      *
      * @param id 主键
      */
-    @SaCheckPermission("peis:teamGroup:query")
     @GetMapping("/{id}")
-    public R<TjTeamGroupVo> getInfo(@NotNull(message = "主键不能为空")
+    public R<TjTeamGroupDetailVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
         return R.ok(tjTeamGroupService.queryById(id));
-    }
-
-    /**
-     * 新增团检分组信息
-     */
-    @SaCheckPermission("peis:teamGroup:add")
-    @Log(title = "团检分组信息", businessType = BusinessType.INSERT)
-    @RepeatSubmit()
-    @PostMapping()
-    public R<Void> add(@Validated(AddGroup.class) @RequestBody TjTeamGroupBo bo) {
-        return toAjax(tjTeamGroupService.insertByBo(bo));
-    }
-
-    /**
-     * 修改团检分组信息
-     */
-    @SaCheckPermission("peis:teamGroup:edit")
-    @Log(title = "团检分组信息", businessType = BusinessType.UPDATE)
-    @RepeatSubmit()
-    @PutMapping()
-    public R<Void> edit(@Validated(EditGroup.class) @RequestBody TjTeamGroupBo bo) {
-        return toAjax(tjTeamGroupService.updateByBo(bo));
     }
 
     /**

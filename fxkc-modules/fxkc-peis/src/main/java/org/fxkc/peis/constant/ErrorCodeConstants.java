@@ -45,4 +45,10 @@ public interface ErrorCodeConstants {
     String PEIS_REGISTER_GROUP_ISEXIST = "peis.register.group.isexist";
 
     String PEIS_GROUP_ITEM_ISEXIST = "peis.group.item.isexist";
+
+    String PEIS_TASK_FILE_SIZE = "peis.task.file.size";
+
+    String PEIS_TASK_FILE_FORMAT = "peis.task.file.format";
+
+    String PEIS_TASK_FILE_UPLOAD = "peis.task.file.upload";
 }

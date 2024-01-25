@@ -15,9 +15,11 @@ import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.peis.constant.ErrorCodeConstants;
 import org.fxkc.peis.domain.*;
 import org.fxkc.peis.domain.bo.TjTeamGroupBo;
-import org.fxkc.peis.domain.bo.TjTeamGroupHazardsBo;
 import org.fxkc.peis.domain.bo.TjTeamGroupItemBo;
 import org.fxkc.peis.domain.bo.TjTeamGroupUpdateBo;
+import org.fxkc.peis.domain.vo.TjTeamGroupDetailVo;
+import org.fxkc.peis.domain.vo.TjTeamGroupHazardsVo;
+import org.fxkc.peis.domain.vo.TjTeamGroupItemVo;
 import org.fxkc.peis.domain.vo.TjTeamGroupVo;
 import org.fxkc.peis.enums.GroupTypeEnum;
 import org.fxkc.peis.enums.HealthyCheckTypeEnum;
@@ -59,8 +61,18 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
      * 查询团检分组信息
      */
     @Override
-    public TjTeamGroupVo queryById(Long id){
-        return baseMapper.selectVoById(id);
+    public TjTeamGroupDetailVo queryById(Long id){
+        TjTeamGroup tjTeamGroup = baseMapper.selectById(id);
+        TjTeamGroupDetailVo vo = MapstructUtils.convert(tjTeamGroup, TjTeamGroupDetailVo.class);
+        List<TjTeamGroupItemVo> groupItemList = tjTeamGroupItemMapper.selectVoList(Wrappers.lambdaQuery(TjTeamGroupItem.class)
+            .eq(TjTeamGroupItem::getGroupId, vo.getId()));
+        vo.setGroupItemList(groupItemList);
+        if(StrUtil.isNotBlank(vo.getDutyStatus())) {
+            List<TjTeamGroupHazardsVo> groupHazardsList = tjTeamGroupHazardsMapper.selectVoList(Wrappers.lambdaQuery(TjTeamGroupHazards.class)
+                .eq(TjTeamGroupHazards::getGroupId, vo.getId()));
+            vo.setGroupHazardsList(groupHazardsList);
+        }
+        return vo;
     }
 
     /**
@@ -83,8 +95,8 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
     }
 
     private LambdaQueryWrapper<TjTeamGroup> buildQueryWrapper(TjTeamGroupBo bo) {
-        Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<TjTeamGroup> lqw = Wrappers.lambdaQuery();
+        lqw.eq(bo.getTeamId() != null, TjTeamGroup::getTeamId, bo.getTeamId());
         lqw.like(StrUtil.isNotBlank(bo.getGroupName()), TjTeamGroup::getGroupName, bo.getGroupName());
         lqw.eq(bo.getDutyStatus() != null, TjTeamGroup::getDutyStatus, bo.getDutyStatus());
         lqw.eq(bo.getGroupType() != null, TjTeamGroup::getGroupType, bo.getGroupType());
@@ -181,20 +193,18 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
                                 tjRegCombinationProjectMapper.delete(Wrappers.lambdaUpdate(TjRegCombinationProject.class)
                                     .eq(TjRegCombinationProject::getRegisterId, s.getId()));
                                 //todo 缺少套餐id
-                                k.getGroupItemList().forEach(d -> {
-                                    projectList.add(TjRegCombinationProject.builder()
-                                        .registerId(s.getId())
-                                        .combinationProjectId(d.getItemId())
-                                        .receivableAmount(d.getActualPrice())
-                                        .standardAmount(d.getStandardPrice())
-                                        .payMode(k.getGroupPayType())
-                                        .payStatus(isTeamPay ? "1" : "0")
-                                        .checkStatus("0")
-                                        .projectType(d.getInclude())
-                                        .discount(d.getDiscount())
-                                        .projectRequiredType(d.getIsRequired() ?  "1" : "0")
-                                        .build());
-                                });
+                                k.getGroupItemList().forEach(d -> projectList.add(TjRegCombinationProject.builder()
+                                    .registerId(s.getId())
+                                    .combinationProjectId(d.getItemId())
+                                    .receivableAmount(d.getActualPrice())
+                                    .standardAmount(d.getStandardPrice())
+                                    .payMode(k.getGroupPayType())
+                                    .payStatus(isTeamPay ? "1" : "0")
+                                    .checkStatus("0")
+                                    .projectType(d.getInclude())
+                                    .discount(d.getDiscount())
+                                    .projectRequiredType(d.getIsRequired() ?  "1" : "0")
+                                    .build()));
                             }
                         });
                     groupRegisters = StreamUtils.filter(groupRegisters, e -> !Objects.equals(HealthyCheckTypeEnum.预约.getCode(), e.getHealthyCheckStatus()));

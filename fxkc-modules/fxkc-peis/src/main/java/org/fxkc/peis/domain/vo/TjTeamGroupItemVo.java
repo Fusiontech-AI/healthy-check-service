@@ -1,5 +1,7 @@
 package org.fxkc.peis.domain.vo;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.fxkc.peis.domain.TjTeamGroupItem;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
@@ -10,6 +12,7 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 
 /**
@@ -27,57 +30,38 @@ public class TjTeamGroupItemVo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 主键id
-     */
-    @ExcelProperty(value = "主键id")
-    private Long id;
-
-    /**
-     * 分组id
-     */
-    @ExcelProperty(value = "分组id")
-    private Long groupId;
-
-    /**
      * 组合项目id
      */
-    @ExcelProperty(value = "组合项目id")
     private Long itemId;
 
     /**
      * 组合项目名称
      */
-    @ExcelProperty(value = "组合项目名称")
     private String itemName;
 
     /**
      * 标准价格
      */
-    @ExcelProperty(value = "标准价格")
-    private Long standardPrice;
+    private BigDecimal standardPrice;
 
     /**
      * 实际价格
      */
-    @ExcelProperty(value = "实际价格")
-    private Long actualPrice;
+    private BigDecimal actualPrice;
 
     /**
      * 折扣
      */
-    @ExcelProperty(value = "折扣")
-    private Long discount;
+    private BigDecimal discount;
 
     /**
      * 是否套餐包含的项目1是2否
      */
-    @ExcelProperty(value = "是否套餐包含的项目1是2否")
     private String include;
 
     /**
      * 是否必选(1:是0否)
      */
-    @ExcelProperty(value = "是否必选(1:是0否)")
     private Boolean isRequired;
 
 

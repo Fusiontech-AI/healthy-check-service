@@ -19,7 +19,7 @@ import java.math.BigDecimal;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@AutoMapper(target = TjTeamGroupItem.class, reverseConvertGenerate = false)
+@AutoMapper(target = TjTeamGroupItem.class)
 public class TjTeamGroupItemBo extends BaseEntity {
 
     /**
@@ -61,7 +61,7 @@ public class TjTeamGroupItemBo extends BaseEntity {
     /**
      * 是否必选(1:是0否)
      */
-    @NotNull(message = "是否必选(1:是0否)不能为空")
+    @NotNull(message = "是否必选(true:是0:false)不能为空")
     private Boolean isRequired;
 
 
