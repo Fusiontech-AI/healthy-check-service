@@ -193,7 +193,7 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
             .eq(StrUtil.isNotEmpty(bo.getHealthyCheckCode()),TjRegister::getHealthyCheckCode,bo.getHealthyCheckCode())
             .eq(TjRegister::getDelFlag,CommonConstants.NORMAL);
         TjRegisterVo vo = baseMapper.selectVoOne(wrapper);
-        if(StrUtil.isNotEmpty(vo.getUserImage())){
+        if(vo != null && StrUtil.isNotEmpty(vo.getUserImage())){
             OssClient ossClient = OssFactory.instance();
             vo.setUserImage(ossClient.getPrivateUrl(vo.getUserImage(),60));
         }
