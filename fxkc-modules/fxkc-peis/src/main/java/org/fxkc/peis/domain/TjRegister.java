@@ -164,11 +164,6 @@ public class TjRegister extends TenantEntity {
     private Long introducer;
 
     /**
-     * 报到人
-     */
-    private Long reporter;
-
-    /**
      * 总检医生
      */
     private Long generalReviewDoctor;

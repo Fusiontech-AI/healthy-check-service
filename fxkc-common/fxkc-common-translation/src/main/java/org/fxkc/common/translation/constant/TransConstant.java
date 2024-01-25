@@ -38,4 +38,13 @@ public interface TransConstant {
      */
     String TEAM_ID_TO_NAME = "team_id_to_name";
 
+    /**
+     * 体检单位分组id转名称
+     */
+    String TEAM_GROUP_ID_TO_NAME = "team_group_id_to_name";
+
+    /**
+     * 体检单位部门id转名称
+     */
+    String TEAM_DEPT_ID_TO_NAME = "team_dept_id_to_name";
 }

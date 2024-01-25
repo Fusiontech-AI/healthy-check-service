@@ -97,7 +97,6 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
         lqw.eq(bo.getTeamGroupId() != null, TjRegister::getTeamGroupId, bo.getTeamGroupId());
         lqw.eq(bo.getTeamDeptId() != null, TjRegister::getTeamDeptId, bo.getTeamDeptId());
         lqw.eq(bo.getIntroducer() != null, TjRegister::getIntroducer, bo.getIntroducer());
-        lqw.eq(bo.getReporter() != null, TjRegister::getReporter, bo.getReporter());
         lqw.eq(bo.getGeneralReviewDoctor() != null, TjRegister::getGeneralReviewDoctor, bo.getGeneralReviewDoctor());
         lqw.eq(bo.getGeneralReviewTime() != null, TjRegister::getGeneralReviewTime, bo.getGeneralReviewTime());
         lqw.eq(bo.getHealthyCheckTime() != null, TjRegister::getHealthyCheckTime, bo.getHealthyCheckTime());

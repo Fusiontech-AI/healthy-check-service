@@ -180,12 +180,6 @@ public class TjRegisterBo extends BaseEntity {
     private Long introducer;
 
     /**
-     * 报到人
-     */
-    @NotNull(message = "报到人不能为空", groups = { AddGroup.class, EditGroup.class })
-    private Long reporter;
-
-    /**
      * 总检医生
      */
     @NotNull(message = "总检医生不能为空", groups = { AddGroup.class, EditGroup.class })
