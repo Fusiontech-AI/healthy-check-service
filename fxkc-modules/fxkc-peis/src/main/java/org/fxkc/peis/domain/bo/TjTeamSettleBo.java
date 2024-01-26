@@ -1,6 +1,8 @@
 package org.fxkc.peis.domain.bo;
 
 import org.fxkc.common.core.validate.AddGroup;
+import org.fxkc.common.core.validate.EditGroup;
+import org.fxkc.common.core.validate.QueryGroup;
 import org.fxkc.peis.domain.TjTeamSettle;
 import org.fxkc.common.mybatis.core.domain.BaseEntity;
 import io.github.linpeilie.annotations.AutoMapper;
@@ -24,13 +26,13 @@ public class TjTeamSettleBo extends BaseEntity {
     /**
      * 单位ID
      */
-    @NotNull(message = "单位ID不能为空", groups = { AddGroup.class })
+    @NotNull(message = "单位ID不能为空", groups = { QueryGroup.class, AddGroup.class, EditGroup.class })
     private Long teamId;
 
     /**
      * 单位任务ID
      */
-    @NotNull(message = "单位任务ID不能为空", groups = { AddGroup.class })
+    @NotNull(message = "单位任务ID不能为空", groups = { QueryGroup.class, AddGroup.class, EditGroup.class })
     private Long teamTaskId;
 
     /**
@@ -43,6 +45,7 @@ public class TjTeamSettleBo extends BaseEntity {
      * 实收金额
      */
     @NotNull(message = "实收金额不能为空", groups = { AddGroup.class })
+    @DecimalMin(value = "0", inclusive = false, message = "实收金额不能小于0")
     private BigDecimal receivedAmount;
 
     /**
@@ -51,5 +54,10 @@ public class TjTeamSettleBo extends BaseEntity {
     @NotBlank(message = "支付方式不能为空", groups = { AddGroup.class })
     private String payType;
 
+    /**
+     * 主键ID
+     */
+    @NotNull(message = "主键不能为空", groups = { EditGroup.class })
+    private Long[] ids;
 
 }

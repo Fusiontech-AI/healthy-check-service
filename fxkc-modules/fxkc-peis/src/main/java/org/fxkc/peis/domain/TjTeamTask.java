@@ -3,6 +3,8 @@ package org.fxkc.peis.domain;
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.math.BigDecimal;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.fxkc.common.tenant.core.TenantEntity;
@@ -79,5 +81,19 @@ public class TjTeamTask extends TenantEntity {
     @TableLogic
     private String delFlag;
 
+    /**
+     * 任务折扣实收金额
+     */
+    private BigDecimal taskReceived;
+
+    /**
+     * 任务折扣优惠金额
+     */
+    private BigDecimal taskDiscount;
+
+    /**
+     * 是否封账(1:是0:否)
+     */
+    private String isSeal;
 
 }

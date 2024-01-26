@@ -1,11 +1,11 @@
 package org.fxkc.peis.service;
 
+import org.fxkc.peis.domain.bo.TjTeamTaskDiscountSealBo;
 import org.fxkc.peis.domain.vo.TjTeamSettleVo;
 import org.fxkc.peis.domain.bo.TjTeamSettleBo;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -39,30 +39,45 @@ public interface ITjTeamSettleService {
     /**
      * 体检单位结账开票
      */
-    Boolean teamInvoice(Collection<Long> ids);
+    Boolean teamInvoice(TjTeamSettleBo bo);
 
     /**
      * 体检单位结账发票作废
      */
-    Boolean teamInvalidInvoice(Collection<Long> ids);
+    Boolean teamInvalidInvoice(TjTeamSettleBo bo);
 
     /**
      * 体检单位结账作废
      */
-    Boolean teamInvalidSettle(Collection<Long> ids);
+    Boolean teamInvalidSettle(TjTeamSettleBo bo);
+
+    /**
+     * 体检单位结账任务折扣
+     */
+    Boolean teamTaskDiscount(TjTeamTaskDiscountSealBo bo);
+
+    /**
+     * 体检单位结账封账
+     */
+    Boolean teamSettleSeal(TjTeamTaskDiscountSealBo bo);
+
+    /**
+     * 体检单位结账解除封账
+     */
+    Boolean teamSettleUnseal(TjTeamTaskDiscountSealBo bo);
 
     /**
      * 体检单位结账审核通过
      */
-    Boolean teamSettleCheckPass(Collection<Long> ids);
+    Boolean teamSettleCheckPass(TjTeamSettleBo bo);
 
     /**
      * 体检单位结账审核驳回
      */
-    Boolean teamSettleCheckReject(Collection<Long> ids);
+    Boolean teamSettleCheckReject(TjTeamSettleBo bo);
 
     /**
      * 校验并批量删除体检单位结账信息
      */
-    Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+    Boolean deleteWithValidByIds(TjTeamSettleBo bo, Boolean isValid);
 }

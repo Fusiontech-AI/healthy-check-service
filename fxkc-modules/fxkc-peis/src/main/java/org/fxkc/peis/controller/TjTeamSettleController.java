@@ -6,7 +6,9 @@ import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import org.fxkc.common.core.validate.EditGroup;
 import org.fxkc.common.core.validate.QueryGroup;
+import org.fxkc.peis.domain.bo.TjTeamTaskDiscountSealBo;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 import org.fxkc.common.idempotent.annotation.RepeatSubmit;
@@ -42,7 +44,7 @@ public class TjTeamSettleController extends BaseController {
      */
     @SaCheckPermission("peis:teamSettle:list")
     @GetMapping("/list")
-    public TableDataInfo<TjTeamSettleVo> list(TjTeamSettleBo bo, PageQuery pageQuery) {
+    public TableDataInfo<TjTeamSettleVo> list(@Validated(QueryGroup.class) TjTeamSettleBo bo, PageQuery pageQuery) {
         return tjTeamSettleService.queryPageList(bo, pageQuery);
     }
 
@@ -82,84 +84,99 @@ public class TjTeamSettleController extends BaseController {
 
     /**
      * 体检单位结账开票
-     *
-     * @param ids 主键串
      */
     @SaCheckPermission("peis:teamSettle:add")
     @Log(title = "体检单位结账开票", businessType = BusinessType.INSERT)
     @RepeatSubmit()
-    @PostMapping("/teamInvoice/{ids}")
-    public R<Void> teamInvoice(@NotEmpty(message = "主键不能为空")
-                          @PathVariable Long[] ids) {
-        return toAjax(tjTeamSettleService.teamInvoice(List.of(ids)));
+    @PostMapping("/teamInvoice")
+    public R<Void> teamInvoice(@Validated(EditGroup.class) @RequestBody TjTeamSettleBo bo) {
+        return toAjax(tjTeamSettleService.teamInvoice(bo));
     }
 
     /**
      * 体检单位结账发票作废
-     *
-     * @param ids 主键串
      */
     @SaCheckPermission("peis:teamSettle:add")
     @Log(title = "体检单位结账发票作废", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
-    @PostMapping("/teamInvalidInvoice/{ids}")
-    public R<Void> teamInvalidInvoice(@NotEmpty(message = "主键不能为空")
-                               @PathVariable Long[] ids) {
-        return toAjax(tjTeamSettleService.teamInvalidInvoice(List.of(ids)));
+    @PostMapping("/teamInvalidInvoice")
+    public R<Void> teamInvalidInvoice(@Validated(EditGroup.class) @RequestBody TjTeamSettleBo bo) {
+        return toAjax(tjTeamSettleService.teamInvalidInvoice(bo));
     }
 
     /**
      * 体检单位结账作废
-     *
-     * @param ids 主键串
      */
     @SaCheckPermission("peis:teamSettle:add")
     @Log(title = "体检单位结账作废", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
-    @PostMapping("/teamInvalidSettle/{ids}")
-    public R<Void> teamInvalidSettle(@NotEmpty(message = "主键不能为空")
-                                      @PathVariable Long[] ids) {
-        return toAjax(tjTeamSettleService.teamInvalidSettle(List.of(ids)));
+    @PostMapping("/teamInvalidSettle")
+    public R<Void> teamInvalidSettle(@Validated(EditGroup.class) @RequestBody TjTeamSettleBo bo) {
+        return toAjax(tjTeamSettleService.teamInvalidSettle(bo));
+    }
+
+    /**
+     * 体检单位结账任务折扣
+     */
+    @SaCheckPermission("peis:teamSettle:check")
+    @Log(title = "体检单位结账任务折扣", businessType = BusinessType.UPDATE)
+    @RepeatSubmit()
+    @PostMapping("/teamTaskDiscount")
+    public R<Void> teamTaskDiscount(@Validated(EditGroup.class) @RequestBody TjTeamTaskDiscountSealBo bo) {
+        return toAjax(tjTeamSettleService.teamTaskDiscount(bo));
+    }
+
+    /**
+     * 体检单位结账封账
+     */
+    @SaCheckPermission("peis:teamSettle:check")
+    @Log(title = "体检单位结账封账", businessType = BusinessType.UPDATE)
+    @RepeatSubmit()
+    @PostMapping("/teamSettleSeal")
+    public R<Void> teamSettleSeal(@Validated(EditGroup.class) @RequestBody TjTeamTaskDiscountSealBo bo) {
+        return toAjax(tjTeamSettleService.teamSettleSeal(bo));
+    }
+
+    /**
+     * 体检单位结账解除封账
+     */
+    @SaCheckPermission("peis:teamSettle:check")
+    @Log(title = "体检单位结账解除封账", businessType = BusinessType.UPDATE)
+    @RepeatSubmit()
+    @PostMapping("/teamSettleUnseal")
+    public R<Void> teamSettleUnseal(@Validated(EditGroup.class) @RequestBody TjTeamTaskDiscountSealBo bo) {
+        return toAjax(tjTeamSettleService.teamSettleUnseal(bo));
     }
 
     /**
      * 体检单位结账审核通过
-     *
-     * @param ids 主键串
      */
     @SaCheckPermission("peis:teamSettle:check")
     @Log(title = "体检单位结账通过审核", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
-    @PostMapping("/teamSettleCheckPass/{ids}")
-    public R<Void> teamSettleCheckPass(@NotEmpty(message = "主键不能为空")
-                                     @PathVariable Long[] ids) {
-        return toAjax(tjTeamSettleService.teamSettleCheckPass(List.of(ids)));
+    @PostMapping("/teamSettleCheckPass")
+    public R<Void> teamSettleCheckPass(@Validated(EditGroup.class) @RequestBody TjTeamSettleBo bo) {
+        return toAjax(tjTeamSettleService.teamSettleCheckPass(bo));
     }
 
     /**
      * 体检单位结账审核驳回
-     *
-     * @param ids 主键串
      */
     @SaCheckPermission("peis:teamSettle:check")
     @Log(title = "体检单位结账审核驳回", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
-    @PostMapping("/teamSettleCheckReject/{ids}")
-    public R<Void> teamSettleCheckReject(@NotEmpty(message = "主键不能为空")
-                                       @PathVariable Long[] ids) {
-        return toAjax(tjTeamSettleService.teamSettleCheckReject(List.of(ids)));
+    @PostMapping("/teamSettleCheckReject")
+    public R<Void> teamSettleCheckReject(@Validated(EditGroup.class) @RequestBody TjTeamSettleBo bo) {
+        return toAjax(tjTeamSettleService.teamSettleCheckReject(bo));
     }
 
     /**
      * 删除体检单位结账
-     *
-     * @param ids 主键串
      */
     @SaCheckPermission("peis:teamSettle:remove")
     @Log(title = "体检单位结账", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{ids}")
-    public R<Void> remove(@NotEmpty(message = "主键不能为空")
-                          @PathVariable Long[] ids) {
-        return toAjax(tjTeamSettleService.deleteWithValidByIds(List.of(ids), true));
+    @DeleteMapping
+    public R<Void> remove(@Validated(EditGroup.class) @RequestBody TjTeamSettleBo bo) {
+        return toAjax(tjTeamSettleService.deleteWithValidByIds(bo, true));
     }
 }

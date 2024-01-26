@@ -1,5 +1,6 @@
 package org.fxkc.peis.service.impl;
 
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -13,7 +14,10 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import org.fxkc.common.satoken.utils.LoginHelper;
 import org.fxkc.peis.constant.ErrorCodeConstants;
+import org.fxkc.peis.domain.TjTeamTask;
+import org.fxkc.peis.domain.bo.TjTeamTaskDiscountSealBo;
 import org.fxkc.peis.exception.PeisException;
+import org.fxkc.peis.mapper.TjTeamTaskMapper;
 import org.springframework.stereotype.Service;
 import org.fxkc.peis.domain.bo.TjTeamSettleBo;
 import org.fxkc.peis.domain.vo.TjTeamSettleVo;
@@ -23,7 +27,6 @@ import org.fxkc.peis.service.ITjTeamSettleService;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Collection;
 
 /**
  * 体检单位结账信息Service业务层处理
@@ -36,6 +39,7 @@ import java.util.Collection;
 public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
 
     private final TjTeamSettleMapper baseMapper;
+    private final TjTeamTaskMapper tjTeamTaskMapper;
 
     /**
      * 查询体检单位结账信息
@@ -77,58 +81,104 @@ public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
      */
     @Override
     public Boolean insertByBo(TjTeamSettleBo bo) {
+        validEntityBeforeSave(bo);
         TjTeamSettle add = MapstructUtils.convert(bo, TjTeamSettle.class);
-        validEntityBeforeSave(add);
-        add.setChargeNumber("1");
+        add.setChargeNumber(IdUtil.getSnowflakeNextIdStr());
         add.setSettleOfficer(LoginHelper.getLoginUser().getNickname());
         return baseMapper.insert(add) > 0;
     }
 
+    /**
+     * 体检单位结账开票
+     */
     @Override
-    public Boolean teamInvoice(Collection<Long> ids) {
+    public Boolean teamInvoice(TjTeamSettleBo bo) {
         TjTeamSettle update = new TjTeamSettle();
-        validEntityBeforeSave(update);
         update.setPrintInvoice("1");
-        return baseMapper.update(update,new LambdaUpdateWrapper<TjTeamSettle>().in(TjTeamSettle::getId,ids)) > 0;
+        return baseMapper.update(update,new LambdaUpdateWrapper<TjTeamSettle>().in(TjTeamSettle::getId,List.of(bo.getIds()))) > 0;
     }
 
+    /**
+     * 体检单位结账发票作废
+     */
     @Override
-    public Boolean teamInvalidInvoice(Collection<Long> ids) {
+    public Boolean teamInvalidInvoice(TjTeamSettleBo bo) {
         TjTeamSettle update = new TjTeamSettle();
-        validEntityBeforeSave(update);
         update.setPrintInvoice("0");
-        return baseMapper.update(update,new LambdaUpdateWrapper<TjTeamSettle>().in(TjTeamSettle::getId,ids)) > 0;
+        return baseMapper.update(update,new LambdaUpdateWrapper<TjTeamSettle>().in(TjTeamSettle::getId,List.of(bo.getIds()))) > 0;
     }
 
+    /**
+     * 体检单位结账作废
+     */
     @Override
-    public Boolean teamInvalidSettle(Collection<Long> ids) {
+    public Boolean teamInvalidSettle(TjTeamSettleBo bo) {
+        validEntityBeforeSave(bo);
+        validEntityBeforeCheck(bo);
         TjTeamSettle update = new TjTeamSettle();
-        validEntityBeforeSave(update);
         update.setStatus("2");
-        return baseMapper.update(update,new LambdaUpdateWrapper<TjTeamSettle>().in(TjTeamSettle::getId,ids)) > 0;
+        return baseMapper.update(update,new LambdaUpdateWrapper<TjTeamSettle>().in(TjTeamSettle::getId,List.of(bo.getIds()))) > 0;
     }
 
+    /**
+     * 体检单位结账任务折扣
+     */
     @Override
-    public Boolean teamSettleCheckPass(Collection<Long> ids) {
-        validEntityBeforeCheck(ids);
+    public Boolean teamTaskDiscount(TjTeamTaskDiscountSealBo bo) {
+        TjTeamSettleBo tjTeamSettleBo = new TjTeamSettleBo();
+        tjTeamSettleBo.setTeamTaskId(bo.getId());
+        validEntityBeforeSave(tjTeamSettleBo);
+        TjTeamTask tjTeamTask = MapstructUtils.convert(bo, TjTeamTask.class);
+        return tjTeamTaskMapper.updateById(tjTeamTask) > 0;
+    }
+
+    /**
+     * 体检单位结账封账
+     */
+    @Override
+    public Boolean teamSettleSeal(TjTeamTaskDiscountSealBo bo) {
+        TjTeamTask tjTeamTask = MapstructUtils.convert(bo, TjTeamTask.class);
+        tjTeamTask.setIsSeal("1");
+        return tjTeamTaskMapper.updateById(tjTeamTask) > 0;
+    }
+
+    /**
+     * 体检单位结账解除封账
+     */
+    @Override
+    public Boolean teamSettleUnseal(TjTeamTaskDiscountSealBo bo) {
+        TjTeamTask tjTeamTask = MapstructUtils.convert(bo, TjTeamTask.class);
+        tjTeamTask.setIsSeal("0");
+        return tjTeamTaskMapper.updateById(tjTeamTask) > 0;
+    }
+
+    /**
+     * 体检单位结账审核通过
+     */
+    @Override
+    public Boolean teamSettleCheckPass(TjTeamSettleBo bo) {
+        validEntityBeforeCheck(bo);
         TjTeamSettle update = new TjTeamSettle();
         update.setCheckStatus("1");
-        return baseMapper.update(update,new LambdaUpdateWrapper<TjTeamSettle>().in(TjTeamSettle::getId,ids)) > 0;
+        return baseMapper.update(update,new LambdaUpdateWrapper<TjTeamSettle>().in(TjTeamSettle::getId,bo.getIds())) > 0;
     }
 
+    /**
+     * 体检单位结账审核驳回
+     */
     @Override
-    public Boolean teamSettleCheckReject(Collection<Long> ids) {
-        validEntityBeforeCheck(ids);
+    public Boolean teamSettleCheckReject(TjTeamSettleBo bo) {
+        validEntityBeforeCheck(bo);
         TjTeamSettle update = new TjTeamSettle();
         update.setCheckStatus("2");
-        return baseMapper.update(update,new LambdaUpdateWrapper<TjTeamSettle>().in(TjTeamSettle::getId,ids)) > 0;
+        return baseMapper.update(update,new LambdaUpdateWrapper<TjTeamSettle>().in(TjTeamSettle::getId,bo.getIds())) > 0;
     }
 
     /**
      * 结账审核前的数据校验
      */
-    private void validEntityBeforeCheck(Collection<Long> ids){
-        List<TjTeamSettle> tjTeamSettleList = baseMapper.selectList(new LambdaUpdateWrapper<TjTeamSettle>().in(TjTeamSettle::getId,ids));
+    private void validEntityBeforeCheck(TjTeamSettleBo bo){
+        List<TjTeamSettle> tjTeamSettleList = baseMapper.selectList(new LambdaUpdateWrapper<TjTeamSettle>().in(TjTeamSettle::getId,List.of(bo.getIds())));
         long notNormalStatusCount = tjTeamSettleList.stream().filter(f -> !StrUtil.equals(f.getStatus(),CommonConstants.NORMAL)).count();
         if(notNormalStatusCount > 0){
             throw new PeisException(ErrorCodeConstants.PEIS_TJTEAMSETTLE_STATUS_REFRESH);
@@ -142,23 +192,27 @@ public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
     /**
      * 保存前的数据校验
      */
-    private void validEntityBeforeSave(TjTeamSettle entity){
-        //TODO 做一些数据校验,如唯一约束
+    private void validEntityBeforeSave(TjTeamSettleBo bo){
+        TjTeamTask tjTeamTask = tjTeamTaskMapper.selectById(bo.getTeamTaskId());
+        if(StrUtil.equals(tjTeamTask.getIsSeal(),"1")){
+            throw new PeisException(ErrorCodeConstants.PEIS_TJTEAMSETTLE_SEAL);
+        }
     }
 
     /**
      * 批量删除体检单位结账信息
      */
     @Override
-    public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
+    public Boolean deleteWithValidByIds(TjTeamSettleBo bo, Boolean isValid) {
         if(isValid){
+            validEntityBeforeSave(bo);
             Long count = baseMapper.selectCount(new LambdaUpdateWrapper<TjTeamSettle>()
-                .in(TjTeamSettle::getId,ids)
+                .in(TjTeamSettle::getId,List.of(bo.getIds()))
                 .eq(TjTeamSettle::getStatus, CommonConstants.NORMAL));
             if(count > 0){
                 throw new PeisException(ErrorCodeConstants.PEIS_TJTEAMSETTLE_FIRST_VOID);
             }
         }
-        return baseMapper.deleteBatchIds(ids) > 0;
+        return baseMapper.deleteBatchIds(List.of(bo.getIds())) > 0;
     }
 }
