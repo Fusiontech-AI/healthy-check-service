@@ -1,0 +1,125 @@
+package org.fxkc.peis.domain.vo;
+
+import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
+import com.alibaba.excel.annotation.ExcelProperty;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.fxkc.common.core.validate.AddGroup;
+import org.fxkc.common.excel.annotation.ExcelDictFormat;
+import org.fxkc.common.excel.convert.ExcelDictConvert;
+
+/**
+ * 带有下拉选的Excel导出
+ *
+ * @author Emil.Zhang
+ */
+@Data
+@ExcelIgnoreUnannotated
+@AllArgsConstructor
+@NoArgsConstructor
+public class TjTaskOccupationalExportVo {
+
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 姓名
+     */
+    @ExcelProperty("姓名")
+    @NotBlank(message = "姓名不能为空", groups = { AddGroup.class })
+    private String name;
+
+    /**
+     * 身份证号
+     */
+    @ExcelProperty("身份证号")
+    @NotBlank(message = "姓名不能为空", groups = { AddGroup.class })
+    private String idCard;
+
+    /**
+     * 性别
+     */
+    @ExcelProperty("性别")
+    @NotBlank(message = "性别不能为空", groups = { AddGroup.class })
+    private String gender;
+
+    /**
+     * 年龄
+     */
+    @ExcelProperty("年龄")
+    @NotNull(message = "年龄不能为空", groups = { AddGroup.class })
+    private Integer age;
+
+    /**
+     * 婚否
+     */
+    @ExcelProperty(value = "婚否", converter = ExcelDictConvert.class)
+    @ExcelDictFormat(dictType = "bus_personnel_marriage_status")
+    private String marriageStatus;
+
+    /**
+     * 联系电话
+     */
+    @ExcelProperty("联系电话")
+    @NotNull(message = "联系电话不能为空", groups = { AddGroup.class })
+    private String phone;
+
+    /**
+     * 分组
+     */
+    @ExcelProperty("分组")
+    private String groupName;
+
+    /**
+     * 工种名称
+     */
+    @ExcelProperty(value = "工种名称", converter = ExcelDictConvert.class)
+    @ExcelDictFormat(dictType = "bus_job_code")
+    private String jobCode;
+
+    /**
+     * 其他工种名称
+     */
+    @ExcelProperty("其他工种名称")
+    private String otherJobName;
+
+    /**
+     * 总工龄年
+     */
+    @ExcelProperty("总工龄年")
+    private String seniorityYear;
+
+    /**
+     * 总工龄月
+     */
+    @ExcelProperty("总工龄月")
+    private String seniorityMonth;
+
+    /**
+     * 接害工龄年
+     */
+    @ExcelProperty("接害工龄年")
+    private String contactSeniorityYear;
+
+    /**
+     * 接触工龄月
+     */
+    @ExcelProperty("接触工龄月")
+    private String contactSeniorityMonth;
+
+    /**
+     * 个案卡类别
+     */
+    @ExcelProperty(value = "个案卡类别", converter = ExcelDictConvert.class)
+    @ExcelDictFormat(dictType = "bus_case_card_type")
+    private String caseCardType;
+
+    /**
+     * 检查类型
+     */
+    @ExcelProperty(value = "检查类型", converter = ExcelDictConvert.class)
+    @ExcelDictFormat(dictType = "bus_tj_check_type")
+    private String checkType;
+}

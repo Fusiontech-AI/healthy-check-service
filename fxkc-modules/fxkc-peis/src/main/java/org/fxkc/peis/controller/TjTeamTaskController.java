@@ -1,5 +1,6 @@
 package org.fxkc.peis.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import jakarta.validation.Valid;
@@ -7,12 +8,12 @@ import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import org.fxkc.peis.domain.bo.TjTeamTaskQueryBo;
-import org.fxkc.peis.domain.bo.TjGroupVerifyBo;
-import org.fxkc.peis.domain.bo.TjGroupVerifyPackageBo;
-import org.fxkc.peis.domain.vo.TjTeamGroupVo;
-import org.fxkc.peis.domain.vo.TjTeamTaskDetailVo;
-import org.fxkc.peis.domain.vo.VerifyMessageVo;
+import org.fxkc.common.excel.core.ExcelResult;
+import org.fxkc.peis.domain.bo.*;
+import org.fxkc.peis.domain.vo.*;
+import org.fxkc.peis.enums.PhysicalTypeEnum;
+import org.fxkc.peis.listener.TjTaskImportListener;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 import org.fxkc.common.idempotent.annotation.RepeatSubmit;
@@ -24,10 +25,9 @@ import org.fxkc.common.core.validate.AddGroup;
 import org.fxkc.common.core.validate.EditGroup;
 import org.fxkc.common.log.enums.BusinessType;
 import org.fxkc.common.excel.utils.ExcelUtil;
-import org.fxkc.peis.domain.vo.TjTeamTaskVo;
-import org.fxkc.peis.domain.bo.TjTeamTaskBo;
 import org.fxkc.peis.service.ITjTeamTaskService;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 团检任务管理
@@ -127,5 +127,25 @@ public class TjTeamTaskController extends BaseController {
     @Log(title = "团检任务校验分组套餐数据", businessType = BusinessType.OTHER)
     public R<VerifyMessageVo> verifyGroupPackageData(@RequestBody @Valid List<TjGroupVerifyPackageBo> list) {
         return R.ok(tjTeamTaskService.verifyGroupPackageData(list));
+    }
+
+    /**
+     * 导出团检人员登记模板
+     * @param templateType 模板类型(JKTJ:健康ZYJKTJ:职业健康体检FSTJ:放射体检)
+     * @param taskId 任务id
+     */
+    @PostMapping("/exportRegisterTemplate")
+    public void exportRegisterTemplate(@NotBlank(message = "模板类型不能为空") String templateType,
+                                       @NotNull(message = "任务id不能为空") Long taskId,
+                                       HttpServletResponse response) {
+        tjTeamTaskService.exportRegisterTemplate(templateType,taskId, response);
+    }
+
+    @PostMapping(value = "/importRegisterData", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public R< ExcelResult<TjTaskOccupationalExportVo>> importData(@Valid TjTaskImportBo bo) throws IOException {
+        ExcelResult<TjTaskOccupationalExportVo> result = ExcelUtil.importExcel(bo.getFile().getInputStream(),
+            TjTaskOccupationalExportVo.class,
+            new TjTaskImportListener(PhysicalTypeEnum.isOccupational(bo.getTemplateType())));
+        return R.ok(result);
     }
 }

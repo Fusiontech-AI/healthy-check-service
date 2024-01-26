@@ -8,9 +8,12 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.fxkc.common.core.utils.MapstructUtils;
 import org.fxkc.common.core.utils.StreamUtils;
+import org.fxkc.common.excel.core.DropDownOptions;
+import org.fxkc.common.excel.utils.ExcelUtil;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.peis.constant.ErrorCodeConstants;
@@ -18,10 +21,7 @@ import org.fxkc.peis.domain.TjRegister;
 import org.fxkc.peis.domain.TjTeamGroup;
 import org.fxkc.peis.domain.TjTeamTask;
 import org.fxkc.peis.domain.bo.*;
-import org.fxkc.peis.domain.vo.TjTeamGroupVo;
-import org.fxkc.peis.domain.vo.TjTeamTaskDetailVo;
-import org.fxkc.peis.domain.vo.TjTeamTaskVo;
-import org.fxkc.peis.domain.vo.VerifyMessageVo;
+import org.fxkc.peis.domain.vo.*;
 import org.fxkc.peis.enums.GroupTypeEnum;
 import org.fxkc.peis.enums.HealthyCheckTypeEnum;
 import org.fxkc.peis.enums.PhysicalTypeEnum;
@@ -319,5 +319,21 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
             vo.setIsPrompt(Boolean.TRUE);
         }
         return vo;
+    }
+
+    @Override
+    public void exportRegisterTemplate(String templateType, Long taskId, HttpServletResponse response) {
+        TjTeamTask tjTeamTask = baseMapper.selectById(taskId);
+        String teamName = iTjTeamInfoService.selectTeamNameById(tjTeamTask.getTeamId());
+        List<TjTeamGroup> groupList = tjTeamGroupMapper.selectList(Wrappers.lambdaQuery(TjTeamGroup.class)
+            .eq(TjTeamGroup::getTaskId, taskId));
+        DropDownOptions options = new DropDownOptions(6, StreamUtils.toList(groupList, TjTeamGroup::getGroupName));
+        List<DropDownOptions> optionsList = CollUtil.newArrayList(options);
+        //如有其他类型再添加
+        if(PhysicalTypeEnum.isOccupational(templateType)) {
+            ExcelUtil.exportExcel(CollUtil.newArrayList(), teamName, TjTaskOccupationalExportVo.class, response, optionsList);
+        }else {
+            ExcelUtil.exportExcel(CollUtil.newArrayList(), teamName, TjTaskHealthExportVo.class, response, optionsList);
+        }
     }
 }

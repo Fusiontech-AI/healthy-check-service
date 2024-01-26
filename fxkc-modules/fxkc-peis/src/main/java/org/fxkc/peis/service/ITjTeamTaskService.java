@@ -1,5 +1,6 @@
 package org.fxkc.peis.service;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.peis.domain.bo.TjTeamTaskBo;
@@ -55,4 +56,6 @@ public interface ITjTeamTaskService {
     VerifyMessageVo verifyGroupData(List<TjGroupVerifyBo> list);
 
     VerifyMessageVo verifyGroupPackageData(List<TjGroupVerifyPackageBo> list);
+
+    void exportRegisterTemplate(String templateType, Long taskId, HttpServletResponse response);
 }

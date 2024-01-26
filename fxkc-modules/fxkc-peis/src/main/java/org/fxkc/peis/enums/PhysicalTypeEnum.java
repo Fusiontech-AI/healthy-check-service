@@ -3,6 +3,8 @@ package org.fxkc.peis.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Objects;
+
 @Getter
 @AllArgsConstructor
 public enum PhysicalTypeEnum {
@@ -16,5 +18,9 @@ public enum PhysicalTypeEnum {
     ;
 
     private final String desc;
+
+    public static Boolean isOccupational(String name) {
+        return Objects.equals(ZYJKTJ.name(), name) || Objects.equals(FSTJ.name(), name);
+    }
 
 }

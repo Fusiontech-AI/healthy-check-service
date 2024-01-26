@@ -3,7 +3,6 @@ package org.fxkc.peis.domain;
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
 import java.math.BigDecimal;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -95,5 +94,34 @@ public class TjTeamTask extends TenantEntity {
      * 是否封账(1:是0:否)
      */
     private String isSeal;
+    /**
+     * 任务编号
+     */
+    private String taskNo;
+
+    /**
+     * 联系人姓名
+     */
+    private String contactName;
+
+    /**
+     * 体检联系人电话
+     */
+    private String contactPhone;
+
+    /**
+     * 销售负责人
+     */
+    private String saleHead;
+
+    /**
+     * 是否审核(1:是0:否)
+     */
+    private String preparedName;
+
+    /**
+     * 审核结论(1:通过2:驳回)
+     */
+    private String reviewResult;
 
 }
