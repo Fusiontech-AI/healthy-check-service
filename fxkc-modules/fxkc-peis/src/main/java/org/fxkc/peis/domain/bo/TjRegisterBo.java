@@ -1,6 +1,7 @@
 package org.fxkc.peis.domain.bo;
 
 import io.github.linpeilie.annotations.AutoMapper;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -470,4 +471,10 @@ public class TjRegisterBo extends BaseEntity {
      * 任务id
      */
     private Long taskId;
+
+    /**
+     * 职业病关联信息
+     */
+    @Valid
+    private TjRegisterZybBo tjRegisterZybBo;
 }

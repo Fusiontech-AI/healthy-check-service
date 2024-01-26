@@ -1,29 +1,31 @@
 package org.fxkc.peis.controller;
 
-import java.util.List;
-
-import lombok.RequiredArgsConstructor;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import org.fxkc.peis.domain.bo.TjRegisterPageBo;
-import org.fxkc.peis.domain.bo.TjRegisterSingleBo;
-import org.fxkc.peis.domain.vo.TjRegisterPageVo;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.validation.annotation.Validated;
-import org.fxkc.common.idempotent.annotation.RepeatSubmit;
-import org.fxkc.common.log.annotation.Log;
-import org.fxkc.common.web.core.BaseController;
-import org.fxkc.common.mybatis.core.page.PageQuery;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 import org.fxkc.common.core.domain.R;
 import org.fxkc.common.core.validate.AddGroup;
 import org.fxkc.common.core.validate.EditGroup;
-import org.fxkc.common.log.enums.BusinessType;
 import org.fxkc.common.excel.utils.ExcelUtil;
-import org.fxkc.peis.domain.vo.TjRegisterVo;
-import org.fxkc.peis.domain.bo.TjRegisterBo;
-import org.fxkc.peis.service.ITjRegisterService;
+import org.fxkc.common.idempotent.annotation.RepeatSubmit;
+import org.fxkc.common.log.annotation.Log;
+import org.fxkc.common.log.enums.BusinessType;
+import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
+import org.fxkc.common.web.core.BaseController;
+import org.fxkc.peis.domain.bo.TjRegisterAddBo;
+import org.fxkc.peis.domain.bo.TjRegisterBo;
+import org.fxkc.peis.domain.bo.TjRegisterPageBo;
+import org.fxkc.peis.domain.bo.TjRegisterSingleBo;
+import org.fxkc.peis.domain.vo.TjRegisterPageVo;
+import org.fxkc.peis.domain.vo.TjRegisterVo;
+import org.fxkc.peis.service.ITjRegisterService;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 体检人员登记信息
@@ -78,8 +80,8 @@ public class TjRegisterController extends BaseController {
     @Log(title = "体检人员登记信息", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
-    public R<Void> add(@Validated(AddGroup.class) @RequestBody TjRegisterBo bo) {
-        return toAjax(tjRegisterService.insertByBo(bo));
+    public R<Long> add(@Validated(AddGroup.class) @RequestBody TjRegisterAddBo bo) {
+        return R.ok(tjRegisterService.insertByBo(bo));
     }
 
     /**

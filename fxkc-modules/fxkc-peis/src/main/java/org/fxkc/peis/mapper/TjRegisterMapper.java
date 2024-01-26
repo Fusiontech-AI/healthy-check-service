@@ -2,6 +2,7 @@ package org.fxkc.peis.mapper;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.fxkc.peis.domain.TjRegister;
 import org.fxkc.peis.domain.bo.TjRegisterPageBo;
 import org.fxkc.peis.domain.vo.TjRegisterPageVo;
@@ -18,4 +19,6 @@ public interface TjRegisterMapper extends BaseMapperPlus<TjRegister, TjRegisterV
 
     Page<TjRegisterPageVo> selectPage(@Param("bo") TjRegisterPageBo bo,@Param("page") Page<TjRegisterPageVo> page);
 
+    @Select("SELECT check_code_sequence.NEXTVAL FROM DUAL")
+    String nextHealthyCode();
 }
