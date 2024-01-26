@@ -104,4 +104,13 @@ public class TjTjksController extends BaseController {
                           @PathVariable Long[] ids) {
         return toAjax(tjTjksService.deleteWithValidByIds(List.of(ids), true));
     }
+
+
+    /**
+     * 查询体检科室编码
+     */
+    @GetMapping("/getKsCode")
+    public R<String> getKsCode() {
+        return R.ok("操作成功!",tjTjksService.getKsCode());
+    }
 }

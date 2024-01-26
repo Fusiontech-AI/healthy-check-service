@@ -1,13 +1,12 @@
 package org.fxkc.peis.service;
 
-import org.fxkc.peis.domain.TjRegister;
+import org.fxkc.common.mybatis.core.page.PageQuery;
+import org.fxkc.common.mybatis.core.page.TableDataInfo;
+import org.fxkc.peis.domain.bo.TjRegisterBo;
 import org.fxkc.peis.domain.bo.TjRegisterPageBo;
 import org.fxkc.peis.domain.bo.TjRegisterSingleBo;
 import org.fxkc.peis.domain.vo.TjRegisterPageVo;
 import org.fxkc.peis.domain.vo.TjRegisterVo;
-import org.fxkc.peis.domain.bo.TjRegisterBo;
-import org.fxkc.common.mybatis.core.page.TableDataInfo;
-import org.fxkc.common.mybatis.core.page.PageQuery;
 
 import java.util.Collection;
 import java.util.List;
