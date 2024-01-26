@@ -40,12 +40,12 @@ public class TjGuideSheetLogBo extends BaseEntity {
 
     private String imagePath;
 
-    /**
-     * 上传的导检单文件
-     */
-    @NotNull(message = "上传文件不能为空",groups = {AddGroup.class})
-    @JsonIgnore
-    private MultipartFile file;
+//    /**
+//     * 上传的导检单文件
+//     */
+//    @NotNull(message = "上传文件不能为空",groups = {AddGroup.class})
+//    @JsonIgnore
+//    private MultipartFile file;
 
 
     /**

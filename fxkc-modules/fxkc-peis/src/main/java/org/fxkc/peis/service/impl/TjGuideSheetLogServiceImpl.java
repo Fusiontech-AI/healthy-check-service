@@ -27,6 +27,7 @@ import org.fxkc.peis.domain.vo.TjGuideSheetLogVo;
 import org.fxkc.peis.domain.TjGuideSheetLog;
 import org.fxkc.peis.mapper.TjGuideSheetLogMapper;
 import org.fxkc.peis.service.ITjGuideSheetLogService;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -102,17 +103,17 @@ public class TjGuideSheetLogServiceImpl implements ITjGuideSheetLogService {
      * 新增导检单回收记录
      */
     @Override
-    public Boolean insertByBo(TjGuideSheetLogBo bo) {
+    public Boolean insertByBo(TjGuideSheetLogBo bo, MultipartFile file) {
         TjGuideSheetLog add = MapstructUtils.convert(bo, TjGuideSheetLog.class);
         validEntityBeforeSave(add);
 
         OssClient ossClient = OssFactory.instance();
-        String originalFileName = bo.getFile().getOriginalFilename();
+        String originalFileName = file.getOriginalFilename();
         String suffix = StringUtils.substring(originalFileName, originalFileName.lastIndexOf("."), originalFileName.length());
         String uuid = OssConstant.GUIDE_SHEET_BUKET+ StrUtil.SLASH +IdUtil.fastSimpleUUID()+suffix;
         UploadResult uploadResult;
         try {
-            ossClient.upload(bo.getFile().getBytes(), uuid,bo.getFile().getContentType());
+            ossClient.upload(file.getBytes(), uuid,file.getContentType());
             add.setImagePath(uuid);
         } catch (IOException e) {
             log.error("上传导检单失败：{}",e);

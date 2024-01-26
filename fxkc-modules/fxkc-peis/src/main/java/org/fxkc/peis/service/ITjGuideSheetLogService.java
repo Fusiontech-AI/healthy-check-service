@@ -6,6 +6,7 @@ import org.fxkc.peis.domain.bo.TjGuideSheetLogBo;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
 import java.util.List;
@@ -36,7 +37,7 @@ public interface ITjGuideSheetLogService {
     /**
      * 新增导检单回收记录
      */
-    Boolean insertByBo(TjGuideSheetLogBo bo);
+    Boolean insertByBo(TjGuideSheetLogBo bo, MultipartFile file);
 
     /**
      * 修改导检单回收记录

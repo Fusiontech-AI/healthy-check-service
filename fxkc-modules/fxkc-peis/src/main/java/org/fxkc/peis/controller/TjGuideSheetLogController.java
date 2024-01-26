@@ -21,6 +21,7 @@ import org.fxkc.peis.domain.vo.TjGuideSheetLogVo;
 import org.fxkc.peis.domain.bo.TjGuideSheetLogBo;
 import org.fxkc.peis.service.ITjGuideSheetLogService;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 电子导检单
@@ -43,8 +44,8 @@ public class TjGuideSheetLogController extends BaseController {
     @Log(title = "新增电子导检单", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
-    public R<Void> add(@Validated(AddGroup.class) TjGuideSheetLogBo bo) {
-        return toAjax(tjGuideSheetLogService.insertByBo(bo));
+    public R<Void> add(@Validated(AddGroup.class) TjGuideSheetLogBo bo, @RequestPart("file")MultipartFile file) {
+        return toAjax(tjGuideSheetLogService.insertByBo(bo,file));
     }
 
 
