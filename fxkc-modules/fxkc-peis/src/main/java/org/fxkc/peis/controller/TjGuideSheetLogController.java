@@ -68,7 +68,7 @@ public class TjGuideSheetLogController extends BaseController {
      */
     @GetMapping("/list")
     public R<List<TjGuideSheetLogVo>> list(@RequestParam("registerId")Long registerId,
-                                           @RequestParam("occupationalType")String occupationalType){
+                                           @RequestParam(value = "occupationalType",required = false)String occupationalType){
         return R.ok(tjGuideSheetLogService.queryList(registerId,occupationalType));
     }
 

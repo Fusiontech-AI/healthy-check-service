@@ -77,7 +77,7 @@ public class TjGuideSheetLogServiceImpl implements ITjGuideSheetLogService {
         LambdaQueryWrapper<TjGuideSheetLog> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(TjGuideSheetLog::getRegisterId,registerId)
             .eq(TjGuideSheetLog::getDelFlag,CommonConstants.NORMAL)
-            .eq(TjGuideSheetLog::getOccupationalType,occupationalType)
+            .eq(StrUtil.isNotEmpty(occupationalType),TjGuideSheetLog::getOccupationalType,occupationalType)
             .orderByAsc(TjGuideSheetLog::getUploadTime);
         List<TjGuideSheetLogVo> list = baseMapper.selectVoList(wrapper);
         OssClient ossClient = OssFactory.instance();

@@ -166,7 +166,7 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
         if(ids.size() - actualCount != 0){
             throw new ServiceException("仅限预约、登记状态人员可取消登记，请重新选择！");
         }
-        //TODO 逻辑删除该人员登记时的项目信息
+        //TODO 逻辑删除该人员登记时的项目信息，或在数据统计时强制必须关联一下主表，否则数据统计可能会有问题
         //TODO 判断人员是否缴费，如果已缴费，向HIS发起退费申请，走退费逻辑
 
         return baseMapper.update(TjRegister.builder()
@@ -179,7 +179,7 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
 
     @Override
     public Boolean reRegistration(Collection<Long> ids) {
-        //TODO 恢复该人员登记时的项目信息
+        //TODO 恢复该人员登记时的项目信息，或在数据统计时强制必须关联一下主表，否则数据统计可能会有问题
 
         return baseMapper.update(TjRegister.builder()
                 .status(RegisterStatusEnum.正常.getCode()).delFlag(CommonConstants.NORMAL).build()
