@@ -144,6 +144,13 @@ public class TjRegCombinationProjectServiceImpl implements ITjRegCombinationProj
     }
 
     @Override
+    public Boolean restoreProjects(Collection<Long> ids) {
+        return baseMapper.update(TjRegCombinationProject.builder()
+                .checkStatus(CheckStatusEnum.未检查.getCode()).build(),
+            Wrappers.lambdaQuery(TjRegCombinationProject.class).in(TjRegCombinationProject::getId,ids)) >0;
+    }
+
+    @Override
     public Boolean delayProjects(TjRegCombinationProjectDelayBo delayBo) {
         Long count = baseMapper.selectCount(Wrappers.lambdaQuery(TjRegCombinationProject.class).in(TjRegCombinationProject::getId, delayBo.getIds())
             .eq(TjRegCombinationProject::getDelFlag, CommonConstants.NORMAL)

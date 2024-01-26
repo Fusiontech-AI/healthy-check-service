@@ -53,5 +53,7 @@ public interface ITjRegCombinationProjectService {
 
     Boolean abandonProjects(Collection<Long> ids);
 
+    Boolean restoreProjects(Collection<Long> ids);
+
     Boolean delayProjects(TjRegCombinationProjectDelayBo delayBo);
 }

@@ -118,6 +118,17 @@ public class TjRegCombinationProjectController extends BaseController {
     }
 
     /**
+     * 体检人员批量恢复综合项目
+     * @return
+     */
+    @Log(title = "体检人员批量恢复综合项目", businessType = BusinessType.UPDATE)
+    @PutMapping("/restoreProjects/{ids}")
+    public R<Void> restoreProjects(@NotEmpty(message = "主键不能为空")
+                                   @PathVariable Long[] ids){
+        return toAjax(tjRegCombinationProjectService.restoreProjects(List.of(ids)));
+    }
+
+    /**
      * 体检人员批量延期综合项目
      * @return
      */
