@@ -204,7 +204,7 @@ public class TjRegisterPageVo implements Serializable {
          * 介绍人名称
          */
         @ExcelProperty(value = "介绍人")
-        @Translation(type = TransConstant.USER_ID_TO_NICKNAME,mapper = "introducer")
+        @Translation(type = TransConstant.USER_ID_TO_NAME,mapper = "introducer")
         private String introducerName;
 
         /**
@@ -216,7 +216,7 @@ public class TjRegisterPageVo implements Serializable {
          * 创建人名称
          */
         @ExcelProperty(value = "创建人")
-        @Translation(type = TransConstant.USER_ID_TO_NICKNAME,mapper = "createBy")
+        @Translation(type = TransConstant.USER_ID_TO_NAME,mapper = "createBy")
         private String createByName;
 
         /**
@@ -228,7 +228,7 @@ public class TjRegisterPageVo implements Serializable {
          * 报道人名称
          */
         @ExcelProperty(value = "体检登记(报道)医生")
-        @Translation(type = TransConstant.USER_ID_TO_NICKNAME,mapper = "registerDoctorId")
+        @Translation(type = TransConstant.USER_ID_TO_NAME,mapper = "registerDoctorId")
         private String registerDoctorName;
 
         /**
@@ -240,7 +240,7 @@ public class TjRegisterPageVo implements Serializable {
          * 总检医生名称
          */
         @ExcelProperty(value = "总检医生")
-        @Translation(type = TransConstant.USER_ID_TO_NICKNAME,mapper = "generalReviewDoctor")
+        @Translation(type = TransConstant.USER_ID_TO_NAME,mapper = "generalReviewDoctor")
         private String generalReviewDoctorName;
 
         /**
@@ -260,7 +260,7 @@ public class TjRegisterPageVo implements Serializable {
          * 审核医生名称
          */
         @ExcelProperty(value = "审核医生")
-        @Translation(type = TransConstant.USER_ID_TO_NICKNAME,mapper = "auditDoctor")
+        @Translation(type = TransConstant.USER_ID_TO_NAME,mapper = "auditDoctor")
         private String auditDoctorName;
 
         /**
@@ -293,7 +293,7 @@ public class TjRegisterPageVo implements Serializable {
          * 取消登记操作人姓名
          */
         @ExcelProperty(value = "取消登记操作人")
-        @Translation(type = TransConstant.USER_ID_TO_NICKNAME,mapper = "cancelRegisterOperator")
+        @Translation(type = TransConstant.USER_ID_TO_NAME,mapper = "cancelRegisterOperator")
         private String cancelRegisterOperatorName;
 
         /**
