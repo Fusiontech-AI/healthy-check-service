@@ -2,35 +2,37 @@ package org.fxkc.peis.service.impl;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.RequiredArgsConstructor;
 import org.fxkc.common.core.constant.CommonConstants;
 import org.fxkc.common.core.exception.ServiceException;
 import org.fxkc.common.core.utils.MapstructUtils;
 import org.fxkc.common.core.utils.StringUtils;
-import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.mybatis.core.page.PageQuery;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import lombok.RequiredArgsConstructor;
+import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.oss.core.OssClient;
 import org.fxkc.common.oss.factory.OssFactory;
 import org.fxkc.common.satoken.utils.LoginHelper;
+import org.fxkc.peis.domain.TjRegister;
+import org.fxkc.peis.domain.TjRegisterZyb;
+import org.fxkc.peis.domain.bo.TjRegisterAddBo;
+import org.fxkc.peis.domain.bo.TjRegisterBo;
 import org.fxkc.peis.domain.bo.TjRegisterPageBo;
 import org.fxkc.peis.domain.bo.TjRegisterSingleBo;
 import org.fxkc.peis.domain.vo.TjRegisterPageVo;
+import org.fxkc.peis.domain.vo.TjRegisterVo;
 import org.fxkc.peis.enums.HealthyCheckTypeEnum;
 import org.fxkc.peis.enums.RegisterStatusEnum;
-import org.springframework.stereotype.Service;
-import org.fxkc.peis.domain.bo.TjRegisterBo;
-import org.fxkc.peis.domain.vo.TjRegisterVo;
-import org.fxkc.peis.domain.TjRegister;
 import org.fxkc.peis.mapper.TjRegisterMapper;
+import org.fxkc.peis.mapper.TjRegisterZybMapper;
+import org.fxkc.peis.register.insert.RegisterInsertHolder;
+import org.fxkc.peis.register.insert.RegisterInsertService;
 import org.fxkc.peis.service.ITjRegisterService;
+import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Collection;
+import java.util.*;
 
 /**
  * 体检人员登记信息Service业务层处理
@@ -44,6 +46,9 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
 
     private final TjRegisterMapper baseMapper;
 
+    private final RegisterInsertHolder registerInsertHolder;
+
+    private final TjRegisterZybMapper tjRegisterZybMapper;
     /**
      * 查询体检人员登记信息
      */
@@ -113,14 +118,11 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
      * 新增体检人员登记信息
      */
     @Override
-    public Boolean insertByBo(TjRegisterBo bo) {
-        TjRegister add = MapstructUtils.convert(bo, TjRegister.class);
-        validEntityBeforeSave(add);
-        boolean flag = baseMapper.insert(add) > 0;
-        if (flag) {
-            bo.setId(add.getId());
-        }
-        return flag;
+    public Long insertByBo(TjRegisterAddBo bo) {
+        //根据团检类型 和 体检类型的业务分类组成联合key路由到相应策略实现类执行
+        RegisterInsertService registerInsertService = registerInsertHolder.selectBuilder(bo.getBusinessCategory() + bo.getOccupationalType());
+        List<TjRegister> tjRegisters = registerInsertService.RegisterInsert(Arrays.asList(bo));
+        return tjRegisters.get(0).getId();
     }
 
     /**
@@ -129,7 +131,11 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
     @Override
     public Boolean updateByBo(TjRegisterBo bo) {
         TjRegister update = MapstructUtils.convert(bo, TjRegister.class);
-        validEntityBeforeSave(update);
+        //validEntityBeforeSave(update);
+        if(Objects.nonNull(bo.getTjRegisterZybBo())){
+            TjRegisterZyb tjRegisterZyb = MapstructUtils.convert(bo.getTjRegisterZybBo(), TjRegisterZyb.class);
+            tjRegisterZybMapper.updateById(tjRegisterZyb);
+        }
         return baseMapper.updateById(update) > 0;
     }
 

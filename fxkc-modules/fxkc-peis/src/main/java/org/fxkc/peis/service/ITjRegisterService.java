@@ -2,6 +2,7 @@ package org.fxkc.peis.service;
 
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
+import org.fxkc.peis.domain.bo.TjRegisterAddBo;
 import org.fxkc.peis.domain.bo.TjRegisterBo;
 import org.fxkc.peis.domain.bo.TjRegisterPageBo;
 import org.fxkc.peis.domain.bo.TjRegisterSingleBo;
@@ -39,7 +40,7 @@ public interface ITjRegisterService {
     /**
      * 新增体检人员登记信息
      */
-    Boolean insertByBo(TjRegisterBo bo);
+    Long insertByBo(TjRegisterAddBo bo);
 
     /**
      * 修改体检人员登记信息
