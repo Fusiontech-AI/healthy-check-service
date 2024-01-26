@@ -4,3 +4,6 @@ org.fxkc.common.translation.core.impl.DictTypeTranslationImpl
 org.fxkc.common.translation.core.impl.OssUrlTranslationImpl
 org.fxkc.common.translation.core.impl.UserNameTranslationImpl
 org.fxkc.common.translation.core.impl.NicknameTranslationImpl
+org.fxkc.common.translation.core.impl.TeamNameTranslationImpl
+org.fxkc.common.translation.core.impl.TeamGroupNameTranslationImpl
+org.fxkc.common.translation.core.impl.TeamDeptNameTranslationImpl
