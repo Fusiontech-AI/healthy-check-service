@@ -269,6 +269,7 @@ public class TjPackageServiceImpl implements ITjPackageService {
         //首先比较已有记录的应收金额 和 分组金额的大小关系
         //获取默认分组支付方式应收金额累加的总和
         BigDecimal reduce = new BigDecimal("0");
+        BigDecimal leftAmount = new BigDecimal("0");
         if(CollUtil.isNotEmpty(haveItems)){
            reduce = haveItems.stream().filter(m -> Objects.equals(tjTeamGroup.getGroupPayType(), m.getPayType())).map(m -> m.getReceivableAmount()).reduce(BigDecimal.ZERO, BigDecimal::add);
         }
@@ -280,19 +281,23 @@ public class TjPackageServiceImpl implements ITjPackageService {
                 addItems.get(i).setDiscount(tjTeamGroup.getAddDiscount());
             }else{
                 reduce = reduce.add(bo.getReceivableAmount());
-                //存量的金额已超过了分组内金额 从当前和后续的支付方式 全部为加项支付方式,加项折扣
+                //存量的金额小于分组内金额 从当前和后续的支付方式 全部为分组内支付方式,分组内折扣
                 if(reduce.compareTo(tjTeamGroup.getPrice())<=0){
                     addItems.get(i).setPayType(tjTeamGroup.getGroupPayType());
                     addItems.get(i).setDiscount(tjTeamGroup.getItemDiscount());
                 }else{
-                    if(i==0){
+                    //组内 和 组外支付方式不一样 才会有混合支付赋值
+                    if(i==0 && !Objects.equals(tjTeamGroup.getAddPayType(),tjTeamGroup.getGroupPayType())){
                         addItems.get(i).setPayType("2");
+                        //混合支付时,需要把当前多余的金额计算出来当做加项支付。
+                        leftAmount = reduce.subtract(tjTeamGroup.getPrice());
                     }else{
                         addItems.get(i).setPayType(tjTeamGroup.getAddPayType());
                     }
                     addItems.get(i).setDiscount(tjTeamGroup.getAddDiscount());
                 }
             }
+            fillSingleAmount(addItems.get(i),leftAmount,tjTeamGroup);
 
         }
 
@@ -310,6 +315,30 @@ public class TjPackageServiceImpl implements ITjPackageService {
         }else{
             bo.setTeamAmount(bo.getReceivableAmount());
             bo.setPersonAmount(new BigDecimal("0"));
+        }
+    }
+
+    /**
+     * 处理个费 和 团费的金额 根据支付类型来处理
+     * @param bo
+     */
+    public void fillSingleAmount(AmountCalculationItemBo bo,BigDecimal leftAmount, TjTeamGroup tjTeamGroup){
+        if(Objects.equals("0",bo.getPayType())){
+            bo.setPersonAmount(bo.getReceivableAmount());
+            bo.setTeamAmount(new BigDecimal("0"));
+        }else if(Objects.equals("1",bo.getPayType())){
+            bo.setTeamAmount(bo.getReceivableAmount());
+            bo.setPersonAmount(new BigDecimal("0"));
+        }else{
+            //混合支付 加项为个人时
+            if(Objects.equals(tjTeamGroup.getAddPayType(),"0")){
+                bo.setPersonAmount(leftAmount);
+                bo.setTeamAmount(bo.getReceivableAmount().subtract(leftAmount));
+            }else if(Objects.equals(tjTeamGroup.getAddPayType(),"1")){
+                bo.setPersonAmount(bo.getReceivableAmount().subtract(leftAmount));
+                bo.setTeamAmount(leftAmount);
+            }
+
         }
     }
 

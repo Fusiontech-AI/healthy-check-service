@@ -49,7 +49,7 @@ public class AmountCalculationItemVo {
     private String payType;
 
     /**
-     * 缴费状态(1未缴费 2已缴费 3无需缴费)
+     * 缴费状态（0：未缴费，1：已缴费，2：申请退费中，3：已退费，）见字典bus_pay_status
      */
     private String payStatus;
 

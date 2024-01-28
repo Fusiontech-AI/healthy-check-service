@@ -13,6 +13,7 @@ import org.fxkc.peis.domain.TjRegister;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -142,19 +143,19 @@ public class TjRegisterPageVo implements Serializable {
          * 总费用
          */
         @ExcelProperty(value = "总费用")
-        private Long totalAmount;
+        private BigDecimal totalAmount;
 
         /**
          * 单位费用
          */
         @ExcelProperty(value = "单位费用")
-        private Long teamAmount;
+        private BigDecimal teamAmount;
 
         /**
          * 个人费用
          */
         @ExcelProperty(value = "个人费用")
-        private Long personAmount;
+        private BigDecimal personAmount;
 
 
 

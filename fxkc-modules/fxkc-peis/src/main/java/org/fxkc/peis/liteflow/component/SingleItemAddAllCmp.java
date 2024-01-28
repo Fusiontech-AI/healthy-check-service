@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 根据单项的项目list信息，累加各个单项计算合计的标准金额，应收额 和折扣
@@ -35,12 +36,24 @@ public class SingleItemAddAllCmp extends NodeComponent {
         //根据标准价格 乘以对应折扣 得到实际应收额
         BigDecimal totalStandardAmount = new BigDecimal("0");
         BigDecimal totalReceivableAmount = new BigDecimal("0");
+        BigDecimal paidPersonAmount = new BigDecimal("0");//个人已收总计
+        BigDecimal paidTeamAmount = new BigDecimal("0");//单位已收总计
+        BigDecimal personAmount = new BigDecimal("0");//个人应收总计
+        BigDecimal teamAmount = new BigDecimal("0");//单位应收总计
         for (int i = 0; i < finalAmountCalculationItemBos.size(); i++) {
             AmountCalculationItemBo bo = finalAmountCalculationItemBos.get(i);
             BigDecimal receivableAmountByDiscount = tjPackageService.getReceivableAmountByDiscount(bo.getStandardAmount(), bo.getDiscount());
             finalAmountCalculationItemBos.get(i).setReceivableAmount(receivableAmountByDiscount);
             totalStandardAmount = totalStandardAmount.add(bo.getStandardAmount());
             totalReceivableAmount = totalReceivableAmount.add(receivableAmountByDiscount);
+            //根据缴费状态 来累计已缴费费用 不分类型 只算金额
+            if(Objects.equals(bo.getPayStatus(),"1")){
+                paidPersonAmount = paidPersonAmount.add(bo.getPersonAmount());
+                paidTeamAmount = paidTeamAmount.add(bo.getTeamAmount());
+            }
+
+            personAmount = personAmount.add(bo.getPersonAmount());
+            teamAmount = teamAmount.add(bo.getTeamAmount());
         }
 
         //如果标准总金额为空，则直接总折扣给0 防止除以为0的情况
@@ -48,6 +61,14 @@ public class SingleItemAddAllCmp extends NodeComponent {
         amountCalculationVo.setStandardAmount(totalStandardAmount);
         amountCalculationVo.setReceivableAmount(totalReceivableAmount);
         amountCalculationVo.setAmountCalculationItemVos(MapstructUtils.convert(finalAmountCalculationItemBos, AmountCalculationItemVo.class));
+
+        amountCalculationVo.setPaidPersonAmount(paidPersonAmount);
+        amountCalculationVo.setPaidTeamAmount(paidTeamAmount);
+        amountCalculationVo.setPaidTotalAmount(paidPersonAmount.add(paidTeamAmount));
+        amountCalculationVo.setUnPaidTotalAmount(totalReceivableAmount.subtract(amountCalculationVo.getPaidTotalAmount()));
+
+        amountCalculationVo.setPersonAmount(personAmount);
+        amountCalculationVo.setTeamAmount(teamAmount);
         contextBean.setAmountCalculationVo(amountCalculationVo);
     }
 

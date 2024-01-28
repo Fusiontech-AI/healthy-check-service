@@ -47,7 +47,7 @@ public class TeamAddCmp extends NodeComponent {
         List<AmountCalculationItemBo> amountCalculationItemBos = requestData.getAmountCalculationItemBos();
         //需要区分当前团检的分组类型 分组折扣需要将子项折扣全部按照分组折扣计算
         if(Objects.equals(GroupTypeEnum.DISCOUNT.getCode(),tjTeamGroup.getGroupType())){
-            //将新增记录全部赋值未项目折扣
+            //将新增记录全部赋值为项目折扣
             amountCalculationItemBos.stream().forEach(m->{
                 m.setDiscount(tjTeamGroup.getItemDiscount());
             });

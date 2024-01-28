@@ -61,6 +61,12 @@ public class AmountCalculationItemBo {
     private String payType;
 
     /**
+     * 缴费状态（0：未缴费，1：已缴费，2：申请退费中，3：已退费，）见字典bus_pay_status
+     */
+    @NotBlank(message = "缴费状态不能为空")
+    private String payStatus;
+
+    /**
      * 组合项目编码
      */
     @NotBlank(message = "组合项目编码不能为空")

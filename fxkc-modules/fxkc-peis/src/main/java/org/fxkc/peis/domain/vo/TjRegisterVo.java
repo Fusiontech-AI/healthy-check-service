@@ -10,6 +10,7 @@ import org.fxkc.peis.domain.TjRegister;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 
@@ -275,37 +276,37 @@ public class TjRegisterVo implements Serializable {
      * 总费用
      */
     @ExcelProperty(value = "总费用")
-    private Long totalAmount;
+    private BigDecimal totalAmount;
 
     /**
      * 个人费用
      */
     @ExcelProperty(value = "个人费用")
-    private Long personAmount;
+    private BigDecimal personAmount;
 
     /**
      * 单位费用
      */
     @ExcelProperty(value = "单位费用")
-    private Long teamAmount;
+    private BigDecimal teamAmount;
 
     /**
      * 已缴总费用
      */
     @ExcelProperty(value = "已缴总费用")
-    private Long paidTotalAmount;
+    private BigDecimal paidTotalAmount;
 
     /**
      * 已缴个人费用
      */
     @ExcelProperty(value = "已缴个人费用")
-    private Long paidPersonAmount;
+    private BigDecimal paidPersonAmount;
 
     /**
      * 已缴单位费用
      */
     @ExcelProperty(value = "已缴单位费用")
-    private Long paidTeamAmount;
+    private BigDecimal paidTeamAmount;
 
     /**
      * 体检登记(报道)时间

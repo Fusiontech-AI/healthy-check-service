@@ -7,6 +7,7 @@ import lombok.*;
 import org.fxkc.common.tenant.core.TenantEntity;
 
 import java.io.Serial;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -231,32 +232,32 @@ public class TjRegister extends TenantEntity {
     /**
      * 总费用
      */
-    private Long totalAmount;
+    private BigDecimal totalAmount;
 
     /**
      * 个人费用
      */
-    private Long personAmount;
+    private BigDecimal personAmount;
 
     /**
      * 单位费用
      */
-    private Long teamAmount;
+    private BigDecimal teamAmount;
 
     /**
      * 已缴总费用
      */
-    private Long paidTotalAmount;
+    private BigDecimal paidTotalAmount;
 
     /**
      * 已缴个人费用
      */
-    private Long paidPersonAmount;
+    private BigDecimal paidPersonAmount;
 
     /**
      * 已缴单位费用
      */
-    private Long paidTeamAmount;
+    private BigDecimal paidTeamAmount;
 
     /**
      * 体检登记(报道)时间

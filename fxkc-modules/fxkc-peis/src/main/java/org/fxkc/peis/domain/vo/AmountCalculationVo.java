@@ -54,6 +54,36 @@ public class AmountCalculationVo {
     private BigDecimal receivableAmount;
 
     /**
+     * 个人应收金额总计
+     */
+    private BigDecimal personAmount;
+
+    /**
+     * 单位应收金额总计
+     */
+    private BigDecimal teamAmount;
+
+    /**
+     * 已缴总费用
+     */
+    private BigDecimal paidTotalAmount;
+
+    /**
+     * 未缴总费用
+     */
+    private BigDecimal unPaidTotalAmount;
+
+    /**
+     * 已缴个人费用
+     */
+    private BigDecimal paidPersonAmount;
+
+    /**
+     * 已缴单位费用
+     */
+    private BigDecimal paidTeamAmount;
+
+    /**
      * 修改序号
      */
     @NotNull(message = "修改序号不能为空")
