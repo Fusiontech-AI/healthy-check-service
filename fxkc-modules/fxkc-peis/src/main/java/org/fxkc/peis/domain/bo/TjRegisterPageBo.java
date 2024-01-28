@@ -1,5 +1,6 @@
 package org.fxkc.peis.domain.bo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.github.linpeilie.annotations.AutoMapper;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,6 +10,7 @@ import org.fxkc.common.core.validate.AddGroup;
 import org.fxkc.common.core.validate.EditGroup;
 import org.fxkc.common.mybatis.core.domain.BaseEntity;
 import org.fxkc.peis.domain.TjRegister;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -92,21 +94,25 @@ public class TjRegisterPageBo extends BaseEntity {
     /**
      * 总检时间开始
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date generalReviewTimeStart;
 
     /**
      * 总检时间结束
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date generalReviewTimeEnd;
 
     /**
      * 体检日期开始
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date healthyCheckTimeStart;
 
     /**
      * 体检日期结束
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date healthyCheckTimeEnd;
 
     /**
@@ -117,21 +123,25 @@ public class TjRegisterPageBo extends BaseEntity {
     /**
      * 审核时间开始
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date auditTimeStart;
 
     /**
      * 审核时间结束
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date auditTimeEnd;
 
     /**
      * 取消登记时间开始
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date cancelRegisterTimeStart;
 
     /**
      * 取消登记时间结束
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date cancelRegisterTimeEnd;
 
     /**
@@ -152,11 +162,13 @@ public class TjRegisterPageBo extends BaseEntity {
     /**
      * 体检登记(报道)时间开始
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date registerTimeStart;
 
     /**
      * 体检登记(报道)时间结束
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date registerTimeEnd;
 
     /**
@@ -167,11 +179,13 @@ public class TjRegisterPageBo extends BaseEntity {
     /**
      * 体检收费时间开始
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date chargeTimeStart;
 
     /**
      * 体检收费时间结束
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date chargeTimeEnd;
 
     /**
