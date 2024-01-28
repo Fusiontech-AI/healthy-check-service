@@ -1,5 +1,6 @@
 package org.fxkc.peis.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.peis.domain.TjTeamGroup;
@@ -17,7 +18,7 @@ import java.util.List;
  * @author JunBaiChen
  * @date 2024-01-17
  */
-public interface ITjTeamGroupService {
+public interface ITjTeamGroupService extends IService<TjTeamGroup> {
 
     /**
      * 查询团检分组信息

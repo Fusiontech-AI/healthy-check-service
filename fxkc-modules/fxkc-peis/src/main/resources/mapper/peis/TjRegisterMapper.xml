@@ -72,6 +72,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.guideSheetReceived)">
                 AND t1.GUIDE_SHEET_RECEIVED = #{bo.guideSheetReceived}
             </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.freezeStatus)">
+                AND t1.FREEZE_STATUS = #{bo.freezeStatus}
+            </if>
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.healthyCheckStatus)">
                 AND t1.HEALTHY_CHECK_STATUS = #{bo.healthyCheckStatus}
             </if>

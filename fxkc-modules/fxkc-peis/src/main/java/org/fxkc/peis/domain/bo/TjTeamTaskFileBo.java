@@ -42,7 +42,7 @@ public class TjTeamTaskFileBo extends BaseEntity {
 
 
     /**
-     * 上传的导检单文件
+     * 上传文件
      */
     @NotNull(message = "上传文件不能为空",groups = { AddGroup.class, EditGroup.class })
     private MultipartFile file;

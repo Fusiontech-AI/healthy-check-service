@@ -140,4 +140,31 @@ public class TjRegisterController extends BaseController {
     public R<TjRegisterVo> getSingleInfo(TjRegisterSingleBo bo) {
         return R.ok(tjRegisterService.getSingleInfo(bo));
     }
+
+    /**
+     * 体检人员冻结
+     *
+     * @param ids 主键串
+     */
+    @Log(title = "体检人员冻结", businessType = BusinessType.UPDATE)
+    @PutMapping("/freeze/{ids}")
+    @RepeatSubmit()
+    public R<Void> freeze(@NotEmpty(message = "主键不能为空")
+                                  @PathVariable Long[] ids){
+        return toAjax(tjRegisterService.freeze(List.of(ids)));
+    }
+
+    /**
+     * 体检人员解冻
+     *
+     * @param ids 主键串
+     */
+    @Log(title = "体检人员冻结", businessType = BusinessType.UPDATE)
+    @PutMapping("/unfreeze/{ids}")
+    @RepeatSubmit()
+    public R<Void> unfreeze(@NotEmpty(message = "主键不能为空")
+                          @PathVariable Long[] ids){
+        return toAjax(tjRegisterService.unfreeze(List.of(ids)));
+    }
+
 }
