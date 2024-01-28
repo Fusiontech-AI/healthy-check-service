@@ -99,11 +99,23 @@ public class TjTeamSettleVo implements Serializable {
     private String status;
 
     /**
+     * 审核人
+     */
+    @ExcelProperty(value = "审核人")
+    private String auditor;
+
+    /**
      * 审核状态（0待审核 1已审核 2审核不通过）
      */
     @ExcelProperty(value = "审核状态", converter = ExcelDictConvert.class)
     @ExcelDictFormat(readConverterExp = "0=待审核,1=已审核,2=审核不通过")
     private String checkStatus;
+
+    /**
+     * 审核时间
+     */
+    @ExcelProperty(value = "审核时间")
+    private Date checkTime;
 
     /**
      * 创建时间

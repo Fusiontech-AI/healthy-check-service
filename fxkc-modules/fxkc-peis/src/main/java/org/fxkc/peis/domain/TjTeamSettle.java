@@ -80,9 +80,19 @@ public class TjTeamSettle extends TenantEntity {
     private String status;
 
     /**
+     * 审核人
+     */
+    private String auditor;
+
+    /**
      * 审核状态（0待审核 1已审核 2审核不通过）
      */
     private String checkStatus;
+
+    /**
+     * 审核时间
+     */
+    private Date checkTime;
 
     /**
      * 删除标志（0代表存在 2代表删除）

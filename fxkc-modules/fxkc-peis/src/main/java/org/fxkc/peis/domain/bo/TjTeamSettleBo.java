@@ -36,6 +36,11 @@ public class TjTeamSettleBo extends BaseEntity {
     private Long teamTaskId;
 
     /**
+     * 单位任务分组ID
+     */
+    private Long teamGroupId;
+
+    /**
      * 结算时间
      */
     @NotNull(message = "结算时间不能为空", groups = { AddGroup.class })

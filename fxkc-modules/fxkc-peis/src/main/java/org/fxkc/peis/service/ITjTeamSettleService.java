@@ -1,7 +1,7 @@
 package org.fxkc.peis.service;
 
 import org.fxkc.peis.domain.bo.TjTeamTaskDiscountSealBo;
-import org.fxkc.peis.domain.vo.TjTeamSettleVo;
+import org.fxkc.peis.domain.vo.*;
 import org.fxkc.peis.domain.bo.TjTeamSettleBo;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.mybatis.core.page.PageQuery;
@@ -17,9 +17,29 @@ import java.util.List;
 public interface ITjTeamSettleService {
 
     /**
+     * 查询体检单位结账任务分组列表
+     */
+    TableDataInfo<TjTeamSettleTaskGroupVo> teamSettleTaskGroupList(TjTeamSettleBo bo, PageQuery pageQuery);
+
+    /**
+     * 查询体检单位结账任务分组统计
+     */
+    TjTeamSettleTaskGroupStatisticsVo teamSettleTaskGroupStatistics(TjTeamSettleBo bo);
+
+    /**
+     * 查询体检单位结账任务分组人员明细列表
+     */
+    TableDataInfo<TjRegisterPageVo> teamSettleTaskGroupDetailList(TjTeamSettleBo bo, PageQuery pageQuery);
+
+    /**
      * 查询体检单位结账
      */
     TjTeamSettleVo queryById(Long id);
+
+    /**
+     * 查询体检单位结账人员明细列表
+     */
+    TableDataInfo<TjRegisterPageVo> teamSettleDetailList(Long id, TjTeamSettleBo bo, PageQuery pageQuery);
 
     /**
      * 查询体检单位结账列表
@@ -50,6 +70,11 @@ public interface ITjTeamSettleService {
      * 体检单位结账作废
      */
     Boolean teamInvalidSettle(TjTeamSettleBo bo);
+
+    /**
+     * 获取体检单位结账金额统计
+     */
+    TjTeamSettleAmountStatisticsVo teamSettleAmountStatistics(TjTeamSettleBo bo);
 
     /**
      * 体检单位结账任务折扣

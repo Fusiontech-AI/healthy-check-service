@@ -82,7 +82,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 AND t1.TEAM_ID = #{bo.teamId}
             </if>
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.teamGroupId)">
-                AND t1.TEAM_GROUP_ID = #{bo.teamGroupId}
+                <if test="bo.teamGroupId == 0">
+                    AND t1.TEAM_GROUP_ID is null
+                </if>
+                <if test="bo.teamGroupId != 0">
+                    AND t1.TEAM_GROUP_ID = #{bo.teamGroupId}
+                </if>
             </if>
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.teamDeptId)">
                 AND t1.TEAM_DEPT_ID = #{bo.teamDeptId}
@@ -152,6 +157,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             </if>
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.taskId)">
                 AND t1.TASK_ID = #{bo.taskId}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.teamSettleId)">
+                AND t1.TEAM_SETTLE_ID = #{bo.teamSettleId}
             </if>
         </where>
     </select>

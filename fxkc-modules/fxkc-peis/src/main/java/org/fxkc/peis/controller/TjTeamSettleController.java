@@ -9,6 +9,7 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.fxkc.common.core.validate.EditGroup;
 import org.fxkc.common.core.validate.QueryGroup;
 import org.fxkc.peis.domain.bo.TjTeamTaskDiscountSealBo;
+import org.fxkc.peis.domain.vo.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 import org.fxkc.common.idempotent.annotation.RepeatSubmit;
@@ -19,7 +20,6 @@ import org.fxkc.common.core.domain.R;
 import org.fxkc.common.core.validate.AddGroup;
 import org.fxkc.common.log.enums.BusinessType;
 import org.fxkc.common.excel.utils.ExcelUtil;
-import org.fxkc.peis.domain.vo.TjTeamSettleVo;
 import org.fxkc.peis.domain.bo.TjTeamSettleBo;
 import org.fxkc.peis.service.ITjTeamSettleService;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
@@ -38,6 +38,33 @@ import org.fxkc.common.mybatis.core.page.TableDataInfo;
 public class TjTeamSettleController extends BaseController {
 
     private final ITjTeamSettleService tjTeamSettleService;
+
+    /**
+     * 查询体检单位结账任务分组列表
+     */
+    @SaCheckPermission("peis:teamSettle:list")
+    @GetMapping("/teamSettleTaskGroupList")
+    public TableDataInfo<TjTeamSettleTaskGroupVo> teamSettleTaskGroupList(@Validated(QueryGroup.class) TjTeamSettleBo bo, PageQuery pageQuery) {
+        return tjTeamSettleService.teamSettleTaskGroupList(bo, pageQuery);
+    }
+
+    /**
+     * 查询体检单位结账任务分组统计
+     */
+    @SaCheckPermission("peis:teamSettle:list")
+    @GetMapping("/teamSettleTaskGroupStatistics")
+    public R<TjTeamSettleTaskGroupStatisticsVo> teamSettleTaskGroupStatistics(@Validated(QueryGroup.class) TjTeamSettleBo bo) {
+        return R.ok(tjTeamSettleService.teamSettleTaskGroupStatistics(bo));
+    }
+
+    /**
+     * 查询体检单位结账任务分组人员明细列表
+     */
+    @SaCheckPermission("peis:teamSettle:list")
+    @GetMapping("/teamSettleTaskGroupDetailList")
+    public TableDataInfo<TjRegisterPageVo> teamSettleTaskGroupDetailList(@Validated(QueryGroup.class) TjTeamSettleBo bo, PageQuery pageQuery) {
+        return tjTeamSettleService.teamSettleTaskGroupDetailList(bo, pageQuery);
+    }
 
     /**
      * 查询体检单位结账列表
@@ -69,6 +96,16 @@ public class TjTeamSettleController extends BaseController {
     public R<TjTeamSettleVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
         return R.ok(tjTeamSettleService.queryById(id));
+    }
+
+    /**
+     * 查询体检单位结账人员明细列表
+     */
+    @SaCheckPermission("peis:teamSettle:list")
+    @GetMapping("/teamSettleDetailList/{id}")
+    public TableDataInfo<TjRegisterPageVo> teamSettleDetailList(@NotNull(message = "主键不能为空") @PathVariable Long id,
+                                                                @Validated(QueryGroup.class) TjTeamSettleBo bo, PageQuery pageQuery) {
+        return tjTeamSettleService.teamSettleDetailList(id, bo, pageQuery);
     }
 
     /**
@@ -113,6 +150,15 @@ public class TjTeamSettleController extends BaseController {
     @PostMapping("/teamInvalidSettle")
     public R<Void> teamInvalidSettle(@Validated(EditGroup.class) @RequestBody TjTeamSettleBo bo) {
         return toAjax(tjTeamSettleService.teamInvalidSettle(bo));
+    }
+
+    /**
+     * 获取体检单位结账金额统计
+     */
+    @SaCheckPermission("peis:teamSettle:query")
+    @PostMapping("/teamSettleAmountStatistics")
+    public R<TjTeamSettleAmountStatisticsVo> teamSettleAmountStatistics(@Validated(QueryGroup.class) @RequestBody TjTeamSettleBo bo) {
+        return R.ok(tjTeamSettleService.teamSettleAmountStatistics(bo));
     }
 
     /**

@@ -1,6 +1,8 @@
 package org.fxkc.peis.service.impl;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -15,16 +17,19 @@ import lombok.RequiredArgsConstructor;
 import org.fxkc.common.satoken.utils.LoginHelper;
 import org.fxkc.peis.constant.ErrorCodeConstants;
 import org.fxkc.peis.domain.TjTeamTask;
+import org.fxkc.peis.domain.bo.TjRegisterPageBo;
 import org.fxkc.peis.domain.bo.TjTeamTaskDiscountSealBo;
+import org.fxkc.peis.domain.vo.*;
 import org.fxkc.peis.exception.PeisException;
+import org.fxkc.peis.mapper.TjRegisterMapper;
 import org.fxkc.peis.mapper.TjTeamTaskMapper;
 import org.springframework.stereotype.Service;
 import org.fxkc.peis.domain.bo.TjTeamSettleBo;
-import org.fxkc.peis.domain.vo.TjTeamSettleVo;
 import org.fxkc.peis.domain.TjTeamSettle;
 import org.fxkc.peis.mapper.TjTeamSettleMapper;
 import org.fxkc.peis.service.ITjTeamSettleService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +45,37 @@ public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
 
     private final TjTeamSettleMapper baseMapper;
     private final TjTeamTaskMapper tjTeamTaskMapper;
+    private final TjRegisterMapper tjRegisterMapper;
+
+    /**
+     * 查询体检单位结账任务分组列表
+     */
+    @Override
+    public TableDataInfo<TjTeamSettleTaskGroupVo> teamSettleTaskGroupList(TjTeamSettleBo bo, PageQuery pageQuery) {
+        Page<TjTeamSettleTaskGroupVo> result = baseMapper.teamSettleTaskGroupList(pageQuery.build(),bo);
+        return TableDataInfo.build(result);
+    }
+
+    /**
+     * 查询体检单位结账任务分组统计
+     */
+    @Override
+    public TjTeamSettleTaskGroupStatisticsVo teamSettleTaskGroupStatistics(TjTeamSettleBo bo) {
+        return baseMapper.teamSettleTaskGroupStatistics(bo);
+    }
+
+    /**
+     * 查询体检单位结账任务分组人员明细列表
+     */
+    @Override
+    public TableDataInfo<TjRegisterPageVo> teamSettleTaskGroupDetailList(TjTeamSettleBo bo, PageQuery pageQuery) {
+        TjRegisterPageBo tjRegisterPageBo = new TjRegisterPageBo();
+        tjRegisterPageBo.setTeamId(bo.getTeamId());
+        tjRegisterPageBo.setTaskId(bo.getTeamTaskId());
+        tjRegisterPageBo.setTeamGroupId(ObjectUtil.isNotNull(bo.getTeamGroupId()) ? bo.getTeamGroupId() : 0L);
+        Page<TjRegisterPageVo> result = tjRegisterMapper.selectPage(tjRegisterPageBo, pageQuery.build());
+        return TableDataInfo.build(result);
+    }
 
     /**
      * 查询体检单位结账信息
@@ -47,6 +83,19 @@ public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
     @Override
     public TjTeamSettleVo queryById(Long id){
         return baseMapper.selectVoById(id);
+    }
+
+    /**
+     * 查询体检单位结账人员明细列表
+     */
+    @Override
+    public TableDataInfo<TjRegisterPageVo> teamSettleDetailList(Long id, TjTeamSettleBo bo, PageQuery pageQuery) {
+        TjRegisterPageBo tjRegisterPageBo = new TjRegisterPageBo();
+        tjRegisterPageBo.setTeamSettleId(id);
+        tjRegisterPageBo.setTeamId(bo.getTeamId());
+        tjRegisterPageBo.setTaskId(bo.getTeamTaskId());
+        Page<TjRegisterPageVo> result = tjRegisterMapper.selectPage(tjRegisterPageBo, pageQuery.build());
+        return TableDataInfo.build(result);
     }
 
     /**
@@ -121,6 +170,26 @@ public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
     }
 
     /**
+     * 获取体检单位结账金额统计
+     */
+    @Override
+    public TjTeamSettleAmountStatisticsVo teamSettleAmountStatistics(TjTeamSettleBo bo) {
+        TjTeamSettleAmountStatisticsVo vo = new TjTeamSettleAmountStatisticsVo();
+        BigDecimal receivedAmount = baseMapper.selectObjs(new LambdaQueryWrapper<TjTeamSettle>()
+            .select(TjTeamSettle::getReceivedAmount)
+            .eq(TjTeamSettle::getTeamId,bo.getTeamId())
+            .eq(TjTeamSettle::getTeamTaskId,bo.getTeamTaskId())
+            .eq(TjTeamSettle::getDelFlag,CommonConstants.NORMAL)
+            .eq(TjTeamSettle::getStatus,CommonConstants.NORMAL))
+            .stream().map(m -> NumberUtil.toBigDecimal((Number) m))
+            .reduce(BigDecimal.ZERO,BigDecimal::add);
+        vo.setReceivedAmount(receivedAmount);
+        vo.setSettledAmount(baseMapper.teamSettledAmount(bo));
+        vo.setBalance(NumberUtil.sub(vo.getReceivedAmount(),vo.getSettledAmount()));
+        return vo;
+    }
+
+    /**
      * 体检单位结账任务折扣
      */
     @Override
@@ -159,7 +228,9 @@ public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
     public Boolean teamSettleCheckPass(TjTeamSettleBo bo) {
         validEntityBeforeCheck(bo);
         TjTeamSettle update = new TjTeamSettle();
+        update.setAuditor(LoginHelper.getLoginUser().getNickname());
         update.setCheckStatus("1");
+        update.setCheckTime(DateUtil.date());
         return baseMapper.update(update,new LambdaUpdateWrapper<TjTeamSettle>().in(TjTeamSettle::getId,bo.getIds())) > 0;
     }
 
@@ -170,7 +241,9 @@ public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
     public Boolean teamSettleCheckReject(TjTeamSettleBo bo) {
         validEntityBeforeCheck(bo);
         TjTeamSettle update = new TjTeamSettle();
+        update.setAuditor(LoginHelper.getLoginUser().getNickname());
         update.setCheckStatus("2");
+        update.setCheckTime(DateUtil.date());
         return baseMapper.update(update,new LambdaUpdateWrapper<TjTeamSettle>().in(TjTeamSettle::getId,bo.getIds())) > 0;
     }
 

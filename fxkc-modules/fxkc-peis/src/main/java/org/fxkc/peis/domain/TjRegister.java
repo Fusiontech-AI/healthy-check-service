@@ -443,4 +443,15 @@ public class TjRegister extends TenantEntity {
      * 任务id
      */
     private Long taskId;
+
+    /**
+     * 单位结账id
+     */
+    private Long teamSettleId;
+
+    /**
+     * 单位结账时间
+     */
+    private Date teamSettleTime;
+
 }
