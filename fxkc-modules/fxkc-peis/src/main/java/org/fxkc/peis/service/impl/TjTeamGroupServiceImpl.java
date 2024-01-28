@@ -242,6 +242,7 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
             throw new PeisException(ErrorCodeConstants.PEIS_GROUP_ITEM_ISEXIST, buffer.deleteCharAt(buffer.length() - 1));
         }
         List<TjTeamGroup> groupList = MapstructUtils.convert(list, TjTeamGroup.class);
+        groupList.forEach(k -> k.setPrice(k.getActualPrice()));
         //任务分组保存项目信息记录分组人员分组信息
         recordGroupInfo(groupList);
         List<Long> packageIds =  StreamUtils.toList(groupList, TjTeamGroup::getPackageId);

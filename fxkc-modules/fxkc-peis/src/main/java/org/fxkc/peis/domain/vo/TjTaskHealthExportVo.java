@@ -28,15 +28,16 @@ public class TjTaskHealthExportVo {
     private String name;
 
     /**
-     * 身份证号(此列格式需改为文本)
+     * 身份证号
      */
-    @ExcelProperty("身份证号(此列格式需改为文本)")
+    @ExcelProperty("身份证号")
     private String idCard;
 
     /**
      * 性别
      */
     @ExcelProperty("性别")
+    @ExcelDictFormat(dictType = "sys_user_sex")
     private String gender;
 
     /**

@@ -141,11 +141,58 @@ public class TjTeamTaskController extends BaseController {
         tjTeamTaskService.exportRegisterTemplate(templateType,taskId, response);
     }
 
+    /**
+     * 导入团检人员
+     */
+    @Log(title = "团检任务导入人员", businessType = BusinessType.IMPORT)
     @PostMapping(value = "/importRegisterData", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public R< ExcelResult<TjTaskOccupationalExportVo>> importData(@Valid TjTaskImportBo bo) throws IOException {
-        ExcelResult<TjTaskOccupationalExportVo> result = ExcelUtil.importExcel(bo.getFile().getInputStream(),
-            TjTaskOccupationalExportVo.class,
-            new TjTaskImportListener(PhysicalTypeEnum.isOccupational(bo.getTemplateType())));
-        return R.ok(result);
+    public R<ExcelResult<TjTaskOccupationalExportVo>> importRegisterData(@RequestPart("file") MultipartFile file, @Valid TjTaskImportBo bo) throws IOException {
+        return R.ok(tjTeamTaskService.importRegisterData(file, bo));
+    }
+
+    @Log(title = "团检任务导入人员", businessType = BusinessType.INSERT)
+    @RepeatSubmit()
+    @PostMapping("/insertRegisterData")
+    public R<Void> insertRegisterData(@RequestBody TjRegisterImportBo bo) {
+        tjTeamTaskService.insertRegisterData(bo);
+        return R.ok();
+    }
+
+    /**
+     * 团检任务审核基础信息
+     */
+    @GetMapping("/queryTaskReviewDetail/{id}")
+    public R<TjTaskReviewDetailVo> queryTaskReviewDetail(@NotNull(message = "主键不能为空")
+                                         @PathVariable Long id) {
+        return R.ok(tjTeamTaskService.queryTaskReviewDetail(id));
+    }
+
+    /**
+     * 团检任务审核分组信息
+     */
+    @GetMapping("/queryTaskReviewGroup")
+    public TableDataInfo<TjTaskReviewGroupVo> queryTaskReviewGroup(@NotNull(message = "任务id不能为空") Long taskId,
+                                                        PageQuery pageQuery) {
+        return tjTeamTaskService.queryTaskReviewGroup(taskId, pageQuery);
+    }
+
+    /**
+     * 团检任务审核人员列表
+     */
+    @GetMapping("/queryTaskReviewRegister")
+    public TableDataInfo<TjTaskReviewRegisterVo> queryTaskReviewRegister(@NotNull(message = "任务id不能为空") Long taskId,
+                                                           PageQuery pageQuery) {
+        return tjTeamTaskService.queryTaskReviewRegister(taskId, pageQuery);
+    }
+
+    /**
+     * 团检任务审核
+     */
+    @Log(title = "团检任务审核", businessType = BusinessType.REVIEW)
+    @RepeatSubmit
+    @PostMapping("/reviewTask")
+    public R<Void> reviewTask(@RequestBody @Valid TjTaskReviewBo bo) {
+        tjTeamTaskService.reviewTask(bo);
+        return R.ok();
     }
 }

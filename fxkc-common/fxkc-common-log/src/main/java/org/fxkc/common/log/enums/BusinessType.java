@@ -59,5 +59,10 @@ public enum BusinessType {
     /**
      * 新增或修改
      */
-    INSERTORUPDATE
+    INSERTORUPDATE,
+
+    /**
+     * 审核
+     */
+    REVIEW
 }

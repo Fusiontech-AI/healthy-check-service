@@ -52,4 +52,6 @@ public interface ErrorCodeConstants {
     String PEIS_TASK_FILE_FORMAT = "peis.task.file.format";
 
     String PEIS_TASK_FILE_UPLOAD = "peis.task.file.upload";
+
+    String PEIS_NOT_LOGGED_IN = "peis.not.logged.in";
 }

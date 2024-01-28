@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import java.math.BigDecimal;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.experimental.Accessors;
 import org.fxkc.common.tenant.core.TenantEntity;
 import org.fxkc.common.translation.annotation.Translation;
 import org.fxkc.common.translation.constant.TransConstant;
@@ -23,6 +24,7 @@ import java.io.Serial;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("tj_team_task")
+@Accessors(chain = true)
 public class TjTeamTask extends TenantEntity {
 
     @Serial
@@ -70,7 +72,7 @@ public class TjTeamTask extends TenantEntity {
     private Integer chargeType;
 
     /**
-     * 是否审核(1:是0:否)
+     * 是否审核(0:是1:否)
      */
     private String isReview;
 
@@ -115,7 +117,7 @@ public class TjTeamTask extends TenantEntity {
     private String saleHead;
 
     /**
-     * 是否审核(1:是0:否)
+     * 编制人
      */
     private String preparedName;
 
@@ -124,4 +126,8 @@ public class TjTeamTask extends TenantEntity {
      */
     private String reviewResult;
 
+    /**
+     * 审核人
+     */
+    private Long reviewBy;
 }

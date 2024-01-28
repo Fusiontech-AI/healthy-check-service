@@ -1,17 +1,14 @@
 package org.fxkc.peis.service;
 
 import jakarta.servlet.http.HttpServletResponse;
+import org.fxkc.common.excel.core.ExcelResult;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
-import org.fxkc.peis.domain.bo.TjTeamTaskBo;
-import org.fxkc.peis.domain.bo.TjTeamTaskQueryBo;
-import org.fxkc.peis.domain.bo.TjGroupVerifyBo;
-import org.fxkc.peis.domain.bo.TjGroupVerifyPackageBo;
-import org.fxkc.peis.domain.vo.TjTeamGroupVo;
-import org.fxkc.peis.domain.vo.TjTeamTaskDetailVo;
-import org.fxkc.peis.domain.vo.TjTeamTaskVo;
-import org.fxkc.peis.domain.vo.VerifyMessageVo;
+import org.fxkc.peis.domain.bo.*;
+import org.fxkc.peis.domain.vo.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -58,4 +55,18 @@ public interface ITjTeamTaskService {
     VerifyMessageVo verifyGroupPackageData(List<TjGroupVerifyPackageBo> list);
 
     void exportRegisterTemplate(String templateType, Long taskId, HttpServletResponse response);
+
+    ExcelResult<TjTaskOccupationalExportVo> importRegisterData(MultipartFile file, TjTaskImportBo bo) throws IOException;
+
+    void insertRegisterData(TjRegisterImportBo bo);
+
+    TjTaskReviewDetailVo queryTaskReviewDetail(Long id);
+
+    TableDataInfo<TjTaskReviewGroupVo> queryTaskReviewGroup(Long taskId, PageQuery pageQuery);
+
+    TableDataInfo<TjTaskReviewRegisterVo> queryTaskReviewRegister(Long taskId, PageQuery pageQuery);
+
+    void reviewTask(TjTaskReviewBo bo);
+
+
 }

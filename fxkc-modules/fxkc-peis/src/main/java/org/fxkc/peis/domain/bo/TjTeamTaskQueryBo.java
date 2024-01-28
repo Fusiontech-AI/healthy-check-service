@@ -30,4 +30,9 @@ public class TjTeamTaskQueryBo {
      */
     @JsonFormat(pattern = DatePattern.NORM_DATE_PATTERN, timezone = "GMT+8")
     private Date signEndDate;
+
+    /**
+     * 是否审核(0:是1:否)
+     */
+    private String isReview;
 }

@@ -85,9 +85,9 @@ public class TjTeamTaskVo implements Serializable {
     private Integer chargeType;
 
     /**
-     * 是否审核(1:是0:否)
+     * 是否审核(0:是1:否)
      */
-    @ExcelProperty(value = "是否审核(1:是0:否)")
+    @ExcelProperty(value = "是否审核(0:是1:否)")
     private String isReview;
 
 

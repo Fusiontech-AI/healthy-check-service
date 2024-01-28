@@ -1,5 +1,6 @@
 package org.fxkc.peis.mapper;
 
+import org.apache.ibatis.annotations.Select;
 import org.fxkc.peis.domain.TjTeamTask;
 import org.fxkc.peis.domain.vo.TjTeamTaskVo;
 import org.fxkc.common.mybatis.core.mapper.BaseMapperPlus;
@@ -12,4 +13,7 @@ import org.fxkc.common.mybatis.core.mapper.BaseMapperPlus;
  */
 public interface TjTeamTaskMapper extends BaseMapperPlus<TjTeamTask, TjTeamTaskVo> {
 
+
+    @Select("select tj_task_number_seq.nextval from dual")
+    String queryTaskNumber();
 }

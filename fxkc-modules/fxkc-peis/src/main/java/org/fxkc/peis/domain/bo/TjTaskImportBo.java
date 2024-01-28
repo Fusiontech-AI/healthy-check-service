@@ -1,9 +1,12 @@
 package org.fxkc.peis.domain.bo;
 
+import cn.hutool.core.date.DateUtil;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Date;
 
 @Data
 public class TjTaskImportBo {
@@ -17,12 +20,18 @@ public class TjTaskImportBo {
     /**
      * 任务id
      */
-    @NotBlank(message = "任务id不能为空")
+    @NotNull(message = "任务id不能为空")
     private Long taskId;
 
     /**
-     * 上传文件
+     * 是否自动入组
      */
-    @NotNull(message = "上传模板不能为空")
-    private MultipartFile file;
+    @NotNull(message = "是否自动入组不能为空")
+    private Boolean autoGroup;
+
+    private String taskName;
+
+    private String teamName;
+
+    private Date time = DateUtil.date();
 }

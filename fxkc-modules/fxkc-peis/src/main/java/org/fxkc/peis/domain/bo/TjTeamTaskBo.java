@@ -77,7 +77,7 @@ public class TjTeamTaskBo extends BaseEntity {
     private Integer chargeType;
 
     /**
-     * 是否审核(1:是0:否)
+     * 是否审核(0:是1:否)
      */
     @NotBlank(message = "是否审核不能为空", groups = { AddGroup.class, EditGroup.class })
     private String isReview;
@@ -104,7 +104,7 @@ public class TjTeamTaskBo extends BaseEntity {
     private String saleHead;
 
     /**
-     * 是否审核(1:是0:否)
+     * 是否审核(0:是1:否)
      */
     private String preparedName;
 }

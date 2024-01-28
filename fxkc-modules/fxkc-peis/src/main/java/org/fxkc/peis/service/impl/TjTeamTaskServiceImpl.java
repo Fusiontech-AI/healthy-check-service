@@ -1,6 +1,7 @@
 package org.fxkc.peis.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
@@ -12,10 +13,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.fxkc.common.core.utils.MapstructUtils;
 import org.fxkc.common.core.utils.StreamUtils;
+import org.fxkc.common.core.utils.StringUtils;
 import org.fxkc.common.excel.core.DropDownOptions;
+import org.fxkc.common.excel.core.ExcelResult;
 import org.fxkc.common.excel.utils.ExcelUtil;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
+import org.fxkc.common.satoken.utils.LoginHelper;
 import org.fxkc.peis.constant.ErrorCodeConstants;
 import org.fxkc.peis.domain.TjRegister;
 import org.fxkc.peis.domain.TjTeamGroup;
@@ -26,6 +30,7 @@ import org.fxkc.peis.enums.GroupTypeEnum;
 import org.fxkc.peis.enums.HealthyCheckTypeEnum;
 import org.fxkc.peis.enums.PhysicalTypeEnum;
 import org.fxkc.peis.exception.PeisException;
+import org.fxkc.peis.listener.TjTaskImportListener;
 import org.fxkc.peis.mapper.TjRegisterMapper;
 import org.fxkc.peis.mapper.TjTeamGroupMapper;
 import org.fxkc.peis.mapper.TjTeamTaskMapper;
@@ -34,7 +39,9 @@ import org.fxkc.peis.service.ITjTeamInfoService;
 import org.fxkc.peis.service.ITjTeamTaskService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -95,7 +102,8 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
         lqw.eq(Objects.nonNull(bo.getTeamId()), TjTeamTask::getTeamId, bo.getTeamId())
             .like(StrUtil.isNotBlank(bo.getTaskName()), TjTeamTask::getTaskName, bo.getTaskName())
             .ge(Objects.nonNull(bo.getSignBeginDate()), TjTeamTask::getSignDate, bo.getSignBeginDate())
-            .le(Objects.nonNull(bo.getSignEndDate()), TjTeamTask::getSignDate, bo.getSignEndDate());
+            .le(Objects.nonNull(bo.getSignEndDate()), TjTeamTask::getSignDate, bo.getSignEndDate())
+            .eq(StrUtil.isNotBlank(bo.getIsReview()), TjTeamTask::getIsReview, bo.getIsReview());
         return lqw;
     }
 
@@ -103,9 +111,12 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
      * 新增团检任务管理
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public List<TjTeamGroupVo> insertByBo(TjTeamTaskBo bo) {
         validEntityBeforeSave(bo, Boolean.TRUE);
         TjTeamTask add = MapstructUtils.convert(bo, TjTeamTask.class);
+        String taskNumber = baseMapper.queryTaskNumber();
+        add.setTaskNo(DateUtil.year(DateUtil.date()) + StringUtils.zeroPrefix(taskNumber, 3));
         baseMapper.insert(add);
         List<TjTeamGroup> groupList = MapstructUtils.convert(bo.getGroupList(), TjTeamGroup.class);
         String teamName = iTjTeamInfoService.selectTeamNameById(add.getTeamId());
@@ -334,6 +345,83 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
             ExcelUtil.exportExcel(CollUtil.newArrayList(), teamName, TjTaskOccupationalExportVo.class, response, optionsList);
         }else {
             ExcelUtil.exportExcel(CollUtil.newArrayList(), teamName, TjTaskHealthExportVo.class, response, optionsList);
+        }
+    }
+
+    @Override
+    public ExcelResult<TjTaskOccupationalExportVo> importRegisterData(MultipartFile file, TjTaskImportBo bo)
+        throws IOException {
+        TjTeamTask tjTeamTask = baseMapper.selectById(bo.getTaskId());
+        String teamName = iTjTeamInfoService.selectTeamNameById(tjTeamTask.getTeamId());
+        bo.setTaskName(tjTeamTask.getTaskName());
+        bo.setTeamName(teamName);
+        ExcelResult<TjTaskOccupationalExportVo> result = ExcelUtil.importExcel(file.getInputStream(),
+            TjTaskOccupationalExportVo.class,
+            new TjTaskImportListener(bo));
+        return result;
+    }
+
+    @Override
+    public void insertRegisterData(TjRegisterImportBo bo) {
+        //todo 批量导入人员信息
+        //是否为职业病
+        Boolean isOccupational = PhysicalTypeEnum.isOccupational(bo.getPhysicalType());
+    }
+
+    @Override
+    public TjTaskReviewDetailVo queryTaskReviewDetail(Long id) {
+        return MapstructUtils.convert(baseMapper.selectById(id), TjTaskReviewDetailVo.class);
+    }
+
+    @Override
+    public TableDataInfo<TjTaskReviewGroupVo> queryTaskReviewGroup(Long taskId, PageQuery pageQuery) {
+        Page<TjTeamGroup> page = tjTeamGroupMapper.selectPage(pageQuery.build(), Wrappers.lambdaQuery(TjTeamGroup.class)
+            .eq(TjTeamGroup::getTaskId, taskId));
+        List<Long> groupIds = StreamUtils.toList(page.getRecords(), TjTeamGroup::getId);
+        List<TjTaskReviewGroupVo> voList = CollUtil.newArrayList();
+        if(CollUtil.isNotEmpty(groupIds)) {
+            List<TjRegister> registerList = tjRegisterMapper.selectList(Wrappers.lambdaQuery(TjRegister.class)
+                .in(TjRegister::getTeamGroupId, groupIds)
+                .select(TjRegister::getTeamGroupId, TjRegister::getHealthyCheckStatus));
+            Map<Long, Long> allMap = registerList.stream().collect(Collectors.groupingBy(TjRegister::getTeamGroupId,
+                Collectors.counting()));
+            Map<Long, Long> appointMap = StreamUtils.filter(registerList, e -> Objects.equals(HealthyCheckTypeEnum.预约.getCode(), e.getHealthyCheckStatus()))
+                .stream().collect(Collectors.groupingBy(TjRegister::getTeamGroupId,
+                Collectors.counting()));
+            Map<Long, Long> checkInMap = StreamUtils.filter(registerList, e -> !Objects.equals(HealthyCheckTypeEnum.预约.getCode(), e.getHealthyCheckStatus()))
+                .stream().collect(Collectors.groupingBy(TjRegister::getTeamGroupId,
+                Collectors.counting()));
+            voList = MapstructUtils.convert(page.getRecords(), TjTaskReviewGroupVo.class);
+            voList.forEach(k -> k.setAllNum(allMap.getOrDefault(k.getId(),0L))
+                .setAppointNum(appointMap.getOrDefault(k.getId(),0L))
+                .setCheckInNum(checkInMap.getOrDefault(k.getId(),0L)));
+        }
+        return TableDataInfo.build(voList);
+    }
+
+    @Override
+    public TableDataInfo<TjTaskReviewRegisterVo> queryTaskReviewRegister(Long taskId, PageQuery pageQuery) {
+        Page<TjRegister> page = tjRegisterMapper.selectPage(pageQuery.build(), Wrappers.lambdaQuery(TjRegister.class)
+            .eq(TjRegister::getTaskId, taskId));
+        List<TjTaskReviewRegisterVo> voList = MapstructUtils.convert(page.getRecords(), TjTaskReviewRegisterVo.class);
+        return TableDataInfo.build(voList);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void reviewTask(TjTaskReviewBo bo) {
+        Long userId;
+        try {
+            userId = LoginHelper.getLoginUser().getUserId();
+        }catch (Exception e) {
+            throw new PeisException(ErrorCodeConstants.PEIS_NOT_LOGGED_IN);
+        }
+        if(Objects.nonNull(bo.getId())) {
+            baseMapper.updateById(new TjTeamTask().setId(bo.getId())
+                .setIsReview(bo.getReviewResult()).setReviewBy(userId));
+        }else if(CollUtil.isNotEmpty(bo.getIdList())) {
+            bo.getIdList().forEach(k -> baseMapper.updateById(new TjTeamTask().setId(k)
+                .setIsReview(bo.getReviewResult()).setReviewBy(userId)));
         }
     }
 }
