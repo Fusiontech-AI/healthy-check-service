@@ -3,6 +3,7 @@ package org.fxkc.peis.service.impl;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
@@ -190,6 +191,18 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
         return baseMapper.update(TjRegister.builder()
                 .status(RegisterStatusEnum.正常.getCode()).delFlag(CommonConstants.NORMAL).build()
             ,Wrappers.lambdaQuery(TjRegister.class).in(TjRegister::getId,ids))>0;
+    }
+
+    @Override
+    public Boolean freeze(Collection<Long> ids) {
+        return baseMapper.update(TjRegister.builder().freezeStatus("0").delFlag(CommonConstants.NORMAL).build(),
+            new LambdaUpdateWrapper<TjRegister>().in(TjRegister::getId,ids)) > 0;
+    }
+
+    @Override
+    public Boolean unfreeze(Collection<Long> ids) {
+        return baseMapper.update(TjRegister.builder().freezeStatus("1").delFlag(CommonConstants.NORMAL).build(),
+            new LambdaUpdateWrapper<TjRegister>().in(TjRegister::getId,ids)) > 0;
     }
 
     @Override

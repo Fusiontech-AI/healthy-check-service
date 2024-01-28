@@ -55,4 +55,19 @@ public interface ITjRegisterService {
     Boolean cancelRegistration(Collection<Long> ids);
 
     Boolean reRegistration(Collection<Long> ids);
+
+    /**
+     * 体检人员冻结
+     *
+     * @param ids 主键串
+     */
+    Boolean freeze(Collection<Long> ids);
+
+    /**
+     * 体检人员解冻
+     *
+     * @param ids 主键串
+     */
+    Boolean unfreeze(Collection<Long> ids);
+
 }
