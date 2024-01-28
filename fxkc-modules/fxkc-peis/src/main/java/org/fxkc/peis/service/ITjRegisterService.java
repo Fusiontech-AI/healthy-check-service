@@ -2,10 +2,7 @@ package org.fxkc.peis.service;
 
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
-import org.fxkc.peis.domain.bo.TjRegisterAddBo;
-import org.fxkc.peis.domain.bo.TjRegisterBo;
-import org.fxkc.peis.domain.bo.TjRegisterPageBo;
-import org.fxkc.peis.domain.bo.TjRegisterSingleBo;
+import org.fxkc.peis.domain.bo.*;
 import org.fxkc.peis.domain.vo.TjRegisterPageVo;
 import org.fxkc.peis.domain.vo.TjRegisterVo;
 
@@ -70,4 +67,5 @@ public interface ITjRegisterService {
      */
     Boolean unfreeze(Collection<Long> ids);
 
+    Boolean changeRegCombin(TjRegCombinAddBo bo);
 }

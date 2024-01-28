@@ -1,5 +1,6 @@
 package org.fxkc.peis.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -7,6 +8,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.fxkc.common.core.constant.CommonConstants;
 import org.fxkc.common.core.exception.ServiceException;
 import org.fxkc.common.core.utils.MapstructUtils;
@@ -16,24 +18,22 @@ import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.oss.core.OssClient;
 import org.fxkc.common.oss.factory.OssFactory;
 import org.fxkc.common.satoken.utils.LoginHelper;
-import org.fxkc.peis.domain.TjRegister;
-import org.fxkc.peis.domain.TjRegisterZyb;
-import org.fxkc.peis.domain.bo.TjRegisterAddBo;
-import org.fxkc.peis.domain.bo.TjRegisterBo;
-import org.fxkc.peis.domain.bo.TjRegisterPageBo;
-import org.fxkc.peis.domain.bo.TjRegisterSingleBo;
+import org.fxkc.peis.domain.*;
+import org.fxkc.peis.domain.bo.*;
 import org.fxkc.peis.domain.vo.TjRegisterPageVo;
 import org.fxkc.peis.domain.vo.TjRegisterVo;
+import org.fxkc.peis.enums.CheckStatusEnum;
 import org.fxkc.peis.enums.HealthyCheckTypeEnum;
 import org.fxkc.peis.enums.RegisterStatusEnum;
-import org.fxkc.peis.mapper.TjRegisterMapper;
-import org.fxkc.peis.mapper.TjRegisterZybMapper;
+import org.fxkc.peis.mapper.*;
 import org.fxkc.peis.register.insert.RegisterInsertHolder;
 import org.fxkc.peis.register.insert.RegisterInsertService;
 import org.fxkc.peis.service.ITjRegisterService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 体检人员登记信息Service业务层处理
@@ -42,6 +42,7 @@ import java.util.*;
  * @date 2024-01-22
  */
 @RequiredArgsConstructor
+@Slf4j
 @Service
 public class TjRegisterServiceImpl implements ITjRegisterService {
 
@@ -50,6 +51,12 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
     private final RegisterInsertHolder registerInsertHolder;
 
     private final TjRegisterZybMapper tjRegisterZybMapper;
+
+    private final TjRegCombinationProjectMapper tjRegCombinationProjectMapper;
+
+    private final TjRegBasicProjectMapper tjRegBasicProjectMapper;
+
+    private final TjCombinationProjectInfoMapper tjCombinationProjectInfoMapper;
     /**
      * 查询体检人员登记信息
      */
@@ -203,6 +210,80 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
     public Boolean unfreeze(Collection<Long> ids) {
         return baseMapper.update(TjRegister.builder().freezeStatus("1").delFlag(CommonConstants.NORMAL).build(),
             new LambdaUpdateWrapper<TjRegister>().in(TjRegister::getId,ids)) > 0;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean changeRegCombin(TjRegCombinAddBo bo) {
+        List<TjRegCombinItemBo> combinItemBos = bo.getTjRegCombinItemBos();
+        List<TjRegCombinationProject> tjRegCombinationProjects = tjRegCombinationProjectMapper.selectList(new LambdaQueryWrapper<TjRegCombinationProject>()
+            .eq(TjRegCombinationProject::getRegisterId, bo.getRegisterId()));
+        if(CollUtil.isNotEmpty(tjRegCombinationProjects)){
+            //筛选出需要删除的记录信息
+            List<TjRegCombinItemBo> comBinIds = combinItemBos.stream().filter(m -> Objects.nonNull(m.getId())).collect(Collectors.toList());
+            List<TjRegCombinationProject> deleteItems = tjRegCombinationProjects.stream().filter(m -> !comBinIds.contains(m.getId())).collect(Collectors.toList());
+            if(CollUtil.isNotEmpty(deleteItems)){
+                //待删除记录中，存在项目己检查的 无法删除 (后面还要除去 不显示的项目记录)
+                if(deleteItems.stream().anyMatch(m -> Objects.equals(CheckStatusEnum.已检查.getCode(), m.getCheckStatus()))){
+                   throw new RuntimeException("已检查的项目无法删除!");
+                }
+
+                //删除相关记录 并删除管理的子项记录
+                tjRegCombinationProjectMapper.deleteBatchIds(deleteItems);
+                tjRegBasicProjectMapper.delete(new LambdaQueryWrapper<TjRegBasicProject>()
+                    .in(TjRegBasicProject::getRegItemId,deleteItems.stream().map(m->m.getId()).collect(Collectors.toList())));
+            }
+
+        }else{
+            log.info("当前登记id{},为第一次添加项目信息！",bo.getRegisterId());
+        }
+
+        //筛选出需要变更的记录信息 这里做价格的更新
+        List<TjRegCombinItemBo> updateItems = combinItemBos.stream().filter(m -> Objects.nonNull(m.getId())).collect(Collectors.toList());
+        if(CollUtil.isNotEmpty(updateItems)){
+            List<TjRegCombinationProject> collect = updateItems.stream().map(m -> {
+                TjRegCombinationProject build = TjRegCombinationProject.builder()
+                    .id(m.getId())
+                    .standardAmount(m.getStandardAmount())
+                    .receivableAmount(m.getReceivableAmount())
+                    .discount(m.getDiscount()).build();
+                return build;
+            }).collect(Collectors.toList());
+            tjRegCombinationProjectMapper.updateBatchById(collect);
+        }
+
+        //筛选出需要新增的记录信息
+        List<TjRegCombinItemBo> addItems = combinItemBos.stream().filter(m -> Objects.isNull(m.getId())).collect(Collectors.toList());
+        if(CollUtil.isNotEmpty(addItems)){
+            List<TjRegCombinationProject> combinationProjects = MapstructUtils.convert(addItems, TjRegCombinationProject.class);
+            combinationProjects.stream().forEach(m->{
+                m.setRegisterId(bo.getRegisterId());
+            });
+            //这里需要针对于项目无需显示的项目信息 默认赋值已检查
+            tjRegCombinationProjectMapper.insertBatch(combinationProjects);
+            //需要根据组合项目id 关联查询出对应的基础项目信息 并插入
+            List<TjCombinationProjectInfo> tjCombinationProjectInfos = tjCombinationProjectInfoMapper.selectList(new LambdaQueryWrapper<TjCombinationProjectInfo>()
+                .in(TjCombinationProjectInfo::getCombinProjectId, combinationProjects.stream().map(m -> m.getCombinationProjectId()).collect(Collectors.toList())));
+
+            if(CollUtil.isNotEmpty(tjCombinationProjectInfos)){
+                combinationProjects.stream().forEach(m->{
+                    List<TjCombinationProjectInfo> infos = tjCombinationProjectInfos.stream().filter(f -> Objects.equals(f.getCombinProjectId(), m.getCombinationProjectId())).collect(Collectors.toList());
+                    List<TjRegBasicProject> tjRegBasicProjectList = infos.stream().map(f -> {
+                        TjRegBasicProject build = TjRegBasicProject.builder()
+                            .regId(bo.getRegisterId())
+                            .regItemId(m.getId())
+                            .combinationProjectId(m.getCombinationProjectId())
+                            .basicProjectId(f.getBasicProjectId()).build();
+                        return build;
+                    }).collect(Collectors.toList());
+                    tjRegBasicProjectMapper.insertBatch(tjRegBasicProjectList);
+                });
+
+            }
+
+            }
+
+        return true;
     }
 
     @Override

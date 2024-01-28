@@ -3,6 +3,7 @@ package org.fxkc.peis.domain;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.fxkc.common.tenant.core.TenantEntity;
@@ -16,6 +17,7 @@ import java.io.Serial;
  * @date 2024-01-25
  */
 @Data
+@Builder
 @EqualsAndHashCode(callSuper = true)
 @TableName("tj_reg_basic_project")
 public class TjRegBasicProject extends TenantEntity {

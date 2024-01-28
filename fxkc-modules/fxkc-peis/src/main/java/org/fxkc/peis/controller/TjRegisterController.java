@@ -15,10 +15,7 @@ import org.fxkc.common.log.enums.BusinessType;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.web.core.BaseController;
-import org.fxkc.peis.domain.bo.TjRegisterAddBo;
-import org.fxkc.peis.domain.bo.TjRegisterBo;
-import org.fxkc.peis.domain.bo.TjRegisterPageBo;
-import org.fxkc.peis.domain.bo.TjRegisterSingleBo;
+import org.fxkc.peis.domain.bo.*;
 import org.fxkc.peis.domain.vo.TjRegisterPageVo;
 import org.fxkc.peis.domain.vo.TjRegisterVo;
 import org.fxkc.peis.service.ITjRegisterService;
@@ -167,4 +164,13 @@ public class TjRegisterController extends BaseController {
         return toAjax(tjRegisterService.unfreeze(List.of(ids)));
     }
 
+    /**
+     * 体检项目登记(或变更)
+     */
+    @Log(title = "体检项目登记", businessType = BusinessType.INSERT)
+    @RepeatSubmit()
+    @PostMapping("/changeRegCombin")
+    public R<Void> changeRegCombin(@Validated(AddGroup.class) @RequestBody TjRegCombinAddBo bo) {
+        return  toAjax(tjRegisterService.changeRegCombin(bo));
+    }
 }
