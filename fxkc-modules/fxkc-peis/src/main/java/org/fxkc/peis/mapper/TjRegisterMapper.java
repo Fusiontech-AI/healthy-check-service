@@ -9,6 +9,8 @@ import org.fxkc.peis.domain.vo.TjRegisterPageVo;
 import org.fxkc.peis.domain.vo.TjRegisterVo;
 import org.fxkc.common.mybatis.core.mapper.BaseMapperPlus;
 
+import java.util.List;
+
 /**
  * 体检人员登记信息Mapper接口
  *
@@ -21,4 +23,7 @@ public interface TjRegisterMapper extends BaseMapperPlus<TjRegister, TjRegisterV
 
     @Select("SELECT check_code_sequence.NEXTVAL FROM DUAL")
     String nextHealthyCode();
+
+    void updateTjRegisterTeamSettleNull(@Param("teamSettleIds") List<Long> teamSettleIds);
+
 }

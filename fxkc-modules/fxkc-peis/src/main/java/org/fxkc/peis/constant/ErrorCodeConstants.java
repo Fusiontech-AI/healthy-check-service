@@ -15,6 +15,8 @@ public interface ErrorCodeConstants {
 
     String PEIS_TJTEAMSETTLE_CHECKSTATUS_REFRESH = "peis.tjteamsettle.checkstatus.refresh";
 
+    String PEIS_TJTEAMSETTLE_CHECKED_REFRESH = "peis.tjteamsettle.checked.refresh";
+
     String PEIS_TJTEAMSETTLE_SEAL = "peis.tjteamsettle.seal";
 
     String PEIS_DEPTNAME_ISEXIST = "peis.deptname.isexist";

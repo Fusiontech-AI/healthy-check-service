@@ -96,6 +96,7 @@ public class TjTeamTask extends TenantEntity {
      * 是否封账(1:是0:否)
      */
     private String isSeal;
+
     /**
      * 任务编号
      */

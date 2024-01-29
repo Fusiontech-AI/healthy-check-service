@@ -42,53 +42,107 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                       ) aa
              ) aaa
         group by aaa.id,aaa.group_name,aaa.totalPeople,aaa.groupAmount,aaa.group_pay_type,aaa.addPeople,aaa.addAmount,aaa.add_pay_type
+        union all
+        select 0 id,
+               '无分组' group_name,
+               nvl(sum(t.team_amount),0) teamReceiveAmount,
+               count(t.id) totalPeople,
+               nvl(sum(t.team_amount),0) groupAmount,
+               null group_pay_type,
+               null addPeople,
+               null addAmount,
+               null add_pay_type
+        from tj_register t
+        where t.del_flag = '0'
+          and t.team_id = #{bo.teamId}
+          and t.task_id = #{bo.teamTaskId}
+          and t.team_group_id is null
     </select>
 
-    <select id="teamSettleTaskGroupStatistics"
-            resultType="org.fxkc.peis.domain.vo.TjTeamSettleTaskGroupStatisticsVo">
-        select sum(teamReceiveAmount) teamReceiveAmount,sum(totalPeople) totalPeople,sum(groupAmount) groupAmount,
-               sum(addPeople) addPeople,sum(addAmount) addAmount,
-               sum(case when add_pay_type = '0' then addAmount else 0 end) personAddAmount,
-               sum(case when add_pay_type = '1' then addAmount else 0 end) teamAddAmount
-        from (
-             select aaa.id,
-                    aaa.group_name,
-                    sum(case when aaa.group_pay_type = '1' then aaa.groupAmount else 0 end) +
-                    sum(case when aaa.add_pay_type = '1' then aaa.addAmount else 0 end) teamReceiveAmount,
-                    aaa.totalPeople,
-                    aaa.groupAmount,
-                    aaa.group_pay_type,
-                    aaa.addPeople,
-                    aaa.addAmount,
-                    aaa.add_pay_type
-             from (
-                      select aa.id,
-                             aa.group_name,
-                             aa.totalPeople,
-                             (case when aa.totalPeople > 0 then aa.totalPeople * aa.price else 0 end) groupAmount,
-                             aa.group_pay_type,
-                             aa.addPeople,
-                             aa.addAmount,
-                             aa.add_pay_type
-                      from (
-                               select a.id,
-                                      a.group_name,
-                                      count(b.id) totalPeople,
-                                      a.price,
-                                      a.group_pay_type,
-                                      sum(case when b.total_amount - a.price > 0 then 1 else 0 end) addPeople,
-                                      sum(case when b.total_amount - a.price > 0 then b.total_amount - a.price else 0 end) addAmount,
-                                      a.add_pay_type
-                               from tj_team_group a
-                                        left join tj_register b on a.id = b.team_group_id and b.del_flag = '0'
-                               where a.del_flag = '0'
-                                 and a.team_id = #{bo.teamId}
-                                 and a.task_id = #{bo.teamTaskId}
-                               group by a.id, a.group_name, a.price, a.group_pay_type, a.add_pay_type
-                           ) aa
-                  ) aaa
-             group by aaa.id,aaa.group_name,aaa.totalPeople,aaa.groupAmount,aaa.group_pay_type,aaa.addPeople,aaa.addAmount,aaa.add_pay_type
-        ) aaaa
+    <select id="teamSettleTaskGroupStatistics" resultType="org.fxkc.peis.domain.vo.TjTeamSettleTaskGroupStatisticsVo">
+        <choose>
+            <when test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.teamGroupId) and bo.teamGroupId == 0">
+                select 0 id,
+                    '无分组' group_name,
+                    nvl(sum(t.team_amount),0) teamReceiveAmount,
+                    count(t.id) totalPeople,
+                    nvl(sum(t.team_amount),0) groupAmount,
+                    null group_pay_type,
+                    null addPeople,
+                    null addAmount,
+                    null add_pay_type
+                from tj_register t
+                where t.del_flag = '0'
+                    and t.team_id = #{bo.teamId}
+                    and t.task_id = #{bo.teamTaskId}
+                    and t.team_group_id is null
+            </when>
+            <otherwise>
+                select sum(teamReceiveAmount) teamReceiveAmount,sum(totalPeople) totalPeople,sum(groupAmount) groupAmount,
+                       sum(addPeople) addPeople,sum(addAmount) addAmount,
+                       sum(case when add_pay_type = '0' then addAmount else 0 end) personAddAmount,
+                       sum(case when add_pay_type = '1' then addAmount else 0 end) teamAddAmount
+                from (
+                     select aaa.id,
+                            aaa.group_name,
+                            sum(case when aaa.group_pay_type = '1' then aaa.groupAmount else 0 end) +
+                            sum(case when aaa.add_pay_type = '1' then aaa.addAmount else 0 end) teamReceiveAmount,
+                            aaa.totalPeople,
+                            aaa.groupAmount,
+                            aaa.group_pay_type,
+                            aaa.addPeople,
+                            aaa.addAmount,
+                            aaa.add_pay_type
+                     from (
+                              select aa.id,
+                                     aa.group_name,
+                                     aa.totalPeople,
+                                     (case when aa.totalPeople > 0 then aa.totalPeople * aa.price else 0 end) groupAmount,
+                                     aa.group_pay_type,
+                                     aa.addPeople,
+                                     aa.addAmount,
+                                     aa.add_pay_type
+                              from (
+                                       select a.id,
+                                              a.group_name,
+                                              count(b.id) totalPeople,
+                                              a.price,
+                                              a.group_pay_type,
+                                              sum(case when b.total_amount - a.price > 0 then 1 else 0 end) addPeople,
+                                              sum(case when b.total_amount - a.price > 0 then b.total_amount - a.price else 0 end) addAmount,
+                                              a.add_pay_type
+                                       from tj_team_group a
+                                                left join tj_register b on a.id = b.team_group_id and b.del_flag = '0'
+                                       where a.del_flag = '0'
+                                         and a.team_id = #{bo.teamId}
+                                         and a.task_id = #{bo.teamTaskId}
+                                        <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.teamGroupId)">
+                                            and a.id = #{bo.teamGroupId}
+                                        </if>
+                                       group by a.id, a.group_name, a.price, a.group_pay_type, a.add_pay_type
+                                   ) aa
+                          ) aaa
+                     group by aaa.id,aaa.group_name,aaa.totalPeople,aaa.groupAmount,aaa.group_pay_type,aaa.addPeople,aaa.addAmount,aaa.add_pay_type
+                    <if test="@org.fxkc.common.mybatis.helper.Ognl@isEmpty(bo.teamGroupId)">
+                         union all
+                         select 0 id,
+                             '无分组' group_name,
+                             nvl(sum(t.team_amount),0) teamReceiveAmount,
+                             count(t.id) totalPeople,
+                             nvl(sum(t.team_amount),0) groupAmount,
+                             null group_pay_type,
+                             null addPeople,
+                             null addAmount,
+                             null add_pay_type
+                         from tj_register t
+                         where t.del_flag = '0'
+                             and t.team_id = #{bo.teamId}
+                             and t.task_id = #{bo.teamTaskId}
+                             and t.team_group_id is null
+                    </if>
+                ) aaaa
+            </otherwise>
+        </choose>
     </select>
 
     <select id="teamSettledAmount" resultType="java.math.BigDecimal">

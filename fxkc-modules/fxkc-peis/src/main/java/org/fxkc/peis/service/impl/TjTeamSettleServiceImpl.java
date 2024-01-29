@@ -1,11 +1,13 @@
 package org.fxkc.peis.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.google.common.collect.Lists;
 import org.fxkc.common.core.constant.CommonConstants;
 import org.fxkc.common.core.utils.MapstructUtils;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
@@ -16,11 +18,14 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import org.fxkc.common.satoken.utils.LoginHelper;
 import org.fxkc.peis.constant.ErrorCodeConstants;
+import org.fxkc.peis.domain.TjRegCombinationProject;
+import org.fxkc.peis.domain.TjRegister;
 import org.fxkc.peis.domain.TjTeamTask;
 import org.fxkc.peis.domain.bo.TjRegisterPageBo;
 import org.fxkc.peis.domain.bo.TjTeamTaskDiscountSealBo;
 import org.fxkc.peis.domain.vo.*;
 import org.fxkc.peis.exception.PeisException;
+import org.fxkc.peis.mapper.TjRegCombinationProjectMapper;
 import org.fxkc.peis.mapper.TjRegisterMapper;
 import org.fxkc.peis.mapper.TjTeamTaskMapper;
 import org.springframework.stereotype.Service;
@@ -28,10 +33,13 @@ import org.fxkc.peis.domain.bo.TjTeamSettleBo;
 import org.fxkc.peis.domain.TjTeamSettle;
 import org.fxkc.peis.mapper.TjTeamSettleMapper;
 import org.fxkc.peis.service.ITjTeamSettleService;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 体检单位结账信息Service业务层处理
@@ -46,6 +54,7 @@ public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
     private final TjTeamSettleMapper baseMapper;
     private final TjTeamTaskMapper tjTeamTaskMapper;
     private final TjRegisterMapper tjRegisterMapper;
+    private final TjRegCombinationProjectMapper tjRegCombinationProjectMapper;
 
     /**
      * 查询体检单位结账任务分组列表
@@ -161,9 +170,25 @@ public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
      * 体检单位结账作废
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Boolean teamInvalidSettle(TjTeamSettleBo bo) {
         validEntityBeforeSave(bo);
         validEntityBeforeCheck(bo);
+        List<TjTeamSettle> tjTeamSettleList = baseMapper.selectList(new LambdaQueryWrapper<TjTeamSettle>().eq(TjTeamSettle::getId,bo.getIds()));
+        long notNormalCount = tjTeamSettleList.stream().filter(f -> !StrUtil.equals(f.getStatus(),CommonConstants.NORMAL)).count();
+        if(notNormalCount > 0){
+            throw new PeisException(ErrorCodeConstants.PEIS_TJTEAMSETTLE_STATUS_REFRESH);
+        }
+        List<Long> regIds = tjRegisterMapper.selectObjs(new LambdaQueryWrapper<TjRegister>()
+            .select(TjRegister::getId)
+            .in(TjRegister::getTeamSettleId,List.of(bo.getIds()))
+            .eq(TjRegister::getDelFlag,CommonConstants.NORMAL));
+        tjRegCombinationProjectMapper.update(TjRegCombinationProject.builder().payStatus("0").build(),
+            new LambdaUpdateWrapper<TjRegCombinationProject>()
+                .in(TjRegCombinationProject::getRegisterId,regIds)
+                .eq(TjRegCombinationProject::getPayMode,"1")
+                .eq(TjRegCombinationProject::getDelFlag,CommonConstants.NORMAL));
+        tjRegisterMapper.updateTjRegisterTeamSettleNull(List.of(bo.getIds()));
         TjTeamSettle update = new TjTeamSettle();
         update.setStatus("2");
         return baseMapper.update(update,new LambdaUpdateWrapper<TjTeamSettle>().in(TjTeamSettle::getId,List.of(bo.getIds()))) > 0;
@@ -225,12 +250,53 @@ public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
      * 体检单位结账审核通过
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Boolean teamSettleCheckPass(TjTeamSettleBo bo) {
+        validEntityBeforeSave(bo);
         validEntityBeforeCheck(bo);
+        List<TjTeamSettle> tjTeamSettleList = baseMapper.selectList(new LambdaQueryWrapper<TjTeamSettle>().eq(TjTeamSettle::getId,bo.getIds()));
+        long notNormalCount = tjTeamSettleList.stream().filter(f -> !StrUtil.equals(f.getCheckStatus(),CommonConstants.NORMAL)).count();
+        if(notNormalCount > 0){
+            throw new PeisException(ErrorCodeConstants.PEIS_TJTEAMSETTLE_CHECKED_REFRESH);
+        }
+        Date date = DateUtil.date();
+        List<TjRegister> tjRegisterList = tjRegisterMapper.selectList(new LambdaQueryWrapper<TjRegister>()
+            .eq(TjRegister::getTeamId,bo.getTeamId())
+            .eq(TjRegister::getTaskId,bo.getTeamTaskId())
+            .isNull(TjRegister::getTeamSettleId)
+            .eq(TjRegister::getHealthyCheckStatus,"5")
+            .eq(TjRegister::getDelFlag,CommonConstants.NORMAL));
+        List<TjRegister> updateTjRegisterList = Lists.newArrayList();
+        tjTeamSettleList.stream().forEach(f ->
+            updateTjRegisterList.addAll(tjRegisterList.stream().filter(ff -> {
+                if(ObjectUtil.isNotNull(ff.getTeamSettleId())){
+                    return false;
+                }
+                BigDecimal balance = NumberUtil.sub(f.getReceivedAmount(),ff.getTeamAmount());
+                f.setReceivedAmount(balance);
+                return ObjectUtil.compare(f.getReceivedAmount(),BigDecimal.ZERO) >= 0;
+            }).map(fff -> {
+                TjRegister tjRegister = new TjRegister();
+                tjRegister.setTeamChargeStatus(CommonConstants.NORMAL);
+                tjRegister.setTeamSettleId(f.getId());
+                tjRegister.setTeamSettleTime(date);
+                tjRegister.setId(fff.getId());
+                return tjRegister;
+            }).collect(Collectors.toList()))
+        );
+        if(CollUtil.isNotEmpty(updateTjRegisterList)){
+            tjRegisterMapper.updateBatchById(updateTjRegisterList);
+            List<Long> regIds = updateTjRegisterList.stream().map(TjRegister::getId).collect(Collectors.toList());
+            tjRegCombinationProjectMapper.update(TjRegCombinationProject.builder().payStatus("1").build(),
+                new LambdaUpdateWrapper<TjRegCombinationProject>()
+                    .in(TjRegCombinationProject::getRegisterId,regIds)
+                    .eq(TjRegCombinationProject::getPayMode,"1")
+                    .eq(TjRegCombinationProject::getDelFlag,CommonConstants.NORMAL));
+        }
         TjTeamSettle update = new TjTeamSettle();
         update.setAuditor(LoginHelper.getLoginUser().getNickname());
         update.setCheckStatus("1");
-        update.setCheckTime(DateUtil.date());
+        update.setCheckTime(date);
         return baseMapper.update(update,new LambdaUpdateWrapper<TjTeamSettle>().in(TjTeamSettle::getId,bo.getIds())) > 0;
     }
 
@@ -239,6 +305,7 @@ public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
      */
     @Override
     public Boolean teamSettleCheckReject(TjTeamSettleBo bo) {
+        validEntityBeforeSave(bo);
         validEntityBeforeCheck(bo);
         TjTeamSettle update = new TjTeamSettle();
         update.setAuditor(LoginHelper.getLoginUser().getNickname());
