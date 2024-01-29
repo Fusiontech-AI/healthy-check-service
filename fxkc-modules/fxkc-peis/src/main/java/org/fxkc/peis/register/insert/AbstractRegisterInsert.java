@@ -2,10 +2,7 @@ package org.fxkc.peis.register.insert;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.fxkc.common.core.utils.MapstructUtils;
-import org.fxkc.common.core.utils.PinYinUtil;
-import org.fxkc.common.core.utils.SequenceNoUtils;
-import org.fxkc.common.core.utils.StringUtils;
+import org.fxkc.common.core.utils.*;
 import org.fxkc.peis.domain.TjRegister;
 import org.fxkc.peis.domain.bo.TjRegisterAddBo;
 import org.fxkc.peis.mapper.TjRegisterMapper;

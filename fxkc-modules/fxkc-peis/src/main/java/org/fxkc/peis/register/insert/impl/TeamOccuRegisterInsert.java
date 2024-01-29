@@ -2,6 +2,7 @@ package org.fxkc.peis.register.insert.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.fxkc.common.core.utils.IDUtil;
 import org.fxkc.common.core.utils.MapstructUtils;
 import org.fxkc.common.core.utils.StringUtils;
 import org.fxkc.peis.domain.TjRegister;
@@ -41,24 +42,29 @@ public class TeamOccuRegisterInsert extends AbstractRegisterInsert {
     @Override
     public List<TjRegister> RegisterInsert(List<TjRegisterAddBo> tjRegisterAddBos) {
         List<TjRegister> tjRegisters = new ArrayList<>() ;
+        List<TjRegisterZyb> tjRegisterZybs = new ArrayList<>();
+        List<TjRegisterZybHazard> tjRegisterZybHazards = new ArrayList<>();
         //进行职业病相关联记录的插入
         tjRegisterAddBos.stream().forEach(m->{
             TjRegister tjRegister = MapstructUtils.convert(m, TjRegister.class);
             fillCommonField(tjRegister);
-            tjRegisterMapper.insert(tjRegister);
+            tjRegister.setId(IDUtil.getInstance().nextId());
             tjRegisters.add(tjRegister);
             TjRegisterZybBo tjRegisterZybBo = m.getTjRegisterZybBo();
             TjRegisterZyb tjRegisterZyb = MapstructUtils.convert(tjRegisterZybBo, TjRegisterZyb.class);
             tjRegisterZyb.setRegId(tjRegister.getId());
-            tjRegisterZybMapper.insert(tjRegisterZyb);
+            tjRegisterZybs.add(tjRegisterZyb);
             List<TjRegisterZybHazardBo> tjRegisterZybHazardBos = m.getTjRegisterZybHazardBos();
-            List<TjRegisterZybHazard> tjRegisterZybHazards = MapstructUtils.convert(tjRegisterZybHazardBos, TjRegisterZybHazard.class);
-            tjRegisterZybHazards.stream().forEach(hazard->{
+            List<TjRegisterZybHazard> tjRegisterZybHazardList = MapstructUtils.convert(tjRegisterZybHazardBos, TjRegisterZybHazard.class);
+            tjRegisterZybHazardList.stream().forEach(hazard->{
                 hazard.setRegId(tjRegister.getId());
             });
-            tjRegisterZybHazardMapper.insertBatch(tjRegisterZybHazards);
+            tjRegisterZybHazards.addAll(tjRegisterZybHazardList);
         });
 
+        tjRegisterMapper.insertBatch(tjRegisters);
+        tjRegisterZybMapper.insertBatch(tjRegisterZybs);
+        tjRegisterZybHazardMapper.insertBatch(tjRegisterZybHazards);
         return tjRegisters;
     }
 
