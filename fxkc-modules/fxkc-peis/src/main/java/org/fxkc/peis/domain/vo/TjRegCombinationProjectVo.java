@@ -1,18 +1,17 @@
 package org.fxkc.peis.domain.vo;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import org.fxkc.peis.domain.TjRegCombinationProject;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
-import org.fxkc.common.excel.annotation.ExcelDictFormat;
-import org.fxkc.common.excel.convert.ExcelDictConvert;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
+import org.fxkc.common.excel.annotation.ExcelDictFormat;
+import org.fxkc.common.excel.convert.ExcelDictConvert;
+import org.fxkc.peis.domain.TjRegCombinationProject;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
 
 /**
@@ -71,6 +70,16 @@ public class TjRegCombinationProjectVo implements Serializable {
      */
     @ExcelProperty(value = "应收金额")
     private BigDecimal receivableAmount;
+
+    /**
+     * 个人费用
+     */
+    private BigDecimal personAmount;
+
+    /**
+     * 单位费用
+     */
+    private BigDecimal teamAmount;
 
     /**
      * 缴费状态（0：未缴费，1：已缴费，2：申请退费中，3：已退费，）见字典bus_pay_status

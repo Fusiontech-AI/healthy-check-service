@@ -1,16 +1,17 @@
 package org.fxkc.peis.domain.bo;
 
-import org.fxkc.common.core.validate.AddGroup;
-import org.fxkc.common.core.validate.EditGroup;
-import org.fxkc.peis.domain.TjRegCombinationProject;
-import org.fxkc.common.mybatis.core.domain.BaseEntity;
 import io.github.linpeilie.annotations.AutoMapper;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import jakarta.validation.constraints.*;
+import org.fxkc.common.core.validate.AddGroup;
+import org.fxkc.common.core.validate.EditGroup;
+import org.fxkc.common.mybatis.core.domain.BaseEntity;
+import org.fxkc.peis.domain.TjRegCombinationProject;
+
 import java.math.BigDecimal;
 import java.util.Date;
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
  * 体检人员综合项目信息业务对象 tj_reg_combination_project
@@ -64,6 +65,18 @@ public class TjRegCombinationProjectBo extends BaseEntity {
      */
     @NotNull(message = "应收金额不能为空", groups = { AddGroup.class, EditGroup.class })
     private BigDecimal receivableAmount;
+
+    /**
+     * 个人费用
+     */
+    @NotNull(message = "个人费用不能为空", groups = { AddGroup.class, EditGroup.class })
+    private BigDecimal personAmount;
+
+    /**
+     * 单位费用
+     */
+    @NotNull(message = "单位费用不能为空", groups = { AddGroup.class, EditGroup.class })
+    private BigDecimal teamAmount;
 
     /**
      * 缴费状态（0：未缴费，1：已缴费，2：申请退费中，3：已退费，）见字典bus_pay_status

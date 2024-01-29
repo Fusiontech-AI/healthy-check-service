@@ -57,6 +57,18 @@ public class TjRegCombinItemBo {
     private BigDecimal receivableAmount;
 
     /**
+     * 个人费用
+     */
+    @NotNull(message = "个人费用不能为空", groups = { AddGroup.class, EditGroup.class })
+    private BigDecimal personAmount;
+
+    /**
+     * 单位费用
+     */
+    @NotNull(message = "单位费用不能为空", groups = { AddGroup.class, EditGroup.class })
+    private BigDecimal teamAmount;
+
+    /**
      * 缴费状态（0：未缴费，1：已缴费，2：申请退费中，3：已退费，）见字典bus_pay_status
      */
     @NotBlank(message = "缴费状态（0：未缴费，1：已缴费，2：申请退费中，3：已退费，）见字典bus_pay_status不能为空", groups = { AddGroup.class, EditGroup.class })

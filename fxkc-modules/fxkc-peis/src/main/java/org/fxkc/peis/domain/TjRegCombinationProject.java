@@ -1,14 +1,14 @@
 package org.fxkc.peis.domain;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
-
-import java.math.BigDecimal;
-import java.util.Date;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import org.fxkc.common.tenant.core.TenantEntity;
 
 import java.io.Serial;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * 体检人员综合项目信息对象 tj_reg_combination_project
@@ -62,6 +62,16 @@ public class TjRegCombinationProject extends TenantEntity {
      * 应收金额
      */
     private BigDecimal receivableAmount;
+
+    /**
+     * 个人费用
+     */
+    private BigDecimal personAmount;
+
+    /**
+     * 单位费用
+     */
+    private BigDecimal teamAmount;
 
     /**
      * 缴费状态（0：未缴费，1：已缴费，2：申请退费中，3：已退费，）见字典bus_pay_status
