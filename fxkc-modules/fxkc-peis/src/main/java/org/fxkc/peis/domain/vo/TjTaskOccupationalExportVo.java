@@ -3,6 +3,7 @@ package org.fxkc.peis.domain.vo;
 import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.annotation.write.style.ColumnWidth;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -33,6 +34,7 @@ public class TjTaskOccupationalExportVo {
      * 姓名
      */
     @ExcelProperty("姓名")
+    @ColumnWidth(20)
     @NotBlank(message = "姓名不能为空", groups = { AddGroup.class, EditGroup.class })
     private String name;
 
@@ -40,6 +42,7 @@ public class TjTaskOccupationalExportVo {
      * 身份证号
      */
     @ExcelProperty("身份证号")
+    @ColumnWidth(25)
     @NotBlank(message = "身份证号不能为空", groups = { AddGroup.class, EditGroup.class })
     private String idCard;
 
@@ -47,6 +50,7 @@ public class TjTaskOccupationalExportVo {
      * 性别
      */
     @ExcelProperty(value = "性别", converter = ExcelDictConvert.class)
+    @ColumnWidth(15)
     @ExcelDictFormat(dictType = "sys_user_sex")
     @NotBlank(message = "性别不能为空", groups = { AddGroup.class, EditGroup.class })
     private String gender;
@@ -55,6 +59,7 @@ public class TjTaskOccupationalExportVo {
      * 年龄
      */
     @ExcelProperty("年龄")
+    @ColumnWidth(15)
     @NotNull(message = "年龄不能为空", groups = { AddGroup.class, EditGroup.class })
     private Integer age;
 
@@ -62,6 +67,7 @@ public class TjTaskOccupationalExportVo {
      * 婚否
      */
     @ExcelProperty(value = "婚否", converter = ExcelDictConvert.class)
+    @ColumnWidth(15)
     @ExcelDictFormat(dictType = "bus_personnel_marriage_status")
     private String marriageStatus;
 
@@ -69,6 +75,7 @@ public class TjTaskOccupationalExportVo {
      * 联系电话
      */
     @ExcelProperty("联系电话")
+    @ColumnWidth(20)
     @NotBlank(message = "联系电话不能为空", groups = { AddGroup.class, EditGroup.class })
     private String phone;
 
@@ -76,6 +83,7 @@ public class TjTaskOccupationalExportVo {
      * 分组
      */
     @ExcelProperty("分组")
+    @ColumnWidth(25)
     private String groupName;
 
     /**
@@ -83,6 +91,7 @@ public class TjTaskOccupationalExportVo {
      */
     @ExcelProperty(value = "工种名称", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "bus_job_code")
+    @ColumnWidth(25)
     @NotBlank(message = "工种名称不能为空", groups = { EditGroup.class })
     private String jobCode;
 
@@ -90,12 +99,14 @@ public class TjTaskOccupationalExportVo {
      * 其他工种名称
      */
     @ExcelProperty("其他工种名称")
+    @ColumnWidth(25)
     private String otherJobName;
 
     /**
      * 总工龄年
      */
     @ExcelProperty("总工龄年")
+    @ColumnWidth(15)
     @NotBlank(message = "总工龄年不能为空", groups = { EditGroup.class })
     private String seniorityYear;
 
@@ -103,6 +114,7 @@ public class TjTaskOccupationalExportVo {
      * 总工龄月
      */
     @ExcelProperty("总工龄月")
+    @ColumnWidth(15)
     @NotBlank(message = "总工龄月不能为空", groups = { EditGroup.class })
     private String seniorityMonth;
 
@@ -110,6 +122,7 @@ public class TjTaskOccupationalExportVo {
      * 接害工龄年
      */
     @ExcelProperty("接害工龄年")
+    @ColumnWidth(15)
     @NotBlank(message = "接害工龄年不能为空", groups = { EditGroup.class })
     private String contactSeniorityYear;
 
@@ -117,6 +130,7 @@ public class TjTaskOccupationalExportVo {
      * 接触工龄月
      */
     @ExcelProperty("接触工龄月")
+    @ColumnWidth(15)
     @NotBlank(message = "接触工龄月不能为空", groups = { EditGroup.class })
     private String contactSeniorityMonth;
 
@@ -124,6 +138,7 @@ public class TjTaskOccupationalExportVo {
      * 个案卡类别
      */
     @ExcelProperty(value = "个案卡类别", converter = ExcelDictConvert.class)
+    @ColumnWidth(20)
     @ExcelDictFormat(dictType = "bus_case_card_type")
     @NotBlank(message = "个案卡类别不能为空", groups = { EditGroup.class })
     private String caseCardType;
@@ -132,6 +147,7 @@ public class TjTaskOccupationalExportVo {
      * 检查类型
      */
     @ExcelProperty(value = "检查类型", converter = ExcelDictConvert.class)
+    @ColumnWidth(20)
     @ExcelDictFormat(dictType = "bus_tj_check_type")
     @NotBlank(message = "检查类型不能为空", groups = { EditGroup.class })
     private String checkType;

@@ -1,24 +1,19 @@
 package org.fxkc.peis.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.fxkc.common.core.domain.R;
 import org.fxkc.common.log.annotation.Log;
 import org.fxkc.common.log.enums.BusinessType;
 import org.fxkc.common.web.core.BaseController;
-import org.fxkc.peis.domain.bo.TjGroupVerifyBo;
 import org.fxkc.peis.domain.bo.TjStatisticsCommonBo;
 import org.fxkc.peis.domain.vo.TjDailyPhysicalExportVo;
-import org.fxkc.peis.domain.vo.VerifyMessageVo;
 import org.fxkc.peis.service.ITjStatisticsService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  * 报表统计
@@ -46,6 +41,7 @@ public class TjStatisticsController extends BaseController {
     /**
      * 每日体检者概览导出
      */
+    @Log(title = "每日体检者概览", businessType = BusinessType.IMPORT)
     @PostMapping("/dailyPhysicalOverviewExport")
     public void dailyPhysicalOverviewExport(@RequestBody TjStatisticsCommonBo bo, HttpServletResponse response) {
         iTjStatisticsService.dailyPhysicalOverviewExport(bo, response);

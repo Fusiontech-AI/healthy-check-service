@@ -302,4 +302,14 @@ public class TjRegisterPageVo implements Serializable {
          */
         @ExcelProperty(value = "体检检查类型11初检 21复检,见字典bus_tj_check_type")
         private String checkType;
+
+        /**
+         * 已缴费
+         */
+        private BigDecimal paidTotalAmount;
+
+        /**
+         * 未缴费
+         */
+        private BigDecimal unPaidTotalAmount;
 }

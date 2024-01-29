@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.fxkc.common.core.constant.CommonConstants;
 import org.fxkc.common.core.utils.MapstructUtils;
 import org.fxkc.common.core.utils.StreamUtils;
 import org.fxkc.common.core.utils.StringUtils;
@@ -421,11 +422,11 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
             throw new PeisException(ErrorCodeConstants.PEIS_NOT_LOGGED_IN);
         }
         if(Objects.nonNull(bo.getId())) {
-            baseMapper.updateById(new TjTeamTask().setId(bo.getId())
-                .setIsReview(bo.getReviewResult()).setReviewBy(userId));
+            baseMapper.updateById(new TjTeamTask().setId(bo.getId()).setIsReview(CommonConstants.NORMAL)
+                .setReviewResult(bo.getReviewResult()).setReviewBy(userId));
         }else if(CollUtil.isNotEmpty(bo.getIdList())) {
             bo.getIdList().forEach(k -> baseMapper.updateById(new TjTeamTask().setId(k)
-                .setIsReview(bo.getReviewResult()).setReviewBy(userId)));
+                .setIsReview(CommonConstants.NORMAL).setReviewResult(bo.getReviewResult()).setReviewBy(userId)));
         }
     }
 }
