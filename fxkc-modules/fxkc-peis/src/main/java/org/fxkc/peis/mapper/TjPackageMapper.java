@@ -1,6 +1,9 @@
 package org.fxkc.peis.mapper;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.apache.ibatis.annotations.Param;
 import org.fxkc.peis.domain.TjPackage;
+import org.fxkc.peis.domain.vo.PackageAndProjectVo;
 import org.fxkc.peis.domain.vo.TjPackageVo;
 import org.fxkc.common.mybatis.core.mapper.BaseMapperPlus;
 
@@ -12,4 +15,5 @@ import org.fxkc.common.mybatis.core.mapper.BaseMapperPlus;
  */
 public interface TjPackageMapper extends BaseMapperPlus<TjPackage, TjPackageVo> {
 
+    Page<PackageAndProjectVo> queryPackageAndProjectPages(@Param("page") Page<Object> page,@Param("name")  String name);
 }

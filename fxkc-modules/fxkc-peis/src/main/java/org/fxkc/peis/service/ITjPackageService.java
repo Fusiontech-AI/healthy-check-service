@@ -5,6 +5,7 @@ import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.peis.domain.TjTeamGroup;
 import org.fxkc.peis.domain.bo.*;
 import org.fxkc.peis.domain.vo.AmountCalculationVo;
+import org.fxkc.peis.domain.vo.PackageAndProjectVo;
 import org.fxkc.peis.domain.vo.TjPackageVo;
 
 import java.math.BigDecimal;
@@ -64,4 +65,5 @@ public interface ITjPackageService {
 
     void fillSingle(AmountCalculationItemBo bo);
 
-    }
+    TableDataInfo<PackageAndProjectVo> queryPackageAndProjectPages(String name, PageQuery pageQuery);
+}

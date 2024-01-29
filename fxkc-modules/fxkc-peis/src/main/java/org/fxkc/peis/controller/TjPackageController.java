@@ -21,6 +21,7 @@ import org.fxkc.peis.domain.bo.TjPackageAddBo;
 import org.fxkc.peis.domain.bo.TjPackageBillBo;
 import org.fxkc.peis.domain.bo.TjPackageBo;
 import org.fxkc.peis.domain.vo.AmountCalculationVo;
+import org.fxkc.peis.domain.vo.PackageAndProjectVo;
 import org.fxkc.peis.domain.vo.TjPackageVo;
 import org.fxkc.peis.service.ITjPackageService;
 import org.springframework.validation.annotation.Validated;
@@ -128,4 +129,12 @@ public class TjPackageController extends BaseController {
         return R.ok(tjPackageService.commonDynamicBilling(bo));
     }
 
+
+    /**
+     * 套餐和项目混合分页查询
+     */
+    @GetMapping("queryPackageAndProjectPages")
+    public TableDataInfo<PackageAndProjectVo> queryPackageAndProjectPages(@RequestParam("name") String name, PageQuery pageQuery) {
+        return tjPackageService.queryPackageAndProjectPages(name,pageQuery);
+    }
 }

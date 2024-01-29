@@ -19,6 +19,7 @@ import org.fxkc.peis.domain.TjPackageInfo;
 import org.fxkc.peis.domain.TjTeamGroup;
 import org.fxkc.peis.domain.bo.*;
 import org.fxkc.peis.domain.vo.AmountCalculationVo;
+import org.fxkc.peis.domain.vo.PackageAndProjectVo;
 import org.fxkc.peis.domain.vo.TjPackageVo;
 import org.fxkc.peis.liteflow.context.AmountCalculationContext;
 import org.fxkc.peis.mapper.TjPackageInfoMapper;
@@ -304,6 +305,13 @@ public class TjPackageServiceImpl implements ITjPackageService {
     }
 
 
+    @Override
+    public TableDataInfo<PackageAndProjectVo> queryPackageAndProjectPages(String name, PageQuery pageQuery) {
+        Page<PackageAndProjectVo> packageAndProjectVoPage = baseMapper.queryPackageAndProjectPages(pageQuery.build(), name);
+        return TableDataInfo.build(packageAndProjectVoPage);
+    }
+
+
     /**
      * 处理个费 和 团费的金额
      * @param bo
@@ -317,6 +325,7 @@ public class TjPackageServiceImpl implements ITjPackageService {
             bo.setPersonAmount(new BigDecimal("0"));
         }
     }
+
 
     /**
      * 处理个费 和 团费的金额 根据支付类型来处理
