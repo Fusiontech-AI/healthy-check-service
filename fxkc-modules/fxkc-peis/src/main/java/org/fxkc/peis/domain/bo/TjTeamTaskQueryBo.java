@@ -22,14 +22,12 @@ public class TjTeamTaskQueryBo {
     /**
      * 签订开始日期
      */
-    @JsonFormat(pattern = DatePattern.NORM_DATE_PATTERN, timezone = "GMT+8")
-    private Date signBeginDate;
+    private String signBeginDate;
 
     /**
      * 签订结束日期
      */
-    @JsonFormat(pattern = DatePattern.NORM_DATE_PATTERN, timezone = "GMT+8")
-    private Date signEndDate;
+    private String signEndDate;
 
     /**
      * 是否审核(0:是1:否)

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.fxkc.peis.mapper.TjStatisticsMapper">
+
+    <select id="dailyPhysicalOverview" resultType="org.fxkc.peis.domain.vo.TjDailyPhysicalExportVo">
+        select nvl(c.team_name,'个人') as teamName,
+            decode(c.team_name, null, '1', '2') as regType,
+            b.gender,
+            b.guide_sheet_received guideSheetReceived,
+            b.ins_mark as insMark,
+            b.report_print_flag reportPrintFlag,
+            sum(a.team_amount) as teamAmount,
+            sum(a.person_amount) as personAmount
+        from tj_reg_combination_project a
+        left join tj_register b on a.register_id = b.id
+        left join tj_team_info c on b.team_id = c.id
+        where a.del_flag = '0'
+        <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(healthyCheckCode)">
+            and b.healthy_check_code = #{healthyCheckCode}
+        </if>
+        <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(name)">
+            and b.name like '%' || #{name} || '%'
+        </if>
+        <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(gender)">
+            and b.gender = #{gender}
+        </if>
+        <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(beginDate)">
+            and to_char(b.healthy_check_time, 'yyyy-mm-dd') &gt;= #{beginDate}
+        </if>
+        <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(endDate)">
+            and to_char(b.healthy_check_time, 'yyyy-mm-dd') &lt;= #{endDate}
+        </if>
+        <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(physicalType)">
+            and b.physical_type = #{physicalType}
+        </if>
+        <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(recordCode)">
+            and b.record_code = #{recordCode}
+        </if>
+        <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(credentialNumber)">
+            and b.credential_number = #{credentialNumber}
+        </if>
+        <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(teamId)">
+            and c.id = #{teamId}
+        </if>
+        <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(healthyCheckStatus)">
+            and b.healthy_check_status = #{healthyCheckStatus}
+        </if>
+        group by c.team_name, b.gender, b.guide_sheet_received,b.ins_mark,b.report_print_flag
+    </select>
+</mapper>

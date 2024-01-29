@@ -150,6 +150,9 @@ public class TjTeamTaskController extends BaseController {
         return R.ok(tjTeamTaskService.importRegisterData(file, bo));
     }
 
+    /**
+     * 保存人员信息
+     */
     @Log(title = "团检任务导入人员", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping("/insertRegisterData")

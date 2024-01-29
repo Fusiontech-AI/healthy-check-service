@@ -47,7 +47,7 @@ public class TjRegisterImportDetailBo {
     /**
      * 分组
      */
-    @NotBlank(message = "分组不嫩为空")
+    @NotBlank(message = "分组不能为空")
     private String groupName;
 
     /**

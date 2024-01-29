@@ -101,9 +101,13 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
         LambdaQueryWrapper<TjTeamTask> lqw = Wrappers.lambdaQuery();
         lqw.eq(Objects.nonNull(bo.getTeamId()), TjTeamTask::getTeamId, bo.getTeamId())
             .like(StrUtil.isNotBlank(bo.getTaskName()), TjTeamTask::getTaskName, bo.getTaskName())
-            .ge(Objects.nonNull(bo.getSignBeginDate()), TjTeamTask::getSignDate, bo.getSignBeginDate())
-            .le(Objects.nonNull(bo.getSignEndDate()), TjTeamTask::getSignDate, bo.getSignEndDate())
             .eq(StrUtil.isNotBlank(bo.getIsReview()), TjTeamTask::getIsReview, bo.getIsReview());
+        if(StrUtil.isNotBlank(bo.getSignBeginDate())) {
+            lqw.ge(TjTeamTask::getSignDate, DateUtil.parseDate(bo.getSignBeginDate()));
+        }
+        if(StrUtil.isNotBlank(bo.getSignEndDate())) {
+            lqw.le(TjTeamTask::getSignDate, DateUtil.parseDate(bo.getSignBeginDate()));
+        }
         return lqw;
     }
 

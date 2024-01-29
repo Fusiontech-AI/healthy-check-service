@@ -139,24 +139,20 @@ public class TjTaskOccupationalExportVo {
     /**
      * 流水号
      */
-    @ExcelIgnore
     private String serialNumber;
 
     /**
      * 添加时间
      */
-    @ExcelIgnore
     private Date addTime;
 
     /**
      * 单位名称
      */
-    @ExcelIgnore
     private String teamName;
 
     /**
      * 任务名称
      */
-    @ExcelIgnore
     private String taskName;
 }
