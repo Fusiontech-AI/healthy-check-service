@@ -22,6 +22,8 @@ public interface TjTeamSettleMapper extends BaseMapperPlus<TjTeamSettle, TjTeamS
 
     Page<TjTeamSettleTaskGroupVo> teamSettleTaskGroupList(Page page, @Param("bo") TjTeamSettleBo bo);
 
+    TjTeamSettleTaskGroupVo teamSettleTaskNoGroup(@Param("bo") TjTeamSettleBo bo);
+
     TjTeamSettleTaskGroupStatisticsVo teamSettleTaskGroupStatistics(@Param("bo") TjTeamSettleBo bo);
 
     BigDecimal teamSettledAmount(@Param("bo") TjTeamSettleBo bo);

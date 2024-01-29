@@ -22,6 +22,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             t1.FREEZE_STATUS,
             t1.HEALTHY_CHECK_STATUS,
             t1.NEED_GENERAL_REVIEW,
+            t1.CHECK_TYPE,
             t1.TOTAL_AMOUNT,
             t1.TEAM_AMOUNT,
             t1.PERSON_AMOUNT,
@@ -38,7 +39,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             t1.FINISH_TIME,
             t1.CANCEL_REGISTER_TIME,
             t1.CANCEL_REGISTER_OPERATOR,
-            t1.CHECK_TYPE,
+            t1.TEAM_SETTLE_TIME,
             t1.PAID_TOTAL_AMOUNT,
             t1.TOTAL_AMOUNT - PAID_TOTAL_AMOUNT as unPaidTotalAmount
         FROM
@@ -165,4 +166,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             </if>
         </where>
     </select>
+
+    <update id="updateTjRegisterTeamSettleNull">
+        update TJ_REGISTER
+        set TEAM_SETTLE_ID=null,TEAM_SETTLE_TIME=null,TEAM_CHARGE_STATUS='1'
+        where TEAM_SETTLE_ID in
+        <foreach collection="teamSettleIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
 </mapper>

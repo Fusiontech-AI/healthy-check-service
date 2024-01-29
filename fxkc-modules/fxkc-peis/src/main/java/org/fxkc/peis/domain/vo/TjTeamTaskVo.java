@@ -1,5 +1,6 @@
 package org.fxkc.peis.domain.vo;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.fxkc.common.translation.annotation.Translation;
@@ -90,5 +91,20 @@ public class TjTeamTaskVo implements Serializable {
     @ExcelProperty(value = "是否审核(0:是1:否)")
     private String isReview;
 
+    /**
+     * 任务折扣实收金额
+     */
+    private BigDecimal taskReceived;
+
+    /**
+     * 任务折扣优惠金额
+     */
+    private BigDecimal taskDiscount;
+
+    /**
+     * 是否封账(1:是0:否)
+     */
+    @ExcelProperty(value = "是否封账(1:是0:否)")
+    private String isSeal;
 
 }

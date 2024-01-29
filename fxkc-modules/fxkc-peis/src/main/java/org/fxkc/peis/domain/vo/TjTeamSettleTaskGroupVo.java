@@ -39,12 +39,6 @@ public class TjTeamSettleTaskGroupVo implements Serializable {
     private String groupName;
 
     /**
-     * 分组方式sys_dict_type(bus_group_type)
-     */
-    @ExcelProperty(value = "分组名称")
-    private Integer groupType;
-
-    /**
      * 单位应收金额
      */
     @ExcelProperty(value = "单位应收金额")
