@@ -59,7 +59,7 @@ public class TjRegister extends TenantEntity {
     private String gender;
 
     /**
-     * 婚姻状况（0：未婚，1：已婚，2：不限）,见字典bus_marriage_status
+     * 婚姻状况（0：未婚，1：已婚，2：未知）,见字典bus_personnel_marriage_status
      */
     private String marriageStatus;
 

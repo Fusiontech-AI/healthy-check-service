@@ -51,7 +51,6 @@ public class TjRegisterPageVo implements Serializable {
      */
     @ExcelProperty(value = "证件类型", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "bus_credential_type")
-    @Translation(type = TransConstant.DICT_TYPE_TO_LABEL, other = "bus_credential_type")
     private String credentialType;
 
     /**
@@ -65,7 +64,6 @@ public class TjRegisterPageVo implements Serializable {
      */
     @ExcelProperty(value = "业务类别", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "bus_category")
-    @Translation(type = TransConstant.DICT_TYPE_TO_LABEL, other = "bus_category")
     private String businessCategory;
 
     /**
@@ -73,7 +71,6 @@ public class TjRegisterPageVo implements Serializable {
      */
     @ExcelProperty(value = "体检类型，见字典bus_physical_type", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "bus_physical_type")
-    @Translation(type = TransConstant.DICT_TYPE_TO_LABEL,other = "bus_physical_type")
     private String physicalType;
 
     /**
@@ -83,11 +80,10 @@ public class TjRegisterPageVo implements Serializable {
     private String name;
 
     /**
-     * 婚姻状况（0：未婚，1：已婚，2：不限）,见字典bus_marriage_status
+     * 婚姻状况（0：未婚，1：已婚，2：未知）,见字典bus_personnel_marriage_status
      */
     @ExcelProperty(value = "婚姻状况", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "bus_marriage_status")
-    @Translation(type = TransConstant.DICT_TYPE_TO_LABEL,other = "bus_marriage_status")
     private String marriageStatus;
 
     /**
@@ -101,7 +97,6 @@ public class TjRegisterPageVo implements Serializable {
      */
     @ExcelProperty(value = "性别", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "sys_user_sex")
-    @Translation(type = TransConstant.DICT_TYPE_TO_LABEL,other = "sys_user_sex")
     private String gender;
 
     /**
@@ -136,7 +131,6 @@ public class TjRegisterPageVo implements Serializable {
      */
     @ExcelProperty(value = "体检状态", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "bus_healthy_check_status")
-    @Translation(type = TransConstant.DICT_TYPE_TO_LABEL,other = "bus_healthy_check_status")
     private String healthyCheckStatus;
 
     /**
@@ -144,7 +138,6 @@ public class TjRegisterPageVo implements Serializable {
      */
     @ExcelProperty(value = "是否需要总检", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "bus_need_general_review")
-    @Translation(type = TransConstant.DICT_TYPE_TO_LABEL,other = "bus_need_general_review")
     private String needGeneralReview;
 
     /**
@@ -152,7 +145,6 @@ public class TjRegisterPageVo implements Serializable {
      */
     @ExcelProperty(value = "费别", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "bus_cost_type")
-    @Translation(type = TransConstant.DICT_TYPE_TO_LABEL,other = "bus_cost_type")
     private String costType;
 
     /**

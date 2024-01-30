@@ -62,9 +62,9 @@ public class TjRegisterBo extends BaseEntity {
     private String gender;
 
     /**
-     * 婚姻状况（0：未婚，1：已婚，2：不限）,见字典bus_marriage_status
+     * 婚姻状况（0：未婚，1：已婚，2：未知）,见字典bus_personnel_marriage_status
      */
-    @NotBlank(message = "婚姻状况（0：未婚，1：已婚，2：不限）,见字典bus_marriage_status不能为空", groups = { AddGroup.class })
+    @NotBlank(message = "婚姻状况（0：未婚，1：已婚，2：未知）,见字典bus_personnel_marriage_status不能为空", groups = { AddGroup.class })
     private String marriageStatus;
 
     /**

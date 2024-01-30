@@ -66,7 +66,7 @@ public class TjRegisterVo implements Serializable {
     private String gender;
 
     /**
-     * 婚姻状况（0：未婚，1：已婚，2：不限）,见字典bus_marriage_status
+     * 婚姻状况（0：未婚，1：已婚，2：未知）,见字典bus_personnel_marriage_status
      */
     @ExcelProperty(value = "婚姻状况", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "bus_marriage_status")
