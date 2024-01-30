@@ -50,7 +50,11 @@ public class PersonTotalUpdateCmp extends NodeComponent {
         for (int i = 0; i <collect.size() ; i++) {
             if(i==collect.size()-1){
                 //最后一项时 通过合计的应收金额 减去前面的应收金额和
-                collect.get(i).setReceivableAmount(tjPackageService.getReceivableAmountByDiscount(requestData.getStandardAmount(),discount).subtract(addAmount));
+                if(Objects.equals(inputType, InputTypeEnum.折扣.getCode())){
+                    collect.get(i).setReceivableAmount(tjPackageService.getReceivableAmountByDiscount(requestData.getStandardAmount(),discount).subtract(addAmount));
+                }else if(Objects.equals(inputType, InputTypeEnum.应收金额.getCode())){
+                    collect.get(i).setReceivableAmount(requestData.getReceivableAmount().subtract(addAmount));
+                }
                 collect.get(i).setDiscount(tjPackageService.getDiscountByReceivableAmount(collect.get(i).getStandardAmount(),collect.get(i).getReceivableAmount()));
             }else{
                 //计算单项的折扣
