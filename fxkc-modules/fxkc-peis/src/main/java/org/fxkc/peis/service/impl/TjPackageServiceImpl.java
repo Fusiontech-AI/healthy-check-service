@@ -10,6 +10,7 @@ import com.yomahub.liteflow.flow.LiteflowResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.fxkc.common.core.constant.CommonConstants;
 import org.fxkc.common.core.exception.ServiceException;
 import org.fxkc.common.core.utils.MapstructUtils;
 import org.fxkc.common.mybatis.core.page.PageQuery;
@@ -161,6 +162,17 @@ public class TjPackageServiceImpl implements ITjPackageService {
         return baseMapper.deleteBatchIds(ids) > 0;
     }
 
+    @Override
+    public Boolean batchDisable(List<Long> ids, boolean b) {
+        List<TjPackage> packageList = ids.stream().map(m -> {
+            TjPackage tjPackage = new TjPackage();
+            tjPackage.setId(m);
+            tjPackage.setStatus(CommonConstants.DISABLE);
+            return tjPackage;
+        }).collect(Collectors.toList());
+        return baseMapper.updateBatchById(packageList);
+    }
+
     /**
      * 体检套餐动态算费(可复用)
      */
@@ -310,6 +322,7 @@ public class TjPackageServiceImpl implements ITjPackageService {
         Page<PackageAndProjectVo> packageAndProjectVoPage = baseMapper.queryPackageAndProjectPages(pageQuery.build(), name);
         return TableDataInfo.build(packageAndProjectVoPage);
     }
+
 
 
     /**

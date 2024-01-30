@@ -113,6 +113,18 @@ public class TjPackageController extends BaseController {
 
 
     /**
+     * 体检套餐批量禁用
+     *
+     * @param ids 主键串
+     */
+    @Log(title = "体检套餐批量禁用", businessType = BusinessType.UPDATE)
+    @GetMapping("/batchDisable/{ids}")
+    public R<Void> batchDisable(@NotEmpty(message = "主键不能为空")
+                          @PathVariable Long[] ids) {
+        return toAjax(tjPackageService.batchDisable(List.of(ids), true));
+    }
+
+    /**
      * 体检套餐动态算费(可复用)
      */
     @PostMapping("dynamicBilling")

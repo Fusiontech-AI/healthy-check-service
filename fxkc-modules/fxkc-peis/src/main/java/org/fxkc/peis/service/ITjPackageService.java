@@ -50,6 +50,8 @@ public interface ITjPackageService {
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
 
+    Boolean batchDisable(List<Long> ids, boolean b);
+
     /**
      * 体检套餐动态算费(可复用)
      */
@@ -66,4 +68,5 @@ public interface ITjPackageService {
     void fillSingle(AmountCalculationItemBo bo);
 
     TableDataInfo<PackageAndProjectVo> queryPackageAndProjectPages(String name, PageQuery pageQuery);
+
 }
