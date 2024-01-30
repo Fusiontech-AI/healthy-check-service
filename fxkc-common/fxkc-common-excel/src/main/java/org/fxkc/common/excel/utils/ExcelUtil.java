@@ -10,6 +10,7 @@ import com.alibaba.excel.write.metadata.WriteSheet;
 import com.alibaba.excel.write.metadata.fill.FillConfig;
 import com.alibaba.excel.write.metadata.fill.FillWrapper;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
+import com.alibaba.excel.write.style.column.SimpleColumnWidthStyleStrategy;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
@@ -24,9 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Excel相关处理
@@ -200,6 +199,41 @@ public class ExcelUtil {
         // 添加下拉框操作
         builder.registerWriteHandler(new ExcelDownHandler(options));
         builder.doWrite(list);
+    }
+
+    /**
+     * 导出excel
+     *
+     * @param list      导出数据集合
+     * @param sheetName 工作表的名称
+     * @param clazz     实体类
+     * @param merge     是否合并单元格
+     * @param response
+     */
+    public static <T> void exportExcel(List<T> list, String sheetName, Class<T> clazz, boolean merge,
+                                       HttpServletResponse response, List<DropDownOptions> options, Integer defaultWidth) {
+        try {
+            resetResponse(sheetName, response);
+            ServletOutputStream os = response.getOutputStream();
+            ExcelWriterSheetBuilder builder = EasyExcel.write(os, clazz)
+                .autoCloseStream(false)
+                // 大数值自动转换 防止失真
+                .registerConverter(new ExcelBigNumberConvert())
+                .sheet(sheetName);
+            if(Objects.nonNull(defaultWidth)) {
+                builder.registerWriteHandler(new SimpleColumnWidthStyleStrategy(defaultWidth));
+            }
+            if (merge) {
+                // 合并处理器
+                builder.registerWriteHandler(new CellMergeStrategy(list, true));
+            }
+            // 添加下拉框操作
+            builder.registerWriteHandler(new ExcelDownHandler(options));
+            builder.doWrite(list);
+        } catch (IOException e) {
+            throw new RuntimeException("导出Excel异常");
+        }
+
     }
 
     /**
@@ -433,5 +467,4 @@ public class ExcelUtil {
     public static String encodingFilename(String filename) {
         return IdUtil.fastSimpleUUID() + "_" + filename + ".xlsx";
     }
-
 }

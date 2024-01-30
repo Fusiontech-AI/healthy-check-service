@@ -50,7 +50,7 @@ public class TjTaskOccupationalExportVo {
      * 性别
      */
     @ExcelProperty(value = "性别", converter = ExcelDictConvert.class)
-    @ColumnWidth(15)
+    @ColumnWidth(10)
     @ExcelDictFormat(dictType = "sys_user_sex")
     @NotBlank(message = "性别不能为空", groups = { AddGroup.class, EditGroup.class })
     private String gender;
@@ -59,7 +59,7 @@ public class TjTaskOccupationalExportVo {
      * 年龄
      */
     @ExcelProperty("年龄")
-    @ColumnWidth(15)
+    @ColumnWidth(10)
     @NotNull(message = "年龄不能为空", groups = { AddGroup.class, EditGroup.class })
     private Integer age;
 
@@ -67,7 +67,7 @@ public class TjTaskOccupationalExportVo {
      * 婚否
      */
     @ExcelProperty(value = "婚否", converter = ExcelDictConvert.class)
-    @ColumnWidth(15)
+    @ColumnWidth(10)
     @ExcelDictFormat(dictType = "bus_personnel_marriage_status")
     private String marriageStatus;
 
@@ -83,7 +83,7 @@ public class TjTaskOccupationalExportVo {
      * 分组
      */
     @ExcelProperty("分组")
-    @ColumnWidth(25)
+    @ColumnWidth(20)
     private String groupName;
 
     /**
@@ -91,7 +91,7 @@ public class TjTaskOccupationalExportVo {
      */
     @ExcelProperty(value = "工种名称", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "bus_job_code")
-    @ColumnWidth(25)
+    @ColumnWidth(20)
     @NotBlank(message = "工种名称不能为空", groups = { EditGroup.class })
     private String jobCode;
 
@@ -99,7 +99,7 @@ public class TjTaskOccupationalExportVo {
      * 其他工种名称
      */
     @ExcelProperty("其他工种名称")
-    @ColumnWidth(25)
+    @ColumnWidth(20)
     private String otherJobName;
 
     /**
@@ -147,7 +147,7 @@ public class TjTaskOccupationalExportVo {
      * 检查类型
      */
     @ExcelProperty(value = "检查类型", converter = ExcelDictConvert.class)
-    @ColumnWidth(20)
+    @ColumnWidth(15)
     @ExcelDictFormat(dictType = "bus_tj_check_type")
     @NotBlank(message = "检查类型不能为空", groups = { EditGroup.class })
     private String checkType;

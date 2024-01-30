@@ -40,7 +40,7 @@ public class TjTaskHealthExportVo {
      * 性别
      */
     @ExcelProperty("性别")
-    @ColumnWidth(15)
+    @ColumnWidth(10)
     @ExcelDictFormat(dictType = "sys_user_sex")
     private String gender;
 
@@ -48,14 +48,14 @@ public class TjTaskHealthExportVo {
      * 年龄
      */
     @ExcelProperty("年龄")
-    @ColumnWidth(15)
+    @ColumnWidth(10)
     private Integer age;
 
     /**
      * 身份证号
      */
     @ExcelProperty("婚否")
-    @ColumnWidth(15)
+    @ColumnWidth(10)
     @ExcelDictFormat(dictType = "bus_personnel_marriage_status")
     private String marriageStatus;
 
@@ -70,7 +70,7 @@ public class TjTaskHealthExportVo {
      * 分组
      */
     @ExcelProperty("分组")
-    @ColumnWidth(25)
+    @ColumnWidth(20)
     private String groupName;
 
 

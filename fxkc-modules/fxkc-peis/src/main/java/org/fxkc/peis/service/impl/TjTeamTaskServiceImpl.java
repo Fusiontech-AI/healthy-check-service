@@ -347,9 +347,11 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
         List<DropDownOptions> optionsList = CollUtil.newArrayList(options);
         //如有其他类型再添加
         if(PhysicalTypeEnum.isOccupational(templateType)) {
-            ExcelUtil.exportExcel(CollUtil.newArrayList(), teamName, TjTaskOccupationalExportVo.class, response, optionsList);
+            ExcelUtil.exportExcel(CollUtil.newArrayList(), teamName, TjTaskOccupationalExportVo.class,
+                Boolean.FALSE, response, optionsList, null);
         }else {
-            ExcelUtil.exportExcel(CollUtil.newArrayList(), teamName, TjTaskHealthExportVo.class, response, optionsList);
+            ExcelUtil.exportExcel(CollUtil.newArrayList(), teamName, TjTaskHealthExportVo.class,
+                Boolean.FALSE, response, optionsList, null);
         }
     }
 

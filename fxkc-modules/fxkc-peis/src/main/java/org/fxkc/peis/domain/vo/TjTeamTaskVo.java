@@ -107,4 +107,9 @@ public class TjTeamTaskVo implements Serializable {
     @ExcelProperty(value = "是否封账(1:是0:否)")
     private String isSeal;
 
+    /**
+     * 审核结论(1:通过2:驳回)
+     */
+    private String reviewResult;
+
 }
