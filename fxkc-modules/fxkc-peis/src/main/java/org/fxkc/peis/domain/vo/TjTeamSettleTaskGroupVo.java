@@ -6,6 +6,8 @@ import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 import org.fxkc.common.excel.annotation.ExcelDictFormat;
 import org.fxkc.common.excel.convert.ExcelDictConvert;
+import org.fxkc.common.translation.annotation.Translation;
+import org.fxkc.common.translation.constant.TransConstant;
 import org.fxkc.peis.domain.TjTeamGroup;
 
 import java.io.Serial;
@@ -61,6 +63,7 @@ public class TjTeamSettleTaskGroupVo implements Serializable {
      */
     @ExcelProperty(value = "分组支付方式", converter = ExcelDictConvert.class)
     @ExcelDictFormat(readConverterExp = "0=个人,1=单位")
+    @Translation(type = TransConstant.DICT_TYPE_TO_LABEL, other = "bus_group_pay_type")
     private String groupPayType;
 
     /**
@@ -80,6 +83,7 @@ public class TjTeamSettleTaskGroupVo implements Serializable {
      */
     @ExcelProperty(value = "加项支付方式", converter = ExcelDictConvert.class)
     @ExcelDictFormat(readConverterExp = "0=个人,1=单位")
+    @Translation(type = TransConstant.DICT_TYPE_TO_LABEL, other = "bus_group_pay_type")
     private String addPayType;
 
 

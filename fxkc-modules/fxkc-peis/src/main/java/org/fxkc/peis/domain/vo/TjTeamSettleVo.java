@@ -3,6 +3,8 @@ package org.fxkc.peis.domain.vo;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import org.fxkc.common.translation.annotation.Translation;
+import org.fxkc.common.translation.constant.TransConstant;
 import org.fxkc.peis.domain.TjTeamSettle;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
@@ -32,20 +34,31 @@ public class TjTeamSettleVo implements Serializable {
     /**
      * ID
      */
-    @ExcelProperty(value = "ID")
     private Long id;
 
     /**
      * 单位ID
      */
-    @ExcelProperty(value = "单位ID")
     private Long teamId;
+
+    /**
+     * 单位名称
+     */
+    @ExcelProperty(value = "单位名称")
+    @Translation(type = TransConstant.TEAM_ID_TO_NAME, mapper = "teamId")
+    private String teamName;
 
     /**
      * 单位任务ID
      */
-    @ExcelProperty(value = "单位任务ID")
     private Long teamTaskId;
+
+    /**
+     * 单位任务名称
+     */
+    @ExcelProperty(value = "单位任务名称")
+    @Translation(type = TransConstant.TEAM_TASK_ID_TO_NAME, mapper = "teamTaskId")
+    private String teamTaskName;
 
     /**
      * 收费批次号
@@ -56,8 +69,14 @@ public class TjTeamSettleVo implements Serializable {
     /**
      * 结算人
      */
+    private Long settleOfficer;
+
+    /**
+     * 结算人名称
+     */
     @ExcelProperty(value = "结算人")
-    private String settleOfficer;
+    @Translation(type = TransConstant.USER_ID_TO_NICKNAME,mapper = "settleOfficer")
+    private String settleOfficerName;
 
     /**
      * 结算时间
@@ -75,14 +94,16 @@ public class TjTeamSettleVo implements Serializable {
      * 支付方式（1微信 2支付宝 3现金 4银行卡）
      */
     @ExcelProperty(value = "支付方式", converter = ExcelDictConvert.class)
-    @ExcelDictFormat(readConverterExp = "1=微信,2=支付宝,3=现金,4=银行卡")
+    @ExcelDictFormat(dictType = "bus_team_pay_type")
+    @Translation(type = TransConstant.DICT_TYPE_TO_LABEL,other = "bus_team_pay_type")
     private String payType;
 
     /**
      * 是否打印发票（0否 1是）
      */
     @ExcelProperty(value = "是否打印发票", converter = ExcelDictConvert.class)
-    @ExcelDictFormat(readConverterExp = "0=否,1=是")
+    @ExcelDictFormat(dictType = "bus_print_invoice")
+    @Translation(type = TransConstant.DICT_TYPE_TO_LABEL,other = "bus_print_invoice")
     private String printInvoice;
 
     /**
@@ -95,20 +116,28 @@ public class TjTeamSettleVo implements Serializable {
      * 状态（0正常 2废弃）
      */
     @ExcelProperty(value = "状态", converter = ExcelDictConvert.class)
-    @ExcelDictFormat(readConverterExp = "0=正常,2=废弃")
+    @ExcelDictFormat(dictType = "bus_team_settle_status")
+    @Translation(type = TransConstant.DICT_TYPE_TO_LABEL,other = "bus_team_settle_status")
     private String status;
 
     /**
      * 审核人
      */
+    private Long auditor;
+
+    /**
+     * 审核人名称
+     */
     @ExcelProperty(value = "审核人")
-    private String auditor;
+    @Translation(type = TransConstant.USER_ID_TO_NICKNAME,mapper = "auditor")
+    private String auditorName;
 
     /**
      * 审核状态（0待审核 1已审核 2审核不通过）
      */
     @ExcelProperty(value = "审核状态", converter = ExcelDictConvert.class)
-    @ExcelDictFormat(readConverterExp = "0=待审核,1=已审核,2=审核不通过")
+    @ExcelDictFormat(dictType = "bus_team_check_status")
+    @Translation(type = TransConstant.DICT_TYPE_TO_LABEL,other = "bus_team_check_status")
     private String checkStatus;
 
     /**

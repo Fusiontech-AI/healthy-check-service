@@ -50,7 +50,7 @@ public class TjTeamSettleBo extends BaseEntity {
      * 实收金额
      */
     @NotNull(message = "实收金额不能为空", groups = { AddGroup.class })
-    @DecimalMin(value = "0", inclusive = false, message = "实收金额不能小于0")
+    @DecimalMin(value = "0", inclusive = false, message = "实收金额不能小于0", groups = { AddGroup.class })
     private BigDecimal receivedAmount;
 
     /**

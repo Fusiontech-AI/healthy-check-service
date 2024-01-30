@@ -47,7 +47,7 @@ public class TjTeamSettle extends TenantEntity {
     /**
      * 结算人
      */
-    private String settleOfficer;
+    private Long settleOfficer;
 
     /**
      * 结算时间
@@ -82,7 +82,7 @@ public class TjTeamSettle extends TenantEntity {
     /**
      * 审核人
      */
-    private String auditor;
+    private Long auditor;
 
     /**
      * 审核状态（0待审核 1已审核 2审核不通过）

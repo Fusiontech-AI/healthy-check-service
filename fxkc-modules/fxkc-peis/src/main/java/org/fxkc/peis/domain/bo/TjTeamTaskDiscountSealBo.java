@@ -37,7 +37,7 @@ public class TjTeamTaskDiscountSealBo extends BaseEntity {
     /**
      * 任务折扣实收金额
      */
-    @DecimalMin(value = "0", inclusive = false, message = "实收金额不能小于0")
+    @DecimalMin(value = "0", inclusive = false, message = "实收金额不能小于0", groups = { EditGroup.class })
     private BigDecimal taskReceived;
 
     /**

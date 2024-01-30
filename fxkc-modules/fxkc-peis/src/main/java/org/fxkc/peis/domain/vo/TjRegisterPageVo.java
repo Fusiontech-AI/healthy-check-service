@@ -97,6 +97,14 @@ public class TjRegisterPageVo implements Serializable {
     private Integer age;
 
     /**
+     * 性别（0：男，1：女，2：未知）,见字典sys_user_sex
+     */
+    @ExcelProperty(value = "性别", converter = ExcelDictConvert.class)
+    @ExcelDictFormat(dictType = "sys_user_sex")
+    @Translation(type = TransConstant.DICT_TYPE_TO_LABEL,other = "sys_user_sex")
+    private String gender;
+
+    /**
      * 电话
      */
     @ExcelProperty(value = "电话")
@@ -326,4 +334,17 @@ public class TjRegisterPageVo implements Serializable {
      * 未缴费
      */
     private BigDecimal unPaidTotalAmount;
+
+    /**
+     * 单位任务id
+     */
+    private Long taskId;
+
+    /**
+     * 单位任务名称
+     */
+    @ExcelProperty(value = "单位任务名称")
+    @Translation(type = TransConstant.TEAM_TASK_ID_TO_NAME,mapper = "taskId")
+    private String taskName;
+
 }

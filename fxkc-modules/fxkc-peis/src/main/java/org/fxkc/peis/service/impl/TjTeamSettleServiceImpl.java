@@ -1,8 +1,8 @@
 package org.fxkc.peis.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
@@ -141,8 +141,8 @@ public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
     public Boolean insertByBo(TjTeamSettleBo bo) {
         validEntityBeforeSave(bo);
         TjTeamSettle add = MapstructUtils.convert(bo, TjTeamSettle.class);
-        add.setChargeNumber(IdUtil.getSnowflakeNextIdStr());
-        add.setSettleOfficer(LoginHelper.getLoginUser().getNickname());
+        add.setChargeNumber(DateUtil.format(DateUtil.date(), DatePattern.PURE_DATETIME_MS_PATTERN));
+        add.setSettleOfficer(LoginHelper.getLoginUser().getUserId());
         return baseMapper.insert(add) > 0;
     }
 
@@ -174,24 +174,25 @@ public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
     public Boolean teamInvalidSettle(TjTeamSettleBo bo) {
         validEntityBeforeSave(bo);
         validEntityBeforeCheck(bo);
-        List<TjTeamSettle> tjTeamSettleList = baseMapper.selectList(new LambdaQueryWrapper<TjTeamSettle>().eq(TjTeamSettle::getId,bo.getIds()));
+        List<Long> ids = List.of(bo.getIds());
+        List<TjTeamSettle> tjTeamSettleList = baseMapper.selectList(new LambdaQueryWrapper<TjTeamSettle>().in(TjTeamSettle::getId,ids));
         long notNormalCount = tjTeamSettleList.stream().filter(f -> !StrUtil.equals(f.getStatus(),CommonConstants.NORMAL)).count();
         if(notNormalCount > 0){
             throw new PeisException(ErrorCodeConstants.PEIS_TJTEAMSETTLE_STATUS_REFRESH);
         }
         List<Long> regIds = tjRegisterMapper.selectObjs(new LambdaQueryWrapper<TjRegister>()
             .select(TjRegister::getId)
-            .in(TjRegister::getTeamSettleId,List.of(bo.getIds()))
+            .in(TjRegister::getTeamSettleId,ids)
             .eq(TjRegister::getDelFlag,CommonConstants.NORMAL));
         tjRegCombinationProjectMapper.update(TjRegCombinationProject.builder().payStatus("0").build(),
             new LambdaUpdateWrapper<TjRegCombinationProject>()
                 .in(TjRegCombinationProject::getRegisterId,regIds)
                 .eq(TjRegCombinationProject::getPayMode,"1")
                 .eq(TjRegCombinationProject::getDelFlag,CommonConstants.NORMAL));
-        tjRegisterMapper.updateTjRegisterTeamSettleNull(List.of(bo.getIds()));
+        tjRegisterMapper.updateTjRegisterTeamSettleNull(ids);
         TjTeamSettle update = new TjTeamSettle();
         update.setStatus("2");
-        return baseMapper.update(update,new LambdaUpdateWrapper<TjTeamSettle>().in(TjTeamSettle::getId,List.of(bo.getIds()))) > 0;
+        return baseMapper.update(update,new LambdaUpdateWrapper<TjTeamSettle>().in(TjTeamSettle::getId,ids)) > 0;
     }
 
     /**
@@ -254,7 +255,8 @@ public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
     public Boolean teamSettleCheckPass(TjTeamSettleBo bo) {
         validEntityBeforeSave(bo);
         validEntityBeforeCheck(bo);
-        List<TjTeamSettle> tjTeamSettleList = baseMapper.selectList(new LambdaQueryWrapper<TjTeamSettle>().eq(TjTeamSettle::getId,bo.getIds()));
+        List<Long> ids = List.of(bo.getIds());
+        List<TjTeamSettle> tjTeamSettleList = baseMapper.selectList(new LambdaQueryWrapper<TjTeamSettle>().in(TjTeamSettle::getId,ids));
         long notNormalCount = tjTeamSettleList.stream().filter(f -> !StrUtil.equals(f.getCheckStatus(),CommonConstants.NORMAL)).count();
         if(notNormalCount > 0){
             throw new PeisException(ErrorCodeConstants.PEIS_TJTEAMSETTLE_CHECKED_REFRESH);
@@ -294,10 +296,10 @@ public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
                     .eq(TjRegCombinationProject::getDelFlag,CommonConstants.NORMAL));
         }
         TjTeamSettle update = new TjTeamSettle();
-        update.setAuditor(LoginHelper.getLoginUser().getNickname());
+        update.setAuditor(LoginHelper.getLoginUser().getUserId());
         update.setCheckStatus("1");
         update.setCheckTime(date);
-        return baseMapper.update(update,new LambdaUpdateWrapper<TjTeamSettle>().in(TjTeamSettle::getId,bo.getIds())) > 0;
+        return baseMapper.update(update,new LambdaUpdateWrapper<TjTeamSettle>().in(TjTeamSettle::getId,ids)) > 0;
     }
 
     /**
@@ -308,10 +310,10 @@ public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
         validEntityBeforeSave(bo);
         validEntityBeforeCheck(bo);
         TjTeamSettle update = new TjTeamSettle();
-        update.setAuditor(LoginHelper.getLoginUser().getNickname());
+        update.setAuditor(LoginHelper.getLoginUser().getUserId());
         update.setCheckStatus("2");
         update.setCheckTime(DateUtil.date());
-        return baseMapper.update(update,new LambdaUpdateWrapper<TjTeamSettle>().in(TjTeamSettle::getId,bo.getIds())) > 0;
+        return baseMapper.update(update,new LambdaUpdateWrapper<TjTeamSettle>().in(TjTeamSettle::getId,List.of(bo.getIds()))) > 0;
     }
 
     /**
@@ -344,15 +346,16 @@ public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
      */
     @Override
     public Boolean deleteWithValidByIds(TjTeamSettleBo bo, Boolean isValid) {
+        List<Long> ids = List.of(bo.getIds());
         if(isValid){
             validEntityBeforeSave(bo);
             Long count = baseMapper.selectCount(new LambdaUpdateWrapper<TjTeamSettle>()
-                .in(TjTeamSettle::getId,List.of(bo.getIds()))
+                .in(TjTeamSettle::getId,ids)
                 .eq(TjTeamSettle::getStatus, CommonConstants.NORMAL));
             if(count > 0){
                 throw new PeisException(ErrorCodeConstants.PEIS_TJTEAMSETTLE_FIRST_VOID);
             }
         }
-        return baseMapper.deleteBatchIds(List.of(bo.getIds())) > 0;
+        return baseMapper.deleteBatchIds(ids) > 0;
     }
 }

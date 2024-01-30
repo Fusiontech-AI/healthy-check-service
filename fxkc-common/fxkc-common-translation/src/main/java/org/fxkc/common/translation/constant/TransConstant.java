@@ -47,4 +47,10 @@ public interface TransConstant {
      * 体检单位部门id转名称
      */
     String TEAM_DEPT_ID_TO_NAME = "team_dept_id_to_name";
+
+    /**
+     * 体检单位任务id转名称
+     */
+    String TEAM_TASK_ID_TO_NAME = "team_task_id_to_name";
+
 }
