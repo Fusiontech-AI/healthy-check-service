@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.fxkc.common.core.validate.AddGroup;
 import org.fxkc.common.core.validate.EditGroup;
-import org.fxkc.peis.domain.TjPackage;
+import org.fxkc.peis.domain.TjPackageInfo;
 
 import java.math.BigDecimal;
 
@@ -16,7 +16,7 @@ import java.math.BigDecimal;
  * @date 2024-01-10
  */
 @Data
-@AutoMapper(target = TjPackage.class, reverseConvertGenerate = false)
+@AutoMapper(target = TjPackageInfo.class, reverseConvertGenerate = false)
 public class TjPackageInfoItemBo {
 
     /**
