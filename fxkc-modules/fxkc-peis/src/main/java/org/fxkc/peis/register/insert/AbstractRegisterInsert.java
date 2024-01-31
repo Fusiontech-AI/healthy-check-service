@@ -2,12 +2,16 @@ package org.fxkc.peis.register.insert;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.fxkc.common.core.utils.*;
+import org.fxkc.common.core.utils.MapstructUtils;
+import org.fxkc.common.core.utils.PinYinUtil;
+import org.fxkc.common.core.utils.SequenceNoUtils;
+import org.fxkc.common.core.utils.StringUtils;
 import org.fxkc.peis.domain.TjRegister;
 import org.fxkc.peis.domain.bo.TjRegisterAddBo;
 import org.fxkc.peis.mapper.TjRegisterMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,6 +23,14 @@ public abstract class AbstractRegisterInsert implements RegisterInsertService{
     @Autowired
     protected  TjRegisterMapper tjRegisterMapper;
 
+
+    @Autowired
+    RegisterInsertHolder registerInsertHolder;
+
+    @PostConstruct
+    public void init() {
+        registerInsertHolder.putBuilder(operateCode, this);
+    }
 
     @Override
     public List<TjRegister> RegisterInsert(List<TjRegisterAddBo> tjRegisterAddBos) {
