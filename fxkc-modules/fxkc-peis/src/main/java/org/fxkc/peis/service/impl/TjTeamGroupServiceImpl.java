@@ -97,6 +97,7 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
     private LambdaQueryWrapper<TjTeamGroup> buildQueryWrapper(TjTeamGroupBo bo) {
         LambdaQueryWrapper<TjTeamGroup> lqw = Wrappers.lambdaQuery();
         lqw.eq(bo.getTeamId() != null, TjTeamGroup::getTeamId, bo.getTeamId());
+        lqw.eq(bo.getTaskId() != null, TjTeamGroup::getTaskId, bo.getTaskId());
         lqw.like(StrUtil.isNotBlank(bo.getGroupName()), TjTeamGroup::getGroupName, bo.getGroupName());
         lqw.eq(bo.getDutyStatus() != null, TjTeamGroup::getDutyStatus, bo.getDutyStatus());
         lqw.eq(bo.getGroupType() != null, TjTeamGroup::getGroupType, bo.getGroupType());

@@ -23,6 +23,11 @@ import java.math.BigDecimal;
 public class TjTeamGroupItemBo extends BaseEntity {
 
     /**
+     * 分组id
+     */
+    private Long groupId;
+
+    /**
      * 组合项目id
      */
     @NotNull(message = "组合项目id不能为空")

@@ -56,7 +56,7 @@ public class TjTeamGroupBo extends BaseEntity {
     /**
      * 性别
      */
-    private String gender = "2";
+    private String gender;
 
     /**
      * 年龄开始段
@@ -71,7 +71,7 @@ public class TjTeamGroupBo extends BaseEntity {
     /**
      * 婚姻状况sys_dict_type(bus_marriage_status)
      */
-    private String marriage = "2";
+    private String marriage;
 
     /**
      * 金额
@@ -106,6 +106,9 @@ public class TjTeamGroupBo extends BaseEntity {
     @NotBlank(message = "是否同步项目")
     private String isSyncProject;
 
-
+    /**
+     * 任务id
+     */
+    private Long taskId;
 
 }
