@@ -58,4 +58,6 @@ public interface ErrorCodeConstants {
     String PEIS_NOT_LOGGED_IN = "peis.not.logged.in";
 
     String PEIS_EXPORT_DATA_EMPTY = "peis.export.data.empty";
+
+    String PEIS_COMBINATION_NOT_EXIST = "peis.combination.not.exist";
 }

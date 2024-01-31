@@ -4,6 +4,8 @@ import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.peis.domain.bo.TjCombinationProjectAddBo;
 import org.fxkc.peis.domain.bo.TjCombinationProjectBo;
+import org.fxkc.peis.domain.bo.TjCompulsoryInspectionProjectBo;
+import org.fxkc.peis.domain.bo.TjOtherCompulsoryInspectionBo;
 import org.fxkc.peis.domain.vo.TjCombinationProjectListVo;
 import org.fxkc.peis.domain.vo.TjCombinationProjectVo;
 
@@ -47,4 +49,8 @@ public interface ITjCombinationProjectService {
      * 校验并批量删除体检组合项目信息
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+
+    List<TjCombinationProjectListVo> queryCompulsoryInspectionProject(TjCompulsoryInspectionProjectBo bo);
+
+    List<TjCombinationProjectListVo> queryOtherCompulsoryInspection(TjOtherCompulsoryInspectionBo bo);
 }

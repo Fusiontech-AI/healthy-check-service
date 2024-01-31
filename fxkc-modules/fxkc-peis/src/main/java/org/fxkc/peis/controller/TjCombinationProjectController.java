@@ -2,6 +2,7 @@ package org.fxkc.peis.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,8 @@ import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.web.core.BaseController;
 import org.fxkc.peis.domain.bo.TjCombinationProjectAddBo;
 import org.fxkc.peis.domain.bo.TjCombinationProjectBo;
+import org.fxkc.peis.domain.bo.TjCompulsoryInspectionProjectBo;
+import org.fxkc.peis.domain.bo.TjOtherCompulsoryInspectionBo;
 import org.fxkc.peis.domain.vo.TjCombinationProjectListVo;
 import org.fxkc.peis.domain.vo.TjCombinationProjectVo;
 import org.fxkc.peis.service.ITjCombinationProjectService;
@@ -105,5 +108,21 @@ public class TjCombinationProjectController extends BaseController {
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
         return toAjax(tjCombinationProjectService.deleteWithValidByIds(List.of(ids), true));
+    }
+
+    /**
+     * 查询必检组合项目
+     */
+    @PostMapping("/queryCompulsoryInspectionProject")
+    public R<List<TjCombinationProjectListVo>> queryCompulsoryInspectionProject(@RequestBody @Valid TjCompulsoryInspectionProjectBo bo) {
+        return R.ok(tjCombinationProjectService.queryCompulsoryInspectionProject(bo));
+    }
+
+    /**
+     * 查询必检组合项目
+     */
+    @PostMapping("/queryOtherCompulsoryInspection")
+    public R<List<TjCombinationProjectListVo>> queryOtherCompulsoryInspection(@RequestBody @Valid TjOtherCompulsoryInspectionBo bo) {
+        return R.ok(tjCombinationProjectService.queryOtherCompulsoryInspection(bo));
     }
 }

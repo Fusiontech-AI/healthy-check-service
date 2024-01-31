@@ -4,6 +4,7 @@ import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
+import lombok.experimental.Accessors;
 import org.fxkc.common.excel.annotation.ExcelDictFormat;
 import org.fxkc.common.excel.convert.ExcelDictConvert;
 import org.fxkc.peis.domain.TjCombinationProject;
@@ -24,6 +25,7 @@ import java.util.List;
 @Data
 @ExcelIgnoreUnannotated
 @AutoMapper(target = TjCombinationProject.class)
+@Accessors(chain = true)
 public class TjCombinationProjectListVo implements Serializable {
 
     @Serial
@@ -220,5 +222,10 @@ public class TjCombinationProjectListVo implements Serializable {
      * 组合项目下已选基础项目信息
      */
     private List<TjCombinationProjectInfoItemBo> infoItemBos;
+
+    /**
+     * 是否必选
+     */
+    private Boolean isRequired;
 
 }

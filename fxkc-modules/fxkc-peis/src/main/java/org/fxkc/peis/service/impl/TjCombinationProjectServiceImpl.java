@@ -1,7 +1,9 @@
 package org.fxkc.peis.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -10,23 +12,24 @@ import org.apache.commons.lang3.StringUtils;
 import org.fxkc.common.core.constant.CommonConstants;
 import org.fxkc.common.core.exception.ServiceException;
 import org.fxkc.common.core.utils.MapstructUtils;
+import org.fxkc.common.core.utils.StreamUtils;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
+import org.fxkc.peis.constant.ErrorCodeConstants;
 import org.fxkc.peis.domain.TjCombinationProject;
 import org.fxkc.peis.domain.TjCombinationProjectInfo;
-import org.fxkc.peis.domain.bo.TjCombinationProjectAddBo;
-import org.fxkc.peis.domain.bo.TjCombinationProjectBo;
-import org.fxkc.peis.domain.bo.TjCombinationProjectInfoItemBo;
+import org.fxkc.peis.domain.bo.*;
 import org.fxkc.peis.domain.vo.TjCombinationProjectListVo;
 import org.fxkc.peis.domain.vo.TjCombinationProjectVo;
+import org.fxkc.peis.domain.vo.TjHazardFactorsRequireVo;
+import org.fxkc.peis.exception.PeisException;
 import org.fxkc.peis.mapper.TjCombinationProjectInfoMapper;
 import org.fxkc.peis.mapper.TjCombinationProjectMapper;
 import org.fxkc.peis.service.ITjCombinationProjectService;
+import org.fxkc.peis.service.ITjHazardFactorsRequireService;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -43,6 +46,8 @@ public class TjCombinationProjectServiceImpl implements ITjCombinationProjectSer
     private final TjCombinationProjectMapper baseMapper;
 
     private final TjCombinationProjectInfoMapper combinationProjectInfoMapper;
+
+    private final ITjHazardFactorsRequireService iTjHazardFactorsRequireService;
 
     /**
      * 查询体检组合项目
@@ -214,5 +219,104 @@ public class TjCombinationProjectServiceImpl implements ITjCombinationProjectSer
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteBatchIds(ids) > 0;
+    }
+
+    @Override
+    public List<TjCombinationProjectListVo> queryCompulsoryInspectionProject(TjCompulsoryInspectionProjectBo bo) {
+        List<TjCombinationProjectVo> voList = baseMapper.selectVoList(Wrappers.lambdaQuery(TjCombinationProject.class)
+            .eq(TjCombinationProject::getStatus, CommonConstants.NORMAL)
+            .like(StrUtil.isNotBlank(bo.getCombinProjectName()), TjCombinationProject::getCombinProjectName, bo.getCombinProjectName()));
+        List<TjCombinationProjectInfo> infoList = combinationProjectInfoMapper.selectList(Wrappers.lambdaQuery(TjCombinationProjectInfo.class)
+            .in(TjCombinationProjectInfo::getBasicProjectId, bo.getItemIdList()));
+        List<Long> combinIds = StreamUtils.toList(infoList, TjCombinationProjectInfo::getCombinProjectId);
+        List<TjCombinationProjectListVo> convert = MapstructUtils.convert(voList, TjCombinationProjectListVo.class);
+        if(CollUtil.isNotEmpty(combinIds)) {
+            List<TjCombinationProjectInfoItemBo> basicProjectBycombinIds = baseMapper.getBasicProjectBycombinIds(combinIds);
+            Map<Long, List<Long>> combinMap = basicProjectBycombinIds.stream().collect(Collectors.groupingBy(TjCombinationProjectInfoItemBo::getCombinProjectId,
+                Collectors.mapping(TjCombinationProjectInfoItemBo::getBasicProjectId, Collectors.toList())));
+            Map<Long, List<TjCombinationProjectInfoItemBo>> listMap = basicProjectBycombinIds.stream().collect(Collectors.groupingBy(TjCombinationProjectInfoItemBo::getCombinProjectId,
+                Collectors.mapping(Function.identity(), Collectors.toList())));
+            Map<Long, List<Long>> sortedMap = new LinkedHashMap<>();
+            combinMap.entrySet().stream()
+                .sorted(Comparator.comparing(entry -> entry.getValue().size()))
+                .forEachOrdered(entry -> sortedMap.put(entry.getKey(), entry.getValue()));
+            List<Long> respCombinIds = findMinCompositeProjects(bo.getItemIdList(), sortedMap);
+            convert.forEach(k -> k.setIsRequired(respCombinIds.contains(k.getId()))
+                .setInfoItemBos(listMap.get(k.getId())));
+        }
+        return convert;
+    }
+
+    @Override
+    public List<TjCombinationProjectListVo> queryOtherCompulsoryInspection(TjOtherCompulsoryInspectionBo bo) {
+        List<TjCombinationProjectInfo> infoList = combinationProjectInfoMapper.selectList(Wrappers.lambdaQuery(TjCombinationProjectInfo.class)
+            .eq(TjCombinationProjectInfo::getCombinProjectId, bo.getCombinProjectId()));
+        List<TjHazardFactorsRequireVo.ItemBody> hazardList = iTjHazardFactorsRequireService
+            .queryItemByFactorsCodeAndDutyStatus(MapstructUtils.convert(bo, TjHazardFactorsCodeBo.class));
+        List<String> hazardItemList = hazardList.stream().map(TjHazardFactorsRequireVo.ItemBody::getItemId).toList();
+        infoList = StreamUtils.filter(infoList, e -> hazardItemList.contains(String.valueOf(e.getBasicProjectId())));
+        //获取此组合项目下面所有必检的基础项目
+        List<String> infoItemList = StreamUtils.toList(infoList, e -> String.valueOf(e.getBasicProjectId()));
+        bo.setItemList(infoItemList);
+        List<String> itemList = baseMapper.queryOtherByCombinationProjectId(bo);
+        //查询组合项目下面所有必检的基础项目所有组合项目
+        List<TjCombinationProjectInfo> infoListNew = baseMapper.queryTjCombinationProjectInfoByBasicProjectId(itemList);
+        Map<Long, List<TjCombinationProjectInfo>> groups = StreamUtils.groupByKey(infoListNew, TjCombinationProjectInfo::getCombinProjectId);
+        List<Long> otherIdList = CollUtil.newArrayList();
+        groups.forEach((k,v) -> {
+            List<String> basicProjectIdList = StreamUtils.toList(v, e -> String.valueOf(e.getBasicProjectId()));
+            if(!bo.getCombinProjectIdList().contains(k) && v.size() >= infoItemList.size() &&
+                CollUtil.newHashSet(basicProjectIdList).containsAll(infoItemList)) {
+                otherIdList.add(k);
+            }
+        });
+        if(CollUtil.isEmpty(otherIdList)) {
+            throw new PeisException(ErrorCodeConstants.PEIS_COMBINATION_NOT_EXIST);
+        }
+        List<TjCombinationProjectVo> voList = baseMapper.selectVoList(Wrappers.lambdaQuery(TjCombinationProject.class)
+            .eq(TjCombinationProject::getStatus, CommonConstants.NORMAL)
+            .in(TjCombinationProject::getId, otherIdList));
+        List<TjCombinationProjectListVo> convert = MapstructUtils.convert(voList, TjCombinationProjectListVo.class);
+        if(CollUtil.isEmpty(convert)) {
+            throw new PeisException(ErrorCodeConstants.PEIS_COMBINATION_NOT_EXIST);
+        }
+        return convert;
+    }
+
+    private static List<Long> findMinCompositeProjects(List<Long> baseProjects, Map<Long, List<Long>> compositeProjects) {
+        List<Long> minCompositeProjects = CollUtil.newArrayList();
+        Set<Long> remainingBaseProjects = CollUtil.newHashSet(baseProjects);
+        List<Long> currentCompositeProjects = CollUtil.newArrayList();
+        dfs(compositeProjects, remainingBaseProjects, currentCompositeProjects, minCompositeProjects);
+        return minCompositeProjects;
+    }
+
+    // 深度优先搜索
+    private static void dfs(Map<Long, List<Long>> compositeProjects, Set<Long> remainingBaseProjects,
+                            List<Long> currentCompositeProjects, List<Long> minCompositeProjects) {
+        if (remainingBaseProjects.isEmpty()) {
+            if (minCompositeProjects.isEmpty() || currentCompositeProjects.size() < minCompositeProjects.size()) {
+                minCompositeProjects.clear();
+                minCompositeProjects.addAll(currentCompositeProjects);
+            }
+            return;
+        }
+        for (Map.Entry<Long, List<Long>> entry : compositeProjects.entrySet()) {
+            Long compositeProject = entry.getKey();
+            List<Long> projects = entry.getValue();
+            // 检查当前组合项目是否能够覆盖剩余的基础项目
+            Set<Long> coveredBaseProjects = CollUtil.newHashSet(remainingBaseProjects);
+            coveredBaseProjects.retainAll(projects);
+            if (!coveredBaseProjects.isEmpty()) {
+                // 更新剩余的基础项目和当前组合项目列表
+                remainingBaseProjects.removeAll(coveredBaseProjects);
+                currentCompositeProjects.add(compositeProject);
+                // 递归调用dfs
+                dfs(compositeProjects, remainingBaseProjects, currentCompositeProjects, minCompositeProjects);
+                // 恢复剩余的基础项目和当前组合项目列表，进行下一个组合项目的尝试
+                remainingBaseProjects.addAll(coveredBaseProjects);
+                currentCompositeProjects.remove(compositeProject);
+            }
+        }
     }
 }

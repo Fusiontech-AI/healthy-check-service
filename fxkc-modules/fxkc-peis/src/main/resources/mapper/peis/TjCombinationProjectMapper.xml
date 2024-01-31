@@ -15,4 +15,38 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </select>
 
+    <select id="queryOtherByCombinationProjectId" resultType="java.lang.String">
+        select distinct b.item_id
+        from tj_hazard_factors_require a , tj_hazard_factors_item b
+        where a.id = b.factors_id
+        and a.del_flag = '0'
+        and b.del_flag = '0'
+        and a.duty_status = #{dutyStatus}
+        <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(shineSource)">
+            and a.shine_source = #{shineSource}
+        </if>
+        <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(shineType)">
+            and a.shine_type = #{shineType}
+        </if>
+        and a.hazard_factors_code in
+        <foreach collection="codeList" item="z" open="(" separator="," close=")">
+            #{z}
+        </foreach>
+        and b.item_id in
+        <foreach collection="itemList" item="x" open="(" separator="," close=")">
+            #{x}
+        </foreach>
+    </select>
+
+    <select id="queryTjCombinationProjectInfoByBasicProjectId" resultType="org.fxkc.peis.domain.TjCombinationProjectInfo">
+        select * from tj_combination_project_info
+        where combin_project_id in (
+        select combin_project_id from tj_combination_project_info
+        where del_flag = '0'
+        and basic_project_id in
+        <foreach collection="list" item="z" open="(" separator="," close=")">
+            #{z}
+        </foreach>
+        ) and del_flag = '0'
+    </select>
 </mapper>
