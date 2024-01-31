@@ -58,4 +58,9 @@ public interface ErrorCodeConstants {
     String PEIS_NOT_LOGGED_IN = "peis.not.logged.in";
 
     String PEIS_EXPORT_DATA_EMPTY = "peis.export.data.empty";
+
+    String PEIS_TJTEAMWAIT_NOT_APPOINTMENT_STATUS = "peis.tjteamwait.not.appointment.status";
+
+    String PEIS_TJTEAMWAIT_NOT_EQUALS_SEX = "peis.tjteamwait.not.equals.sex";
+
 }

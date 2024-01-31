@@ -61,6 +61,7 @@ public class TjTeamGroupItemServiceImpl implements ITjTeamGroupItemService {
     private LambdaQueryWrapper<TjTeamGroupItem> buildQueryWrapper(TjTeamGroupItemBo bo) {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<TjTeamGroupItem> lqw = Wrappers.lambdaQuery();
+        lqw.eq(bo.getGroupId() != null, TjTeamGroupItem::getGroupId, bo.getGroupId());
         lqw.eq(bo.getItemId() != null, TjTeamGroupItem::getItemId, bo.getItemId());
         lqw.like(StrUtil.isNotBlank(bo.getItemName()), TjTeamGroupItem::getItemName, bo.getItemName());
         lqw.eq(bo.getStandardPrice() != null, TjTeamGroupItem::getStandardPrice, bo.getStandardPrice());
