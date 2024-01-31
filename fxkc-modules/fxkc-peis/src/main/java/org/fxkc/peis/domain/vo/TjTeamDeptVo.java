@@ -10,6 +10,7 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Date;
 
 
 /**
@@ -60,4 +61,9 @@ public class TjTeamDeptVo implements Serializable {
      * 上级单位
      */
     private String teamName;
+
+    /**
+     * 更新时间
+     */
+    private Date updateTime;
 }
