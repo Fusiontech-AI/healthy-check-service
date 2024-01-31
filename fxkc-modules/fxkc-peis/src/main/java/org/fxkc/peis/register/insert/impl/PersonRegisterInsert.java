@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 public class PersonRegisterInsert extends AbstractRegisterInsert {
 
     public PersonRegisterInsert(){
-        this.operateCode = "10";
+        this.operateCode = "11";
     }
 
 
