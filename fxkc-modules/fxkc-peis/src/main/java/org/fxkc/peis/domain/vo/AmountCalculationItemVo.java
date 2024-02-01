@@ -19,6 +19,11 @@ public class AmountCalculationItemVo {
     private Long id;
 
     /**
+     * 组合项目主键id
+     */
+    private Long combinProjectId;
+
+    /**
      * 排列序号
      */
     private Integer sort;

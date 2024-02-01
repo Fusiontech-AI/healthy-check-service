@@ -119,10 +119,10 @@ public class TjPackageServiceImpl implements ITjPackageService {
         TjPackage update = MapstructUtils.convert(bo, TjPackage.class);
         validEntityBeforeSave(update);
         List<TjPackageInfoItemBo> infoItemBos = bo.getTjPackageInfoItemBos();
+        //先删除 再新增
+        tjPackageInfoMapper.delete(new LambdaQueryWrapper<TjPackageInfo>()
+            .eq(TjPackageInfo::getPackageId,bo.getId()));
         if(CollUtil.isNotEmpty(infoItemBos)){
-            //先删除 再新增
-            tjPackageInfoMapper.delete(new LambdaQueryWrapper<TjPackageInfo>()
-                .eq(TjPackageInfo::getPackageId,bo.getId()));
             insertPackageInfo(infoItemBos,bo);
         }
         return baseMapper.updateById(update) > 0;
