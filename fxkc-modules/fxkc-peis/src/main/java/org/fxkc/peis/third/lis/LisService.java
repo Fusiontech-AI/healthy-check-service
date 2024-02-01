@@ -4,13 +4,16 @@ import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.fxkc.common.core.domain.R;
 import org.fxkc.peis.third.core.IThridService;
+import org.fxkc.peis.third.core.ThreadPoolConfig;
 import org.fxkc.peis.third.enums.ServiceProviderEnum;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 /**
@@ -25,6 +28,10 @@ public class LisService implements IThridService {
 
     @Autowired
     LisProvider lisProvider;
+
+    @Autowired
+    @Qualifier(ThreadPoolConfig.LIS_POOL_PREX)
+    ExecutorService lisPool;
 
     @Override
     public R postProcessBeforeGetResult(Object... objects) {
@@ -47,8 +54,7 @@ public class LisService implements IThridService {
             CompletableFuture.supplyAsync(() -> {
                     Object result = lisProvider.lisResult(ServiceProviderEnum.FUSIONTECH_LIS, e);
                     return JSON.toJSONString(result);
-                }
-                )).toList();
+                },lisPool)).toList();
         // 等待所有查询完成
         CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
         // 获取所有查询结果

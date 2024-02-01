@@ -2,7 +2,6 @@ package org.fxkc.peis.third.pacs;
 
 import lombok.extern.slf4j.Slf4j;
 import org.fxkc.peis.third.enums.ServiceProviderEnum;
-import org.fxkc.peis.third.lis.LisProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -51,7 +50,7 @@ public class PacsProviderComposite implements PacsProvider{
     public Object pacsResult(ServiceProviderEnum providerEnum, Object... objects) {
         PacsProvider pacsProvider = getPacsProvider(providerEnum.name(), providerEnum);
         if (Objects.isNull(pacsProvider)) {
-            throw new IllegalArgumentException("不支持" + providerEnum.name() + "类型 服务厂商！");
+            throw new IllegalArgumentException(providerEnum.name() +"service provider type is not defined, contact the administrator！");
         }
         return pacsProvider.pacsResult(providerEnum, objects);
     }

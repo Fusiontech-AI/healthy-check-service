@@ -52,7 +52,7 @@ public class LisProviderComposite implements LisProvider{
     public Object lisResult(ServiceProviderEnum providerEnum, Object... objects) {
         LisProvider lisProvider = getLisProvider(providerEnum.name(), providerEnum);
         if (Objects.isNull(lisProvider)) {
-            throw new IllegalArgumentException("不支持" + providerEnum.name() + "类型 服务厂商！");
+            throw new IllegalArgumentException(providerEnum.name() +"service provider type is not defined, contact the administrator！");
         }
         return lisProvider.lisResult(providerEnum, objects);
     }
