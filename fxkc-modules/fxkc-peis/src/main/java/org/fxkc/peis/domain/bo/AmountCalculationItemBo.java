@@ -19,6 +19,11 @@ import java.math.BigDecimal;
 public class AmountCalculationItemBo {
 
     /**
+     * 主键id
+     */
+    private Long id;
+
+    /**
      * 排列序号
      */
     @NotNull(message = "排列序号不能为空")
