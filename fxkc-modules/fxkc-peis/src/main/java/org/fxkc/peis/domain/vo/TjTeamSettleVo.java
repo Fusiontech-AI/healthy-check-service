@@ -93,18 +93,28 @@ public class TjTeamSettleVo implements Serializable {
     /**
      * 支付方式（1微信 2支付宝 3现金 4银行卡）
      */
+    private String payType;
+
+    /**
+     * 支付方式名称
+     */
     @ExcelProperty(value = "支付方式", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "bus_team_pay_type")
-    @Translation(type = TransConstant.DICT_TYPE_TO_LABEL,other = "bus_team_pay_type")
-    private String payType;
+    @Translation(type = TransConstant.DICT_TYPE_TO_LABEL,other = "bus_team_pay_type",mapper = "payType")
+    private String payTypeName;
 
     /**
      * 是否打印发票（0否 1是）
      */
+    private String printInvoice;
+
+    /**
+     * 是否打印发票名称
+     */
     @ExcelProperty(value = "是否打印发票", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "bus_print_invoice")
-    @Translation(type = TransConstant.DICT_TYPE_TO_LABEL,other = "bus_print_invoice")
-    private String printInvoice;
+    @Translation(type = TransConstant.DICT_TYPE_TO_LABEL,other = "bus_print_invoice",mapper = "printInvoice")
+    private String printInvoiceName;
 
     /**
      * 发票号
@@ -115,10 +125,15 @@ public class TjTeamSettleVo implements Serializable {
     /**
      * 状态（0正常 2废弃）
      */
+    private String status;
+
+    /**
+     * 状态（0正常 2废弃）
+     */
     @ExcelProperty(value = "状态", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "bus_team_settle_status")
-    @Translation(type = TransConstant.DICT_TYPE_TO_LABEL,other = "bus_team_settle_status")
-    private String status;
+    @Translation(type = TransConstant.DICT_TYPE_TO_LABEL,other = "bus_team_settle_status",mapper = "status")
+    private String statusName;
 
     /**
      * 审核人
@@ -135,10 +150,15 @@ public class TjTeamSettleVo implements Serializable {
     /**
      * 审核状态（0待审核 1已审核 2审核不通过）
      */
+    private String checkStatus;
+
+    /**
+     * 审核状态名称
+     */
     @ExcelProperty(value = "审核状态", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "bus_team_check_status")
-    @Translation(type = TransConstant.DICT_TYPE_TO_LABEL,other = "bus_team_check_status")
-    private String checkStatus;
+    @Translation(type = TransConstant.DICT_TYPE_TO_LABEL,other = "bus_team_check_status",mapper = "checkStatus")
+    private String checkStatusName;
 
     /**
      * 审核时间
