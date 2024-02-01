@@ -49,7 +49,42 @@ public class TjTeamGroupVo implements Serializable {
      * 分组方式sys_dict_type(bus_group_type)
      */
     @ExcelProperty(value = "分组方式sys_dict_type(bus_group_type)")
-    private Integer groupType;
+    private String groupType;
+
+    /**
+     * 性别
+     */
+    private String gender;
+
+    /**
+     * 年龄开始段
+     */
+    private Integer startAge;
+
+    /**
+     * 年龄结束段
+     */
+    private Integer endAge;
+
+    /**
+     * 金额
+     */
+    private BigDecimal price;
+
+    /**
+     * 婚姻状况sys_dict_type(bus_marriage_status)
+     */
+    private String marriage;
+
+    /**
+     * 分组支付方式sys_dict_type(bus_group_pay_type)0:个人1:单位
+     */
+    private String groupPayType;
+
+    /**
+     * 加项支付方式sys_dict_type(bus_group_pay_type)0:个人1:单位
+     */
+    private String addPayType;
 
 
     /**
@@ -70,17 +105,7 @@ public class TjTeamGroupVo implements Serializable {
     @ExcelProperty(value = "是否同步项目(0:是1:否)")
     private String isSyncProject;
 
-    /**
-     * 标准价格
-     */
-    @ExcelProperty(value = "标准价格")
-    private BigDecimal standardPrice;
 
-    /**
-     * 实际价格
-     */
-    @ExcelProperty(value = "实际价格")
-    private BigDecimal actualPrice;
 
 
 

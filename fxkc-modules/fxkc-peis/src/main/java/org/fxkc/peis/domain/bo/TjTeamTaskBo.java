@@ -74,7 +74,7 @@ public class TjTeamTaskBo extends BaseEntity {
      * 收费类型sys_dict_type(bus_charge_type)
      */
     @NotNull(message = "收费类型不能为空", groups = { AddGroup.class, EditGroup.class })
-    private Integer chargeType;
+    private String chargeType;
 
     /**
      * 是否审核(0:是1:否)

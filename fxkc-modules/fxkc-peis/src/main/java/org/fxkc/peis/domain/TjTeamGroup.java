@@ -46,7 +46,7 @@ public class TjTeamGroup extends TenantEntity {
     /**
      * 分组方式sys_dict_type(bus_group_type)
      */
-    private Integer groupType;
+    private String groupType;
 
     /**
      * 性别

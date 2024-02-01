@@ -35,7 +35,7 @@ public class TjTeamGroupDetailVo {
     /**
      * 分组方式sys_dict_type(bus_group_type)
      */
-    private Integer groupType;
+    private String groupType;
 
     /**
      * 项目折扣

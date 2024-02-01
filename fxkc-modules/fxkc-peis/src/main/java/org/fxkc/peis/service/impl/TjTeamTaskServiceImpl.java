@@ -35,6 +35,8 @@ import org.fxkc.peis.listener.TjTaskImportListener;
 import org.fxkc.peis.mapper.TjRegisterMapper;
 import org.fxkc.peis.mapper.TjTeamGroupMapper;
 import org.fxkc.peis.mapper.TjTeamTaskMapper;
+import org.fxkc.peis.register.insert.RegisterInsertHolder;
+import org.fxkc.peis.register.insert.RegisterInsertService;
 import org.fxkc.peis.service.ITjTeamGroupService;
 import org.fxkc.peis.service.ITjTeamInfoService;
 import org.fxkc.peis.service.ITjTeamTaskService;
@@ -65,6 +67,8 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
     private final TjRegisterMapper tjRegisterMapper;
 
     private final ITjTeamGroupService iTjTeamGroupService;
+
+    private final RegisterInsertHolder registerInsertHolder;
 
     /**
      * 查询团检任务管理
@@ -373,6 +377,8 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
         //todo 批量导入人员信息
         //是否为职业病
         Boolean isOccupational = PhysicalTypeEnum.isOccupational(bo.getPhysicalType());
+        RegisterInsertService registerInsertService = registerInsertHolder.selectBuilder("2".concat(isOccupational ?
+            CommonConstants.NORMAL : CommonConstants.DISABLE));
     }
 
     @Override

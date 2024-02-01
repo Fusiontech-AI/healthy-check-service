@@ -69,7 +69,7 @@ public class TjTeamTask extends TenantEntity {
     /**
      * 收费类型sys_dict_type(bus_charge_type)
      */
-    private Integer chargeType;
+    private String chargeType;
 
     /**
      * 是否审核(0:是1:否)

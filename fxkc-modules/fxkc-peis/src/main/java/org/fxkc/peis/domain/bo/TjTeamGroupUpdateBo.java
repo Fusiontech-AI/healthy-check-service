@@ -43,8 +43,8 @@ public class TjTeamGroupUpdateBo {
     /**
      * 分组方式sys_dict_type(bus_group_type)
      */
-    @NotNull(message = "分组方式不能为空")
-    private Integer groupType;
+    @NotBlank(message = "分组方式不能为空")
+    private String groupType;
 
     /**
      * 项目折扣
