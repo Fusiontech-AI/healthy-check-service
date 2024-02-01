@@ -323,6 +323,11 @@ public class TjPackageServiceImpl implements ITjPackageService {
         return TableDataInfo.build(packageAndProjectVoPage);
     }
 
+    @Override
+    public List<PackageAndProjectVo> queryProjectByPackageId(String packageId) {
+        List<PackageAndProjectVo> projectVos = baseMapper.queryProjectByPackageId(packageId);
+        return projectVos;
+    }
 
 
     /**

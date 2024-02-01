@@ -53,4 +53,8 @@ public interface TransConstant {
      */
     String TEAM_TASK_ID_TO_NAME = "team_task_id_to_name";
 
+    /**
+     * 组合项目id转名称
+     */
+    String COMBINATION_ID_TO_NAME = "combination_id_to_name";
 }

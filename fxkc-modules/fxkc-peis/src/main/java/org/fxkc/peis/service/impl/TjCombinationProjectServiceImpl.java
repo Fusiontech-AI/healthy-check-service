@@ -1,7 +1,6 @@
 package org.fxkc.peis.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -281,6 +280,12 @@ public class TjCombinationProjectServiceImpl implements ITjCombinationProjectSer
             throw new PeisException(ErrorCodeConstants.PEIS_COMBINATION_NOT_EXIST);
         }
         return convert;
+    }
+
+    @Override
+    public String selectCombinationNameById(Long id) {
+        TjCombinationProject tjCombinationProject = baseMapper.selectById(id);
+        return Objects.isNull(tjCombinationProject) ? null : tjCombinationProject.getCombinProjectName();
     }
 
     private static List<Long> findMinCompositeProjects(List<Long> baseProjects, Map<Long, List<Long>> compositeProjects) {

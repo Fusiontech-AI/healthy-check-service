@@ -53,4 +53,6 @@ public interface ITjCombinationProjectService {
     List<TjCombinationProjectListVo> queryCompulsoryInspectionProject(TjCompulsoryInspectionProjectBo bo);
 
     List<TjCombinationProjectListVo> queryOtherCompulsoryInspection(TjOtherCompulsoryInspectionBo bo);
+
+    String selectCombinationNameById(Long id);
 }

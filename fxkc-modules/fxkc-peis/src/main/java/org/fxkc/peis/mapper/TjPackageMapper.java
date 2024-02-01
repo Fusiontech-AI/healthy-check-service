@@ -7,6 +7,8 @@ import org.fxkc.peis.domain.vo.PackageAndProjectVo;
 import org.fxkc.peis.domain.vo.TjPackageVo;
 import org.fxkc.common.mybatis.core.mapper.BaseMapperPlus;
 
+import java.util.List;
+
 /**
  * 体检套餐Mapper接口
  *
@@ -16,4 +18,6 @@ import org.fxkc.common.mybatis.core.mapper.BaseMapperPlus;
 public interface TjPackageMapper extends BaseMapperPlus<TjPackage, TjPackageVo> {
 
     Page<PackageAndProjectVo> queryPackageAndProjectPages(@Param("page") Page<Object> page,@Param("name")  String name);
+
+    List<PackageAndProjectVo> queryProjectByPackageId(@Param("packageId") String packageId);
 }

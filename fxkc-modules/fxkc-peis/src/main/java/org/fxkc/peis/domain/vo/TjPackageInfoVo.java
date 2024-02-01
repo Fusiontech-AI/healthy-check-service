@@ -4,6 +4,8 @@ import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
+import org.fxkc.common.translation.annotation.Translation;
+import org.fxkc.common.translation.constant.TransConstant;
 import org.fxkc.peis.domain.TjPackageInfo;
 
 import java.io.Serial;
@@ -43,6 +45,11 @@ public class TjPackageInfoVo implements Serializable {
     @ExcelProperty(value = "组合项目主键id")
     private Long combinProjectId;
 
+    /**
+     * 组合项目名称
+     */
+    @Translation(type = TransConstant.COMBINATION_ID_TO_NAME,mapper = "combinProjectId")
+    private String combinProjectName;
     /**
      * 标准价格
      */
