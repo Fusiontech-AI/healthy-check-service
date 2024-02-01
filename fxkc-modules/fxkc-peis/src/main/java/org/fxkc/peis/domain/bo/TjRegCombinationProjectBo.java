@@ -138,5 +138,9 @@ public class TjRegCombinationProjectBo extends BaseEntity {
     @NotBlank(message = "检查结果不能为空", groups = { AddGroup.class, EditGroup.class })
     private String checkResult;
 
+    /**
+     * 加项标识:1个人加项 2团队加项
+     */
+    private String addFlag;
 
 }
