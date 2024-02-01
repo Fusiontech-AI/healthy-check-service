@@ -17,4 +17,9 @@ public class RemoteTjCombinationProjectServiceImpl implements RemoteTjCombinatio
     public String selectCombinationNameById(Long id) {
         return tjCombinationProjectService.selectCombinationNameById(id);
     }
+
+    @Override
+    public String selectCombinationCodeById(Long id) {
+        return tjCombinationProjectService.selectCombinationCodeById(id);
+    }
 }

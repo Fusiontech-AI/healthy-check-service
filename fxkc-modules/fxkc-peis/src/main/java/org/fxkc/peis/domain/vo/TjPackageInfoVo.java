@@ -50,6 +50,13 @@ public class TjPackageInfoVo implements Serializable {
      */
     @Translation(type = TransConstant.COMBINATION_ID_TO_NAME,mapper = "combinProjectId")
     private String combinProjectName;
+
+    /**
+     * 组合项目编码
+     */
+    @Translation(type = TransConstant.COMBINATION_ID_TO_CODE,mapper = "combinProjectId")
+    private String combinProjectCode;
+
     /**
      * 标准价格
      */

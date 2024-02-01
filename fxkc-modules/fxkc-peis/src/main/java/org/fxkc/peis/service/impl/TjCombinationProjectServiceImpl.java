@@ -288,6 +288,13 @@ public class TjCombinationProjectServiceImpl implements ITjCombinationProjectSer
         return Objects.isNull(tjCombinationProject) ? null : tjCombinationProject.getCombinProjectName();
     }
 
+    @Override
+    public String selectCombinationCodeById(Long id) {
+        TjCombinationProject tjCombinationProject = baseMapper.selectById(id);
+        return Objects.isNull(tjCombinationProject) ? null : tjCombinationProject.getCombinProjectCode();
+
+    }
+
     private static List<Long> findMinCompositeProjects(List<Long> baseProjects, Map<Long, List<Long>> compositeProjects) {
         List<Long> minCompositeProjects = CollUtil.newArrayList();
         Set<Long> remainingBaseProjects = CollUtil.newHashSet(baseProjects);

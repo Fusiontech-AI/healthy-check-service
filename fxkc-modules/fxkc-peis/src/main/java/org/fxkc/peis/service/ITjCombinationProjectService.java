@@ -55,4 +55,6 @@ public interface ITjCombinationProjectService {
     List<TjCombinationProjectListVo> queryOtherCompulsoryInspection(TjOtherCompulsoryInspectionBo bo);
 
     String selectCombinationNameById(Long id);
+
+    String selectCombinationCodeById(Long id);
 }
