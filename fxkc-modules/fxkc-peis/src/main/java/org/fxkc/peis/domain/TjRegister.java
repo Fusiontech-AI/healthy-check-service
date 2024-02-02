@@ -407,7 +407,7 @@ public class TjRegister extends TenantEntity {
     /**
      * 被替检人年龄
      */
-    private Long replaceAge;
+    private Integer replaceAge;
 
     /**
      * 排班id

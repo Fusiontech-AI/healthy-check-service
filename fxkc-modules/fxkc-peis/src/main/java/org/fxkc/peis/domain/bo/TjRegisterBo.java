@@ -435,7 +435,7 @@ public class TjRegisterBo extends BaseEntity {
     /**
      * 被替检人年龄
      */
-    private Long replaceAge;
+    private Integer replaceAge;
 
     /**
      * 排班id

@@ -31,6 +31,7 @@ import org.fxkc.peis.register.insert.RegisterInsertService;
 import org.fxkc.peis.service.ITjRegisterService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -284,6 +285,32 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
             }
 
         return true;
+    }
+
+    @Override
+    public Boolean changeRegReplaceInfo(TjRegReplaceInfoBo bo) {
+        //先查询已有记录 是否为替检过状态
+        TjRegister tjRegister = baseMapper.selectById(bo.getRegisterId());
+        Assert.notNull(tjRegister,"根据登记id["+bo.getRegisterId()+"],未找到登录记录!");
+        TjRegister updateEntity = new TjRegister();
+        updateEntity.setReplaceFlag("0");
+        updateEntity.setId(bo.getRegisterId());
+        //不等于0是的时候 初次将原体检人信息存入 replace相关字段。
+        if(!Objects.equals("0",tjRegister.getReplaceFlag())){
+            updateEntity.setReplaceName(tjRegister.getName());
+            updateEntity.setReplaceGender(tjRegister.getGender());
+            updateEntity.setReplaceCredentialType(tjRegister.getCredentialType());
+            updateEntity.setReplaceCredentialNumber(tjRegister.getReplaceCredentialNumber());
+            updateEntity.setReplaceAge(tjRegister.getAge());
+            updateEntity.setReplaceBirthday(tjRegister.getBirthday());
+        }
+        updateEntity.setName(bo.getReplaceName());
+        updateEntity.setGender(bo.getReplaceGender());
+        updateEntity.setCredentialType(bo.getReplaceCredentialType());
+        updateEntity.setCredentialNumber(bo.getReplaceCredentialNumber());
+        updateEntity.setAge(bo.getReplaceAge());
+        updateEntity.setBirthday(bo.getReplaceBirthday());
+        return baseMapper.updateById(updateEntity)> 0;
     }
 
     @Override

@@ -173,4 +173,15 @@ public class TjRegisterController extends BaseController {
     public R<Void> changeRegCombin(@Validated(AddGroup.class) @RequestBody TjRegCombinAddBo bo) {
         return  toAjax(tjRegisterService.changeRegCombin(bo));
     }
+
+
+    /**
+     * 体检替检登记
+     */
+    @Log(title = "替检登记", businessType = BusinessType.INSERT)
+    @RepeatSubmit()
+    @PostMapping("/changeRegReplaceInfo")
+    public R<Void> changeRegReplaceInfo(@Validated(AddGroup.class) @RequestBody TjRegReplaceInfoBo bo) {
+        return  toAjax(tjRegisterService.changeRegReplaceInfo(bo));
+    }
 }

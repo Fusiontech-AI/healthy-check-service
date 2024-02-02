@@ -68,4 +68,6 @@ public interface ITjRegisterService {
     Boolean unfreeze(Collection<Long> ids);
 
     Boolean changeRegCombin(TjRegCombinAddBo bo);
+
+    Boolean changeRegReplaceInfo(TjRegReplaceInfoBo bo);
 }

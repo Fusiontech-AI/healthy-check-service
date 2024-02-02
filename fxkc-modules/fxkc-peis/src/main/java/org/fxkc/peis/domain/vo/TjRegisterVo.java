@@ -486,7 +486,7 @@ public class TjRegisterVo implements Serializable {
      * 被替检人年龄
      */
     @ExcelProperty(value = "被替检人年龄")
-    private Long replaceAge;
+    private Integer replaceAge;
 
     /**
      * 排班id
