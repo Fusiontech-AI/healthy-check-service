@@ -27,6 +27,11 @@ public class TjTeamGroupHazardsVo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
+     * 分组id
+     */
+    private Long groupId;
+
+    /**
      * 危害因素编码
      */
     private String hazardFactorsCode;

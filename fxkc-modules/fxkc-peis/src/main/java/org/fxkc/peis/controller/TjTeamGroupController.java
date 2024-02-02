@@ -86,8 +86,11 @@ public class TjTeamGroupController extends BaseController {
         return toAjax(tjTeamGroupService.deleteWithValidByIds(List.of(ids), true));
     }
 
-    @PostMapping(value = "/updateGroupInfo")
-    public R<Void> updateGroupInfo(@RequestBody @Valid List<TjTeamGroupUpdateBo> list)  {
-        return toAjax(tjTeamGroupService.updateGroupInfo(list));
+    /**
+     * 修改任务项目分组信息
+     */
+    @PostMapping(value = "/updateGroupProjectInfo")
+    public R<Void> updateGroupProjectInfo(@RequestBody @Valid List<TjTeamGroupUpdateBo> list)  {
+        return toAjax(tjTeamGroupService.updateGroupProjectInfo(list));
     }
 }
