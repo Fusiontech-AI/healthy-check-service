@@ -2,6 +2,7 @@ package org.fxkc.common.oss.core;
 
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.Protocol;
@@ -22,12 +23,15 @@ import org.fxkc.common.oss.enumd.AccessPolicyType;
 import org.fxkc.common.oss.enumd.PolicyType;
 import org.fxkc.common.oss.exception.OssException;
 import org.fxkc.common.oss.properties.OssProperties;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * S3 存储协议 所有兼容S3协议的云厂商均支持
@@ -147,6 +151,23 @@ public class OssClient {
 
     public UploadResult uploadSuffix(File file, String suffix) {
         return upload(file, getPath(properties.getPrefix(), suffix));
+    }
+
+    public String uploadWithRandomName(MultipartFile file) throws IOException {
+        return uploadWithRandomName(StrUtil.EMPTY,file);
+    }
+
+    public String uploadWithRandomName(String bucketName,MultipartFile file) throws IOException {
+        String fileName = file.getOriginalFilename();
+        String suffix = StringUtils.substring(fileName, Objects.requireNonNull(fileName).lastIndexOf("."), fileName.length());
+        String randomName;
+        if(StrUtil.isNotBlank(bucketName)){
+            randomName = bucketName+ StrUtil.SLASH +IdUtil.fastSimpleUUID()+suffix;
+        }else {
+            randomName = IdUtil.fastSimpleUUID()+suffix;
+        }
+        upload(file.getBytes(),randomName,file.getContentType());
+        return randomName;
     }
 
     /**

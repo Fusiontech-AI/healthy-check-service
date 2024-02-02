@@ -108,15 +108,11 @@ public class TjGuideSheetLogServiceImpl implements ITjGuideSheetLogService {
         validEntityBeforeSave(add);
 
         OssClient ossClient = OssFactory.instance();
-        String originalFileName = file.getOriginalFilename();
-        String suffix = StringUtils.substring(originalFileName, originalFileName.lastIndexOf("."), originalFileName.length());
-        String uuid = OssConstant.GUIDE_SHEET_BUKET+ StrUtil.SLASH +IdUtil.fastSimpleUUID()+suffix;
-        UploadResult uploadResult;
         try {
-            ossClient.upload(file.getBytes(), uuid,file.getContentType());
-            add.setImagePath(uuid);
+            String fileName = ossClient.uploadWithRandomName(OssConstant.GUIDE_SHEET_BUKET, file);
+            add.setImagePath(fileName);
         } catch (IOException e) {
-            log.error("上传导检单失败：{}",e);
+            log.error("上传导检单失败",e);
             throw new ServiceException("上传导检单失败!");
         }
 
