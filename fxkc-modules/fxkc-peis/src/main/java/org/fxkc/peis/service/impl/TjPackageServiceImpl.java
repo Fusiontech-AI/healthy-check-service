@@ -17,7 +17,6 @@ import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.peis.domain.TjPackage;
 import org.fxkc.peis.domain.TjPackageInfo;
-import org.fxkc.peis.domain.TjTeamGroup;
 import org.fxkc.peis.domain.bo.*;
 import org.fxkc.peis.domain.vo.AmountCalculationVo;
 import org.fxkc.peis.domain.vo.PackageAndProjectVo;
@@ -275,42 +274,42 @@ public class TjPackageServiceImpl implements ITjPackageService {
      * 根据加项 已有项目 分组信息 计算加项的支付方式和折扣
      * @param addItems
      * @param haveItems
-     * @param tjTeamGroup
+     * @param amountCalGroupBo
      */
     @Override
-    public void calCulPayType(List<AmountCalculationItemBo> addItems, List<AmountCalculationItemBo> haveItems, TjTeamGroup tjTeamGroup) {
+    public void calCulPayType(List<AmountCalculationItemBo> addItems, List<AmountCalculationItemBo> haveItems, AmountCalGroupBo amountCalGroupBo) {
         //首先比较已有记录的应收金额 和 分组金额的大小关系
         //获取默认分组支付方式应收金额累加的总和
         BigDecimal reduce = new BigDecimal("0");
         BigDecimal leftAmount = new BigDecimal("0");
         if(CollUtil.isNotEmpty(haveItems)){
-           reduce = haveItems.stream().filter(m -> Objects.equals(tjTeamGroup.getGroupPayType(), m.getPayType())).map(m -> m.getReceivableAmount()).reduce(BigDecimal.ZERO, BigDecimal::add);
+           reduce = haveItems.stream().filter(m -> Objects.equals(amountCalGroupBo.getGroupPayType(), m.getPayType())).map(m -> m.getReceivableAmount()).reduce(BigDecimal.ZERO, BigDecimal::add);
         }
         for (int i = 0; i < addItems.size() ; i++) {
             AmountCalculationItemBo bo = addItems.get(i);
-            if(reduce.compareTo(tjTeamGroup.getPrice())>=0){
+            if(reduce.compareTo(amountCalGroupBo.getPrice())>=0){
                 //初始化计算前就超过了分组金额  当前和之后的全部走加项
-                addItems.get(i).setPayType(tjTeamGroup.getAddPayType());
-                addItems.get(i).setDiscount(tjTeamGroup.getAddDiscount());
+                addItems.get(i).setPayType(amountCalGroupBo.getAddPayType());
+                addItems.get(i).setDiscount(amountCalGroupBo.getAddDiscount());
             }else{
                 reduce = reduce.add(bo.getReceivableAmount());
                 //存量的金额小于分组内金额 从当前和后续的支付方式 全部为分组内支付方式,分组内折扣
-                if(reduce.compareTo(tjTeamGroup.getPrice())<=0){
-                    addItems.get(i).setPayType(tjTeamGroup.getGroupPayType());
-                    addItems.get(i).setDiscount(tjTeamGroup.getItemDiscount());
+                if(reduce.compareTo(amountCalGroupBo.getPrice())<=0){
+                    addItems.get(i).setPayType(amountCalGroupBo.getGroupPayType());
+                    addItems.get(i).setDiscount(amountCalGroupBo.getItemDiscount());
                 }else{
                     //组内 和 组外支付方式不一样 才会有混合支付赋值
-                    if(i==0 && !Objects.equals(tjTeamGroup.getAddPayType(),tjTeamGroup.getGroupPayType())){
+                    if(i==0 && !Objects.equals(amountCalGroupBo.getAddPayType(),amountCalGroupBo.getGroupPayType())){
                         addItems.get(i).setPayType("2");
                         //混合支付时,需要把当前多余的金额计算出来当做加项支付。
-                        leftAmount = reduce.subtract(tjTeamGroup.getPrice());
+                        leftAmount = reduce.subtract(amountCalGroupBo.getPrice());
                     }else{
-                        addItems.get(i).setPayType(tjTeamGroup.getAddPayType());
+                        addItems.get(i).setPayType(amountCalGroupBo.getAddPayType());
                     }
-                    addItems.get(i).setDiscount(tjTeamGroup.getAddDiscount());
+                    addItems.get(i).setDiscount(amountCalGroupBo.getAddDiscount());
                 }
             }
-            fillSingleAmount(addItems.get(i),leftAmount,tjTeamGroup);
+            fillSingleAmount(addItems.get(i),leftAmount,amountCalGroupBo);
 
         }
 
@@ -349,7 +348,7 @@ public class TjPackageServiceImpl implements ITjPackageService {
      * 处理个费 和 团费的金额 根据支付类型来处理
      * @param bo
      */
-    public void fillSingleAmount(AmountCalculationItemBo bo,BigDecimal leftAmount, TjTeamGroup tjTeamGroup){
+    public void fillSingleAmount(AmountCalculationItemBo bo,BigDecimal leftAmount, AmountCalGroupBo amountCalGroupBo){
         if(Objects.equals("0",bo.getPayType())){
             bo.setPersonAmount(bo.getReceivableAmount());
             bo.setTeamAmount(new BigDecimal("0"));
@@ -358,10 +357,10 @@ public class TjPackageServiceImpl implements ITjPackageService {
             bo.setPersonAmount(new BigDecimal("0"));
         }else{
             //混合支付 加项为个人时
-            if(Objects.equals(tjTeamGroup.getAddPayType(),"0")){
+            if(Objects.equals(amountCalGroupBo.getAddPayType(),"0")){
                 bo.setPersonAmount(leftAmount);
                 bo.setTeamAmount(bo.getReceivableAmount().subtract(leftAmount));
-            }else if(Objects.equals(tjTeamGroup.getAddPayType(),"1")){
+            }else if(Objects.equals(amountCalGroupBo.getAddPayType(),"1")){
                 bo.setPersonAmount(bo.getReceivableAmount().subtract(leftAmount));
                 bo.setTeamAmount(leftAmount);
             }

@@ -2,7 +2,6 @@ package org.fxkc.peis.service;
 
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
-import org.fxkc.peis.domain.TjTeamGroup;
 import org.fxkc.peis.domain.bo.*;
 import org.fxkc.peis.domain.vo.AmountCalculationVo;
 import org.fxkc.peis.domain.vo.PackageAndProjectVo;
@@ -63,7 +62,7 @@ public interface ITjPackageService {
 
     BigDecimal getDiscountByReceivableAmount(BigDecimal standardAmount,BigDecimal receivableAmount);
 
-    void calCulPayType(List<AmountCalculationItemBo> addItems, List<AmountCalculationItemBo> haveItems,TjTeamGroup tjTeamGroup);
+    void calCulPayType(List<AmountCalculationItemBo> addItems, List<AmountCalculationItemBo> haveItems,AmountCalGroupBo amountCalGroupBo);
 
     void fillSingle(AmountCalculationItemBo bo);
 

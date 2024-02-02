@@ -5,7 +5,9 @@ import cn.hutool.core.collection.CollUtil;
 import com.yomahub.liteflow.core.NodeComponent;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.fxkc.peis.domain.bo.AmountCalGroupBo;
 import org.fxkc.peis.domain.bo.AmountCalculationBo;
+import org.fxkc.peis.enums.GroupTypeEnum;
 import org.fxkc.peis.liteflow.enums.ChangeTypeEnum;
 import org.springframework.stereotype.Component;
 
@@ -59,10 +61,39 @@ public class PreCheckCmp extends NodeComponent {
             throw new RuntimeException("当前变更新增或删除信息时，对应子项目列表信息不能为空！");
         }
 
-        //团检时校验 分组类型不能为空
-        /*if(Objects.equals(requestData.getRegType(),"2") && requestData.getGroupId()==null){
-            throw new RuntimeException("团检计算金额信息时，对应分组id不能为空！");
-        }*/
+        //团检时校验 且有分组时 校验分组折扣和加项折扣不能为空
+        if(Objects.equals(requestData.getRegType(),"2") && Objects.equals(requestData.getGroupFlag(),"1")){
+            AmountCalGroupBo amountCalGroupBo = requestData.getAmountCalGroupBo();
+            if(amountCalGroupBo==null){
+                throw new RuntimeException("团检计算金额信息时，对应分组参数信息不能为空！");
+            }
+
+            if(StringUtils.isEmpty(amountCalGroupBo.getGroupType())){
+                throw new RuntimeException("团检计算金额信息时，分组方式不能为空！");
+            }
+
+            if(amountCalGroupBo.getItemDiscount()==null){
+                throw new RuntimeException("团检计算金额信息时，项目折扣不能为空！");
+            }
+
+            if(amountCalGroupBo.getAddDiscount()==null){
+                throw new RuntimeException("团检计算金额信息时，加项折扣不能为空！");
+            }
+
+            if(StringUtils.isEmpty(amountCalGroupBo.getGroupPayType())){
+                throw new RuntimeException("团检计算金额信息时，分组支付方式不能为空！");
+            }
+
+            if(StringUtils.isEmpty(amountCalGroupBo.getAddPayType())){
+                throw new RuntimeException("团检计算金额信息时，加项支付方式不能为空！");
+            }
+
+            //不为折扣分组时  校验 分组金额不能为空
+            if(!Objects.equals(GroupTypeEnum.DISCOUNT.getCode(),amountCalGroupBo.getGroupType())
+               && amountCalGroupBo.getPrice()==null){
+                throw new RuntimeException("团检计算金额信息时，分组金额不能为空！");
+            }
+        }
 
         }
 }

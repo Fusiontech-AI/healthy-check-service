@@ -29,14 +29,19 @@ public class AmountCalculationBo {
     private String changeType;
 
     /**
-     * 输入类型(1折扣 2应收金额 3收费方式 4个人应收额 5单位应收额)
+     * 输入类型(1折扣 2应收金额 3收费方式 4个人应收额 5单位应收额 6分组或加项折扣)
      */
     private String inputType;
 
     /**
-     * 分组主键id
+     * 有无分组标志(1有分组)
      */
-    private Long groupId;
+    private String groupFlag;
+
+    /**
+     * 分组参数对象
+     */
+    private AmountCalGroupBo amountCalGroupBo;
 
     /**
      * 总计项标准价格

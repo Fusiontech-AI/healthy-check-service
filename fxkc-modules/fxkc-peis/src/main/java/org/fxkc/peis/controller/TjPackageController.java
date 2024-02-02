@@ -18,7 +18,6 @@ import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.web.core.BaseController;
 import org.fxkc.peis.domain.bo.AmountCalculationBo;
 import org.fxkc.peis.domain.bo.TjPackageAddBo;
-import org.fxkc.peis.domain.bo.TjPackageBillBo;
 import org.fxkc.peis.domain.bo.TjPackageBo;
 import org.fxkc.peis.domain.vo.AmountCalculationVo;
 import org.fxkc.peis.domain.vo.PackageAndProjectVo;
@@ -127,10 +126,10 @@ public class TjPackageController extends BaseController {
     /**
      * 体检套餐动态算费(可复用)
      */
-    @PostMapping("dynamicBilling")
+    /*@PostMapping("dynamicBilling")
     public R<TjPackageBillBo> dynamicBilling(@Valid @RequestBody TjPackageBillBo bo) {
         return R.ok(tjPackageService.dynamicBilling(bo));
-    }
+    }*/
 
 
     /**

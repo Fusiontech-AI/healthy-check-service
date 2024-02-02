@@ -5,6 +5,7 @@ import com.yomahub.liteflow.core.NodeSwitchComponent;
 import lombok.extern.slf4j.Slf4j;
 import org.fxkc.peis.domain.bo.AmountCalculationBo;
 import org.fxkc.peis.liteflow.enums.ChangeTypeEnum;
+import org.fxkc.peis.liteflow.enums.InputTypeEnum;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
@@ -24,11 +25,15 @@ public class InitSelectCmp extends NodeSwitchComponent {
             return "PublicDeleteCmp";
         }else if(Objects.equals(ChangeTypeEnum.新增.getCode(),requestData.getChangeType())){
             //个检 或 是团检但无分组时 都走个人项目新增即可 根据前端传值计算
-            if(Objects.equals(requestData.getRegType(),"1") || requestData.getGroupId()==null){
+            if(Objects.equals(requestData.getRegType(),"1") || !Objects.equals(requestData.getGroupFlag(),"1")){
                 return "PersonAddCmp";
             }
             return "TeamAddCmp";
         }else if(Objects.equals(ChangeTypeEnum.总计项.getCode(),requestData.getChangeType())){
+            //总计项修改分组或加项折扣时
+            if(Objects.equals(InputTypeEnum.分组或加项折扣.getCode(),requestData.getInputType())){
+                return "TeamTotalAddUpdateCmp";
+            }
             //这里是先走个检的总计修改 再走团检(有入口开关)
             return "t1";
         }else if(Objects.equals(ChangeTypeEnum.单项.getCode(),requestData.getChangeType())){
