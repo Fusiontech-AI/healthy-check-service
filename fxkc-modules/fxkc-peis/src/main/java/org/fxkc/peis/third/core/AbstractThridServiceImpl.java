@@ -28,6 +28,11 @@ public class AbstractThridServiceImpl implements IThridService{
 
     private final Map<String,IThridService> thridServiceMap = new ConcurrentHashMap<>(32);
 
+    /**
+     * 项目走哪个服务路由
+     * @param itemId 项目id
+     * @return 项目对应的服务
+     */
     protected IThridService findServie(String itemId){
         IThridService currentThirdService = this.thridServiceMap.get(itemId);
         if (Objects.isNull(currentThirdService)) {
@@ -42,6 +47,11 @@ public class AbstractThridServiceImpl implements IThridService{
         return currentThirdService;
     }
 
+    /**
+     * 获取第三方结果前置处理
+     * @param objects 参数
+     * @return 前置处理（参数过滤）结果
+     */
     @Override
     public R postProcessBeforeGetResult(Object... objects){
         String itemId = (String) objects[0];
@@ -52,11 +62,23 @@ public class AbstractThridServiceImpl implements IThridService{
         return thirdService.postProcessBeforeGetResult(objects);
     }
 
+    /**
+     * 是否支持项目
+     * @param itemId 项目id
+     * @return true-有处理该项目id的实现类  false-无处理该项目id的实现类
+     */
     @Override
     public boolean supportItem(String itemId) {
         return false;
     }
 
+    /**
+     * 获取第三方结果
+     * @param objects 参数
+     * @return 第三方结果
+     * @throws ExecutionException 执行方法体异常
+     * @throws InterruptedException 线程被中断异常
+     */
     @Override
     public Object getItemResult(Object... objects) throws ExecutionException, InterruptedException {
         R r = postProcessBeforeGetResult(objects);

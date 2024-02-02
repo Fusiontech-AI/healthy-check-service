@@ -13,6 +13,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ServiceProviderEnum {
 
+    // his
+    FUSIONTECH_HIS_HTTP("福鑫科创 HIS，直接走接口"),
+    FUSIONTECH_HIS_JCPT("福鑫科创 HIS，走集成平台"),
+
     // lis
     FUSIONTECH_LIS("福鑫科创 LIS"),
     CHUANGZHI_LIS("创智 LIS"),

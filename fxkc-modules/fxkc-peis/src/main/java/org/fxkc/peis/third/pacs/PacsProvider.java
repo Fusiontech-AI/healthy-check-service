@@ -24,7 +24,7 @@ public interface PacsProvider extends ThirdServiceProvider {
      *
      * @param providerEnum pacs服务提供者类型
      * @param objects      pacs服务调用相关参数
-     * @return 身份证信息
+     * @return pacs结果
      */
     default Object pacsResult(ServiceProviderEnum providerEnum, Object... objects) {
         return pacsResult(objects);
