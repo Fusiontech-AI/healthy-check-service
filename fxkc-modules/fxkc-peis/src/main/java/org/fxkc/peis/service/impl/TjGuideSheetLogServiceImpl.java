@@ -156,9 +156,8 @@ public class TjGuideSheetLogServiceImpl implements ITjGuideSheetLogService {
         //删除图片
         List<TjGuideSheetLog> list = baseMapper.selectList(Wrappers.lambdaQuery(TjGuideSheetLog.class).in(TjGuideSheetLog::getId, ids));
         OssClient ossClient = OssFactory.instance();
-        list.forEach(guideSheet->{
-            ossClient.delete(guideSheet.getImagePath());
-        });
+        List<String> pathList = list.stream().map(TjGuideSheetLog::getImagePath).toList();
+        ossClient.deleteBatch(pathList);
         return  baseMapper.deleteBatchIds(ids)> 0;
     }
 

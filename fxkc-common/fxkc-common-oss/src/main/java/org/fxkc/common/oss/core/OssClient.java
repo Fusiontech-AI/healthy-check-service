@@ -31,7 +31,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * S3 存储协议 所有兼容S3协议的云厂商均支持
@@ -139,6 +141,12 @@ public class OssClient {
         } catch (Exception e) {
             throw new OssException("删除文件失败，请检查配置信息:[" + e.getMessage() + "]");
         }
+    }
+
+    public void deleteBatch(List<String> pathList){
+        List<String> path = pathList.stream().distinct().toList();
+        //多线程处理删除文件
+        path.parallelStream().forEach(this::delete);
     }
 
     public UploadResult uploadSuffix(byte[] data, String suffix, String contentType) {
