@@ -182,7 +182,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
             }
             voList.forEach(k -> k.setGroupItemList(StreamUtils.filter(groupItemList, e -> Objects.equals(e.getGroupId(),k.getId()))));
         }
-        return voList);
+        return voList;
     }
 
     /**
