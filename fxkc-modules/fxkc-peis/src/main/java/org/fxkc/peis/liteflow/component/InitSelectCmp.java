@@ -23,7 +23,8 @@ public class InitSelectCmp extends NodeSwitchComponent {
         if(Objects.equals(ChangeTypeEnum.删除.getCode(),requestData.getChangeType())){
             return "PublicDeleteCmp";
         }else if(Objects.equals(ChangeTypeEnum.新增.getCode(),requestData.getChangeType())){
-            if(Objects.equals(requestData.getRegType(),"1")){
+            //个检 或 是团检但无分组时 都走个人项目新增即可 根据前端传值计算
+            if(Objects.equals(requestData.getRegType(),"1") || requestData.getGroupId()==null){
                 return "PersonAddCmp";
             }
             return "TeamAddCmp";

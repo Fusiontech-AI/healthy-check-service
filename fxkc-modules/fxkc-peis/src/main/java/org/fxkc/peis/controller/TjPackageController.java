@@ -149,4 +149,13 @@ public class TjPackageController extends BaseController {
     public TableDataInfo<PackageAndProjectVo> queryPackageAndProjectPages(@RequestParam("name") String name, PageQuery pageQuery) {
         return tjPackageService.queryPackageAndProjectPages(name,pageQuery);
     }
+
+
+    /**
+     * 套餐下项目信息查询
+     */
+    @GetMapping("queryProjectByPackageId")
+    public R<List<PackageAndProjectVo>> queryProjectByPackageId(@RequestParam("packageId")@NotNull(message = "套餐id不能为空") String packageId) {
+        return R.ok(tjPackageService.queryProjectByPackageId(packageId));
+    }
 }

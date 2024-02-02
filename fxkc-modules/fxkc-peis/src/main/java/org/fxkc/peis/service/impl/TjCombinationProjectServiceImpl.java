@@ -1,7 +1,6 @@
 package org.fxkc.peis.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -150,10 +149,10 @@ public class TjCombinationProjectServiceImpl implements ITjCombinationProjectSer
         TjCombinationProject update = MapstructUtils.convert(bo, TjCombinationProject.class);
         validEntityBeforeSave(update);
         List<TjCombinationProjectInfoItemBo> infoItemBos = bo.getInfoItemBos();
+        //先删除 再新增
+        combinationProjectInfoMapper.delete(new LambdaQueryWrapper<TjCombinationProjectInfo>()
+            .eq(TjCombinationProjectInfo::getCombinProjectId,bo.getId()));
         if(CollUtil.isNotEmpty(infoItemBos)){
-            //先删除 再新增
-            combinationProjectInfoMapper.delete(new LambdaQueryWrapper<TjCombinationProjectInfo>()
-                .eq(TjCombinationProjectInfo::getCombinProjectId,bo.getId()));
             insertCombinationInfo(infoItemBos,bo);
         }
         return baseMapper.updateById(update) > 0;
@@ -281,6 +280,19 @@ public class TjCombinationProjectServiceImpl implements ITjCombinationProjectSer
             throw new PeisException(ErrorCodeConstants.PEIS_COMBINATION_NOT_EXIST);
         }
         return convert;
+    }
+
+    @Override
+    public String selectCombinationNameById(Long id) {
+        TjCombinationProject tjCombinationProject = baseMapper.selectById(id);
+        return Objects.isNull(tjCombinationProject) ? null : tjCombinationProject.getCombinProjectName();
+    }
+
+    @Override
+    public String selectCombinationCodeById(Long id) {
+        TjCombinationProject tjCombinationProject = baseMapper.selectById(id);
+        return Objects.isNull(tjCombinationProject) ? null : tjCombinationProject.getCombinProjectCode();
+
     }
 
     private static List<Long> findMinCompositeProjects(List<Long> baseProjects, Map<Long, List<Long>> compositeProjects) {

@@ -124,6 +124,11 @@ public class TjRegCombinationProject extends TenantEntity {
     private String checkResult;
 
     /**
+     * 加项标识:1个人加项 2团队加项
+     */
+    private String addFlag;
+
+    /**
      * 删除标志（0代表存在 2代表删除）
      */
     @TableLogic

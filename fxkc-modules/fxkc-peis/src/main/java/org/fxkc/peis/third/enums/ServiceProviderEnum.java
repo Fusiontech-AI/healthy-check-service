@@ -30,5 +30,5 @@ public enum ServiceProviderEnum {
     // 骨密度
     ;
 
-    private String serviceProvider;
+    private final String serviceProvider;
 }

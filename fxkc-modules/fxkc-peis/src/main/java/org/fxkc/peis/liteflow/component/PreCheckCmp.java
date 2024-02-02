@@ -60,9 +60,9 @@ public class PreCheckCmp extends NodeComponent {
         }
 
         //团检时校验 分组类型不能为空
-        if(Objects.equals(requestData.getRegType(),"2") && requestData.getGroupId()==null){
+        /*if(Objects.equals(requestData.getRegType(),"2") && requestData.getGroupId()==null){
             throw new RuntimeException("团检计算金额信息时，对应分组id不能为空！");
-        }
+        }*/
 
         }
 }

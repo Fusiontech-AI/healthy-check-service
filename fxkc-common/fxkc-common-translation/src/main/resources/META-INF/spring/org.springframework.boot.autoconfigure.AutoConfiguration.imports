@@ -8,3 +8,6 @@ org.fxkc.common.translation.core.impl.TeamNameTranslationImpl
 org.fxkc.common.translation.core.impl.TeamGroupNameTranslationImpl
 org.fxkc.common.translation.core.impl.TeamDeptNameTranslationImpl
 org.fxkc.common.translation.core.impl.TeamTaskNameTranslationImpl
+org.fxkc.common.translation.core.impl.CombinationNameTranslationImpl
+org.fxkc.common.translation.core.impl.CombinationCodeTranslationImpl
+

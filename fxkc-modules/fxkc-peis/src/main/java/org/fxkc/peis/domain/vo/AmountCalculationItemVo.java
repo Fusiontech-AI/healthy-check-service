@@ -14,6 +14,16 @@ import java.math.BigDecimal;
 public class AmountCalculationItemVo {
 
     /**
+     * 主键id
+     */
+    private Long id;
+
+    /**
+     * 组合项目主键id
+     */
+    private Long combinProjectId;
+
+    /**
      * 排列序号
      */
     private Integer sort;

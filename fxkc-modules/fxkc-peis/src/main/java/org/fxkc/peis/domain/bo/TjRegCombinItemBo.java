@@ -86,4 +86,8 @@ public class TjRegCombinItemBo {
     @NotBlank(message = "检查状态（0：未检查，1：已检查，2：弃捡，3：未保存，4：延期）见字典bus_check_status不能为空", groups = { AddGroup.class, EditGroup.class })
     private String checkStatus;
 
+    /**
+     * 加项标识:1个人加项 2团队加项
+     */
+    private String addFlag;
 }

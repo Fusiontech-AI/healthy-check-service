@@ -62,7 +62,7 @@ public class TjTeamSettleTaskGroupVo implements Serializable {
      * 分组支付方式sys_dict_type(bus_group_pay_type)0:个人1:单位
      */
     @ExcelProperty(value = "分组支付方式", converter = ExcelDictConvert.class)
-    @ExcelDictFormat(readConverterExp = "0=个人,1=单位")
+    @ExcelDictFormat(dictType = "bus_group_pay_type")
     @Translation(type = TransConstant.DICT_TYPE_TO_LABEL, other = "bus_group_pay_type")
     private String groupPayType;
 
@@ -82,10 +82,8 @@ public class TjTeamSettleTaskGroupVo implements Serializable {
      * 加项支付方式sys_dict_type(bus_group_pay_type)0:个人1:单位
      */
     @ExcelProperty(value = "加项支付方式", converter = ExcelDictConvert.class)
-    @ExcelDictFormat(readConverterExp = "0=个人,1=单位")
+    @ExcelDictFormat(dictType = "bus_group_pay_type")
     @Translation(type = TransConstant.DICT_TYPE_TO_LABEL, other = "bus_group_pay_type")
     private String addPayType;
-
-
 
 }

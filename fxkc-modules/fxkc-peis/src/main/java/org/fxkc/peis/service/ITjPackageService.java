@@ -69,4 +69,5 @@ public interface ITjPackageService {
 
     TableDataInfo<PackageAndProjectVo> queryPackageAndProjectPages(String name, PageQuery pageQuery);
 
+    List<PackageAndProjectVo> queryProjectByPackageId(String packageId);
 }

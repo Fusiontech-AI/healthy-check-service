@@ -1,5 +1,6 @@
 package org.fxkc.peis.third.pacs;
 
+import lombok.extern.slf4j.Slf4j;
 import org.fxkc.peis.third.enums.ServiceProviderEnum;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
  * @date 2024-02-01 9:31
  */
 @Service
+@Slf4j
 public class JuleiPacsProvider implements PacsProvider{
 
     @Override
@@ -18,6 +20,7 @@ public class JuleiPacsProvider implements PacsProvider{
 
     @Override
     public Object pacsResult(ServiceProviderEnum providerEnum, Object... objects) {
+        log.info("pacs deal request param:{}",objects[0]);
         Integer param = (Integer) objects[0];
         return param+1;
     }
