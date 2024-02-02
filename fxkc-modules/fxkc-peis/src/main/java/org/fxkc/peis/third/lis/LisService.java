@@ -33,6 +33,11 @@ public class LisService implements IThridService {
     @Qualifier(ThreadPoolConfig.LIS_POOL_PREX)
     ExecutorService lisPool;
 
+    /**
+     * 获取lis结果前置处理
+     * @param objects 参数
+     * @return 前置处理结果
+     */
     @Override
     public R postProcessBeforeGetResult(Object... objects) {
         List<String> list = (List<String>)objects[1];
@@ -40,11 +45,23 @@ public class LisService implements IThridService {
         return R.ok(collect);
     }
 
+    /**
+     * 决定什么条件走这个服务
+     * @param itemId 项目id
+     * @return true-这个服务支持这个项目id false-这个服务不支持这个项目id
+     */
     @Override
     public boolean supportItem(String itemId) {
         return "a".equals(itemId);
     }
 
+    /**
+     *
+     * @param objects 参数
+     * @return 第三方结果
+     * @throws ExecutionException 执行方法体抛出异常
+     * @throws InterruptedException 线程中断异常
+     */
     @Override
     public Object getItemResult(Object... objects) throws ExecutionException, InterruptedException {
         List<String> projectInfos = (List<String>)objects[0];
@@ -65,6 +82,11 @@ public class LisService implements IThridService {
         return results;
     }
 
+    /**
+     * 获取lis结果后后置处理
+     * @param objects 参数
+     * @return 后置处理结果
+     */
     @Override
     public R postProcessAfterGetResult(Object... objects){
         log.info("lis process data:{}", JSON.toJSONString(objects[1]));

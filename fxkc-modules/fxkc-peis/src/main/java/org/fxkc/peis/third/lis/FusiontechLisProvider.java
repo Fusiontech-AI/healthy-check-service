@@ -16,6 +16,12 @@ public class FusiontechLisProvider implements LisProvider {
         return ServiceProviderEnum.FUSIONTECH_LIS == providerEnum;
     }
 
+    /**
+     * 获取lis结果
+     * @param providerEnum lis服务提供者类型
+     * @param objects      lis服务调用相关参数
+     * @return lis结果
+     */
     @Override
     public Object lisResult(ServiceProviderEnum providerEnum, Object... objects) {
         String param = (String) objects[0];

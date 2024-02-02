@@ -27,6 +27,12 @@ public class LisProviderComposite implements LisProvider{
 
     private final Map<String, LisProvider> lisProviderMap = new ConcurrentHashMap<>(4);
 
+    /**
+     * 获取lis服务，由哪家lis服务提供
+     * @param key 服务标志
+     * @param providerEnum 服务提供方
+     * @return 对应lis服务
+     */
     private LisProvider getLisProvider(String key, ServiceProviderEnum providerEnum) {
         LisProvider currentLisProvider = this.lisProviderMap.get(key);
         if (Objects.isNull(currentLisProvider)) {
@@ -47,7 +53,12 @@ public class LisProviderComposite implements LisProvider{
         return Objects.nonNull(getLisProvider(providerEnum.name(), providerEnum));
     }
 
-
+    /**
+     * 获取lis结果
+     * @param providerEnum lis服务提供者类型
+     * @param objects      lis服务调用相关参数
+     * @return lis结果
+     */
     @Override
     public Object lisResult(ServiceProviderEnum providerEnum, Object... objects) {
         LisProvider lisProvider = getLisProvider(providerEnum.name(), providerEnum);
