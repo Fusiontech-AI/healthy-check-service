@@ -52,5 +52,5 @@ public interface ITjTeamGroupService extends IService<TjTeamGroup> {
 
     void recordGroupInfo(List<TjTeamGroup> groupList);
 
-    Boolean updateGroupInfo(List<TjTeamGroupUpdateBo> list);
+    Boolean updateGroupProjectInfo(List<TjTeamGroupUpdateBo> list);
 }

@@ -30,6 +30,11 @@ public class TjTeamGroupItemVo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
+     * 分组id
+     */
+    private Long groupId;
+
+    /**
      * 组合项目id
      */
     private Long itemId;

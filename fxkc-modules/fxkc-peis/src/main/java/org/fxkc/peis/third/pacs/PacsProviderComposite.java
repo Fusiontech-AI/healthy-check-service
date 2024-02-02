@@ -27,6 +27,12 @@ public class PacsProviderComposite implements PacsProvider{
 
     private final Map<String, PacsProvider> lisProviderMap = new ConcurrentHashMap<>(4);
 
+    /**
+     * 获取具体pacs服务厂商
+     * @param key 服务提供厂商key
+     * @param providerEnum 服务提供厂商枚举
+     * @return pacs服务实现类
+     */
     private PacsProvider getPacsProvider(String key, ServiceProviderEnum providerEnum) {
         PacsProvider currentPacsProvider = this.lisProviderMap.get(key);
         if (Objects.isNull(currentPacsProvider)) {
@@ -46,6 +52,12 @@ public class PacsProviderComposite implements PacsProvider{
         return Objects.nonNull(getPacsProvider(providerEnum.name(), providerEnum));
     }
 
+    /**
+     * 获取pacs服务调用结果
+     * @param providerEnum pacs服务提供者类型
+     * @param objects      pacs服务调用相关参数
+     * @return pacs服务调用结果
+     */
     @Override
     public Object pacsResult(ServiceProviderEnum providerEnum, Object... objects) {
         PacsProvider pacsProvider = getPacsProvider(providerEnum.name(), providerEnum);

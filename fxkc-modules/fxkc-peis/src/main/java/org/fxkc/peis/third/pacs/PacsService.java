@@ -33,6 +33,11 @@ public class PacsService implements IThridService {
     @Qualifier(ThreadPoolConfig.PACS_POOL_PREX)
     ExecutorService pacsPool;
 
+    /**
+     * 获取pacs结果前置处理
+     * @param objects 参数
+     * @return 前置处理结果
+     */
     @Override
     public R postProcessBeforeGetResult(Object... objects) {
         List<Integer> list = (List<Integer>)objects[1];
@@ -40,11 +45,23 @@ public class PacsService implements IThridService {
         return R.ok(collect);
     }
 
+    /**
+     * 什么条件走这个服务
+     * @param itemId 项目id
+     * @return true-服务支持此项目id false-服务不支持此项目id
+     */
     @Override
     public boolean supportItem(String itemId) {
         return "1".equals(itemId);
     }
 
+    /**
+     * 获取pacs结果
+     * @param objects 参数
+     * @return
+     * @throws ExecutionException 异步调用方法提执行异常
+     * @throws InterruptedException 线程被中断异常（如所有线程执行完成在等待时候，线程被中断）
+     */
     @Override
     public Object getItemResult(Object... objects) throws ExecutionException, InterruptedException {
         List<Integer> projectInfos = (List<Integer>)objects[0];
@@ -65,6 +82,11 @@ public class PacsService implements IThridService {
         return results;
     }
 
+    /**
+     * 获取pacs结果后置处理
+     * @param objects 参数
+     * @return pacs结果后置处理结果
+     */
     @Override
     public R postProcessAfterGetResult(Object... objects){
         log.info("pacs process data:{}", JSON.toJSONString(objects[1]));

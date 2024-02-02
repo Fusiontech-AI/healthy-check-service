@@ -18,6 +18,12 @@ public class JuleiPacsProvider implements PacsProvider{
         return ServiceProviderEnum.JULEI_PACS == providerEnum;
     }
 
+    /**
+     * 聚垒pacs服务调用结果
+     * @param providerEnum pacs服务提供者类型
+     * @param objects      pacs服务调用相关参数
+     * @return pacs结果
+     */
     @Override
     public Object pacsResult(ServiceProviderEnum providerEnum, Object... objects) {
         log.info("pacs deal request param:{}",objects[0]);
