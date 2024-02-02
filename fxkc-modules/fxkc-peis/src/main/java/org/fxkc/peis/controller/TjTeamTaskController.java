@@ -131,8 +131,9 @@ public class TjTeamTaskController extends BaseController {
 
     /**
      * 导出团检人员登记模板
-     * @param templateType 模板类型(JKTJ:健康ZYJKTJ:职业健康体检FSTJ:放射体检)
+     *
      * @param taskId 任务id
+     * @param templateType 模板类型(JKTJ:健康ZYJKTJ:职业健康体检FSTJ:放射体检)
      */
     @PostMapping("/exportRegisterTemplate")
     public void exportRegisterTemplate(@NotBlank(message = "模板类型不能为空") String templateType,

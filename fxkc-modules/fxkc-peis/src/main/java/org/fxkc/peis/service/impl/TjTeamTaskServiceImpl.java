@@ -22,19 +22,16 @@ import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.satoken.utils.LoginHelper;
 import org.fxkc.peis.constant.ErrorCodeConstants;
-import org.fxkc.peis.domain.TjRegister;
-import org.fxkc.peis.domain.TjTeamGroup;
-import org.fxkc.peis.domain.TjTeamTask;
+import org.fxkc.peis.domain.*;
 import org.fxkc.peis.domain.bo.*;
 import org.fxkc.peis.domain.vo.*;
 import org.fxkc.peis.enums.GroupTypeEnum;
 import org.fxkc.peis.enums.HealthyCheckTypeEnum;
+import org.fxkc.peis.enums.OccupationalDictEnum;
 import org.fxkc.peis.enums.PhysicalTypeEnum;
 import org.fxkc.peis.exception.PeisException;
 import org.fxkc.peis.listener.TjTaskImportListener;
-import org.fxkc.peis.mapper.TjRegisterMapper;
-import org.fxkc.peis.mapper.TjTeamGroupMapper;
-import org.fxkc.peis.mapper.TjTeamTaskMapper;
+import org.fxkc.peis.mapper.*;
 import org.fxkc.peis.register.insert.RegisterInsertHolder;
 import org.fxkc.peis.register.insert.RegisterInsertService;
 import org.fxkc.peis.service.ITjTeamGroupService;
@@ -69,6 +66,10 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
     private final ITjTeamGroupService iTjTeamGroupService;
 
     private final RegisterInsertHolder registerInsertHolder;
+
+    private final TjTeamGroupItemMapper tjTeamGroupItemMapper;
+
+    private final TjTeamGroupHazardsMapper tjTeamGroupHazardsMapper;
 
     /**
      * 查询团检任务管理
@@ -132,9 +133,22 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
         groupList.forEach(k -> k.setTaskId(add.getId()).setTaskName(add.getTaskName())
             .setTeamId(add.getTeamId()).setTeamName(teamName));
         tjTeamGroupMapper.insertBatch(groupList);
-        return tjTeamGroupMapper.selectVoList(Wrappers.lambdaQuery(TjTeamGroup.class)
+
+        List<TjTeamGroupVo> voList = tjTeamGroupMapper.selectVoList(Wrappers.lambdaQuery(TjTeamGroup.class)
             .eq(TjTeamGroup::getTaskId, add.getId())
             .eq(TjTeamGroup::getGroupType, GroupTypeEnum.ITEM.getCode()));
+        List<Long> groupIds = StreamUtils.toList(voList, TjTeamGroupVo::getId);
+        if(CollUtil.isNotEmpty(groupIds)) {
+            List<TjTeamGroupItemVo> groupItemList = tjTeamGroupItemMapper.selectVoList(Wrappers.lambdaQuery(TjTeamGroupItem.class)
+                .in(TjTeamGroupItem::getGroupId, groupIds));
+            if(PhysicalTypeEnum.isOccupational(bo.getPhysicalType())) {
+                List<TjTeamGroupHazardsVo> groupHazardsList = tjTeamGroupHazardsMapper.selectVoList(Wrappers.lambdaQuery(TjTeamGroupHazards.class)
+                    .eq(TjTeamGroupHazards::getGroupId, groupIds));
+                voList.forEach(k -> k.setGroupHazardsList(StreamUtils.filter(groupHazardsList, e -> Objects.equals(e.getGroupId(),k.getId()))));
+            }
+            voList.forEach(k -> k.setGroupItemList(StreamUtils.filter(groupItemList, e -> Objects.equals(e.getGroupId(),k.getId()))));
+        }
+        return voList;
     }
 
     /**
@@ -154,9 +168,21 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
         List<TjTeamGroup> recordList = StreamUtils.filter(groupList, e -> Objects.nonNull(e.getId()));
         iTjTeamGroupService.recordGroupInfo(recordList);
         tjTeamGroupMapper.insertOrUpdateBatch(groupList);
-        return tjTeamGroupMapper.selectVoList(Wrappers.lambdaQuery(TjTeamGroup.class)
-            .eq(TjTeamGroup::getTaskId, update.getId())
+        List<TjTeamGroupVo> voList = tjTeamGroupMapper.selectVoList(Wrappers.lambdaQuery(TjTeamGroup.class)
+            .eq(TjTeamGroup::getTaskId, bo.getId())
             .eq(TjTeamGroup::getGroupType, GroupTypeEnum.ITEM.getCode()));
+        List<Long> groupIds = StreamUtils.toList(voList, TjTeamGroupVo::getId);
+        if(CollUtil.isNotEmpty(groupIds)) {
+            List<TjTeamGroupItemVo> groupItemList = tjTeamGroupItemMapper.selectVoList(Wrappers.lambdaQuery(TjTeamGroupItem.class)
+                .in(TjTeamGroupItem::getGroupId, groupIds));
+            if(PhysicalTypeEnum.isOccupational(bo.getPhysicalType())) {
+                List<TjTeamGroupHazardsVo> groupHazardsList = tjTeamGroupHazardsMapper.selectVoList(Wrappers.lambdaQuery(TjTeamGroupHazards.class)
+                    .eq(TjTeamGroupHazards::getGroupId, groupIds));
+                voList.forEach(k -> k.setGroupHazardsList(StreamUtils.filter(groupHazardsList, e -> Objects.equals(e.getGroupId(),k.getId()))));
+            }
+            voList.forEach(k -> k.setGroupItemList(StreamUtils.filter(groupItemList, e -> Objects.equals(e.getGroupId(),k.getId()))));
+        }
+        return voList);
     }
 
     /**

@@ -1,5 +1,6 @@
 package org.fxkc.peis.domain.vo;
 
+import lombok.experimental.Accessors;
 import org.fxkc.peis.domain.TjTeamGroup;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
@@ -11,6 +12,7 @@ import lombok.Data;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 
 /**
@@ -22,6 +24,7 @@ import java.math.BigDecimal;
 @Data
 @ExcelIgnoreUnannotated
 @AutoMapper(target = TjTeamGroup.class)
+@Accessors(chain = true)
 public class TjTeamGroupVo implements Serializable {
 
     @Serial
@@ -105,8 +108,30 @@ public class TjTeamGroupVo implements Serializable {
     @ExcelProperty(value = "是否同步项目(0:是1:否)")
     private String isSyncProject;
 
+    /**
+     * 套餐id
+     */
+    private Long packageId;
 
+    /**
+     * 分组项目信息集合
+     */
+    private List<TjTeamGroupItemVo> groupItemList;
 
+    /**
+     * 危害因素集合
+     */
+    private List<TjTeamGroupHazardsVo> groupHazardsList;
+
+    /**
+     * 照射源sys_dict_type(bus_shine_source)
+     */
+    private String shineSource;
+
+    /**
+     * 照射源种类sys_dict_type(bus_job_illumination_source)
+     */
+    private String shineType;
 
 
 }

@@ -229,7 +229,7 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean updateGroupInfo(List<TjTeamGroupUpdateBo> list) {
+    public Boolean updateGroupProjectInfo(List<TjTeamGroupUpdateBo> list) {
         StringBuffer buffer = new StringBuffer();
         list.forEach(k -> {
             List<TjTeamGroupItemBo> itemBoList = k.getGroupItemList();
