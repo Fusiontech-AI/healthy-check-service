@@ -69,9 +69,4 @@ public class TjTeamGroupItem extends TenantEntity {
      * 是否必选(1:是0否)
      */
     private Boolean isRequired;
-
-    /**
-     * 套餐id
-     */
-    private Long packageId;
 }

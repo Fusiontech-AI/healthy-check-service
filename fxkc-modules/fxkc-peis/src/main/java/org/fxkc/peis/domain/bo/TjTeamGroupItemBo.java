@@ -68,9 +68,4 @@ public class TjTeamGroupItemBo extends BaseEntity {
      */
     @NotNull(message = "是否必选(true:是0:false)不能为空")
     private Boolean isRequired;
-
-    /**
-     * 套餐id
-     */
-    private Long packageId;
 }

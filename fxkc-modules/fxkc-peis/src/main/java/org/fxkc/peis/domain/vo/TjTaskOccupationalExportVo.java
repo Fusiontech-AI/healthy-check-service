@@ -131,9 +131,9 @@ public class TjTaskOccupationalExportVo {
     /**
      * 接触工龄月
      */
-    @ExcelProperty("接触工龄月")
+    @ExcelProperty("接害工龄月")
     @ColumnWidth(15)
-    @NotBlank(message = "接触工龄月不能为空", groups = { EditGroup.class })
+    @NotBlank(message = "接害工龄月不能为空", groups = { EditGroup.class })
     private Long contactSeniorityMonth;
 
     /**
@@ -184,6 +184,11 @@ public class TjTaskOccupationalExportVo {
      */
     @JsonFormat(pattern = DatePattern.NORM_DATE_PATTERN, timezone = "GMT+8")
     private Date birthday;
+
+    /**
+     * 在岗状态
+     */
+    private String dutyStatus;
 
     /**
      * 照射源,字典bus_shine_source

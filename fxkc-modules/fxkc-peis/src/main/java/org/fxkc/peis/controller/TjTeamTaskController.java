@@ -13,6 +13,7 @@ import org.fxkc.peis.domain.bo.*;
 import org.fxkc.peis.domain.vo.*;
 import org.fxkc.peis.enums.PhysicalTypeEnum;
 import org.fxkc.peis.listener.TjTaskImportListener;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
@@ -131,7 +132,7 @@ public class TjTeamTaskController extends BaseController {
 
     /**
      * 导出团检人员登记模板
-     * @param templateType 模板类型
+     * @param templateType 模板类型(JKTJ:健康ZYJKTJ:职业健康体检FSTJ:放射体检)
      * @param taskId 任务id
      */
     @PostMapping("/exportRegisterTemplate")
@@ -146,7 +147,7 @@ public class TjTeamTaskController extends BaseController {
      */
     @Log(title = "团检任务导入人员", businessType = BusinessType.IMPORT)
     @PostMapping(value = "/importRegisterData", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public R<ExcelResult<TjTaskOccupationalExportVo>> importRegisterData(@RequestPart("file") MultipartFile file, @Valid TjTaskImportBo bo) throws IOException {
+    public R<ExcelResult<TjTaskOccupationalExportVo>> importRegisterData(@RequestPart("file") MultipartFile file, @ParameterObject @Valid TjTaskImportBo bo) throws IOException {
         return R.ok(tjTeamTaskService.importRegisterData(file, bo));
     }
 

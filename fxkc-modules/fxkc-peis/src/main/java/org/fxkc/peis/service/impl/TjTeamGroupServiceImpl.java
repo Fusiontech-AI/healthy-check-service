@@ -21,6 +21,7 @@ import org.fxkc.peis.domain.vo.TjTeamGroupDetailVo;
 import org.fxkc.peis.domain.vo.TjTeamGroupHazardsVo;
 import org.fxkc.peis.domain.vo.TjTeamGroupItemVo;
 import org.fxkc.peis.domain.vo.TjTeamGroupVo;
+import org.fxkc.peis.enums.CheckStatusEnum;
 import org.fxkc.peis.enums.GroupTypeEnum;
 import org.fxkc.peis.enums.HealthyCheckTypeEnum;
 import org.fxkc.peis.exception.PeisException;
@@ -29,6 +30,7 @@ import org.fxkc.peis.service.ITjTeamGroupService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -184,8 +186,13 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
                     boolean isTeamPay = Objects.equals("1", k.getGroupPayType());
                     groupRegisters.stream().filter(e -> Objects.equals(HealthyCheckTypeEnum.预约.getCode(), e.getHealthyCheckStatus()))
                         .forEach(s -> {
-                            //todo tjRegisterMapper更新个人金额、团检金额、体检类型
-
+                            //更新个人金额、团检金额
+                            tjRegisterMapper.updateById(TjRegister.builder()
+                                    .id(s.getId())
+                                    .chargeStatus(isTeamPay ? "1" : "0")
+                                    .teamAmount(isTeamPay ? k.getActualPrice() : BigDecimal.ZERO)
+                                    .personAmount(isTeamPay ? BigDecimal.ZERO : k.getActualPrice())
+                                    .build());
                             //删除已记录的人员分组信息
                             tjTeamGroupHistoryMapper.delete(Wrappers.lambdaUpdate(TjTeamGroupHistory.class)
                                 .eq(TjTeamGroupHistory::getRegId, s.getId()));
@@ -193,15 +200,13 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
                                 //删除人员项目信息,新增新分组项目信息
                                 tjRegCombinationProjectMapper.delete(Wrappers.lambdaUpdate(TjRegCombinationProject.class)
                                     .eq(TjRegCombinationProject::getRegisterId, s.getId()));
-                                //todo 缺少套餐id
                                 k.getGroupItemList().forEach(d -> projectList.add(TjRegCombinationProject.builder()
                                     .registerId(s.getId())
                                     .combinationProjectId(d.getItemId())
                                     .receivableAmount(d.getActualPrice())
                                     .standardAmount(d.getStandardPrice())
                                     .payMode(k.getGroupPayType())
-                                    .payStatus(isTeamPay ? "1" : "0")
-                                    .checkStatus("0")
+                                    .payStatus(isTeamPay ? CheckStatusEnum.已检查.getCode() : CheckStatusEnum.未检查.getCode())
                                     .projectType(d.getInclude())
                                     .discount(d.getDiscount())
                                     .projectRequiredType(d.getIsRequired() ?  "1" : "0")

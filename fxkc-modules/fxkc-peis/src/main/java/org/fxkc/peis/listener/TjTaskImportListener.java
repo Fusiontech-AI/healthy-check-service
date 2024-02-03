@@ -81,6 +81,7 @@ public class TjTaskImportListener extends AnalysisEventListener<TjTaskOccupation
             if(Objects.isNull(group)) {
                 failureMsg.append("所选分组不存在或已删除,");
             }
+            tjTaskOccupationalExportVo.setDutyStatus(group.getDutyStatus());
             tjTaskOccupationalExportVo.setTeamGroupId(group.getId());
             tjTaskOccupationalExportVo.setIlluminationSource(group.getShineSource());
             tjTaskOccupationalExportVo.setJobIlluminationType(group.getShineType());
@@ -88,6 +89,16 @@ public class TjTaskImportListener extends AnalysisEventListener<TjTaskOccupation
         if(isOccupational &&  otherJobCode.contains(tjTaskOccupationalExportVo.getJobCode())
             && StrUtil.isBlank(tjTaskOccupationalExportVo.getOtherJobName())) {
             failureMsg.append("工种为其他时其他工种名称不能为空,");
+        }
+        if(isOccupational && Objects.nonNull(tjTaskOccupationalExportVo.getSeniorityYear())
+            && Objects.nonNull(tjTaskOccupationalExportVo.getSeniorityMonth())
+            && Objects.nonNull(tjTaskOccupationalExportVo.getContactSeniorityYear())
+            && Objects.nonNull(tjTaskOccupationalExportVo.getContactSeniorityMonth())) {
+            Long seniorityMonth = tjTaskOccupationalExportVo.getSeniorityYear() * 12 + tjTaskOccupationalExportVo.getSeniorityMonth();
+            Long contactSeniorityMonth = tjTaskOccupationalExportVo.getContactSeniorityYear() * 12 + tjTaskOccupationalExportVo.getContactSeniorityMonth();
+            if(seniorityMonth < contactSeniorityMonth) {
+                failureMsg.append("总工龄年月不能小于接害工龄月,");
+            }
         }
         if(idCardSet.contains(tjTaskOccupationalExportVo.getCredentialNumber())) {
             failureMsg.append("身份证").append(tjTaskOccupationalExportVo.getCredentialNumber()).append("重复,");
@@ -118,6 +129,7 @@ public class TjTaskImportListener extends AnalysisEventListener<TjTaskOccupation
                 }else {
                     group = groupList.get(ThreadLocalRandom.current().nextInt(groupList.size()));
                 }
+                tjTaskOccupationalExportVo.setDutyStatus(group.getDutyStatus());
                 tjTaskOccupationalExportVo.setGroupName(group.getGroupName());
                 tjTaskOccupationalExportVo.setTeamGroupId(group.getId());
                 tjTaskOccupationalExportVo.setIlluminationSource(group.getShineSource());
