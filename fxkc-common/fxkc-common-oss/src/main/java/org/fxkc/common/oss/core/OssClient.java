@@ -250,6 +250,19 @@ public class OssClient {
     }
 
     /**
+     * 获取不带后缀的文件地址
+     * @param objectKey
+     * @return
+     */
+    public String getPrivateUrlWithoutSuffix(String objectKey){
+        String privateUrl = getPrivateUrl(objectKey, 60);
+        if(StrUtil.isNotEmpty(privateUrl)){
+            privateUrl = privateUrl.substring(0,privateUrl.indexOf("?"));
+        }
+        return privateUrl;
+    }
+
+    /**
      * 检查配置是否相同
      */
     public boolean checkPropertiesSame(OssProperties properties) {
