@@ -131,11 +131,12 @@ public class TjTeamTaskController extends BaseController {
 
     /**
      * 导出团检人员登记模板
-     *
+     * @param templateType 模板类型
+     * @param taskId 任务id
      */
     @PostMapping("/exportRegisterTemplate")
-    public void exportRegisterTemplate(@RequestParam("模板类型") @NotBlank(message = "模板类型不能为空") String templateType,
-                                       @RequestParam("任务id") @NotNull(message = "任务id不能为空") Long taskId,
+    public void exportRegisterTemplate(@RequestParam("templateType") @NotBlank(message = "模板类型不能为空") String templateType,
+                                       @RequestParam("taskId") @NotNull(message = "任务id不能为空") Long taskId,
                                        HttpServletResponse response) {
         tjTeamTaskService.exportRegisterTemplate(templateType,taskId, response);
     }
