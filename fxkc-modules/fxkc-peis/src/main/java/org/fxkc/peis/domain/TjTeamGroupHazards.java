@@ -48,7 +48,7 @@ public class TjTeamGroupHazards extends TenantEntity {
     /**
      * 其他危害因素名称
      */
-    private String hazardFactorsOtherName;
+    private String hazardFactorsOther;
 
 
 }

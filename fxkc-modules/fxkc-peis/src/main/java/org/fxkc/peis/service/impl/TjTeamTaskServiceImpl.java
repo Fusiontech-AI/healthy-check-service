@@ -1,7 +1,9 @@
 package org.fxkc.peis.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
@@ -400,18 +402,41 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
 
     @Override
     public void insertRegisterData(TjRegisterImportBo bo) {
-        //todo 批量导入人员信息
         //是否为职业病
-        Boolean isOccupational = PhysicalTypeEnum.isOccupational(bo.getPhysicalType());
+        String occupationalType = PhysicalTypeEnum.isOccupational(bo.getPhysicalType()) ?
+            CommonConstants.NORMAL : CommonConstants.DISABLE;
         List<TjRegisterImportDetailBo> registerList = bo.getRegisterList();
-        List<TjRegisterAddBo> addBoList = MapstructUtils.convert(registerList, TjRegisterAddBo.class);
-        addBoList.forEach(k -> {
-            k.setTaskId(bo.getTaskId());
-            k.setTeamId(bo.getTeamId());
+        Map<Long, List<TjTeamGroupHazardsVo>> hazardMap = MapUtil.newHashMap();
+        if(Objects.equals(occupationalType, CommonConstants.NORMAL)) {
+            List<Long> groupIdList = StreamUtils.toList(registerList, TjRegisterImportDetailBo::getTeamGroupId);
+            if(CollUtil.isNotEmpty(groupIdList)) {
+                List<TjTeamGroupHazardsVo> hazardsList = tjTeamGroupHazardsMapper.selectVoList(Wrappers.lambdaQuery(TjTeamGroupHazards.class)
+                    .in(TjTeamGroupHazards::getGroupId, groupIdList));
+                hazardMap.putAll(StreamUtils.groupByKey(hazardsList, TjTeamGroupHazardsVo::getGroupId));
+            }
+        }
+        List<TjRegisterAddBo> addBoList = CollUtil.newArrayList();
+        registerList.forEach(k -> {
+            TjRegisterAddBo addBo = MapstructUtils.convert(k, TjRegisterAddBo.class);
+            addBo.setTaskId(bo.getTaskId());
+            addBo.setTeamId(bo.getTeamId());
+            addBo.setBusinessCategory("2");
+            addBo.setHealthyCheckStatus(HealthyCheckTypeEnum.预约.getCode());
+            addBo.setOccupationalType(occupationalType);
+            if(Objects.equals(occupationalType, CommonConstants.NORMAL)) {
+                TjRegisterZybBo occupational = MapstructUtils.convert(k, TjRegisterZybBo.class);
+                addBo.setTjRegisterZybBo(occupational);
+                Long month = occupational.getContactSeniorityYear() * 12 + occupational.getContactSeniorityMonth();
+                List<TjRegisterZybHazardBo> hazardBoList = MapstructUtils.convert(hazardMap.get(k.getTeamGroupId()),
+                    TjRegisterZybHazardBo.class);
+                hazardBoList.forEach(s -> s.setHazardStartDate(DateUtil.offsetMonth(
+                    DateUtil.date(), -1 * Math.toIntExact(month))));
+                addBo.setTjRegisterZybHazardBos(hazardBoList);
+            }
+            addBoList.add(addBo);
         });
-        RegisterInsertService registerInsertService = registerInsertHolder.selectBuilder("2".concat(isOccupational ?
-            CommonConstants.NORMAL : CommonConstants.DISABLE));
-//        registerInsertService.RegisterInsert()
+        RegisterInsertService registerInsertService = registerInsertHolder.selectBuilder("2".concat(occupationalType));
+        registerInsertService.RegisterInsert(addBoList);
     }
 
     @Override

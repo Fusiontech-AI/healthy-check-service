@@ -1,5 +1,6 @@
 package org.fxkc.peis.domain.vo;
 
+import io.github.linpeilie.annotations.AutoMappers;
 import org.fxkc.peis.domain.TjTeamGroupHazards;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
@@ -7,6 +8,7 @@ import org.fxkc.common.excel.annotation.ExcelDictFormat;
 import org.fxkc.common.excel.convert.ExcelDictConvert;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
+import org.fxkc.peis.domain.bo.TjRegisterZybHazardBo;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -20,7 +22,7 @@ import java.io.Serializable;
  */
 @Data
 @ExcelIgnoreUnannotated
-@AutoMapper(target = TjTeamGroupHazards.class)
+@AutoMappers({@AutoMapper(target = TjTeamGroupHazards.class), @AutoMapper(target = TjRegisterZybHazardBo.class)})
 public class TjTeamGroupHazardsVo implements Serializable {
 
     @Serial
@@ -44,7 +46,7 @@ public class TjTeamGroupHazardsVo implements Serializable {
     /**
      * 其他危害因素名称
      */
-    private String hazardFactorsOtherName;
+    private String hazardFactorsOther;
 
 
 

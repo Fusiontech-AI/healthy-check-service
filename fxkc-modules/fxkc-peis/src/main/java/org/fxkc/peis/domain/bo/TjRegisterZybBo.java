@@ -114,5 +114,9 @@ public class TjRegisterZybBo extends BaseEntity {
      */
     private String dxResult;
 
+    /**
+     * 其他工种名称
+     */
+    private String otherJobName;
 
 }

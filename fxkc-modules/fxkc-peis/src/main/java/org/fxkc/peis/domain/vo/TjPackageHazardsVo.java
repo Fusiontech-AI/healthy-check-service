@@ -54,7 +54,7 @@ public class TjPackageHazardsVo implements Serializable {
      * 其他危害因素名称
      */
     @ExcelProperty(value = "其他危害因素名称")
-    private String hazardFactorsOtherName;
+    private String hazardFactorsOther;
 
 
 }

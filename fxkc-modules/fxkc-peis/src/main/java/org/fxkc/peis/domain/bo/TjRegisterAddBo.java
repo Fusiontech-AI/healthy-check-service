@@ -210,4 +210,9 @@ public class TjRegisterAddBo {
      * 职业病关联危害因素
      */
     private List<TjRegisterZybHazardBo> tjRegisterZybHazardBos;
+
+    /**
+     * 体检状态（0：预约，1：登记，2：科室分检，3：分检完成，4：待总检，5：已终检）见字典bus_healthy_check_status
+     */
+    private String healthyCheckStatus;
 }

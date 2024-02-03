@@ -1,5 +1,7 @@
 package org.fxkc.peis.domain.bo;
 
+import cn.hutool.core.date.DatePattern;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.github.linpeilie.annotations.AutoMapper;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -57,6 +59,7 @@ public class TjRegisterZybHazardBo extends BaseEntity {
      * 开始接害日期,条件必填，体检类型为岗前体检该项非必填
      */
     @NotNull(message = "开始接害日期,条件必填，体检类型为岗前体检该项非必填不能为空", groups = { AddGroup.class, EditGroup.class })
+    @JsonFormat(pattern = DatePattern.PURE_DATE_PATTERN)
     private Date hazardStartDate;
 
     /**

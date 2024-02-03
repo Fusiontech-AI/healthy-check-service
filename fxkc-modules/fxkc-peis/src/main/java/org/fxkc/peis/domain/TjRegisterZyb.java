@@ -104,5 +104,9 @@ public class TjRegisterZyb extends TenantEntity {
      */
     private String dxResult;
 
+    /**
+     * 其他工种名称
+     */
+    private String otherJobName;
 
 }

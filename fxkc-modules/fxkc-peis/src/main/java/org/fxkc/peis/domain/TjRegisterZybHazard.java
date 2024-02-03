@@ -1,7 +1,9 @@
 package org.fxkc.peis.domain;
 
+import cn.hutool.core.date.DatePattern;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.fxkc.common.tenant.core.TenantEntity;
@@ -52,6 +54,7 @@ public class TjRegisterZybHazard extends TenantEntity {
     /**
      * 开始接害日期,条件必填，体检类型为岗前体检该项非必填
      */
+    @JsonFormat(pattern = DatePattern.PURE_DATE_PATTERN)
     private Date hazardStartDate;
 
     /**

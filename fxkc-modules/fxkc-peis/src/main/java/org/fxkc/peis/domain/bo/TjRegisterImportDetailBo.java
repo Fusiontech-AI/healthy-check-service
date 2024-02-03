@@ -50,7 +50,7 @@ public class TjRegisterImportDetailBo {
     /**
      * 分组
      */
-    private String teamGroupId;
+    private Long teamGroupId;
 
     /**
      * 工种名称

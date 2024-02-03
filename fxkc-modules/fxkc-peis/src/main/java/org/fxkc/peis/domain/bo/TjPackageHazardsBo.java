@@ -49,7 +49,7 @@ public class TjPackageHazardsBo extends BaseEntity {
      * 其他危害因素名称
      */
     @NotBlank(message = "其他危害因素名称不能为空", groups = { AddGroup.class, EditGroup.class })
-    private String hazardFactorsOtherName;
+    private String hazardFactorsOther;
 
 
 }

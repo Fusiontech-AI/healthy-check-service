@@ -1,5 +1,6 @@
 package org.fxkc.peis.register.insert;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.fxkc.common.core.utils.MapstructUtils;
@@ -83,7 +84,9 @@ public abstract class AbstractRegisterInsert implements RegisterInsertService{
     public void fillCommonField(TjRegister tjRegister){
         tjRegister.setNamePy(PinYinUtil.getPinyin(tjRegister.getName()));
         tjRegister.setRecordCode(tjRegister.getCredentialNumber());
-        tjRegister.setHealthyCheckStatus("1");//登记状态
+        if(StrUtil.isBlank(tjRegister.getHealthyCheckStatus())) {
+            tjRegister.setHealthyCheckStatus("1");//登记状态
+        }
         tjRegister.setHealthyCheckCode(SequenceNoUtils.padl(tjRegisterMapper.nextHealthyCode(),6,'0'));
         Long count = tjRegisterMapper.selectCount(new LambdaQueryWrapper<TjRegister>().eq(TjRegister::getCredentialNumber, tjRegister.getCredentialNumber()));
         tjRegister.setPeTimes(count + 1);
