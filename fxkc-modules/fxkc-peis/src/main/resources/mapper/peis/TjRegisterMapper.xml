@@ -170,6 +170,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
+    <select id="getByIds" resultType="org.fxkc.peis.domain.vo.TjRegisterVo">
+        select * from TJ_REGISTER where id in
+        <foreach collection="regIdList" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
     <update id="updateTjRegisterTeamSettleNull">
         update TJ_REGISTER
         set TEAM_SETTLE_ID=null,TEAM_SETTLE_TIME=null,TEAM_CHARGE_STATUS='1'

@@ -23,4 +23,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           and t1.CHECK_STATUS = #{bo.checkStatus}
           and t1.REGISTER_ID = #{bo.registerId}
     </select>
+
+    <select id="queryGuideItemByIds" resultType="org.fxkc.peis.domain.vo.ftlModel.GuideSheetItemVo">
+        SELECT
+            pi.REGISTER_ID as regId,
+            cp.GUIDE_ITEM_TYPE as checkType,
+            cp.COMBIN_PROJECT_NAME as itemName,
+            cp.GUIDE_NOTICE as hint,
+            cp.CHECK_ADDRESS as deptAddress
+        FROM
+            TJ_REG_COMBINATION_PROJECT pi
+                INNER JOIN TJ_COMBINATION_PROJECT cp ON pi.COMBINATION_PROJECT_ID = cp.id
+        WHERE  cp.GUIDE_FLAG ='0' and pi.CHECK_STATUS!='2'
+          and pi.REGISTER_ID in
+        <foreach collection="regIdList" item="regId" open="(" separator="," close=")">
+            #{regId}
+        </foreach>
+        ORDER BY cp.PROJECT_SORT
+    </select>
 </mapper>

@@ -69,6 +69,8 @@ public interface ITjRegisterService {
 
     Boolean changeRegCombin(TjRegCombinAddBo bo);
 
+    List<TjRegisterVo> getByIds(List<Long> regIdList);
+
     Boolean changeRegReplaceInfo(TjRegReplaceInfoBo bo);
 
     Boolean changeReportReceiveWay(TjRegReceiveWayBo bo);

@@ -184,6 +184,10 @@ public class TjCombinationProject extends TenantEntity {
     private String status;
 
     /**
+     * 指引单项目类型
+     */
+    private String guideItemType;
+    /**
      * 删除标志（0代表存在 2代表删除）
      */
     @TableLogic

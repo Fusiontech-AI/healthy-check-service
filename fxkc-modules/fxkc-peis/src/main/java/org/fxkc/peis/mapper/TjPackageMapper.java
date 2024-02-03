@@ -20,4 +20,6 @@ public interface TjPackageMapper extends BaseMapperPlus<TjPackage, TjPackageVo> 
     Page<PackageAndProjectVo> queryPackageAndProjectPages(@Param("page") Page<Object> page,@Param("name")  String name);
 
     List<PackageAndProjectVo> queryProjectByPackageId(@Param("packageId") String packageId);
+
+    List<TjPackageVo> queryListByIds(@Param("packageList") List<Long> packageList);
 }

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.fxkc.peis.mapper.TjTemplateMapper">
+
+    <select id="getList" resultType="org.fxkc.peis.domain.vo.template.TjTemplateVo">
+        SELECT
+            t.id,ti.TEMPLATE_NAME,ti.EXTEND_TYPE
+        FROM TJ_TEMPLATE t
+            INNER JOIN TJ_TEMPLATE_INFO  ti on t.TEMPLATE_INFO_ID = ti.id
+        WHERE TENANT_ID = #{bo.tenantId}
+    </select>
+
+    <select id="getValidTemplate" resultType="org.fxkc.peis.domain.vo.template.TjTemplateVo">
+        SELECT
+            t.ID,
+            ti.id as template_info_id,
+            ti.TEMPLATE_NAME,
+            ti.TEMPLATE_CODE,
+            ti.PHYSICAL_TYPE,
+            ti.REPORT_TYPE,
+            ti.TEMPLATE_PATH,
+            ti.EXTEND_TYPE
+        FROM
+            TJ_TEMPLATE T
+                INNER JOIN TJ_TEMPLATE_INFO TI ON T.TEMPLATE_INFO_ID = TI.ID
+        WHERE TI.REPORT_TYPE = #{reportType}
+          AND TI.DEL_FLAG='0'
+    </select>
+</mapper>

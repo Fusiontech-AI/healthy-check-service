@@ -26,4 +26,5 @@ public interface TjRegisterMapper extends BaseMapperPlus<TjRegister, TjRegisterV
 
     void updateTjRegisterTeamSettleNull(@Param("teamSettleIds") List<Long> teamSettleIds);
 
+    List<TjRegisterVo> getByIds(@Param("regIdList") List<Long> regIdList);
 }

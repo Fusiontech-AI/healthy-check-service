@@ -6,6 +6,7 @@ import org.fxkc.peis.domain.TjTeamInfo;
 import org.fxkc.peis.domain.bo.TjTeamInfoBo;
 import org.fxkc.peis.domain.vo.TjTeamInfoVo;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -50,4 +51,6 @@ public interface ITjTeamInfoService {
     String getTeamNoById(Long id);
 
     String selectTeamNameById(Long id);
+
+    List<TjTeamInfoVo> queryListByIds(List<Long> teamIdList);
 }

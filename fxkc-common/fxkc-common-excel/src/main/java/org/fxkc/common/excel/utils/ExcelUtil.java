@@ -91,6 +91,21 @@ public class ExcelUtil {
         }
     }
 
+    public static void download(HttpServletResponse response, String fileName,Class<?> clazz, List<?> data, Set<String> set) throws Exception {
+        try {
+            resetResponse(fileName, response);
+            EasyExcel.write(response.getOutputStream(), clazz)
+                .excludeColumnFieldNames(set)
+                .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
+                .autoCloseStream(Boolean.TRUE)
+                .registerConverter(new ExcelBigNumberConvert())
+                .sheet("sheet1")
+                .doWrite(data);
+        } catch (IOException e) {
+            throw new RuntimeException("导出Excel异常");
+        }
+    }
+
     /**
      * 导出excel
      *

@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.fxkc.peis.domain.bo.TjRegCombinationProjectDelayBo;
 import org.fxkc.peis.domain.bo.TjRegCombinationProjectListBo;
 import org.fxkc.peis.domain.vo.TjRegCombinationProjectListVo;
+import org.fxkc.peis.domain.vo.ftlModel.GuideSheetItemVo;
 import org.fxkc.peis.enums.CheckStatusEnum;
 import org.springframework.stereotype.Service;
 import org.fxkc.peis.domain.bo.TjRegCombinationProjectBo;
@@ -164,5 +165,10 @@ public class TjRegCombinationProjectServiceImpl implements ITjRegCombinationProj
                 .delayReason(delayBo.getDelayReason())
                 .checkStatus(CheckStatusEnum.延期.getCode()).build(),
             Wrappers.lambdaQuery(TjRegCombinationProject.class).in(TjRegCombinationProject::getId,delayBo.getIds())) >0;
+    }
+
+    @Override
+    public List<GuideSheetItemVo> queryGuideItemByIds(List<Long> regIdList) {
+        return this.baseMapper.queryGuideItemByIds(regIdList);
     }
 }
