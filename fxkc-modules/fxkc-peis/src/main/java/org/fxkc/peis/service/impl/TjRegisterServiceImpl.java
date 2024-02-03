@@ -146,7 +146,7 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
             tjRegisterZybMapper.updateById(tjRegisterZyb);
         }
         //不应在这里修改体检人员照片信息
-        bo.setUserImage(null);
+        update.setUserImage(null);
 
         return baseMapper.updateById(update) > 0;
     }
