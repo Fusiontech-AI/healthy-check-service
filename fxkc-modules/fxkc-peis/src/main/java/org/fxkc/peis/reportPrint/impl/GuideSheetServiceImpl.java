@@ -1,7 +1,7 @@
-package org.fxkc.peis.service.impl;
+package org.fxkc.peis.reportPrint.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -11,7 +11,6 @@ import org.fxkc.common.satoken.utils.LoginHelper;
 import org.fxkc.peis.constant.DictTypeConstants;
 import org.fxkc.peis.constant.ExtendTypeEnum;
 import org.fxkc.peis.constant.ReportTypeEnum;
-import org.fxkc.peis.constant.TemplateConstants;
 import org.fxkc.peis.domain.bo.template.ReportPrintBO;
 import org.fxkc.peis.domain.vo.TjPackageVo;
 import org.fxkc.peis.domain.vo.TjRegisterVo;
@@ -22,42 +21,50 @@ import org.fxkc.peis.domain.vo.ftlModel.GuideSheetVo;
 import org.fxkc.peis.domain.vo.template.TjTemplateExtendVo;
 import org.fxkc.peis.domain.vo.template.TjTemplateVo;
 import org.fxkc.peis.exception.PeisException;
+import org.fxkc.peis.reportPrint.AbstractReportPrint;
 import org.fxkc.peis.service.*;
 import org.fxkc.peis.utils.BarCodeUtils;
 import org.fxkc.peis.utils.PdfMergeUtil;
 import org.fxkc.peis.utils.WordToPdfUtils;
 import org.fxkc.system.api.RemoteUserService;
 import org.fxkc.system.api.domain.vo.RemoteUserVo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
+/**
+ * 指引单打印
+ */
 @Slf4j
 @Service
-public class TjReportPrintServiceImpl implements ITjReportPrintService {
+public class GuideSheetServiceImpl extends AbstractReportPrint {
 
-    private final ITjTemplateService templateService;
-
-    private final ITjRegisterService registerService;
-
-    private final ITjRegCombinationProjectService regProjectService;
-
-    private final ITjTeamInfoService teamInfoService;
-
-    private final ITjPackageService packageService;
-
-    private final DictService dictService;
+    @Autowired
+    private ITjRegisterService registerService;
+    @Autowired
+    private ITjRegCombinationProjectService regProjectService;
+    @Autowired
+    private ITjTeamInfoService teamInfoService;
+    @Autowired
+    private ITjPackageService packageService;
+    @Autowired
+    private DictService dictService;
     @DubboReference
     private RemoteUserService remoteUserService;
 
+    public GuideSheetServiceImpl(){
+        this.reportType = ReportTypeEnum.ZYD.getCode();
+    }
+
     @Override
-    public void printGuideSheet(ReportPrintBO bo, HttpServletResponse response) throws Exception {
+    public void print(ReportPrintBO bo, HttpServletResponse response) throws Exception {
         String nickname = LoginHelper.getLoginUser().getNickname();
         //查询体检记录
         List<TjRegisterVo> registerList = registerService.getByIds(bo.getRegIdList());
@@ -66,17 +73,17 @@ public class TjReportPrintServiceImpl implements ITjReportPrintService {
         }
         Set<Long> packageIdSet = new HashSet<>();
         Set<Long> teamIdSet = new HashSet<>();
-        Set<Long> regIdSet = new HashSet<>();
+        List<Long> regIdList = new ArrayList<>();
         Set<Long> userIdSet = new HashSet<>();
-        Map<Long, TjTemplateVo> templateMap = this.getTemplateMap(registerList, ReportTypeEnum.ZYD.getCode());
+        Map<Long, TjTemplateVo> templateMap = this.getTemplateMap(registerList);
         registerList.forEach(s->{
             packageIdSet.add(s.getPackageId());
             if(null!=s.getTeamId()){teamIdSet.add(s.getTeamId());}
-            if(null!=s.getId()){regIdSet.add(s.getId());}
+            if(null!=s.getId()){regIdList.add(s.getId());}
             if(null!=s.getGeneralReviewDoctor()){userIdSet.add(s.getGeneralReviewDoctor());}
         });
         //查询全部的项目
-        List<GuideSheetItemVo> itemAllList = this.regProjectService.queryGuideItemByIds(new ArrayList<>(regIdSet));
+        List<GuideSheetItemVo> itemAllList = this.regProjectService.queryGuideItemByIds(regIdList);
         Map<Long, List<GuideSheetItemVo>> itemMap = itemAllList.stream().collect(Collectors.groupingBy(GuideSheetItemVo::getRegId));
         //查询其它需要翻译的数据
         List<TjTeamInfoVo> teamInfoList = this.teamInfoService.queryListByIds(new ArrayList<>(teamIdSet));
@@ -98,6 +105,7 @@ public class TjReportPrintServiceImpl implements ITjReportPrintService {
         if(registerList.size()==1){
             TjRegisterVo s = registerList.get(0);
             this.printGuideSheet(s,templateMap, itemMap.getOrDefault(s.getId(),new ArrayList<>()), teamInfoMap, packageMap, sexMap, guideItemTypeMap, userMap, nickname, response.getOutputStream());
+            this.afterExecute(bo);
             return;
         }
         //多条数据时，需要下载导本地并合并
@@ -115,6 +123,7 @@ public class TjReportPrintServiceImpl implements ITjReportPrintService {
             //删除临时文件
             WordToPdfUtils.deleteFolder(new File(templatePath));
         }
+        this.afterExecute(bo);
     }
 
     /**
@@ -188,33 +197,23 @@ public class TjReportPrintServiceImpl implements ITjReportPrintService {
         WordToPdfUtils.createPdf(guideSheetVo,templateVo.getTemplatePath(),templateVo.getTemplateName(),outputStream);
     }
 
-    private Map<Long,TjTemplateVo> getTemplateMap(List<TjRegisterVo> registerList,String reportType){
-        List<TjTemplateVo> list = templateService.getValidTemplate(reportType);
-        if(list.isEmpty()){
-            throw new PeisException("未配置相关模板，无法打印！");
+    /**
+     * 数据的后置处理
+     * @param bo 查询的数据
+     */
+    private void afterExecute(ReportPrintBO bo) {
+        //修改导检单打印数据
+        if(bo.getIsPrint()){
+            this.registerService.updateGuideSheetPrint(bo);
         }
-        Map<String, TjTemplateVo> templateMap = list.stream().collect(Collectors.toMap(TjTemplateVo::getPhysicalType,s->s));
-        Map<Long,TjTemplateVo> map = new HashMap<>();
-        for(TjRegisterVo s:registerList){
-            TjTemplateVo tjTemplateVo;
-            if(templateMap.containsKey(s.getPhysicalType())){
-                tjTemplateVo = templateMap.get(s.getPhysicalType());
-            }else {
-                tjTemplateVo = templateMap.get(TemplateConstants.COMMON_PHYSICAL_TYPE);
-            }
-            if(null==tjTemplateVo){
-                throw new PeisException(String.format("未寻找到 %s 关联的模板，请配置通用模板或者相关体检类型模板！",s.getHealthyCheckCode()));
-            }
-            map.put(s.getId(),tjTemplateVo);
-        }
-        return map;
+
     }
 
     /**
      * 生成条形码图片
      * @param number 内容
      */
-    private  String getBarCodeBase64(String number) {
+    private String getBarCodeBase64(String number) {
         try {
             //生成条形码图片，然后转换成base64
             BufferedImage img = BarCodeUtils.insertWords(BarCodeUtils.getBarCode(number), number);

@@ -3,6 +3,7 @@ package org.fxkc.peis.service;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.peis.domain.bo.*;
+import org.fxkc.peis.domain.bo.template.ReportPrintBO;
 import org.fxkc.peis.domain.vo.TjRegisterPageVo;
 import org.fxkc.peis.domain.vo.TjRegisterVo;
 
@@ -74,4 +75,6 @@ public interface ITjRegisterService {
     Boolean changeRegReplaceInfo(TjRegReplaceInfoBo bo);
 
     Boolean changeReportReceiveWay(TjRegReceiveWayBo bo);
+
+    void updateGuideSheetPrint(ReportPrintBO bo);
 }

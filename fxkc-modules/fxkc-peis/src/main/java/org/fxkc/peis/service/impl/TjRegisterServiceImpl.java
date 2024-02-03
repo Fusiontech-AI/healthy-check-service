@@ -20,6 +20,7 @@ import org.fxkc.common.oss.factory.OssFactory;
 import org.fxkc.common.satoken.utils.LoginHelper;
 import org.fxkc.peis.domain.*;
 import org.fxkc.peis.domain.bo.*;
+import org.fxkc.peis.domain.bo.template.ReportPrintBO;
 import org.fxkc.peis.domain.vo.TjRegisterPageVo;
 import org.fxkc.peis.domain.vo.TjRegisterVo;
 import org.fxkc.peis.enums.CheckStatusEnum;
@@ -328,6 +329,11 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
         updateEntity.setRecipient(bo.getRecipient());
         updateEntity.setPostAddress(bo.getPostAddress());
         return baseMapper.updateById(updateEntity)> 0;
+    }
+
+    @Override
+    public void updateGuideSheetPrint(ReportPrintBO bo) {
+        this.baseMapper.updateGuideSheetPrint(bo);
     }
 
     @Override

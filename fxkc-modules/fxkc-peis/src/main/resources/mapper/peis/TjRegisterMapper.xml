@@ -186,4 +186,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </update>
 
+    <update id="updateGuideSheetPrint">
+        update TJ_REGISTER set GUIDE_PRINT_TIMES = GUIDE_PRINT_TIMES +1
+        where ID in
+        <foreach collection="bo.regIdList" item="regId" open="(" separator="," close=")">
+            #{regId}
+        </foreach>
+    </update>
+
 </mapper>
