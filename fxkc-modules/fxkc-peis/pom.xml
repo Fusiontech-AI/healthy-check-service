@@ -186,6 +186,9 @@
         <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
+                <configuration>
+                    <includeSystemScope>true</includeSystemScope><!--外部进行打包-->
+                </configuration>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
