@@ -253,7 +253,7 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
             groupList.forEach(k -> k.setPackageName(packageMap.getOrDefault(k.getId(), StrUtil.EMPTY)));
         }
         //每次保存都先根据groupId删除项目信息、职业病则需多删除危害因素
-        List<Long> groupIds = StreamUtils.toList(groupList, TjTeamGroup::getTeamId);
+        List<Long> groupIds = StreamUtils.toList(groupList, TjTeamGroup::getId);
         tjTeamGroupItemMapper.delete(Wrappers.lambdaQuery(TjTeamGroupItem.class)
             .in(TjTeamGroupItem::getGroupId, groupIds));
         tjTeamGroupHazardsMapper.delete(Wrappers.lambdaQuery(TjTeamGroupHazards.class)

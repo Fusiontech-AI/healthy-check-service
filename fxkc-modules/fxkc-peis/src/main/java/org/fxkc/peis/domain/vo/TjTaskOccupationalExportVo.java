@@ -1,9 +1,11 @@
 package org.fxkc.peis.domain.vo;
 
+import cn.hutool.core.date.DatePattern;
 import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.write.style.ColumnWidth;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -44,7 +46,7 @@ public class TjTaskOccupationalExportVo {
     @ExcelProperty("身份证号")
     @ColumnWidth(25)
     @NotBlank(message = "身份证号不能为空", groups = { AddGroup.class, EditGroup.class })
-    private String idCard;
+    private String credentialNumber;
 
     /**
      * 性别
@@ -171,4 +173,15 @@ public class TjTaskOccupationalExportVo {
      * 任务名称
      */
     private String taskName;
+
+    /**
+     * 分组id
+     */
+    private Long groupId;
+
+    /**
+     * 生日
+     */
+    @JsonFormat(pattern = DatePattern.NORM_DATE_PATTERN, timezone = "GMT+8")
+    private Date birthday;
 }

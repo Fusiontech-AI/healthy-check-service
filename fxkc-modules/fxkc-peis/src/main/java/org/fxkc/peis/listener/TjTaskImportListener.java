@@ -69,7 +69,8 @@ public class TjTaskImportListener extends AnalysisEventListener<TjTaskOccupation
         if(StrUtil.isNotBlank(errorMsg)) {
             failureMsg.append(errorMsg).append(StrUtil.COMMA);
         }
-        if(StrUtil.isNotBlank(tjTaskOccupationalExportVo.getIdCard()) && !IdcardUtil.isValidCard(tjTaskOccupationalExportVo.getIdCard())) {
+        if(StrUtil.isNotBlank(tjTaskOccupationalExportVo.getCredentialNumber()) &&
+            !IdcardUtil.isValidCard(tjTaskOccupationalExportVo.getCredentialNumber())) {
            failureMsg.append("身份证有误,");
         }
         if(StrUtil.isNotBlank(tjTaskOccupationalExportVo.getPhone()) && tjTaskOccupationalExportVo.getPhone().length() != 11) {
@@ -82,16 +83,17 @@ public class TjTaskImportListener extends AnalysisEventListener<TjTaskOccupation
             if(Objects.isNull(group)) {
                 failureMsg.append("所选分组不存在或已删除,");
             }
+            tjTaskOccupationalExportVo.setGroupId(group.getId());
         }
         if(isOccupational &&  otherJobCode.contains(tjTaskOccupationalExportVo.getJobCode())
             && StrUtil.isBlank(tjTaskOccupationalExportVo.getOtherJobName())) {
             failureMsg.append("工种为其他时其他工种名称不能为空,");
         }
-        if(idCardSet.contains(tjTaskOccupationalExportVo.getIdCard())) {
-            failureMsg.append("身份证").append(tjTaskOccupationalExportVo.getIdCard()).append("重复,");
+        if(idCardSet.contains(tjTaskOccupationalExportVo.getCredentialNumber())) {
+            failureMsg.append("身份证").append(tjTaskOccupationalExportVo.getCredentialNumber()).append("重复,");
         }
-        if(StrUtil.isNotBlank(tjTaskOccupationalExportVo.getIdCard())) {
-            idCardSet.add(tjTaskOccupationalExportVo.getIdCard());
+        if(StrUtil.isNotBlank(tjTaskOccupationalExportVo.getCredentialNumber())) {
+            idCardSet.add(tjTaskOccupationalExportVo.getCredentialNumber());
         }
         if(failureMsg.length() > 0) {
             failureMsg.insert(0, index + ".第" + i + "行").deleteCharAt(failureMsg.length() - 1);
@@ -101,8 +103,8 @@ public class TjTaskImportListener extends AnalysisEventListener<TjTaskOccupation
             if(autoGroup) {
                 List<TjTeamGroup> groupList = iTjTeamGroupService.list(Wrappers.lambdaQuery(TjTeamGroup.class)
                     .eq(TjTeamGroup::getTaskId, tjTaskImportBo.getTaskId()));
-                Integer gender = IdcardUtil.getGenderByIdCard(tjTaskOccupationalExportVo.getIdCard()) == 1 ? 0 : 1 ;
-                Integer age = IdcardUtil.getAgeByIdCard(tjTaskOccupationalExportVo.getIdCard());
+                Integer gender = IdcardUtil.getGenderByIdCard(tjTaskOccupationalExportVo.getCredentialNumber()) == 1 ? 0 : 1 ;
+                Integer age = IdcardUtil.getAgeByIdCard(tjTaskOccupationalExportVo.getCredentialNumber());
                 TjTeamGroup group;
                 List<TjTeamGroup> conformList = StreamUtils.filter(groupList, e -> Objects.nonNull(e.getStartAge()) && Objects.nonNull(e.getEndAge())
                     && (Objects.equals(String.valueOf(gender), e.getGender()) || Objects.equals("2", e.getGender()))
@@ -117,7 +119,9 @@ public class TjTaskImportListener extends AnalysisEventListener<TjTaskOccupation
                     group = groupList.get(ThreadLocalRandom.current().nextInt(groupList.size()));
                 }
                 tjTaskOccupationalExportVo.setGroupName(group.getGroupName());
+                tjTaskOccupationalExportVo.setGroupId(group.getId());
             }
+//            IdcardUtil.getBirthByIdCard()
             //todo 赋值流水号
             tjTaskOccupationalExportVo.setAddTime(tjTaskImportBo.getTime());
             tjTaskOccupationalExportVo.setTeamName(tjTaskImportBo.getTeamName());

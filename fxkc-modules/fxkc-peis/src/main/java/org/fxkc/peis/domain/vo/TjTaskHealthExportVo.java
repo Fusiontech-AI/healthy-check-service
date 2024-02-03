@@ -34,7 +34,7 @@ public class TjTaskHealthExportVo {
      */
     @ExcelProperty("身份证号")
     @ColumnWidth(25)
-    private String idCard;
+    private String credentialNumber;
 
     /**
      * 性别
