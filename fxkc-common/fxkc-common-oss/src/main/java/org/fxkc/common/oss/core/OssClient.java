@@ -1,5 +1,6 @@
 package org.fxkc.common.oss.core;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
@@ -15,6 +16,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
+import org.fxkc.common.core.service.DictService;
 import org.fxkc.common.core.utils.DateUtils;
 import org.fxkc.common.core.utils.StringUtils;
 import org.fxkc.common.oss.constant.OssConstant;
@@ -144,6 +146,9 @@ public class OssClient {
     }
 
     public void deleteBatch(List<String> pathList){
+        if(CollUtil.isEmpty(pathList)){
+            return;
+        }
         List<String> path = pathList.stream().distinct().toList();
         //多线程处理删除文件
         path.parallelStream().forEach(this::delete);
