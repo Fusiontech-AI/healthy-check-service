@@ -57,7 +57,6 @@ public class SysDictDataServiceImpl implements ISysDictDataService {
         lqw.like(StringUtils.isNotBlank(bo.getDictLabel()), SysDictData::getDictLabel, bo.getDictLabel());
         lqw.eq(StringUtils.isNotBlank(bo.getDictType()), SysDictData::getDictType, bo.getDictType());
         lqw.eq(StringUtils.isNotBlank(bo.getBusType()), SysDictData::getBusType, bo.getBusType());
-        lqw.eq(StringUtils.isNotBlank(bo.getDictValue()), SysDictData::getDictValue, bo.getDictValue());
         lqw.orderByAsc(SysDictData::getDictSort);
         return lqw;
     }
@@ -135,6 +134,21 @@ public class SysDictDataServiceImpl implements ISysDictDataService {
             return baseMapper.selectDictDataByType(data.getDictType());
         }
         throw new ServiceException("操作失败");
+    }
+
+    /**
+     * 根据字典类型和字典键值查询字典数据信息
+     *
+     * @param dictType  字典类型
+     * @param dictValue 字典键值
+     * @return SysDictDataVo
+     */
+    @Override
+    public SysDictDataVo selectDictByTypeAndValue(String dictType, String dictValue) {
+        return baseMapper.selectVoOne(new LambdaQueryWrapper<SysDictData>()
+                .select(SysDictData::getDictLabel)
+                .eq(SysDictData::getDictType, dictType)
+                .eq(SysDictData::getDictValue, dictValue));
     }
 
 }
