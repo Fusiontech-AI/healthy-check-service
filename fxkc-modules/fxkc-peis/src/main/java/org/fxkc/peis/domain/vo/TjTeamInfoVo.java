@@ -111,13 +111,6 @@ public class TjTeamInfoVo implements Serializable {
     private String regionCode;
 
     /**
-     * 地区名称
-     */
-    @ExcelProperty(value = "地区名称")
-    @Translation(type = TransConstant.DICT_TYPE_TO_LABEL,other = "bus_area",mapper = "regionCode")
-    private String regionCodeName;
-
-    /**
      * 地区编码
      */
     @ExcelProperty(value = "经济类型")
