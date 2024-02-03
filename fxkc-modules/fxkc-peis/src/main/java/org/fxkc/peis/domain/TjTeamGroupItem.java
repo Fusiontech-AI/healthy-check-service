@@ -61,7 +61,7 @@ public class TjTeamGroupItem extends TenantEntity {
     private BigDecimal discount;
 
     /**
-     * 是否套餐包含的项目1是2否
+     * 是否套餐包含的项目0是1否
      */
     private String include;
 
@@ -70,5 +70,8 @@ public class TjTeamGroupItem extends TenantEntity {
      */
     private Boolean isRequired;
 
-
+    /**
+     * 套餐id
+     */
+    private Long packageId;
 }

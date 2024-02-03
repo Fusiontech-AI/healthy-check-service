@@ -60,7 +60,7 @@ public class TjTeamGroupItemVo implements Serializable {
     private BigDecimal discount;
 
     /**
-     * 是否套餐包含的项目1是2否
+     * 是否套餐包含的项目0是1否
      */
     private String include;
 
@@ -69,5 +69,8 @@ public class TjTeamGroupItemVo implements Serializable {
      */
     private Boolean isRequired;
 
-
+    /**
+     * 套餐id
+     */
+    private Long packageId;
 }

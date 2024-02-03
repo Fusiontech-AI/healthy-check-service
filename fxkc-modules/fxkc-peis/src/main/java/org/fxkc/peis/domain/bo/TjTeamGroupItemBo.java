@@ -58,9 +58,9 @@ public class TjTeamGroupItemBo extends BaseEntity {
     private BigDecimal discount;
 
     /**
-     * 是否套餐包含的项目1是2否
+     * 是否套餐包含的项目0是1否
      */
-    @NotBlank(message = "是否套餐包含的项目1是2否不能为空")
+    @NotBlank(message = "是否套餐包含的项目0是1否不能为空")
     private String include;
 
     /**
@@ -69,5 +69,8 @@ public class TjTeamGroupItemBo extends BaseEntity {
     @NotNull(message = "是否必选(true:是0:false)不能为空")
     private Boolean isRequired;
 
-
+    /**
+     * 套餐id
+     */
+    private Long packageId;
 }
