@@ -1,6 +1,7 @@
 package org.fxkc.peis.listener;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdcardUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
@@ -21,10 +22,7 @@ import org.fxkc.peis.domain.vo.TjTaskOccupationalExportVo;
 import org.fxkc.peis.enums.PhysicalTypeEnum;
 import org.fxkc.peis.service.ITjTeamGroupService;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -56,7 +54,7 @@ public class TjTaskImportListener extends AnalysisEventListener<TjTaskOccupation
     @Override
     public void invoke(TjTaskOccupationalExportVo tjTaskOccupationalExportVo, AnalysisContext context) {
         log.info("解析导入数据======={}", JSONUtil.toJsonStr(tjTaskOccupationalExportVo));
-        int i = context.readRowHolder().getRowIndex();
+            int i = context.readRowHolder().getRowIndex();
         Boolean isOccupational = PhysicalTypeEnum.isOccupational(tjTaskImportBo.getTemplateType());
         Boolean autoGroup = tjTaskImportBo.getAutoGroup();
         String errorMsg;
@@ -83,7 +81,9 @@ public class TjTaskImportListener extends AnalysisEventListener<TjTaskOccupation
             if(Objects.isNull(group)) {
                 failureMsg.append("所选分组不存在或已删除,");
             }
-            tjTaskOccupationalExportVo.setGroupId(group.getId());
+            tjTaskOccupationalExportVo.setTeamGroupId(group.getId());
+            tjTaskOccupationalExportVo.setIlluminationSource(group.getShineSource());
+            tjTaskOccupationalExportVo.setJobIlluminationType(group.getShineType());
         }
         if(isOccupational &&  otherJobCode.contains(tjTaskOccupationalExportVo.getJobCode())
             && StrUtil.isBlank(tjTaskOccupationalExportVo.getOtherJobName())) {
@@ -119,9 +119,11 @@ public class TjTaskImportListener extends AnalysisEventListener<TjTaskOccupation
                     group = groupList.get(ThreadLocalRandom.current().nextInt(groupList.size()));
                 }
                 tjTaskOccupationalExportVo.setGroupName(group.getGroupName());
-                tjTaskOccupationalExportVo.setGroupId(group.getId());
+                tjTaskOccupationalExportVo.setTeamGroupId(group.getId());
+                tjTaskOccupationalExportVo.setIlluminationSource(group.getShineSource());
+                tjTaskOccupationalExportVo.setJobIlluminationType(group.getShineType());
             }
-//            IdcardUtil.getBirthByIdCard()
+            tjTaskOccupationalExportVo.setBirthday(IdcardUtil.getBirthDate(tjTaskOccupationalExportVo.getCredentialNumber()));
             //todo 赋值流水号
             tjTaskOccupationalExportVo.setAddTime(tjTaskImportBo.getTime());
             tjTaskOccupationalExportVo.setTeamName(tjTaskImportBo.getTeamName());

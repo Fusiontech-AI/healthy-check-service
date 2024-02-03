@@ -1,5 +1,7 @@
 package org.fxkc.peis.domain.bo;
 
+import io.github.linpeilie.annotations.AutoMapper;
+import io.github.linpeilie.annotations.AutoMappers;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -7,6 +9,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
+@AutoMappers({@AutoMapper(target = TjRegisterAddBo.class), @AutoMapper(target = TjRegisterZybBo.class)})
 public class TjRegisterImportDetailBo {
 
     /**
@@ -19,7 +22,7 @@ public class TjRegisterImportDetailBo {
      * 身份证号
      */
     @NotBlank(message = "身份证号不能为空")
-    private String idCard;
+    private String credentialNumber;
 
     /**
      * 性别
@@ -47,8 +50,7 @@ public class TjRegisterImportDetailBo {
     /**
      * 分组
      */
-    @NotBlank(message = "分组不能为空")
-    private String groupName;
+    private String teamGroupId;
 
     /**
      * 工种名称
@@ -63,22 +65,22 @@ public class TjRegisterImportDetailBo {
     /**
      * 总工龄年
      */
-    private String seniorityYear;
+    private Long seniorityYear;
 
     /**
      * 总工龄月
      */
-    private String seniorityMonth;
+    private Long seniorityMonth;
 
     /**
      * 接害工龄年
      */
-    private String contactSeniorityYear;
+    private Long contactSeniorityYear;
 
     /**
      * 接触工龄月
      */
-    private String contactSeniorityMonth;
+    private Long contactSeniorityMonth;
 
     /**
      * 个案卡类别
@@ -93,7 +95,6 @@ public class TjRegisterImportDetailBo {
     /**
      * 流水号
      */
-    @NotBlank(message = "流水号不能为空")
     private String serialNumber;
 
     /**
