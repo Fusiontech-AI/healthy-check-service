@@ -1,7 +1,6 @@
 package org.fxkc.peis.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.EnumUtil;
@@ -29,7 +28,6 @@ import org.fxkc.peis.domain.bo.*;
 import org.fxkc.peis.domain.vo.*;
 import org.fxkc.peis.enums.GroupTypeEnum;
 import org.fxkc.peis.enums.HealthyCheckTypeEnum;
-import org.fxkc.peis.enums.OccupationalDictEnum;
 import org.fxkc.peis.enums.PhysicalTypeEnum;
 import org.fxkc.peis.exception.PeisException;
 import org.fxkc.peis.listener.TjTaskImportListener;
@@ -245,8 +243,8 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
     }
 
     @Override
-    public VerifyMessageVo verifyGroupData(List<TjGroupVerifyBo> list) {
-        VerifyMessageVo vo = new VerifyMessageVo();
+    public TjVerifyMessageVo verifyGroupData(List<TjGroupVerifyBo> list) {
+        TjVerifyMessageVo vo = new TjVerifyMessageVo();
         List<TjTeamGroupBo> boList = MapstructUtils.convert(list, TjTeamGroupBo.class);
         validEntityBeforeSave(new TjTeamTaskBo().setGroupList(boList), Boolean.FALSE);
         List<Long> idList = StreamUtils.toList(list, TjGroupVerifyBo::getId);
@@ -316,8 +314,8 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
     }
 
     @Override
-    public VerifyMessageVo verifyGroupPackageData(List<TjGroupVerifyPackageBo> list) {
-        VerifyMessageVo vo = new VerifyMessageVo();
+    public TjVerifyMessageVo verifyGroupPackageData(List<TjGroupVerifyPackageBo> list) {
+        TjVerifyMessageVo vo = new TjVerifyMessageVo();
         List<Long> idList = StreamUtils.toList(list, TjGroupVerifyPackageBo::getId);
         List<TjTeamGroup> groupList = tjTeamGroupMapper.selectBatchIds(idList);
         List<TjRegister> tjRegisterList = tjRegisterMapper.selectList(Wrappers.lambdaQuery(TjRegister.class)

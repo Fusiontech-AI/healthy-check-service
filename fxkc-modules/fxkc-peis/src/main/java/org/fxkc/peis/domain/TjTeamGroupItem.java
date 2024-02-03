@@ -69,4 +69,9 @@ public class TjTeamGroupItem extends TenantEntity {
      * 是否必选(1:是0否)
      */
     private Boolean isRequired;
+
+    /**
+     * 项目编码
+     */
+    private String combinProjectCode;
 }

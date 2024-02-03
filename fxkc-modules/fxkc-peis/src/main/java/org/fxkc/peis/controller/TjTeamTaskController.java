@@ -11,8 +11,6 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.fxkc.common.excel.core.ExcelResult;
 import org.fxkc.peis.domain.bo.*;
 import org.fxkc.peis.domain.vo.*;
-import org.fxkc.peis.enums.PhysicalTypeEnum;
-import org.fxkc.peis.listener.TjTaskImportListener;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -117,7 +115,7 @@ public class TjTeamTaskController extends BaseController {
      */
     @PostMapping("/verifyGroupData")
     @Log(title = "团检任务校验分组数据", businessType = BusinessType.OTHER)
-    public R<VerifyMessageVo> verifyGroupData(@RequestBody @Valid List<TjGroupVerifyBo> list) {
+    public R<TjVerifyMessageVo> verifyGroupData(@RequestBody @Valid List<TjGroupVerifyBo> list) {
         return R.ok(tjTeamTaskService.verifyGroupData(list));
     }
 
@@ -126,7 +124,7 @@ public class TjTeamTaskController extends BaseController {
      */
     @PostMapping("/verifyGroupPackageData")
     @Log(title = "团检任务校验分组套餐数据", businessType = BusinessType.OTHER)
-    public R<VerifyMessageVo> verifyGroupPackageData(@RequestBody @Valid List<TjGroupVerifyPackageBo> list) {
+    public R<TjVerifyMessageVo> verifyGroupPackageData(@RequestBody @Valid List<TjGroupVerifyPackageBo> list) {
         return R.ok(tjTeamTaskService.verifyGroupPackageData(list));
     }
 

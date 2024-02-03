@@ -50,9 +50,9 @@ public interface ITjTeamTaskService {
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
 
-    VerifyMessageVo verifyGroupData(List<TjGroupVerifyBo> list);
+    TjVerifyMessageVo verifyGroupData(List<TjGroupVerifyBo> list);
 
-    VerifyMessageVo verifyGroupPackageData(List<TjGroupVerifyPackageBo> list);
+    TjVerifyMessageVo verifyGroupPackageData(List<TjGroupVerifyPackageBo> list);
 
     void exportRegisterTemplate(String templateType, Long taskId, HttpServletResponse response);
 

@@ -89,4 +89,9 @@ public class TjTeamGroupUpdateBo {
      * 照射源种类sys_dict_type(bus_job_illumination_source)
      */
     private String shineType;
+
+    /**
+     * 项目编码
+     */
+    private String combinProjectCode;
 }

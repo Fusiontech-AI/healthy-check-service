@@ -133,5 +133,14 @@ public class TjTeamGroupVo implements Serializable {
      */
     private String shineType;
 
+    /**
+     * 标准价格
+     */
+    private BigDecimal standardPrice;
+
+    /**
+     * 实际价格
+     */
+    private BigDecimal actualPrice;
 
 }

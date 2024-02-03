@@ -3,7 +3,7 @@ package org.fxkc.peis.domain.vo;
 import lombok.Data;
 
 @Data
-public class VerifyMessageVo {
+public class TjVerifyMessageVo {
 
     /**
      * 记录信息

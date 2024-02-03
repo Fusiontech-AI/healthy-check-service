@@ -5,6 +5,8 @@ import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.write.style.ColumnWidth;
+import com.alibaba.excel.annotation.write.style.ContentStyle;
+import com.alibaba.excel.enums.poi.HorizontalAlignmentEnum;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -28,6 +30,7 @@ import java.util.Date;
 @ExcelIgnoreUnannotated
 @AllArgsConstructor
 @NoArgsConstructor
+@ContentStyle(horizontalAlignment = HorizontalAlignmentEnum.CENTER)
 public class TjTaskOccupationalExportVo {
 
     private static final long serialVersionUID = 1L;

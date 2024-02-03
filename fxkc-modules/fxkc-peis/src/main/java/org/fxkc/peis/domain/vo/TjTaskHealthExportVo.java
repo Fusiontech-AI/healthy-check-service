@@ -3,6 +3,8 @@ package org.fxkc.peis.domain.vo;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.write.style.ColumnWidth;
+import com.alibaba.excel.annotation.write.style.ContentStyle;
+import com.alibaba.excel.enums.poi.HorizontalAlignmentEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +20,7 @@ import org.fxkc.common.excel.convert.ExcelDictConvert;
 @ExcelIgnoreUnannotated
 @AllArgsConstructor
 @NoArgsConstructor
+@ContentStyle(horizontalAlignment = HorizontalAlignmentEnum.CENTER)
 public class TjTaskHealthExportVo {
 
     private static final long serialVersionUID = 1L;
