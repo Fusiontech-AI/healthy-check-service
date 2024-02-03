@@ -184,11 +184,13 @@ public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
             .select(TjRegister::getId)
             .in(TjRegister::getTeamSettleId,ids)
             .eq(TjRegister::getDelFlag,CommonConstants.NORMAL));
-        tjRegCombinationProjectMapper.update(TjRegCombinationProject.builder().payStatus("0").build(),
-            new LambdaUpdateWrapper<TjRegCombinationProject>()
-                .in(TjRegCombinationProject::getRegisterId,regIds)
-                .eq(TjRegCombinationProject::getPayMode,"1")
-                .eq(TjRegCombinationProject::getDelFlag,CommonConstants.NORMAL));
+        if(CollUtil.isNotEmpty(regIds)){
+            tjRegCombinationProjectMapper.update(TjRegCombinationProject.builder().payStatus("0").build(),
+                new LambdaUpdateWrapper<TjRegCombinationProject>()
+                    .in(TjRegCombinationProject::getRegisterId,regIds)
+                    .eq(TjRegCombinationProject::getPayMode,"1")
+                    .eq(TjRegCombinationProject::getDelFlag,CommonConstants.NORMAL));
+        }
         tjRegisterMapper.updateTjRegisterTeamSettleNull(ids);
         TjTeamSettle update = new TjTeamSettle();
         update.setStatus("2");
