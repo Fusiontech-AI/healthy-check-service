@@ -322,7 +322,7 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
         TjRegisterVo vo = baseMapper.selectVoOne(wrapper);
         if(vo != null && StrUtil.isNotEmpty(vo.getUserImage())){
             OssClient ossClient = OssFactory.instance();
-            vo.setUserImage(ossClient.getPrivateUrl(vo.getUserImage(),60));
+            vo.setUserImage(ossClient.getPrivateUrlWithoutSuffix(vo.getUserImage()));
         }
         return vo;
     }

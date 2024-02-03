@@ -105,13 +105,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 AND t1.GENERAL_REVIEW_TIME >= #{bo.generalReviewTimeStart}
             </if>
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.generalReviewTimeEnd)">
-                AND t1.GENERAL_REVIEW_TIME &lt;= #{bo.generalReviewTimeStart}
+                AND t1.GENERAL_REVIEW_TIME &lt; TRUNC(#{bo.generalReviewTimeEnd})+1
             </if>
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.healthyCheckTimeStart)">
                 AND t1.HEALTHY_CHECK_TIME >= #{bo.healthyCheckTimeStart}
             </if>
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.healthyCheckTimeEnd)">
-                AND t1.HEALTHY_CHECK_TIME &lt;= #{bo.healthyCheckTimeEnd}
+                AND t1.HEALTHY_CHECK_TIME &lt; TRUNC(#{bo.healthyCheckTimeEnd})+1
             </if>
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.auditDoctor)">
                 AND t1.AUDIT_DOCTOR = #{bo.auditDoctor}
@@ -120,13 +120,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 AND t1.AUDIT_TIME >= #{bo.auditTimeStart}
             </if>
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.auditTimeEnd)">
-                AND t1.AUDIT_TIME &lt;= #{bo.auditTimeEnd}
+                AND t1.AUDIT_TIME &lt; TRUNC(#{bo.auditTimeEnd})+1
             </if>
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.cancelRegisterTimeStart)">
                 AND t1.CANCEL_REGISTER_TIME >= #{bo.cancelRegisterTimeStart}
             </if>
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.cancelRegisterTimeEnd)">
-                AND t1.CANCEL_REGISTER_TIME &lt;= #{bo.cancelRegisterTimeEnd}
+                AND t1.CANCEL_REGISTER_TIME &lt; TRUNC(#{bo.cancelRegisterTimeEnd})+1
             </if>
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.cancelRegisterOperator)">
                 AND t1.CANCEL_REGISTER_OPERATOR = #{bo.cancelRegisterOperator}
@@ -138,16 +138,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 AND t1.REGISTER_TIME >= #{bo.registerTimeStart}
             </if>
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.registerTimeEnd)">
-                AND t1.REGISTER_TIME &lt;= #{bo.registerTimeEnd}
+                AND t1.REGISTER_TIME &lt; TRUNC(#{bo.registerTimeEnd})+1
             </if>
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.registerDoctorId)">
-                AND t1.REGISTER_DOCTOR_ID &lt;= #{bo.registerDoctorId}
+                AND t1.REGISTER_DOCTOR_ID = #{bo.registerDoctorId}
             </if>
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.chargeTimeStart)">
                 AND t1.CHARGE_TIME >= #{bo.chargeTimeStart}
             </if>
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.chargeTimeEnd)">
-                AND t1.CHARGE_TIME &lt;= #{bo.chargeTimeEnd}
+                AND t1.CHARGE_TIME &lt; TRUNC(#{bo.chargeTimeEnd})+1
             </if>
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.insMark)">
                 AND t1.INS_MARK = #{bo.insMark}
