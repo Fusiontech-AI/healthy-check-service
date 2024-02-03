@@ -1,5 +1,7 @@
 package org.fxkc.peis.domain.bo;
 
+import cn.hutool.core.date.DatePattern;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.github.linpeilie.annotations.AutoMapper;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -65,6 +67,7 @@ public class TjRegisterAddBo {
      * 生日
      */
     @NotNull(message = "生日不能为空", groups = { AddGroup.class, EditGroup.class })
+    @JsonFormat(pattern = DatePattern.NORM_DATE_PATTERN, timezone = "GMT+8")
     private Date birthday;
 
     /**
