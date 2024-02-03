@@ -136,4 +136,18 @@ public class SysDictDataServiceImpl implements ISysDictDataService {
         throw new ServiceException("操作失败");
     }
 
+    /**
+     * 根据字典类型和字典键值查询字典数据信息
+     *
+     * @param dictType  字典类型
+     * @param dictValue 字典键值
+     * @return SysDictDataVo
+     */
+    @Override
+    public SysDictDataVo selectDictByTypeAndValue(String dictType, String dictValue) {
+        return baseMapper.selectVoOne(new LambdaQueryWrapper<SysDictData>()
+                .eq(SysDictData::getDictType, dictType)
+                .eq(SysDictData::getDictValue, dictValue));
+    }
+
 }

@@ -2,6 +2,7 @@ package org.fxkc.system.controller.system;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.hutool.core.util.ObjectUtil;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.fxkc.common.core.domain.R;
 import org.fxkc.common.web.core.BaseController;
@@ -14,6 +15,7 @@ import org.fxkc.system.domain.bo.SysDictDataBo;
 import org.fxkc.system.domain.vo.SysDictDataVo;
 import org.fxkc.system.service.ISysDictDataService;
 import org.fxkc.system.service.ISysDictTypeService;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -113,5 +115,17 @@ public class SysDictDataController extends BaseController {
     public R<Void> remove(@PathVariable Long[] dictCodes) {
         dictDataService.deleteDictDataByIds(dictCodes);
         return R.ok();
+    }
+
+    /**
+     * 根据字典类型查询字典数据信息
+     *
+     * @param dictType 字典类型
+     * @param dictValue 字典值
+     */
+    @GetMapping(value = "/selectDictByTypeAndValue")
+    public R<SysDictDataVo> selectDictByTypeAndValue(@NotBlank(message = "字典类型不能为空") String dictType,
+                                                     @NotBlank(message = "字典值不能为空") String dictValue) {
+        return R.ok(dictDataService.selectDictByTypeAndValue(dictType,dictValue));
     }
 }
