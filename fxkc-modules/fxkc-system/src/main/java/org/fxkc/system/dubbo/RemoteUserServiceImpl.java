@@ -14,6 +14,7 @@ import org.fxkc.common.mybatis.helper.DataPermissionHelper;
 import org.fxkc.common.tenant.helper.TenantHelper;
 import org.fxkc.system.api.RemoteUserService;
 import org.fxkc.system.api.domain.bo.RemoteUserBo;
+import org.fxkc.system.api.domain.vo.RemoteUserVo;
 import org.fxkc.system.api.model.LoginUser;
 import org.fxkc.system.api.model.RoleDTO;
 import org.fxkc.system.api.model.XcxLoginUser;
@@ -198,6 +199,11 @@ public class RemoteUserServiceImpl implements RemoteUserService {
         sysUser.setLoginDate(DateUtils.getNowDate());
         sysUser.setUpdateBy(userId);
         DataPermissionHelper.ignore(() -> userMapper.updateById(sysUser));
+    }
+
+    @Override
+    public List<RemoteUserVo> selectByIdList(List<Long> userIdList) {
+        return this.userMapper.selectByIdList(userIdList);
     }
 
 }

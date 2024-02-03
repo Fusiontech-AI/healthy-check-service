@@ -8,6 +8,7 @@ import org.fxkc.peis.domain.vo.PackageAndProjectVo;
 import org.fxkc.peis.domain.vo.TjPackageVo;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -69,4 +70,6 @@ public interface ITjPackageService {
     TableDataInfo<PackageAndProjectVo> queryPackageAndProjectPages(String name, PageQuery pageQuery);
 
     List<PackageAndProjectVo> queryProjectByPackageId(String packageId);
+
+    List<TjPackageVo> queryListByIds(List<Long> packageList);
 }

@@ -27,6 +27,7 @@ import org.fxkc.peis.service.ITjTeamInfoService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -169,6 +170,14 @@ public class TjTeamInfoServiceImpl extends ServiceImpl<TjTeamInfoMapper, TjTeamI
     public String selectTeamNameById(Long teamId) {
         TjTeamInfo tjTeamInfo = baseMapper.selectById(teamId);
         return Objects.isNull(tjTeamInfo) ? null : tjTeamInfo.getTeamName();
+    }
+
+    @Override
+    public List<TjTeamInfoVo> queryListByIds(List<Long> teamIdList) {
+        if(teamIdList.isEmpty()){
+            return new ArrayList<>();
+        }
+        return this.baseMapper.queryListByIds(teamIdList);
     }
 
 }

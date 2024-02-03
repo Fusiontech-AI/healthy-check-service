@@ -328,6 +328,14 @@ public class TjPackageServiceImpl implements ITjPackageService {
         return projectVos;
     }
 
+    @Override
+    public List<TjPackageVo> queryListByIds(List<Long> packageList) {
+        if(packageList.isEmpty()){
+            return new ArrayList<>();
+        }
+        return this.baseMapper.queryListByIds(packageList);
+    }
+
 
     /**
      * 处理个费 和 团费的金额

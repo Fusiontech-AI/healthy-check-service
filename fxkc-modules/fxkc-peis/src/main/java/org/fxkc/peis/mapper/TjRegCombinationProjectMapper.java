@@ -8,6 +8,9 @@ import org.fxkc.peis.domain.bo.TjRegCombinationProjectListBo;
 import org.fxkc.peis.domain.vo.TjRegCombinationProjectListVo;
 import org.fxkc.peis.domain.vo.TjRegCombinationProjectVo;
 import org.fxkc.common.mybatis.core.mapper.BaseMapperPlus;
+import org.fxkc.peis.domain.vo.ftlModel.GuideSheetItemVo;
+
+import java.util.List;
 
 /**
  * 体检人员综合项目信息Mapper接口
@@ -18,4 +21,6 @@ import org.fxkc.common.mybatis.core.mapper.BaseMapperPlus;
 public interface TjRegCombinationProjectMapper extends BaseMapperPlus<TjRegCombinationProject, TjRegCombinationProjectVo> {
 
     Page<TjRegCombinationProjectListVo> selectPage(@Param("page")Page<TjRegCombinationProjectListVo> page, @Param("bo")TjRegCombinationProjectListBo bo);
+
+    List<GuideSheetItemVo> queryGuideItemByIds(@Param("regIdList")List<Long> regIdList);
 }

@@ -331,6 +331,11 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
     }
 
     @Override
+    public List<TjRegisterVo> getByIds(List<Long> regIdList) {
+        return this.baseMapper.getByIds(regIdList);
+    }
+
+    @Override
     public TjRegisterVo getSingleInfo(TjRegisterSingleBo bo) {
         LambdaQueryWrapper<TjRegister> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(bo.getId() != null,TjRegister::getId,bo.getId())

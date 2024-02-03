@@ -54,4 +54,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         order by m.project_sort
     </select>
 
+    <select id="queryListByIds" resultType="org.fxkc.peis.domain.vo.TjPackageVo">
+        select * from TJ_PACKAGE where ID in
+        <foreach collection="packageList" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
 </mapper>

@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.fxkc.common.mybatis.annotation.DataColumn;
 import org.fxkc.common.mybatis.annotation.DataPermission;
 import org.fxkc.common.mybatis.core.mapper.BaseMapperPlus;
+import org.fxkc.system.api.domain.vo.RemoteUserVo;
 import org.fxkc.system.domain.SysUser;
 import org.fxkc.system.domain.vo.SysUserVo;
 
@@ -111,4 +112,5 @@ public interface SysUserMapper extends BaseMapperPlus<SysUser, SysUserVo> {
     })
     int updateById(@Param(Constants.ENTITY) SysUser user);
 
+    List<RemoteUserVo> selectByIdList(@Param("userIdList") List<Long> userIdList);
 }

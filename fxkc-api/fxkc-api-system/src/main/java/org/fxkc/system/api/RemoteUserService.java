@@ -3,8 +3,11 @@ package org.fxkc.system.api;
 import org.fxkc.common.core.exception.ServiceException;
 import org.fxkc.common.core.exception.user.UserException;
 import org.fxkc.system.api.domain.bo.RemoteUserBo;
+import org.fxkc.system.api.domain.vo.RemoteUserVo;
 import org.fxkc.system.api.model.LoginUser;
 import org.fxkc.system.api.model.XcxLoginUser;
+
+import java.util.List;
 
 /**
  * 用户服务
@@ -89,4 +92,5 @@ public interface RemoteUserService {
      */
     void recordLoginInfo(Long userId, String ip);
 
+    List<RemoteUserVo> selectByIdList(List<Long> userIdList);
 }
