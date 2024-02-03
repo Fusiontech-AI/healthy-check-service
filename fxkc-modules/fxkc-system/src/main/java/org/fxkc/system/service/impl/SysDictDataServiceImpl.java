@@ -146,7 +146,6 @@ public class SysDictDataServiceImpl implements ISysDictDataService {
     @Override
     public SysDictDataVo selectDictByTypeAndValue(String dictType, String dictValue) {
         return baseMapper.selectVoOne(new LambdaQueryWrapper<SysDictData>()
-                .select(SysDictData::getDictLabel)
                 .eq(SysDictData::getDictType, dictType)
                 .eq(SysDictData::getDictValue, dictValue));
     }
