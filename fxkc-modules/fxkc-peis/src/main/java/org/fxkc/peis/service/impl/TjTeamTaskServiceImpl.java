@@ -404,10 +404,11 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
         //是否为职业病
         Boolean isOccupational = PhysicalTypeEnum.isOccupational(bo.getPhysicalType());
         List<TjRegisterImportDetailBo> registerList = bo.getRegisterList();
-        List<String> groupNameList = StreamUtils.toList(registerList, TjRegisterImportDetailBo::getGroupName);
-        List<TjTeamGroup> groupList = tjTeamGroupMapper.selectList(Wrappers.lambdaQuery(TjTeamGroup.class)
-            .in(TjTeamGroup::getGroupName, groupNameList));
-        Map<String, Long> groupMap = StreamUtils.toMap(groupList, TjTeamGroup::getGroupName, TjTeamGroup::getId);
+        List<TjRegisterAddBo> addBoList = MapstructUtils.convert(registerList, TjRegisterAddBo.class);
+        addBoList.forEach(k -> {
+            k.setTaskId(bo.getTaskId());
+            k.setTeamId(bo.getTeamId());
+        });
         RegisterInsertService registerInsertService = registerInsertHolder.selectBuilder("2".concat(isOccupational ?
             CommonConstants.NORMAL : CommonConstants.DISABLE));
 //        registerInsertService.RegisterInsert()

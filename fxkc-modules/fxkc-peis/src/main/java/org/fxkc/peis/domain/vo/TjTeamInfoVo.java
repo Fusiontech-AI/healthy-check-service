@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.fxkc.common.translation.annotation.Translation;
+import org.fxkc.common.translation.constant.TransConstant;
+import org.fxkc.peis.constant.DictTypeConstants;
 import org.fxkc.peis.domain.TjTeamInfo;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
@@ -108,9 +111,16 @@ public class TjTeamInfoVo implements Serializable {
     private String regionCode;
 
     /**
+     * 地区名称
+     */
+    @ExcelProperty(value = "地区名称")
+    @Translation(type = TransConstant.DICT_TYPE_TO_LABEL,other = "bus_area",mapper = "regionCode")
+    private String regionCodeName;
+
+    /**
      * 地区编码
      */
-    @ExcelProperty(value = "地区编码")
+    @ExcelProperty(value = "经济类型")
     private Integer economicType;
 
     /**

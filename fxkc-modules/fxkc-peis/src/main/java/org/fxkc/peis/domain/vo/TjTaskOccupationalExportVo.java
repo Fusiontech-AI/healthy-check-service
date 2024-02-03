@@ -110,7 +110,7 @@ public class TjTaskOccupationalExportVo {
     @ExcelProperty("总工龄年")
     @ColumnWidth(15)
     @NotBlank(message = "总工龄年不能为空", groups = { EditGroup.class })
-    private String seniorityYear;
+    private Long seniorityYear;
 
     /**
      * 总工龄月
@@ -118,7 +118,7 @@ public class TjTaskOccupationalExportVo {
     @ExcelProperty("总工龄月")
     @ColumnWidth(15)
     @NotBlank(message = "总工龄月不能为空", groups = { EditGroup.class })
-    private String seniorityMonth;
+    private Long seniorityMonth;
 
     /**
      * 接害工龄年
@@ -126,7 +126,7 @@ public class TjTaskOccupationalExportVo {
     @ExcelProperty("接害工龄年")
     @ColumnWidth(15)
     @NotBlank(message = "接害工龄年不能为空", groups = { EditGroup.class })
-    private String contactSeniorityYear;
+    private Long contactSeniorityYear;
 
     /**
      * 接触工龄月
@@ -134,7 +134,7 @@ public class TjTaskOccupationalExportVo {
     @ExcelProperty("接触工龄月")
     @ColumnWidth(15)
     @NotBlank(message = "接触工龄月不能为空", groups = { EditGroup.class })
-    private String contactSeniorityMonth;
+    private Long contactSeniorityMonth;
 
     /**
      * 个案卡类别
@@ -177,11 +177,21 @@ public class TjTaskOccupationalExportVo {
     /**
      * 分组id
      */
-    private Long groupId;
+    private Long teamGroupId;
 
     /**
      * 生日
      */
     @JsonFormat(pattern = DatePattern.NORM_DATE_PATTERN, timezone = "GMT+8")
     private Date birthday;
+
+    /**
+     * 照射源,字典bus_shine_source
+     */
+    private String illuminationSource;
+
+    /**
+     * 职业照射种类,字典bus_job_illumination_source
+     */
+    private String jobIlluminationType;
 }

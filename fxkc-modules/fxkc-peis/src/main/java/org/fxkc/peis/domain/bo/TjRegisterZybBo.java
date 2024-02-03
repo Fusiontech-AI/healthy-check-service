@@ -42,15 +42,15 @@ public class TjRegisterZybBo extends BaseEntity {
     private String dutyStatus;
 
     /**
-     * 照射源,字典bus_illumination_source
+     * 照射源,字典bus_shine_source
      */
-    @NotBlank(message = "照射源,字典bus_illumination_source不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotBlank(message = "照射源,字典bus_shine_source不能为空", groups = { AddGroup.class, EditGroup.class })
     private String illuminationSource;
 
     /**
-     * 职业照射种类,字典bus_job_illumination_type
+     * 职业照射种类,字典bus_job_illumination_source
      */
-    @NotBlank(message = "职业照射种类,字典bus_job_illumination_type不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotBlank(message = "职业照射种类,字典bus_job_illumination_source不能为空", groups = { AddGroup.class, EditGroup.class })
     private String jobIlluminationType;
 
     /**

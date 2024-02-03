@@ -40,12 +40,12 @@ public class TjRegisterZyb extends TenantEntity {
     private String dutyStatus;
 
     /**
-     * 照射源,字典bus_illumination_source
+     * 照射源,字典bus_shine_source
      */
     private String illuminationSource;
 
     /**
-     * 职业照射种类,字典bus_job_illumination_type
+     * 职业照射种类,字典bus_job_illumination_source
      */
     private String jobIlluminationType;
 
