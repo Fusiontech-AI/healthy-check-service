@@ -184,4 +184,13 @@ public class TjRegisterController extends BaseController {
     public R<Void> changeRegReplaceInfo(@Validated(AddGroup.class) @RequestBody TjRegReplaceInfoBo bo) {
         return  toAjax(tjRegisterService.changeRegReplaceInfo(bo));
     }
+
+    /**
+     * 报告领取方式信息登记
+     */
+    @RepeatSubmit()
+    @PostMapping("/changeReportReceiveWay")
+    public R<Void> changeReportReceiveWay(@Validated(AddGroup.class) @RequestBody TjRegReceiveWayBo bo) {
+        return  toAjax(tjRegisterService.changeReportReceiveWay(bo));
+    }
 }

@@ -317,6 +317,20 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
     }
 
     @Override
+    public Boolean changeReportReceiveWay(TjRegReceiveWayBo bo) {
+        //先查询已有记录
+        TjRegister tjRegister = baseMapper.selectById(bo.getRegisterId());
+        Assert.notNull(tjRegister,"根据登记id["+bo.getRegisterId()+"],未找到登录记录!");
+        TjRegister updateEntity = new TjRegister();
+        updateEntity.setId(bo.getRegisterId());
+        updateEntity.setReceiveWay(bo.getReceiveWay());
+        updateEntity.setReceiptPhone(bo.getReceiptPhone());
+        updateEntity.setRecipient(bo.getRecipient());
+        updateEntity.setPostAddress(bo.getPostAddress());
+        return baseMapper.updateById(updateEntity)> 0;
+    }
+
+    @Override
     public TjRegisterVo getSingleInfo(TjRegisterSingleBo bo) {
         LambdaQueryWrapper<TjRegister> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(bo.getId() != null,TjRegister::getId,bo.getId())

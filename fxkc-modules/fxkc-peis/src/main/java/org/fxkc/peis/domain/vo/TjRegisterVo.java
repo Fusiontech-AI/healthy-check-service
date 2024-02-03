@@ -124,6 +124,11 @@ public class TjRegisterVo implements Serializable {
     private String needGeneralReview;
 
     /**
+     * 报告领取方式0邮寄 1自取,见字典bus_receive_way
+     */
+    private String receiveWay;
+
+    /**
      * 收件人
      */
     @ExcelProperty(value = "收件人")

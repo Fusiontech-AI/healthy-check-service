@@ -70,4 +70,6 @@ public interface ITjRegisterService {
     Boolean changeRegCombin(TjRegCombinAddBo bo);
 
     Boolean changeRegReplaceInfo(TjRegReplaceInfoBo bo);
+
+    Boolean changeReportReceiveWay(TjRegReceiveWayBo bo);
 }
