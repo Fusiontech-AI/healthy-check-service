@@ -131,6 +131,7 @@ public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
         LambdaQueryWrapper<TjTeamSettle> lqw = Wrappers.lambdaQuery();
         lqw.eq(ObjectUtil.isNotNull(bo.getTeamId()), TjTeamSettle::getTeamId, bo.getTeamId());
         lqw.eq(ObjectUtil.isNotNull(bo.getTeamTaskId()), TjTeamSettle::getTeamTaskId, bo.getTeamTaskId());
+        lqw.eq(TjTeamSettle::getDelFlag,CommonConstants.NORMAL);
         return lqw;
     }
 
@@ -173,7 +174,6 @@ public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
     @Transactional(rollbackFor = Exception.class)
     public Boolean teamInvalidSettle(TjTeamSettleBo bo) {
         validEntityBeforeSave(bo);
-        validEntityBeforeCheck(bo);
         List<Long> ids = List.of(bo.getIds());
         List<TjTeamSettle> tjTeamSettleList = baseMapper.selectList(new LambdaQueryWrapper<TjTeamSettle>().in(TjTeamSettle::getId,ids));
         long notNormalCount = tjTeamSettleList.stream().filter(f -> !StrUtil.equals(f.getStatus(),CommonConstants.NORMAL)).count();
