@@ -91,7 +91,13 @@ public class TjTeamGroupUpdateBo {
     private String shineType;
 
     /**
-     * 项目编码
+     * 标准价格
      */
-    private String combinProjectCode;
+    private BigDecimal standardPrice;
+
+    /**
+     * 实际价格
+     */
+    private BigDecimal actualPrice;
+
 }
