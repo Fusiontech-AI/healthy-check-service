@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 import org.fxkc.common.idempotent.annotation.RepeatSubmit;
@@ -44,7 +45,7 @@ public class TjGuideSheetLogController extends BaseController {
     @Log(title = "新增电子导检单", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
-    public R<Void> add(@Validated(AddGroup.class) TjGuideSheetLogBo bo, @RequestPart("file")MultipartFile file) {
+    public R<Void> add(@Validated(AddGroup.class)@ParameterObject TjGuideSheetLogBo bo, @RequestPart("file")MultipartFile file) {
         return toAjax(tjGuideSheetLogService.insertByBo(bo,file));
     }
 
