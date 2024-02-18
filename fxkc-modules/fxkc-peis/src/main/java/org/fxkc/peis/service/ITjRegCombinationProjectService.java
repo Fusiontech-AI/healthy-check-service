@@ -1,17 +1,15 @@
 package org.fxkc.peis.service;
 
-import org.fxkc.peis.domain.TjRegCombinationProject;
+import org.fxkc.common.mybatis.core.page.PageQuery;
+import org.fxkc.common.mybatis.core.page.TableDataInfo;
+import org.fxkc.peis.domain.bo.TjRegCombinationProjectBo;
 import org.fxkc.peis.domain.bo.TjRegCombinationProjectDelayBo;
 import org.fxkc.peis.domain.bo.TjRegCombinationProjectListBo;
+import org.fxkc.peis.domain.vo.TjRegBasicProjectVo;
 import org.fxkc.peis.domain.vo.TjRegCombinationProjectListVo;
 import org.fxkc.peis.domain.vo.TjRegCombinationProjectVo;
-import org.fxkc.peis.domain.bo.TjRegCombinationProjectBo;
-import org.fxkc.common.mybatis.core.page.TableDataInfo;
-import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.peis.domain.vo.ftlModel.GuideSheetItemVo;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -60,4 +58,6 @@ public interface ITjRegCombinationProjectService {
     Boolean delayProjects(TjRegCombinationProjectDelayBo delayBo);
 
     List<GuideSheetItemVo> queryGuideItemByIds(List<Long> regIdList);
+
+    List<TjRegBasicProjectVo> queryRegBasicProjectList(Long id);
 }

@@ -1,31 +1,33 @@
 package org.fxkc.peis.service.impl;
 
 import cn.hutool.core.date.DateUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.RequiredArgsConstructor;
 import org.fxkc.common.core.constant.CommonConstants;
 import org.fxkc.common.core.exception.ServiceException;
 import org.fxkc.common.core.utils.MapstructUtils;
 import org.fxkc.common.core.utils.StringUtils;
-import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.mybatis.core.page.PageQuery;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import lombok.RequiredArgsConstructor;
+import org.fxkc.common.mybatis.core.page.TableDataInfo;
+import org.fxkc.peis.domain.TjRegCombinationProject;
+import org.fxkc.peis.domain.bo.TjRegCombinationProjectBo;
 import org.fxkc.peis.domain.bo.TjRegCombinationProjectDelayBo;
 import org.fxkc.peis.domain.bo.TjRegCombinationProjectListBo;
+import org.fxkc.peis.domain.vo.TjRegBasicProjectVo;
 import org.fxkc.peis.domain.vo.TjRegCombinationProjectListVo;
+import org.fxkc.peis.domain.vo.TjRegCombinationProjectVo;
 import org.fxkc.peis.domain.vo.ftlModel.GuideSheetItemVo;
 import org.fxkc.peis.enums.CheckStatusEnum;
-import org.springframework.stereotype.Service;
-import org.fxkc.peis.domain.bo.TjRegCombinationProjectBo;
-import org.fxkc.peis.domain.vo.TjRegCombinationProjectVo;
-import org.fxkc.peis.domain.TjRegCombinationProject;
+import org.fxkc.peis.mapper.TjRegBasicProjectMapper;
 import org.fxkc.peis.mapper.TjRegCombinationProjectMapper;
 import org.fxkc.peis.service.ITjRegCombinationProjectService;
+import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Collection;
 
 /**
  * 体检人员综合项目信息Service业务层处理
@@ -38,6 +40,8 @@ import java.util.Collection;
 public class TjRegCombinationProjectServiceImpl implements ITjRegCombinationProjectService {
 
     private final TjRegCombinationProjectMapper baseMapper;
+
+    private final TjRegBasicProjectMapper tjRegBasicProjectMapper;
 
     /**
      * 查询体检人员综合项目信息
@@ -170,5 +174,10 @@ public class TjRegCombinationProjectServiceImpl implements ITjRegCombinationProj
     @Override
     public List<GuideSheetItemVo> queryGuideItemByIds(List<Long> regIdList) {
         return this.baseMapper.queryGuideItemByIds(regIdList);
+    }
+
+    @Override
+    public List<TjRegBasicProjectVo> queryRegBasicProjectList(Long id) {
+        return tjRegBasicProjectMapper.queryRegBasicProjectList(id);
     }
 }

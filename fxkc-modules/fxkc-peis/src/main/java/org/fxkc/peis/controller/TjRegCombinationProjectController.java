@@ -1,29 +1,31 @@
 package org.fxkc.peis.controller;
 
-import java.util.List;
-
-import lombok.RequiredArgsConstructor;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import org.fxkc.peis.domain.bo.TjRegCombinationProjectDelayBo;
-import org.fxkc.peis.domain.bo.TjRegCombinationProjectListBo;
-import org.fxkc.peis.domain.vo.TjRegCombinationProjectListVo;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.validation.annotation.Validated;
-import org.fxkc.common.idempotent.annotation.RepeatSubmit;
-import org.fxkc.common.log.annotation.Log;
-import org.fxkc.common.web.core.BaseController;
-import org.fxkc.common.mybatis.core.page.PageQuery;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 import org.fxkc.common.core.domain.R;
 import org.fxkc.common.core.validate.AddGroup;
 import org.fxkc.common.core.validate.EditGroup;
-import org.fxkc.common.log.enums.BusinessType;
 import org.fxkc.common.excel.utils.ExcelUtil;
-import org.fxkc.peis.domain.vo.TjRegCombinationProjectVo;
-import org.fxkc.peis.domain.bo.TjRegCombinationProjectBo;
-import org.fxkc.peis.service.ITjRegCombinationProjectService;
+import org.fxkc.common.idempotent.annotation.RepeatSubmit;
+import org.fxkc.common.log.annotation.Log;
+import org.fxkc.common.log.enums.BusinessType;
+import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
+import org.fxkc.common.web.core.BaseController;
+import org.fxkc.peis.domain.bo.TjRegCombinationProjectBo;
+import org.fxkc.peis.domain.bo.TjRegCombinationProjectDelayBo;
+import org.fxkc.peis.domain.bo.TjRegCombinationProjectListBo;
+import org.fxkc.peis.domain.vo.TjRegBasicProjectVo;
+import org.fxkc.peis.domain.vo.TjRegCombinationProjectListVo;
+import org.fxkc.peis.domain.vo.TjRegCombinationProjectVo;
+import org.fxkc.peis.service.ITjRegCombinationProjectService;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 体检人员综合项目信息
@@ -46,6 +48,14 @@ public class TjRegCombinationProjectController extends BaseController {
     @GetMapping("/list")
     public TableDataInfo<TjRegCombinationProjectListVo> list(TjRegCombinationProjectListBo bo, PageQuery pageQuery) {
         return tjRegCombinationProjectService.queryPageList(bo, pageQuery);
+    }
+
+    /**
+     * 根据登记组合项目主键id查询基础项目列表
+     */
+    @GetMapping("queryRegBasicProjectList")
+    public R<List<TjRegBasicProjectVo>> queryRegBasicProjectList(@RequestParam(value = "id") @NotNull(message = "登记组合项目id不能为空") Long id) {
+        return R.ok(tjRegCombinationProjectService.queryRegBasicProjectList(id));
     }
 
     /**
