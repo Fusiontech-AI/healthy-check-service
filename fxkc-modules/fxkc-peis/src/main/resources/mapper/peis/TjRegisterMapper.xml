@@ -47,6 +47,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             t1.TOTAL_AMOUNT - PAID_TOTAL_AMOUNT as unPaidTotalAmount
         FROM
             TJ_REGISTER t1
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.createByName)">
+                LEFT JOIN SYS_USER t2 on t1.CREATE_BY = t2.USER_ID
+            </if>
         <where>
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.delFlag)">
                 AND t1.DEL_FLAG = #{bo.delFlag}
@@ -166,6 +169,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             </if>
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.teamSettleId)">
                 AND t1.TEAM_SETTLE_ID = #{bo.teamSettleId}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.createByName)">
+                AND t2.USER_NAME LIKE CONCAT('%',CONCAT(#{bo.createByName},'%'))
             </if>
         </where>
     </select>

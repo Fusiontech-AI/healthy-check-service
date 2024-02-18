@@ -233,4 +233,9 @@ public class TjRegisterPageBo extends BaseEntity {
      */
     private Date teamSettleTime;
 
+    /**
+     * 创建人姓名
+     */
+    private String createByName;
+
 }
