@@ -145,7 +145,7 @@ public class TjPackageController extends BaseController {
      * 套餐和项目混合分页查询
      */
     @GetMapping("queryPackageAndProjectPages")
-    public TableDataInfo<PackageAndProjectVo> queryPackageAndProjectPages(@RequestParam("name") String name, PageQuery pageQuery) {
+    public TableDataInfo<PackageAndProjectVo> queryPackageAndProjectPages(@RequestParam(value = "name",required = false) String name, PageQuery pageQuery) {
         return tjPackageService.queryPackageAndProjectPages(name,pageQuery);
     }
 
