@@ -72,7 +72,7 @@ public class TjRegBasicProject extends TenantEntity {
     private String reference;
 
     /**
-     * $column.columnComment
+     * 检查结果
      */
     private String checkResult;
 
@@ -92,7 +92,7 @@ public class TjRegBasicProject extends TenantEntity {
     private String lowLimit;
 
     /**
-     * $column.columnComment
+     * 删除标志（0代表存在 2代表删除）
      */
     @TableLogic
     private String delFlag;

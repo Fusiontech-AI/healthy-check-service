@@ -76,9 +76,9 @@ public class TjRegBasicProjectBo extends BaseEntity {
     private String reference;
 
     /**
-     * $column.columnComment
+     * 检查结果
      */
-    @NotBlank(message = "$column.columnComment不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotBlank(message = "检查结果不能为空", groups = { AddGroup.class, EditGroup.class })
     private String checkResult;
 
     /**

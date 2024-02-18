@@ -82,10 +82,9 @@ public class TjRegBasicProjectVo implements Serializable {
     private String reference;
 
     /**
-     * $column.columnComment
+     * 检查结果
      */
-    @ExcelProperty(value = "${comment}", converter = ExcelDictConvert.class)
-    @ExcelDictFormat(readConverterExp = "$column.readConverterExp()")
+    @ExcelProperty(value = "检查结果")
     private String checkResult;
 
     /**
