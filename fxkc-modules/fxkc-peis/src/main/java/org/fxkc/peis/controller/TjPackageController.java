@@ -154,7 +154,7 @@ public class TjPackageController extends BaseController {
      * 套餐下项目信息查询
      */
     @GetMapping("queryProjectByPackageId")
-    public R<List<PackageAndProjectVo>> queryProjectByPackageId(@RequestParam("packageId")@NotNull(message = "套餐id不能为空") String packageId) {
+    public R<List<PackageAndProjectVo>> queryProjectByPackageId(@RequestParam("packageId")@NotNull(message = "套餐id不能为空") Long packageId) {
         return R.ok(tjPackageService.queryProjectByPackageId(packageId));
     }
 }
