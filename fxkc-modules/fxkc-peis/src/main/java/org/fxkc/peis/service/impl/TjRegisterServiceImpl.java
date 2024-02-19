@@ -2,6 +2,7 @@ package org.fxkc.peis.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -18,6 +19,7 @@ import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.oss.core.OssClient;
 import org.fxkc.common.oss.factory.OssFactory;
 import org.fxkc.common.satoken.utils.LoginHelper;
+import org.fxkc.peis.constant.ErrorCodeConstants;
 import org.fxkc.peis.domain.*;
 import org.fxkc.peis.domain.bo.*;
 import org.fxkc.peis.domain.bo.template.ReportPrintBO;
@@ -26,6 +28,7 @@ import org.fxkc.peis.domain.vo.TjRegisterVo;
 import org.fxkc.peis.enums.CheckStatusEnum;
 import org.fxkc.peis.enums.HealthyCheckTypeEnum;
 import org.fxkc.peis.enums.RegisterStatusEnum;
+import org.fxkc.peis.exception.PeisException;
 import org.fxkc.peis.mapper.*;
 import org.fxkc.peis.register.insert.RegisterInsertHolder;
 import org.fxkc.peis.register.insert.RegisterInsertService;
@@ -362,6 +365,15 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
 
         //这里需要更改登记记录允许总检状态  以及对诊断明细相关记录的保存
         return null;
+    }
+
+    @Override
+    public Boolean deleteTaskRegister(Long id) {
+        TjRegister tjRegister = baseMapper.selectById(id);
+        if(Objects.nonNull(tjRegister) && ObjectUtil.notEqual(tjRegister.getHealthyCheckStatus(), HealthyCheckTypeEnum.预约.getCode())) {
+            throw new PeisException(ErrorCodeConstants.PEIS_REGISTER_NOT_APPIONT);
+        }
+        return baseMapper.deleteById(id) > 0;
     }
 
     @Override

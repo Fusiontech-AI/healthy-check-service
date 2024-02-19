@@ -204,4 +204,16 @@ public class TjRegisterController extends BaseController {
     public R<Void> changeReportReceiveWay(@Validated(AddGroup.class) @RequestBody TjRegReceiveWayBo bo) {
         return  toAjax(tjRegisterService.changeReportReceiveWay(bo));
     }
+
+    /**
+     * 删除任务体检人员信息
+     *
+     * @param id 主键
+     */
+    @Log(title = "删除任务体检人员信息", businessType = BusinessType.DELETE)
+    @DeleteMapping("/deleteTaskRegister/{id}")
+    public R<Void> remove(@NotNull(message = "主键不能为空")
+                          @PathVariable Long id) {
+        return toAjax(tjRegisterService.deleteTaskRegister(id));
+    }
 }

@@ -56,7 +56,7 @@ public class TjTaskImportListener extends AnalysisEventListener<TjTaskOccupation
     @Override
     public void invoke(TjTaskOccupationalExportVo tjTaskOccupationalExportVo, AnalysisContext context) {
         log.info("解析导入数据======={}", JSONUtil.toJsonStr(tjTaskOccupationalExportVo));
-            int i = context.readRowHolder().getRowIndex();
+        int i = context.readRowHolder().getRowIndex();
         Boolean isOccupational = PhysicalTypeEnum.isOccupational(tjTaskImportBo.getTemplateType());
         Boolean autoGroup = tjTaskImportBo.getAutoGroup();
         String errorMsg;
@@ -96,8 +96,8 @@ public class TjTaskImportListener extends AnalysisEventListener<TjTaskOccupation
             && Objects.nonNull(tjTaskOccupationalExportVo.getSeniorityMonth())
             && Objects.nonNull(tjTaskOccupationalExportVo.getContactSeniorityYear())
             && Objects.nonNull(tjTaskOccupationalExportVo.getContactSeniorityMonth())) {
-            Long seniorityMonth = tjTaskOccupationalExportVo.getSeniorityYear() * 12 + tjTaskOccupationalExportVo.getSeniorityMonth();
-            Long contactSeniorityMonth = tjTaskOccupationalExportVo.getContactSeniorityYear() * 12 + tjTaskOccupationalExportVo.getContactSeniorityMonth();
+            long seniorityMonth = tjTaskOccupationalExportVo.getSeniorityYear() * 12 + tjTaskOccupationalExportVo.getSeniorityMonth();
+            long contactSeniorityMonth = tjTaskOccupationalExportVo.getContactSeniorityYear() * 12 + tjTaskOccupationalExportVo.getContactSeniorityMonth();
             if(seniorityMonth < contactSeniorityMonth) {
                 failureMsg.append("总工龄年月不能小于接害工龄月,");
             }

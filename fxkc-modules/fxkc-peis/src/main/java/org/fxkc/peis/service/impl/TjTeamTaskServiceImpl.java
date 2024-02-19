@@ -316,6 +316,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
     @Override
     public TjVerifyMessageVo verifyGroupPackageData(List<TjGroupVerifyPackageBo> list) {
         TjVerifyMessageVo vo = new TjVerifyMessageVo();
+        vo.setIsPrompt(Boolean.FALSE);
         List<Long> idList = StreamUtils.toList(list, TjGroupVerifyPackageBo::getId);
         List<TjTeamGroup> groupList = tjTeamGroupMapper.selectBatchIds(idList);
         List<TjRegister> tjRegisterList = tjRegisterMapper.selectList(Wrappers.lambdaQuery(TjRegister.class)
@@ -423,7 +424,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
             if(Objects.equals(occupationalType, CommonConstants.NORMAL)) {
                 TjRegisterZybBo occupational = MapstructUtils.convert(k, TjRegisterZybBo.class);
                 addBo.setTjRegisterZybBo(occupational);
-                Long month = occupational.getContactSeniorityYear() * 12 + occupational.getContactSeniorityMonth();
+                long month = occupational.getContactSeniorityYear() * 12 + occupational.getContactSeniorityMonth();
                 List<TjRegisterZybHazardBo> hazardBoList = MapstructUtils.convert(hazardMap.get(k.getTeamGroupId()),
                     TjRegisterZybHazardBo.class);
                 hazardBoList.forEach(s -> s.setHazardStartDate(DateUtil.offsetMonth(

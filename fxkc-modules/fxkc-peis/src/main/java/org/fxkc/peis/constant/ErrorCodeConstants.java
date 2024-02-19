@@ -66,4 +66,6 @@ public interface ErrorCodeConstants {
     String PEIS_COMBINATION_NOT_EXIST = "peis.combination.not.exist";
 
     String PEIS_CAN_REVIEW = "peis.can.review";
+
+    String PEIS_REGISTER_NOT_APPIONT = "peis.register.not.appiont";
 }

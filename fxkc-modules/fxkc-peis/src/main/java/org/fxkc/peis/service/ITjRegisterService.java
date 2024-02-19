@@ -79,4 +79,6 @@ public interface ITjRegisterService {
     void updateGuideSheetPrint(ReportPrintBO bo);
 
     Boolean saveDiagnosis(TjRegSaveDiagnosisBo bo);
+
+    Boolean deleteTaskRegister(Long id);
 }
