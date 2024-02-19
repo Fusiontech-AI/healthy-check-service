@@ -77,4 +77,6 @@ public interface ITjRegisterService {
     Boolean changeReportReceiveWay(TjRegReceiveWayBo bo);
 
     void updateGuideSheetPrint(ReportPrintBO bo);
+
+    Boolean saveDiagnosis(TjRegSaveDiagnosisBo bo);
 }
