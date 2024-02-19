@@ -1,9 +1,7 @@
 package org.fxkc.peis.domain.vo;
 
 import cn.hutool.core.collection.CollUtil;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 import org.fxkc.peis.domain.TjTeamGroup;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
@@ -11,7 +9,6 @@ import com.alibaba.excel.annotation.ExcelProperty;
 import org.fxkc.common.excel.annotation.ExcelDictFormat;
 import org.fxkc.common.excel.convert.ExcelDictConvert;
 import io.github.linpeilie.annotations.AutoMapper;
-import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -25,12 +22,13 @@ import java.util.List;
  * @author JunBaiChen
  * @date 2024-01-17
  */
-@Setter
-@Getter
+@Data
 @ExcelIgnoreUnannotated
 @AutoMapper(target = TjTeamGroup.class)
 @Accessors(chain = true)
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TjTeamGroupVo implements Serializable {
 
     @Serial
