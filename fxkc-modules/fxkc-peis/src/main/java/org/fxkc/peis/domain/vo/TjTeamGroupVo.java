@@ -128,7 +128,6 @@ public class TjTeamGroupVo implements Serializable {
      * 危害因素集合
      */
     @Builder.Default
-
     private List<TjTeamGroupHazardsVo> groupHazardsList = CollUtil.newArrayList();
 
     /**
