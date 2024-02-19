@@ -1,10 +1,6 @@
 package org.fxkc.peis.domain.bo;
 
-import cn.hutool.core.date.DatePattern;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-
-import java.util.Date;
 
 @Data
 public class TjTeamTaskQueryBo {

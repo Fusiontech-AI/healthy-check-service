@@ -509,6 +509,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
 
     @Override
     public void returnTask(List<Long> idList) {
-        idList.forEach(k -> baseMapper.updateById(new TjTeamTask().setId(k).setReviewResult("0")));
+        idList.forEach(k -> baseMapper.updateById(new TjTeamTask().setId(k)
+            .setIsReview(CommonConstants.DISABLE).setReviewResult("0")));
     }
 }

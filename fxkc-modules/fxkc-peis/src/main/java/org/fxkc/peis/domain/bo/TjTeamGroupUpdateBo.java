@@ -79,7 +79,7 @@ public class TjTeamGroupUpdateBo {
     /**
      * 危害因素集合
      */
-    private List<TjTeamGroupHazardsBo> groupHazardsList = CollUtil.newArrayList();
+    private List<TjTeamGroupHazardsBo> groupHazardsList;
 
     /**
      * 照射源sys_dict_type(bus_shine_source)

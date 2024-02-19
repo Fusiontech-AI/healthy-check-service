@@ -1,5 +1,9 @@
 package org.fxkc.peis.domain.vo;
 
+import cn.hutool.core.collection.CollUtil;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.fxkc.peis.domain.TjTeamGroup;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
@@ -21,10 +25,12 @@ import java.util.List;
  * @author JunBaiChen
  * @date 2024-01-17
  */
-@Data
+@Setter
+@Getter
 @ExcelIgnoreUnannotated
 @AutoMapper(target = TjTeamGroup.class)
 @Accessors(chain = true)
+@Builder
 public class TjTeamGroupVo implements Serializable {
 
     @Serial
@@ -121,7 +127,8 @@ public class TjTeamGroupVo implements Serializable {
     /**
      * 危害因素集合
      */
-    private List<TjTeamGroupHazardsVo> groupHazardsList;
+    @Builder.Default
+    private List<TjTeamGroupHazardsVo> groupHazardsList = CollUtil.newArrayList();
 
     /**
      * 照射源sys_dict_type(bus_shine_source)
