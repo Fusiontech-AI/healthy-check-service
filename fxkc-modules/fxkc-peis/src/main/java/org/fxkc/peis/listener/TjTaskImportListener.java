@@ -1,7 +1,6 @@
 package org.fxkc.peis.listener;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdcardUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
@@ -22,7 +21,10 @@ import org.fxkc.peis.domain.vo.TjTaskOccupationalExportVo;
 import org.fxkc.peis.enums.PhysicalTypeEnum;
 import org.fxkc.peis.service.ITjTeamGroupService;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**

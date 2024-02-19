@@ -143,4 +143,9 @@ public class TjTeamGroupVo implements Serializable {
      */
     private BigDecimal actualPrice;
 
+    /**
+     * 任务id
+     */
+    private Long taskId;
+
 }

@@ -17,6 +17,10 @@ import java.util.Date;
 @AutoMapper(target = TjRegister.class)
 @Accessors(chain = true)
 public class TjTaskReviewRegisterVo {
+    /**
+     * 主键id
+     */
+    private Long id;
 
     /**
      * 体检号
