@@ -114,6 +114,11 @@ public class TjRegCombinationProject extends TenantEntity {
     private Long checkDoctor;
 
     /**
+     * 检查医生姓名
+     */
+    private String checkDoctorName;
+
+    /**
      * 检查时间
      */
     private Date checkTime;

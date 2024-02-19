@@ -134,6 +134,12 @@ public class TjRegCombinationProjectVo implements Serializable {
     private Long checkDoctor;
 
     /**
+     * 检查医生姓名
+     */
+    @ExcelProperty(value = "检查医生姓名")
+    private String checkDoctorName;
+
+    /**
      * 检查时间
      */
     @ExcelProperty(value = "检查时间")

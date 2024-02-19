@@ -337,6 +337,34 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
     }
 
     @Override
+    public Boolean saveDiagnosis(TjRegSaveDiagnosisBo bo) {
+        //拿到当前需要保存的组合项目登记主键记录
+        TjRegCombinationProject tjRegCombinationProject = tjRegCombinationProjectMapper.selectById(bo.getRegItemId());
+        Assert.notNull(tjRegCombinationProject,"根据登记组合id"+bo.getRegItemId()+"未找到对应记录!");
+        //为弃检状态时不能保存结果
+        if(Objects.equals("2",tjRegCombinationProject.getCheckStatus())){
+            throw new RuntimeException("此组合项目已放弃检查,不能保存!");
+        }
+
+        //修改基础子项结果内容
+        List<TjRegBasicProjectSaveBo> regBasicProjects = bo.getRegBasicProjects();
+        if(CollUtil.isNotEmpty(regBasicProjects)){
+            List<TjRegBasicProject> tjRegBasicProjects = MapstructUtils.convert(regBasicProjects, TjRegBasicProject.class);
+            tjRegBasicProjectMapper.updateBatchById(tjRegBasicProjects);
+        }
+        //修改组合项目结果内容
+        tjRegCombinationProject.setCheckDoctor(bo.getCheckDoctor());
+        tjRegCombinationProject.setCheckDoctorName(bo.getCheckDoctorName());
+        tjRegCombinationProject.setCheckTime(bo.getCheckTime());
+        tjRegCombinationProject.setCheckStatus(StringUtils.isEmpty(bo.getCheckStatus())
+            ? "1" : bo.getCheckStatus());//已检查
+        tjRegCombinationProjectMapper.updateById(tjRegCombinationProject);
+
+        //这里需要更改登记记录允许总检状态  以及对诊断明细相关记录的保存
+        return null;
+    }
+
+    @Override
     public List<TjRegisterVo> getByIds(List<Long> regIdList) {
         return this.baseMapper.getByIds(regIdList);
     }

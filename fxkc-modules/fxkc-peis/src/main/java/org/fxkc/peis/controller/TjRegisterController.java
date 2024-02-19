@@ -2,6 +2,7 @@ package org.fxkc.peis.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -174,6 +175,16 @@ public class TjRegisterController extends BaseController {
         return  toAjax(tjRegisterService.changeRegCombin(bo));
     }
 
+
+    /**
+     * 体检项目诊断结果保存
+     */
+    @Log(title = "体检项目诊断结果保存", businessType = BusinessType.INSERT)
+    @RepeatSubmit()
+    @PostMapping("/saveDiagnosis")
+    public R<Void> saveDiagnosis(@Valid @RequestBody TjRegSaveDiagnosisBo bo) {
+        return  toAjax(tjRegisterService.saveDiagnosis(bo));
+    }
 
     /**
      * 体检替检登记

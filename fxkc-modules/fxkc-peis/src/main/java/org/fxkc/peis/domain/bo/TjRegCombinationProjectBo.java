@@ -127,6 +127,12 @@ public class TjRegCombinationProjectBo extends BaseEntity {
     private Long checkDoctor;
 
     /**
+     * 检查医生姓名
+     */
+    @NotNull(message = "检查医生姓名不能为空", groups = { AddGroup.class, EditGroup.class })
+    private String checkDoctorName;
+
+    /**
      * 检查时间
      */
     @NotNull(message = "检查时间不能为空", groups = { AddGroup.class, EditGroup.class })
