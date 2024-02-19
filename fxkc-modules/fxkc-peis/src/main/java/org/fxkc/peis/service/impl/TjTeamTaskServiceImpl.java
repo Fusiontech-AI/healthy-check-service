@@ -245,6 +245,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
     @Override
     public TjVerifyMessageVo verifyGroupData(List<TjGroupVerifyBo> list) {
         TjVerifyMessageVo vo = new TjVerifyMessageVo();
+        vo.setIsPrompt(Boolean.FALSE);
         List<TjTeamGroupBo> boList = MapstructUtils.convert(list, TjTeamGroupBo.class);
         validEntityBeforeSave(new TjTeamTaskBo().setGroupList(boList), Boolean.FALSE);
         List<Long> idList = StreamUtils.toList(list, TjGroupVerifyBo::getId);
@@ -260,7 +261,6 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
             if(Objects.equals(k.getId(), s.getId())) {
                 boolean isPrompt = Boolean.FALSE;
                 Long count = tjRegisterMap.getOrDefault(k.getId(), 0L);
-                buffer.append(index.getAndIncrement()).append(StrUtil.DOT).append("【").append(k.getGroupName()).append("】");
                 if(k.getItemDiscount().compareTo(s.getItemDiscount()) != 0) {
                     isPrompt = Boolean.TRUE;
                     buffer.append("【折扣调整为<span style='color:red'>").append(k.getItemDiscount())
@@ -295,11 +295,11 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
                         .concat(difference.abs().multiply(new BigDecimal(count)).toPlainString()).concat("</span>元】、") : "】、");
                 }
                 if(!isPrompt && ObjectUtil.notEqual(k.getIsSyncProject(), s.getIsSyncProject())) {
-                    buffer.append(ObjectUtil.equal("1", k.getIsSyncProject()) ?
+                    buffer.insert(0, index.getAndIncrement() + ".【" + k.getGroupName() + "】").append(ObjectUtil.equal("1", k.getIsSyncProject()) ?
                         "确认后将此分组信息同步本至分组内预约状态的未检人员<span style='color:red'>".concat(String.valueOf(count))
                             .concat("</span>人。") : "确认后新入组人员将按照此规则执行。").append("</br>");
                 }else if(isPrompt) {
-                    buffer.deleteCharAt(buffer.length() - 1).append("，")
+                    buffer.insert(0, index.getAndIncrement() + ".【" + k.getGroupName() + "】").deleteCharAt(buffer.length() - 1).append("，")
                         .append(ObjectUtil.equal("1", k.getIsSyncProject()) ?
                             "确认后将同步本分组内预约状态的未检人员<span style='color:red'>".concat(String.valueOf(count))
                                 .concat("</span>人。") : "新入组人员将按照此规则执行。").append("</br>");
@@ -329,7 +329,6 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
             if(Objects.equals(k.getId(), s.getId())) {
                 boolean isPrompt = Boolean.FALSE;
                 Long count = tjRegisterMap.getOrDefault(k.getId(), 0L);
-                buffer.append(index.getAndIncrement()).append(StrUtil.DOT).append("【").append(k.getGroupName()).append("】");
                 if(k.getItemDiscount().compareTo(s.getItemDiscount()) != 0) {
                     isPrompt = Boolean.TRUE;
                     buffer.append("【折扣调整为<span style='color:red'>").append(k.getItemDiscount())
@@ -349,11 +348,11 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
                         .concat(difference.abs().multiply(new BigDecimal(count)).toPlainString()).concat("</span>元】、") : "】、");
                 }
                 if(!isPrompt && ObjectUtil.notEqual(k.getIsSyncProject(), s.getIsSyncProject())) {
-                    buffer.append(ObjectUtil.equal("1", k.getIsSyncProject()) ?
+                    buffer.insert(0, index.getAndIncrement() + ".【" + k.getGroupName() + "】").append(ObjectUtil.equal("1", k.getIsSyncProject()) ?
                         "确认后将此分组信息同步本至分组内预约状态的未检人员<span style='color:red'>".concat(String.valueOf(count))
                             .concat("</span>人。") : "确认后新入组人员将按照此规则执行。").append("</br>");
                 }else if(isPrompt) {
-                    buffer.deleteCharAt(buffer.length() - 1).append("，")
+                    buffer.insert(0, index.getAndIncrement() + ".【" + k.getGroupName() + "】").deleteCharAt(buffer.length() - 1).append("，")
                         .append(ObjectUtil.equal("1", k.getIsSyncProject()) ?
                             "确认后将同步本分组内预约状态的未检人员<span style='color:red'>".concat(String.valueOf(count))
                                 .concat("</span>人。") : "新入组人员将按照此规则执行。").append("</br>");

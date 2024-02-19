@@ -119,7 +119,7 @@ public class TjCombinationProjectController extends BaseController {
     }
 
     /**
-     * 查询必检组合项目
+     * 查询其他必检组合项目
      */
     @PostMapping("/queryOtherCompulsoryInspection")
     public R<List<TjCombinationProjectListVo>> queryOtherCompulsoryInspection(@RequestBody @Valid TjOtherCompulsoryInspectionBo bo) {

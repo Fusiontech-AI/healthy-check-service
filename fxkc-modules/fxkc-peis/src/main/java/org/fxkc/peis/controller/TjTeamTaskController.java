@@ -120,7 +120,7 @@ public class TjTeamTaskController extends BaseController {
     }
 
     /**
-     * 团检任务校验分组数据
+     * 团检任务校验分组套餐数据
      */
     @PostMapping("/verifyGroupPackageData")
     @Log(title = "团检任务校验分组套餐数据", businessType = BusinessType.OTHER)
