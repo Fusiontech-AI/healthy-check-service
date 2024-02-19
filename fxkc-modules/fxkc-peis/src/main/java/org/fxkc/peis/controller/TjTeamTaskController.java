@@ -197,4 +197,14 @@ public class TjTeamTaskController extends BaseController {
         tjTeamTaskService.reviewTask(bo);
         return R.ok();
     }
+
+    /**
+     * 团检任务退回
+     */
+    @RepeatSubmit
+    @PostMapping("/returnTask")
+    public R<Void> returnTask(@RequestBody @NotEmpty(message = "所选审核任务不能为空") List<Long> idList) {
+        tjTeamTaskService.returnTask(idList);
+        return R.ok();
+    }
 }

@@ -123,7 +123,7 @@ public class TjTeamTask extends TenantEntity {
     private String preparedName;
 
     /**
-     * 审核结论(1:通过2:驳回)
+     * 审核结论(0:待审1:通过2:驳回)
      */
     private String reviewResult;
 

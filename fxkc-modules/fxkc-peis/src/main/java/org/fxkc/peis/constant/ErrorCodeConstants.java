@@ -64,4 +64,6 @@ public interface ErrorCodeConstants {
     String PEIS_TJTEAMWAIT_NOT_EQUALS_SEX = "peis.tjteamwait.not.equals.sex";
 
     String PEIS_COMBINATION_NOT_EXIST = "peis.combination.not.exist";
+
+    String PEIS_CAN_REVIEW = "peis.can.review";
 }

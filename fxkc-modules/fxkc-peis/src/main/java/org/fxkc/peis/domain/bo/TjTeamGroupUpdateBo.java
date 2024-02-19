@@ -1,5 +1,6 @@
 package org.fxkc.peis.domain.bo;
 
+import cn.hutool.core.collection.CollUtil;
 import io.github.linpeilie.annotations.AutoMapper;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -78,7 +79,7 @@ public class TjTeamGroupUpdateBo {
     /**
      * 危害因素集合
      */
-    private List<TjTeamGroupHazardsBo> groupHazardsList;
+    private List<TjTeamGroupHazardsBo> groupHazardsList = CollUtil.newArrayList();
 
     /**
      * 照射源sys_dict_type(bus_shine_source)

@@ -447,7 +447,8 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
         Page<TjTeamGroup> page = tjTeamGroupMapper.selectPage(pageQuery.build(), Wrappers.lambdaQuery(TjTeamGroup.class)
             .eq(TjTeamGroup::getTaskId, taskId));
         List<Long> groupIds = StreamUtils.toList(page.getRecords(), TjTeamGroup::getId);
-        List<TjTaskReviewGroupVo> voList = CollUtil.newArrayList();
+        Page<TjTaskReviewGroupVo> voPage = new Page<>();
+        List<TjTaskReviewGroupVo> voList;
         if(CollUtil.isNotEmpty(groupIds)) {
             List<TjRegister> registerList = tjRegisterMapper.selectList(Wrappers.lambdaQuery(TjRegister.class)
                 .in(TjRegister::getTeamGroupId, groupIds)
@@ -464,8 +465,10 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
             voList.forEach(k -> k.setAllNum(allMap.getOrDefault(k.getId(),0L))
                 .setAppointNum(appointMap.getOrDefault(k.getId(),0L))
                 .setCheckInNum(checkInMap.getOrDefault(k.getId(),0L)));
+            voPage.setRecords(voList);
+            voPage.setTotal(page.getTotal());
         }
-        return TableDataInfo.build(voList);
+        return TableDataInfo.build(voPage);
     }
 
     @Override
@@ -473,7 +476,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
         Page<TjRegister> page = tjRegisterMapper.selectPage(pageQuery.build(), Wrappers.lambdaQuery(TjRegister.class)
             .eq(TjRegister::getTaskId, taskId));
         List<TjTaskReviewRegisterVo> voList = MapstructUtils.convert(page.getRecords(), TjTaskReviewRegisterVo.class);
-        return TableDataInfo.build(voList);
+        return TableDataInfo.build(new Page<TjTaskReviewRegisterVo>().setRecords(voList).setTotal(page.getTotal()));
     }
 
     @Override
@@ -486,11 +489,26 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
             throw new PeisException(ErrorCodeConstants.PEIS_NOT_LOGGED_IN);
         }
         if(Objects.nonNull(bo.getId())) {
+            long count = baseMapper.selectCount(Wrappers.lambdaQuery(TjTeamTask.class).eq(TjTeamTask::getId, bo.getId())
+                .eq(TjTeamTask::getReviewResult, "0"));
+            if(count == 0) {
+                throw new PeisException(ErrorCodeConstants.PEIS_CAN_REVIEW);
+            }
             baseMapper.updateById(new TjTeamTask().setId(bo.getId()).setIsReview(CommonConstants.NORMAL)
                 .setReviewResult(bo.getReviewResult()).setReviewBy(userId));
         }else if(CollUtil.isNotEmpty(bo.getIdList())) {
+            long count = baseMapper.selectCount(Wrappers.lambdaQuery(TjTeamTask.class).in(TjTeamTask::getId, bo.getIdList())
+                .gt(TjTeamTask::getReviewResult, "0"));
+            if(count > 0) {
+                throw new PeisException(ErrorCodeConstants.PEIS_CAN_REVIEW);
+            }
             bo.getIdList().forEach(k -> baseMapper.updateById(new TjTeamTask().setId(k)
                 .setIsReview(CommonConstants.NORMAL).setReviewResult(bo.getReviewResult()).setReviewBy(userId)));
         }
+    }
+
+    @Override
+    public void returnTask(List<Long> idList) {
+        idList.forEach(k -> baseMapper.updateById(new TjTeamTask().setId(k).setReviewResult("0")));
     }
 }

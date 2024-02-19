@@ -68,5 +68,5 @@ public interface ITjTeamTaskService {
 
     void reviewTask(TjTaskReviewBo bo);
 
-
+    void returnTask(List<Long> idList);
 }

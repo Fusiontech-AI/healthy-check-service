@@ -19,7 +19,7 @@ public class TjTaskReviewBo {
     private List<Long> idList;
 
     /**
-     *审核结论(1:通过2:驳回)
+     *审核结论(0:待审1:通过2:驳回)
      */
     @NotBlank(message = "审核结论不能为空")
     private String reviewResult;
