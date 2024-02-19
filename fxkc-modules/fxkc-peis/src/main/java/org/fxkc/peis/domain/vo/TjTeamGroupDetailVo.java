@@ -1,20 +1,28 @@
 package org.fxkc.peis.domain.vo;
 
 
+import cn.hutool.core.collection.CollUtil;
 import io.github.linpeilie.annotations.AutoMapper;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.fxkc.peis.domain.TjTeamGroup;
 import org.fxkc.peis.domain.bo.TjTeamGroupHazardsBo;
 import org.fxkc.peis.domain.bo.TjTeamGroupItemBo;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 
 @Data
 @AutoMapper(target = TjTeamGroup.class)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TjTeamGroupDetailVo {
 
     /**
@@ -65,7 +73,7 @@ public class TjTeamGroupDetailVo {
     /**
      * 危害因素集合
      */
-    private List<TjTeamGroupHazardsVo> groupHazardsList;
+    private List<TjTeamGroupHazardsVo> groupHazardsList = CollUtil.newArrayList();
 
     /**
      * 照射源sys_dict_type(bus_shine_source)

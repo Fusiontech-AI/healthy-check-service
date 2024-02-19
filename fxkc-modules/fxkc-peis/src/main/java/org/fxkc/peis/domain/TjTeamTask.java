@@ -1,19 +1,16 @@
 package org.fxkc.peis.domain;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import java.math.BigDecimal;
-import java.util.Date;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.experimental.Accessors;
 import org.fxkc.common.tenant.core.TenantEntity;
-import org.fxkc.common.translation.annotation.Translation;
-import org.fxkc.common.translation.constant.TransConstant;
-import org.fxkc.peis.constant.DictTypeConstants;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serial;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * 团检任务管理对象 tj_team_task

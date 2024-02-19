@@ -111,4 +111,8 @@ public class TjTeamGroupBo extends BaseEntity {
      */
     private Long taskId;
 
+    /**
+     * 是否过滤无项目分组(0:是1:否)
+     */
+    private String filterProject;
 }

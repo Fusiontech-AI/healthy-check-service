@@ -29,4 +29,9 @@ public class TjTeamTaskQueryBo {
      * 是否审核(0:是1:否)
      */
     private String isReview;
+
+    /**
+     * 审核结论(0:待审1:通过2:驳回)
+     */
+    private String reviewResult;
 }
