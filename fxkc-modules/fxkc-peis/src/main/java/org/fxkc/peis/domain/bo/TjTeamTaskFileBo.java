@@ -40,10 +40,4 @@ public class TjTeamTaskFileBo extends BaseEntity {
     @NotBlank(message = "文件类型1:职业健康检查委托协议书2:体检方案3:职业健康检查表不能为空", groups = { AddGroup.class, EditGroup.class })
     private String fileType;
 
-
-    /**
-     * 上传文件
-     */
-    @NotNull(message = "上传文件不能为空",groups = { AddGroup.class, EditGroup.class })
-    private MultipartFile file;
 }

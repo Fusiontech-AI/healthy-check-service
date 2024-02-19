@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 import org.fxkc.common.idempotent.annotation.RepeatSubmit;
@@ -21,6 +22,7 @@ import org.fxkc.peis.domain.vo.TjTeamTaskFileVo;
 import org.fxkc.peis.domain.bo.TjTeamTaskFileBo;
 import org.fxkc.peis.service.ITjTeamTaskFileService;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 体检单位任务文件
@@ -75,8 +77,8 @@ public class TjTeamTaskFileController extends BaseController {
     @Log(title = "体检单位任务文件", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
-    public R<Void> add(@Validated(AddGroup.class) TjTeamTaskFileBo bo) {
-        return toAjax(tjTeamTaskFileService.insertByBo(bo));
+    public R<Void> add(@RequestPart("file") MultipartFile file, @ParameterObject @Validated(AddGroup.class) TjTeamTaskFileBo bo) {
+        return toAjax(tjTeamTaskFileService.insertByBo(file, bo));
     }
 
     /**
@@ -86,8 +88,8 @@ public class TjTeamTaskFileController extends BaseController {
     @Log(title = "体检单位任务文件", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
-    public R<Void> edit(@Validated(EditGroup.class) TjTeamTaskFileBo bo) {
-        return toAjax(tjTeamTaskFileService.updateByBo(bo));
+    public R<Void> edit(@RequestPart("file") MultipartFile file, @ParameterObject @Validated(EditGroup.class) TjTeamTaskFileBo bo) {
+        return toAjax(tjTeamTaskFileService.updateByBo(file, bo));
     }
 
     /**

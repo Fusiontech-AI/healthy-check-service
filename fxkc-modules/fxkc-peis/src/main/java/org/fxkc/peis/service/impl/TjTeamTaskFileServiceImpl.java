@@ -28,6 +28,7 @@ import org.fxkc.peis.domain.vo.TjTeamTaskFileVo;
 import org.fxkc.peis.domain.TjTeamTaskFile;
 import org.fxkc.peis.mapper.TjTeamTaskFileMapper;
 import org.fxkc.peis.service.ITjTeamTaskFileService;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,7 +47,7 @@ import java.util.Collection;
 @Service
 public class TjTeamTaskFileServiceImpl extends ServiceImpl<TjTeamTaskFileMapper, TjTeamTaskFile> implements ITjTeamTaskFileService {
 
-    private final static String[] fileSuffix = new String[]{"doc", "docx", "pdf","rar","zip"};
+    private final static String[] fileSuffix = new String[]{"doc", "docx", "pdf", "rar", "zip"};
 
     /**
      * 查询体检单位任务文件
@@ -85,8 +86,8 @@ public class TjTeamTaskFileServiceImpl extends ServiceImpl<TjTeamTaskFileMapper,
      * 新增体检单位任务文件
      */
     @Override
-    public Boolean insertByBo(TjTeamTaskFileBo bo) {
-        TjTeamTaskFile add = commonBuild(bo);
+    public Boolean insertByBo(MultipartFile file, TjTeamTaskFileBo bo) {
+        TjTeamTaskFile add = commonBuild(file, bo);
         validEntityBeforeSave(add);
         boolean flag = baseMapper.insert(add) > 0;
         if (flag) {
@@ -99,8 +100,8 @@ public class TjTeamTaskFileServiceImpl extends ServiceImpl<TjTeamTaskFileMapper,
      * 修改体检单位任务文件
      */
     @Override
-    public Boolean updateByBo(TjTeamTaskFileBo bo) {
-        TjTeamTaskFile update = commonBuild(bo);
+    public Boolean updateByBo(MultipartFile file, TjTeamTaskFileBo bo) {
+        TjTeamTaskFile update = commonBuild(file, bo);
         validEntityBeforeSave(update);
         return baseMapper.updateById(update) > 0;
     }
@@ -118,21 +119,21 @@ public class TjTeamTaskFileServiceImpl extends ServiceImpl<TjTeamTaskFileMapper,
         }
     }
 
-    private TjTeamTaskFile commonBuild(TjTeamTaskFileBo bo) {
+    private TjTeamTaskFile commonBuild(MultipartFile file, TjTeamTaskFileBo bo) {
         TjTeamTaskFile tjTeamTaskFile = MapstructUtils.convert(bo, TjTeamTaskFile.class);
         String fileName = IdUtil.simpleUUID() + StrUtil.DOT +
-            FileUtil.extName(bo.getFile().getOriginalFilename());
+            FileUtil.extName(file.getOriginalFilename());
         OssClient ossClient = OssFactory.instance();
         try {
-            ossClient.upload(bo.getFile().getBytes(), fileName, bo.getFile().getContentType());
+            ossClient.upload(file.getBytes(), fileName, file.getContentType());
         } catch (IOException e) {
             log.error(e.getMessage(), e);
             throw new PeisException(ErrorCodeConstants.PEIS_TASK_FILE_UPLOAD);
         }
         tjTeamTaskFile.setFileName(fileName);
-        tjTeamTaskFile.setOriginalName(FileNameUtil.cleanInvalid(bo.getFile().getOriginalFilename()));
+        tjTeamTaskFile.setOriginalName(FileNameUtil.cleanInvalid(file.getOriginalFilename()));
         tjTeamTaskFile.setSuffixType(FileUtil.extName(tjTeamTaskFile.getOriginalName()));
-        tjTeamTaskFile.setFileSize(bo.getFile().getSize());
+        tjTeamTaskFile.setFileSize(file.getSize());
         return tjTeamTaskFile;
     }
 

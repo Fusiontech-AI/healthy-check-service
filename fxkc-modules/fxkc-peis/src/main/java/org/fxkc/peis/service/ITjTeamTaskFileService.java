@@ -6,6 +6,7 @@ import org.fxkc.peis.domain.vo.TjTeamTaskFileVo;
 import org.fxkc.peis.domain.bo.TjTeamTaskFileBo;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.mybatis.core.page.PageQuery;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
 import java.util.List;
@@ -36,12 +37,12 @@ public interface ITjTeamTaskFileService {
     /**
      * 新增体检单位任务文件
      */
-    Boolean insertByBo(TjTeamTaskFileBo bo);
+    Boolean insertByBo(MultipartFile file, TjTeamTaskFileBo bo);
 
     /**
      * 修改体检单位任务文件
      */
-    Boolean updateByBo(TjTeamTaskFileBo bo);
+    Boolean updateByBo(MultipartFile file, TjTeamTaskFileBo bo);
 
     /**
      * 校验并批量删除体检单位任务文件信息
