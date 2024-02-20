@@ -129,7 +129,6 @@ public class TjBasicProjectServiceImpl implements ITjBasicProjectService {
     private boolean checkCodeUnique(TjBasicProject entity) {
         long id = ObjectUtil.isNull(entity.getId()) ? -1L : entity.getId();
         TjBasicProject tjBasicProject = baseMapper.selectOne(new LambdaQueryWrapper<TjBasicProject>()
-            .eq(TjBasicProject::getDelFlag, CommonConstants.NORMAL)
             .eq(TjBasicProject::getBasicProjectCode, entity.getBasicProjectCode())
 
         );
