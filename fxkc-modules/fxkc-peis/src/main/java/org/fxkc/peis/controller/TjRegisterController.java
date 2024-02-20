@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 体检人员登记信息
+ * 体检登记人员信息
  * 前端访问路由地址为:/peis/register
  *
  * @author JunBaiChen
@@ -168,7 +168,7 @@ public class TjRegisterController extends BaseController {
     /**
      * 体检项目登记(或变更)
      */
-    @Log(title = "体检项目登记", businessType = BusinessType.INSERT)
+    @Log(title = "体检项目登记保存或变更", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping("/changeRegCombin")
     public R<Void> changeRegCombin(@Validated(AddGroup.class) @RequestBody TjRegCombinAddBo bo) {

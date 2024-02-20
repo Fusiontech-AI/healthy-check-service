@@ -6,6 +6,8 @@ import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 import org.fxkc.common.excel.annotation.ExcelDictFormat;
 import org.fxkc.common.excel.convert.ExcelDictConvert;
+import org.fxkc.common.translation.annotation.Translation;
+import org.fxkc.common.translation.constant.TransConstant;
 import org.fxkc.peis.domain.TjRegCombinationProject;
 
 import java.io.Serial;
@@ -45,6 +47,12 @@ public class TjRegCombinationProjectVo implements Serializable {
      */
     @ExcelProperty(value = "组合项目id")
     private Long combinationProjectId;
+
+    /**
+     * 组合项目名称
+     */
+    @Translation(type = TransConstant.COMBINATION_ID_TO_NAME,mapper = "combinationProjectId")
+    private String combinProjectName;
 
     /**
      * 项目类型（1：套餐项目，2：加项项目）见字典bus_combination_project_type
