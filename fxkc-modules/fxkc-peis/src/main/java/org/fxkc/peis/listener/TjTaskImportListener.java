@@ -138,7 +138,6 @@ public class TjTaskImportListener extends AnalysisEventListener<TjTaskOccupation
                 tjTaskOccupationalExportVo.setJobIlluminationType(group.getShineType());
             }
             tjTaskOccupationalExportVo.setBirthday(IdcardUtil.getBirthDate(tjTaskOccupationalExportVo.getCredentialNumber()));
-            //todo 赋值流水号
             tjTaskOccupationalExportVo.setAddTime(tjTaskImportBo.getTime());
             tjTaskOccupationalExportVo.setTeamName(tjTaskImportBo.getTeamName());
             tjTaskOccupationalExportVo.setTaskName(tjTaskImportBo.getTaskName());

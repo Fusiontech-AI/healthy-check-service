@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.fxkc.common.core.utils.IDUtil;
 import org.fxkc.common.core.utils.MapstructUtils;
 import org.fxkc.common.core.utils.StringUtils;
+import org.fxkc.peis.domain.TjArchives;
 import org.fxkc.peis.domain.TjRegister;
 import org.fxkc.peis.domain.TjRegisterZyb;
 import org.fxkc.peis.domain.TjRegisterZybHazard;
@@ -44,9 +45,11 @@ public class TeamOccuRegisterInsert extends AbstractRegisterInsert {
         List<TjRegister> tjRegisters = new ArrayList<>() ;
         List<TjRegisterZyb> tjRegisterZybs = new ArrayList<>();
         List<TjRegisterZybHazard> tjRegisterZybHazards = new ArrayList<>();
+        List<TjArchives> tjArchivesList = CollUtil.newArrayList();
         //进行职业病相关联记录的插入
         tjRegisterAddBos.stream().forEach(m->{
             TjRegister tjRegister = MapstructUtils.convert(m, TjRegister.class);
+            fillArchives(tjRegister, tjArchivesList);
             fillCommonField(tjRegister);
             tjRegister.setId(IDUtil.getInstance().nextId());
             tjRegisters.add(tjRegister);
@@ -65,6 +68,9 @@ public class TeamOccuRegisterInsert extends AbstractRegisterInsert {
         tjRegisterMapper.insertBatch(tjRegisters);
         tjRegisterZybMapper.insertBatch(tjRegisterZybs);
         tjRegisterZybHazardMapper.insertBatch(tjRegisterZybHazards);
+        if(CollUtil.isNotEmpty(tjArchivesList)) {
+            tjArchivesMapper.insertBatch(tjArchivesList);
+        }
         return tjRegisters;
     }
 

@@ -3,10 +3,7 @@ package org.fxkc.peis.domain.vo;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.fxkc.common.translation.annotation.Translation;
-import org.fxkc.common.translation.constant.TransConstant;
 import org.fxkc.peis.domain.TjTeamGroup;
-import org.fxkc.peis.domain.TjTeamTask;
 
 import java.math.BigDecimal;
 

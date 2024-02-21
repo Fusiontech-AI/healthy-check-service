@@ -26,6 +26,7 @@ import org.fxkc.peis.constant.ErrorCodeConstants;
 import org.fxkc.peis.domain.*;
 import org.fxkc.peis.domain.bo.*;
 import org.fxkc.peis.domain.vo.*;
+import org.fxkc.peis.enums.CertificateTypeEnum;
 import org.fxkc.peis.enums.GroupTypeEnum;
 import org.fxkc.peis.enums.HealthyCheckTypeEnum;
 import org.fxkc.peis.enums.PhysicalTypeEnum;
@@ -422,6 +423,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
             addBo.setTaskId(bo.getTaskId());
             addBo.setTeamId(tjTeamTask.getTeamId());
             addBo.setBusinessCategory("2");
+            addBo.setCredentialType(CertificateTypeEnum.身份证.getCode());
             addBo.setHealthyCheckStatus(HealthyCheckTypeEnum.预约.getCode());
             addBo.setOccupationalType(occupationalType);
             if(Objects.equals(occupationalType, CommonConstants.NORMAL)) {

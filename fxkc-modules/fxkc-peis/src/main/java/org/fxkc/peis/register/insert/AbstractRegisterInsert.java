@@ -1,14 +1,22 @@
 package org.fxkc.peis.register.insert;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.extern.slf4j.Slf4j;
 import org.fxkc.common.core.utils.MapstructUtils;
 import org.fxkc.common.core.utils.PinYinUtil;
 import org.fxkc.common.core.utils.SequenceNoUtils;
 import org.fxkc.common.core.utils.StringUtils;
+import org.fxkc.common.satoken.utils.LoginHelper;
+import org.fxkc.peis.constant.ErrorCodeConstants;
+import org.fxkc.peis.domain.TjArchives;
 import org.fxkc.peis.domain.TjRegister;
 import org.fxkc.peis.domain.bo.TjRegisterAddBo;
+import org.fxkc.peis.exception.PeisException;
+import org.fxkc.peis.mapper.TjArchivesMapper;
 import org.fxkc.peis.mapper.TjRegisterMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -28,6 +36,9 @@ public abstract class AbstractRegisterInsert implements RegisterInsertService{
     @Autowired
     RegisterInsertHolder registerInsertHolder;
 
+    @Autowired
+    protected TjArchivesMapper tjArchivesMapper;
+
     @PostConstruct
     public void init() {
         registerInsertHolder.putBuilder(operateCode, this);
@@ -37,10 +48,15 @@ public abstract class AbstractRegisterInsert implements RegisterInsertService{
     public List<TjRegister> RegisterInsert(List<TjRegisterAddBo> tjRegisterAddBos) {
         List<TjRegister> tjRegisters = MapstructUtils.convert(tjRegisterAddBos, TjRegister.class);
         //默认字段信息赋值
+        List<TjArchives> tjArchivesList = CollUtil.newArrayList();
         tjRegisters.stream().forEach(m->{
+            fillArchives(m, tjArchivesList);
             fillCommonField(m);
         });
         tjRegisterMapper.insertBatch(tjRegisters);
+        if(CollUtil.isNotEmpty(tjArchivesList)) {
+            tjArchivesMapper.insertBatch(tjArchivesList);
+        }
         return tjRegisters;
     }
 
@@ -83,7 +99,6 @@ public abstract class AbstractRegisterInsert implements RegisterInsertService{
      */
     public void fillCommonField(TjRegister tjRegister){
         tjRegister.setNamePy(PinYinUtil.getPinyin(tjRegister.getName()));
-        tjRegister.setRecordCode(tjRegister.getCredentialNumber());
         if(StrUtil.isBlank(tjRegister.getHealthyCheckStatus())) {
             tjRegister.setHealthyCheckStatus("1");//登记状态
         }
@@ -91,4 +106,29 @@ public abstract class AbstractRegisterInsert implements RegisterInsertService{
         Long count = tjRegisterMapper.selectCount(new LambdaQueryWrapper<TjRegister>().eq(TjRegister::getCredentialNumber, tjRegister.getCredentialNumber()));
         tjRegister.setPeTimes(count + 1);
     }
+
+    public void fillArchives(TjRegister tjRegister, List<TjArchives> tjArchivesList) {
+        TjArchives tjArchives = tjArchivesMapper.selectOne(Wrappers.lambdaQuery(TjArchives.class)
+            .eq(TjArchives::getName, tjRegister.getName())
+            .eq(TjArchives::getCredentialType, tjRegister.getCredentialType())
+            .eq(TjArchives::getCredentialNumber, tjRegister.getCredentialNumber()));
+        if(Objects.nonNull(tjArchives)) {
+            tjRegister.setRecordCode(tjArchives.getArchivesNo());
+        }else {
+            String tenantId;
+            try {
+                tenantId = LoginHelper.getLoginUser().getTenantId();
+            }catch (Exception e) {
+                throw new PeisException(ErrorCodeConstants.PEIS_NOT_LOGGED_IN);
+            }
+            String archivesNo = tjArchivesMapper.queryTjArchives();
+            TjArchives resp = new TjArchives();
+            resp.setArchivesNo("TJ".concat(tenantId).concat(StringUtils.zeroPrefix(archivesNo, 3)));
+            resp.setName(tjRegister.getName());
+            resp.setCredentialType(tjRegister.getCredentialType());
+            resp.setCredentialNumber(tjRegister.getCredentialNumber());
+            tjArchivesList.add(resp);
+        }
+    }
+
 }
