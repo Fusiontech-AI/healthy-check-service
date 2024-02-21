@@ -53,14 +53,16 @@ public class TjTeamTaskController extends BaseController {
     }
 
     /**
-     * 导出团检任务管理列表
+     * 团检人员批量导出
      */
     @SaCheckPermission("peis:teamTask:export")
-    @Log(title = "团检任务管理", businessType = BusinessType.EXPORT)
+    @Log(title = "团检人员批量导出", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(TjTeamTaskQueryBo bo, HttpServletResponse response) {
-        List<TjTeamTaskVo> list = tjTeamTaskService.queryList(bo);
-        ExcelUtil.exportExcel(list, "团检任务管理", TjTeamTaskVo.class, response);
+    public void export(@RequestParam("taskId") @NotBlank(message = "任务id不能为空") Long taskId, HttpServletResponse response) {
+        PageQuery pageQuery = new PageQuery();
+        pageQuery.setPageSize(-1);
+        TableDataInfo<TjTaskRegisterExportVo> result = tjTeamTaskService.queryTaskRegisterExportById(taskId, pageQuery);
+        ExcelUtil.exportExcel(result.getRows(), "团检人员批量导出", TjTaskRegisterExportVo.class, response);
     }
 
     /**
@@ -206,5 +208,14 @@ public class TjTeamTaskController extends BaseController {
     public R<Void> returnTask(@RequestBody @NotEmpty(message = "所选审核任务不能为空") List<Long> idList) {
         tjTeamTaskService.returnTask(idList);
         return R.ok();
+    }
+
+    /**
+     * 团检任务导入人员列表
+     */
+    @GetMapping("/queryTaskRegisterExportById")
+    public TableDataInfo<TjTaskRegisterExportVo> queryTaskRegisterExportById(@NotNull(message = "任务id不能为空") Long taskId,
+                                                                         PageQuery pageQuery) {
+        return tjTeamTaskService.queryTaskRegisterExportById(taskId, pageQuery);
     }
 }

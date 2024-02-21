@@ -9,6 +9,7 @@ import org.fxkc.peis.domain.bo.template.ReportPrintBO;
 import org.fxkc.peis.domain.vo.TjRegisterPageVo;
 import org.fxkc.peis.domain.vo.TjRegisterVo;
 import org.fxkc.common.mybatis.core.mapper.BaseMapperPlus;
+import org.fxkc.peis.domain.vo.TjTaskRegisterExportVo;
 
 import java.util.List;
 
@@ -30,4 +31,6 @@ public interface TjRegisterMapper extends BaseMapperPlus<TjRegister, TjRegisterV
     List<TjRegisterVo> getByIds(@Param("regIdList") List<Long> regIdList);
 
     void updateGuideSheetPrint(@Param("bo") ReportPrintBO bo);
+
+    Page<TjTaskRegisterExportVo> queryTaskRegisterExportById(@Param("page") Page<Object> build, @Param("taskId") Long taskId);
 }

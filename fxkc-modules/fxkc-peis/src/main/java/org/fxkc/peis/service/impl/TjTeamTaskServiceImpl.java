@@ -513,4 +513,10 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
         idList.forEach(k -> baseMapper.updateById(new TjTeamTask().setId(k)
             .setIsReview(CommonConstants.DISABLE).setReviewResult("0")));
     }
+
+    @Override
+    public TableDataInfo<TjTaskRegisterExportVo> queryTaskRegisterExportById(Long taskId,PageQuery pageQuery) {
+        Page<TjTaskRegisterExportVo> result = tjRegisterMapper.queryTaskRegisterExportById(pageQuery.build(), taskId);
+        return TableDataInfo.build(result);
+    }
 }

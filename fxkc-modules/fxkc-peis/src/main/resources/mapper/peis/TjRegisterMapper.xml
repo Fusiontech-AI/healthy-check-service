@@ -183,6 +183,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </select>
 
+    <select id="queryTaskRegisterExportById" resultType="org.fxkc.peis.domain.vo.TjTaskRegisterExportVo">
+        select a.name,
+            a.gender,
+            a.age,
+            a.credential_number,
+            c.group_name,
+            b.duty_status,
+            a.healthy_check_status
+        from tj_register a left join tj_register_zyb b on a.id = b.reg_id
+                           left join tj_team_group c on a.team_group_id = c.id
+        where a.del_flag = '0'
+        and a.task_id = #{taskId}
+    </select>
+
     <update id="updateTjRegisterTeamSettleNull">
         update TJ_REGISTER
         set TEAM_SETTLE_ID=null,TEAM_SETTLE_TIME=null,TEAM_CHARGE_STATUS='1'
