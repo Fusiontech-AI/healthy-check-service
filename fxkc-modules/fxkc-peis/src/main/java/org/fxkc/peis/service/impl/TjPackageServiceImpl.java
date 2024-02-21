@@ -26,7 +26,6 @@ import org.fxkc.peis.domain.vo.AmountCalculationVo;
 import org.fxkc.peis.domain.vo.PackageAndProjectVo;
 import org.fxkc.peis.domain.vo.TjPackageHazardsVo;
 import org.fxkc.peis.domain.vo.TjPackageVo;
-import org.fxkc.peis.enums.OccupationalDictEnum;
 import org.fxkc.peis.enums.PhysicalTypeEnum;
 import org.fxkc.peis.exception.PeisException;
 import org.fxkc.peis.liteflow.context.AmountCalculationContext;
@@ -314,7 +313,7 @@ public class TjPackageServiceImpl implements ITjPackageService {
         if(standardAmount.compareTo(new BigDecimal("0"))==0){
             return new BigDecimal("0");
         }
-        return receivableAmount.divide(standardAmount, 2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100"));
+        return receivableAmount.divide(standardAmount, 6, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")).setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
     /**
