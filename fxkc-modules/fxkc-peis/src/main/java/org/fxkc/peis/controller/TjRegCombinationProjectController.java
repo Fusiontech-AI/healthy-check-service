@@ -7,9 +7,13 @@ import lombok.RequiredArgsConstructor;
 import org.fxkc.common.core.domain.R;
 import org.fxkc.common.log.annotation.Log;
 import org.fxkc.common.log.enums.BusinessType;
+import org.fxkc.common.mybatis.core.page.PageQuery;
+import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.web.core.BaseController;
 import org.fxkc.peis.domain.bo.TjRegCombinationProjectDelayBo;
+import org.fxkc.peis.domain.bo.TjRegCombinationProjectListBo;
 import org.fxkc.peis.domain.vo.TjRegBasicProjectVo;
+import org.fxkc.peis.domain.vo.TjRegCombinationProjectListVo;
 import org.fxkc.peis.domain.vo.TjRegCombinationProjectVo;
 import org.fxkc.peis.service.ITjRegCombinationProjectService;
 import org.springframework.validation.annotation.Validated;
@@ -31,6 +35,14 @@ import java.util.List;
 public class TjRegCombinationProjectController extends BaseController {
 
     private final ITjRegCombinationProjectService tjRegCombinationProjectService;
+
+    /**
+     * 查询体检人员综合项目信息列表
+     */
+    @GetMapping("/list")
+    public TableDataInfo<TjRegCombinationProjectListVo> list(TjRegCombinationProjectListBo bo, PageQuery pageQuery) {
+        return tjRegCombinationProjectService.queryPageList(bo, pageQuery);
+    }
 
 
     /**
