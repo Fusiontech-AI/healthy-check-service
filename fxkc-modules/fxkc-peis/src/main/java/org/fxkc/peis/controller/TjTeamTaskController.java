@@ -58,7 +58,7 @@ public class TjTeamTaskController extends BaseController {
     @SaCheckPermission("peis:teamTask:export")
     @Log(title = "团检人员批量导出", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(@RequestParam("taskId") @NotBlank(message = "任务id不能为空") Long taskId, HttpServletResponse response) {
+    public void export(@RequestParam("taskId") @NotNull(message = "任务id不能为空") Long taskId, HttpServletResponse response) {
         PageQuery pageQuery = new PageQuery();
         pageQuery.setPageSize(-1);
         TableDataInfo<TjTaskRegisterExportVo> result = tjTeamTaskService.queryTaskRegisterExportById(taskId, pageQuery);
