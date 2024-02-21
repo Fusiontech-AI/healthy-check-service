@@ -1,13 +1,10 @@
 package org.fxkc.peis.domain.vo;
 
-import io.github.linpeilie.annotations.AutoMappers;
-import org.fxkc.peis.domain.TjTeamGroupHazards;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
-import com.alibaba.excel.annotation.ExcelProperty;
-import org.fxkc.common.excel.annotation.ExcelDictFormat;
-import org.fxkc.common.excel.convert.ExcelDictConvert;
 import io.github.linpeilie.annotations.AutoMapper;
+import io.github.linpeilie.annotations.AutoMappers;
 import lombok.Data;
+import org.fxkc.peis.domain.TjTeamGroupHazards;
 import org.fxkc.peis.domain.bo.TjRegisterZybHazardBo;
 
 import java.io.Serial;

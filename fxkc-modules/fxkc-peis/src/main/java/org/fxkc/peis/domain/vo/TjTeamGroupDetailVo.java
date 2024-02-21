@@ -3,19 +3,13 @@ package org.fxkc.peis.domain.vo;
 
 import cn.hutool.core.collection.CollUtil;
 import io.github.linpeilie.annotations.AutoMapper;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.fxkc.peis.domain.TjTeamGroup;
-import org.fxkc.peis.domain.bo.TjTeamGroupHazardsBo;
-import org.fxkc.peis.domain.bo.TjTeamGroupItemBo;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -73,6 +67,7 @@ public class TjTeamGroupDetailVo {
     /**
      * 危害因素集合
      */
+    @Builder.Default
     private List<TjTeamGroupHazardsVo> groupHazardsList = CollUtil.newArrayList();
 
     /**
@@ -84,4 +79,19 @@ public class TjTeamGroupDetailVo {
      * 照射源种类sys_dict_type(bus_job_illumination_source)
      */
     private String shineType;
+
+    /**
+     * 标准价格
+     */
+    private BigDecimal standardPrice;
+
+    /**
+     * 实际价格
+     */
+    private BigDecimal actualPrice;
+
+    /**
+     * 任务id
+     */
+    private Long taskId;
 }
