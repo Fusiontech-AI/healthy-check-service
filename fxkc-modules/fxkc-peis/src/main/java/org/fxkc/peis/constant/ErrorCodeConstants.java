@@ -68,4 +68,8 @@ public interface ErrorCodeConstants {
     String PEIS_CAN_REVIEW = "peis.can.review";
 
     String PEIS_REGISTER_NOT_APPIONT = "peis.register.not.appiont";
+
+    String PEIS_PACKAGE_HAZARDS_NOT_EMPTY = "peis.package.hazards.not.empty";
+
+    String PEIS_SHINE_NOT_EMPTY = "peis.shine.not.empty";
 }

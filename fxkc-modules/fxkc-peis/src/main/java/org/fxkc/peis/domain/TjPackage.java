@@ -87,7 +87,7 @@ public class TjPackage extends TenantEntity {
     private String delFlag;
 
     /**
-     * 照射源sys_dict_type(bus_duty_status)
+     * 在岗状态sys_dict_type(bus_duty_status)
      */
     private String dutyStatus;
 

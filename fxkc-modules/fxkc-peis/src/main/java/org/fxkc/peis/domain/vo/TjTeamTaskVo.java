@@ -2,6 +2,8 @@ package org.fxkc.peis.domain.vo;
 
 import java.math.BigDecimal;
 import java.util.Date;
+
+import cn.hutool.core.date.DatePattern;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.fxkc.common.translation.annotation.Translation;
 import org.fxkc.common.translation.constant.TransConstant;
@@ -65,18 +67,21 @@ public class TjTeamTaskVo implements Serializable {
      * 签订日期
      */
     @ExcelProperty(value = "签订日期")
+    @JsonFormat(pattern = DatePattern.NORM_DATE_PATTERN, timezone = "GMT+8")
     private Date signDate;
 
     /**
      * 开始日期
      */
     @ExcelProperty(value = "开始日期")
+    @JsonFormat(pattern = DatePattern.NORM_DATE_PATTERN, timezone = "GMT+8")
     private Date beginDate;
 
     /**
      * 结束日期
      */
     @ExcelProperty(value = "结束日期")
+    @JsonFormat(pattern = DatePattern.NORM_DATE_PATTERN, timezone = "GMT+8")
     private Date endDate;
 
     /**

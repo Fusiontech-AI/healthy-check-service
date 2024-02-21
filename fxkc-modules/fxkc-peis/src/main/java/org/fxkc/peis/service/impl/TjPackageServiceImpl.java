@@ -1,7 +1,9 @@
 package org.fxkc.peis.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -15,13 +17,20 @@ import org.fxkc.common.core.exception.ServiceException;
 import org.fxkc.common.core.utils.MapstructUtils;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
+import org.fxkc.peis.constant.ErrorCodeConstants;
 import org.fxkc.peis.domain.TjPackage;
+import org.fxkc.peis.domain.TjPackageHazards;
 import org.fxkc.peis.domain.TjPackageInfo;
 import org.fxkc.peis.domain.bo.*;
 import org.fxkc.peis.domain.vo.AmountCalculationVo;
 import org.fxkc.peis.domain.vo.PackageAndProjectVo;
+import org.fxkc.peis.domain.vo.TjPackageHazardsVo;
 import org.fxkc.peis.domain.vo.TjPackageVo;
+import org.fxkc.peis.enums.OccupationalDictEnum;
+import org.fxkc.peis.enums.PhysicalTypeEnum;
+import org.fxkc.peis.exception.PeisException;
 import org.fxkc.peis.liteflow.context.AmountCalculationContext;
+import org.fxkc.peis.mapper.TjPackageHazardsMapper;
 import org.fxkc.peis.mapper.TjPackageInfoMapper;
 import org.fxkc.peis.mapper.TjPackageMapper;
 import org.fxkc.peis.service.ITjPackageService;
@@ -48,12 +57,20 @@ public class TjPackageServiceImpl implements ITjPackageService {
 
     private final FlowExecutor flowExecutor;
 
+    private final TjPackageHazardsMapper tjPackageHazardsMapper;
+
     /**
      * 查询体检套餐
      */
     @Override
     public TjPackageVo queryById(Long id){
-        return baseMapper.selectVoById(id);
+        TjPackageVo vo = baseMapper.selectVoById(id);
+        List<TjPackageHazardsVo> hazardsVoList = tjPackageHazardsMapper.selectVoList(Wrappers.lambdaQuery(TjPackageHazards.class)
+            .eq(TjPackageHazards::getPackageId, id));
+        if(CollUtil.isNotEmpty(hazardsVoList)) {
+            vo.setTjPackageHazardsVoList(hazardsVoList);
+        }
+        return vo;
     }
 
     /**
@@ -98,7 +115,8 @@ public class TjPackageServiceImpl implements ITjPackageService {
     @Override
     public Boolean insertByBo(TjPackageAddBo bo) {
         TjPackage add = MapstructUtils.convert(bo, TjPackage.class);
-        validEntityBeforeSave(add);
+        List<TjPackageHazardsBo> tjPackageHazardsBoList = bo.getTjPackageHazardsBoList();
+        validEntityBeforeSave(add, tjPackageHazardsBoList);
         boolean flag = baseMapper.insert(add) > 0;
         if (flag) {
             bo.setId(add.getId());
@@ -107,7 +125,16 @@ public class TjPackageServiceImpl implements ITjPackageService {
         if(CollUtil.isNotEmpty(infoItemBos)){
             insertPackageInfo(infoItemBos,bo);
         }
+        if(CollUtil.isNotEmpty(tjPackageHazardsBoList)) {
+            insertPackageHazards(tjPackageHazardsBoList, bo.getId());
+        }
         return flag;
+    }
+
+    private void insertPackageHazards(List<TjPackageHazardsBo> tjPackageHazardsBoList, Long packageId) {
+        List<TjPackageHazards> hazardsList = MapstructUtils.convert(tjPackageHazardsBoList, TjPackageHazards.class);
+        hazardsList.forEach(k -> k.setPackageId(packageId));
+        tjPackageHazardsMapper.insertBatch(hazardsList);
     }
 
     /**
@@ -116,7 +143,8 @@ public class TjPackageServiceImpl implements ITjPackageService {
     @Override
     public Boolean updateByBo(TjPackageAddBo bo) {
         TjPackage update = MapstructUtils.convert(bo, TjPackage.class);
-        validEntityBeforeSave(update);
+        List<TjPackageHazardsBo> tjPackageHazardsBoList = bo.getTjPackageHazardsBoList();
+        validEntityBeforeSave(update, tjPackageHazardsBoList);
         List<TjPackageInfoItemBo> infoItemBos = bo.getTjPackageInfoItemBos();
         //先删除 再新增
         tjPackageInfoMapper.delete(new LambdaQueryWrapper<TjPackageInfo>()
@@ -124,15 +152,34 @@ public class TjPackageServiceImpl implements ITjPackageService {
         if(CollUtil.isNotEmpty(infoItemBos)){
             insertPackageInfo(infoItemBos,bo);
         }
+        tjPackageHazardsMapper.delete(Wrappers.lambdaQuery(TjPackageHazards.class)
+            .eq(TjPackageHazards::getPackageId, bo.getId()));
+        if(CollUtil.isNotEmpty(tjPackageHazardsBoList)) {
+            insertPackageHazards(tjPackageHazardsBoList, bo.getId());
+        }
         return baseMapper.updateById(update) > 0;
     }
 
     /**
      * 保存前的数据校验
      */
-    private void validEntityBeforeSave(TjPackage entity){
+    private void validEntityBeforeSave(TjPackage entity, List<TjPackageHazardsBo> tjPackageHazardsBoList){
         if(StringUtils.isNotEmpty(entity.getPackageName()) && !checkNameUnique(entity)){
             throw new ServiceException("套餐名称'" + entity.getPackageName() + "'已存在!");
+        }
+        if(PhysicalTypeEnum.isOccupational(entity.getTjType())) {
+            Map<String, Object> enumMap = EnumUtil.getNameFieldMap(PhysicalTypeEnum.class, "desc");
+            if(StrUtil.isBlank(entity.getDutyStatus())) {
+                throw new PeisException(ErrorCodeConstants.PEIS_DUTY_STATUS_NOT_EMPTY, enumMap.get(entity.getTjType()));
+            }
+            if(CollUtil.isEmpty(tjPackageHazardsBoList)) {
+                throw new PeisException(ErrorCodeConstants.PEIS_PACKAGE_HAZARDS_NOT_EMPTY, enumMap.get(entity.getTjType()));
+            }
+        }
+        if(Objects.equals(entity.getTjType(), PhysicalTypeEnum.FSTJ.name())) {
+            if(StrUtil.isBlank(entity.getShineSource()) || StrUtil.isBlank(entity.getShineType())) {
+                throw new PeisException(ErrorCodeConstants.PEIS_SHINE_NOT_EMPTY);
+            }
         }
     }
 

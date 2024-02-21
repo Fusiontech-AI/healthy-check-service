@@ -88,4 +88,24 @@ public class TjPackageAddBo {
 
     @Valid
     private List<TjPackageInfoItemBo> tjPackageInfoItemBos;
+
+    /**
+     * 危害因素
+     */
+    private List<TjPackageHazardsBo> tjPackageHazardsBoList;
+
+    /**
+     * 在岗状态sys_dict_type(bus_duty_status)
+     */
+    private String dutyStatus;
+
+    /**
+     * 照射源sys_dict_type(bus_shine_source)
+     */
+    private String shineSource;
+
+    /**
+     * 照射源种类sys_dict_type(bus_job_illumination_source)
+     */
+    private String shineType;
 }

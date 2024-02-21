@@ -8,10 +8,12 @@ import org.fxkc.common.excel.annotation.ExcelDictFormat;
 import org.fxkc.common.excel.convert.ExcelDictConvert;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
+import org.fxkc.peis.domain.bo.TjPackageHazardsBo;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 
 /**
@@ -94,6 +96,26 @@ public class TjPackageVo extends BaseEntity implements Serializable {
     @ExcelProperty(value = "组合项目状态", converter = ExcelDictConvert.class)
     @ExcelDictFormat(readConverterExp = "0=正常,1=停用")
     private String status;
+
+    /**
+     * 危害因素
+     */
+    private List<TjPackageHazardsVo> tjPackageHazardsVoList;
+
+    /**
+     * 在岗状态sys_dict_type(bus_duty_status)
+     */
+    private String dutyStatus;
+
+    /**
+     * 照射源sys_dict_type(bus_shine_source)
+     */
+    private String shineSource;
+
+    /**
+     * 照射源种类sys_dict_type(bus_job_illumination_source)
+     */
+    private String shineType;
 
 
 }

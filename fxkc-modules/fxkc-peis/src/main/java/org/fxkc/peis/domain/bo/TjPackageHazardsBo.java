@@ -21,34 +21,20 @@ import org.fxkc.peis.domain.TjPackageHazards;
 @AutoMapper(target = TjPackageHazards.class, reverseConvertGenerate = false)
 public class TjPackageHazardsBo extends BaseEntity {
 
-    /**
-     * 主键id
-     */
-    @NotNull(message = "主键id不能为空", groups = { EditGroup.class })
-    private Long id;
-
-    /**
-     * 套餐id
-     */
-    @NotNull(message = "套餐id不能为空", groups = { AddGroup.class, EditGroup.class })
-    private Long packageId;
 
     /**
      * 危害因素编码
      */
-    @NotBlank(message = "危害因素编码不能为空", groups = { AddGroup.class, EditGroup.class })
     private String hazardFactorsCode;
 
     /**
      * 危害因素名称
      */
-    @NotBlank(message = "危害因素名称不能为空", groups = { AddGroup.class, EditGroup.class })
     private String hazardFactorsName;
 
     /**
      * 其他危害因素名称
      */
-    @NotBlank(message = "其他危害因素名称不能为空", groups = { AddGroup.class, EditGroup.class })
     private String hazardFactorsOther;
 
 
