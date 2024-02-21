@@ -8,7 +8,6 @@ import org.fxkc.common.excel.annotation.ExcelDictFormat;
 import org.fxkc.common.excel.convert.ExcelDictConvert;
 import org.fxkc.common.translation.annotation.Translation;
 import org.fxkc.common.translation.constant.TransConstant;
-import org.fxkc.peis.domain.TjTeamGroup;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -23,6 +22,7 @@ import java.math.BigDecimal;
  */
 @Data
 @ExcelIgnoreUnannotated
+@AutoMapper(target = TjTeamSettleTaskGroupStatisticsVo.class, reverseConvertGenerate = false)
 public class TjTeamSettleTaskGroupVo implements Serializable {
 
     @Serial

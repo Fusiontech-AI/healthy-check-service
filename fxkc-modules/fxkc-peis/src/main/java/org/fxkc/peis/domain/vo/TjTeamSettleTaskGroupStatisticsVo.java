@@ -26,42 +26,42 @@ public class TjTeamSettleTaskGroupStatisticsVo implements Serializable {
      * 单位应收金额
      */
     @ExcelProperty(value = "单位应收金额")
-    private BigDecimal teamReceiveAmount;
+    private BigDecimal teamReceiveAmount = BigDecimal.ZERO;
 
     /**
      * 累计人数
      */
     @ExcelProperty(value = "累计人数")
-    private Long totalPeople;
+    private Long totalPeople = 0L;
 
     /**
      * 分组金额
      */
     @ExcelProperty(value = "分组金额")
-    private BigDecimal groupAmount;
+    private BigDecimal groupAmount = BigDecimal.ZERO;
 
     /**
      * 加项人数
      */
     @ExcelProperty(value = "加项人数")
-    private Long addPeople;
+    private Long addPeople = 0L;
 
     /**
      * 加项金额
      */
     @ExcelProperty(value = "加项金额")
-    private BigDecimal addAmount;
+    private BigDecimal addAmount = BigDecimal.ZERO;
 
     /**
      * 个人加项金额
      */
     @ExcelProperty(value = "个人加项金额")
-    private BigDecimal personAddAmount;
+    private BigDecimal personAddAmount = BigDecimal.ZERO;
 
     /**
      * 单位加项金额
      */
     @ExcelProperty(value = "单位加项金额")
-    private BigDecimal teamAddAmount;
+    private BigDecimal teamAddAmount = BigDecimal.ZERO;
 
 }

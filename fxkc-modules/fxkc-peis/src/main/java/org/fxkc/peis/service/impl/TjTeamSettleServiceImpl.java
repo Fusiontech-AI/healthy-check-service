@@ -61,7 +61,16 @@ public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
      */
     @Override
     public TableDataInfo<TjTeamSettleTaskGroupVo> teamSettleTaskGroupList(TjTeamSettleBo bo, PageQuery pageQuery) {
+        TjTeamTask tjTeamTask = tjTeamTaskMapper.selectById(bo.getTeamTaskId());
+        bo.setHealthyCheckStatus(StrUtil.equals(tjTeamTask.getChargeType(),"1") ? "1" : StrUtil.equals(tjTeamTask.getChargeType(),"2") ? "0" : null);
         Page<TjTeamSettleTaskGroupVo> result = baseMapper.teamSettleTaskGroupList(pageQuery.build(),bo);
+        TjTeamSettleTaskGroupVo tjTeamSettleTaskGroupVo = baseMapper.teamSettleTaskNoGroup(bo);
+        if(ObjectUtil.isNotNull(tjTeamSettleTaskGroupVo)){
+            List<TjTeamSettleTaskGroupVo> newRecords = Lists.newArrayList(result.getRecords());
+            newRecords.add(tjTeamSettleTaskGroupVo);
+            result.setRecords(newRecords);
+            result.setTotal(result.getTotal() + 1L);
+        }
         return TableDataInfo.build(result);
     }
 
@@ -70,7 +79,19 @@ public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
      */
     @Override
     public TjTeamSettleTaskGroupStatisticsVo teamSettleTaskGroupStatistics(TjTeamSettleBo bo) {
-        return baseMapper.teamSettleTaskGroupStatistics(bo);
+        TjTeamTask tjTeamTask = tjTeamTaskMapper.selectById(bo.getTeamTaskId());
+        bo.setHealthyCheckStatus(StrUtil.equals(tjTeamTask.getChargeType(),"1") ? "1" : StrUtil.equals(tjTeamTask.getChargeType(),"2") ? "0" : null);
+        if(ObjectUtil.equal(bo.getTeamGroupId(),0L)){
+            return MapstructUtils.convert(baseMapper.teamSettleTaskNoGroup(bo), TjTeamSettleTaskGroupStatisticsVo.class);
+        }
+        TjTeamSettleTaskGroupStatisticsVo vo = baseMapper.teamSettleTaskGroupStatistics(bo);
+        if(ObjectUtil.isNull(bo.getTeamGroupId())){
+            TjTeamSettleTaskGroupVo tjTeamSettleTaskGroupVo = baseMapper.teamSettleTaskNoGroup(bo);
+            vo.setTeamReceiveAmount(NumberUtil.add(vo.getTeamReceiveAmount(),tjTeamSettleTaskGroupVo.getTeamReceiveAmount()));
+            vo.setTotalPeople(vo.getTotalPeople() + tjTeamSettleTaskGroupVo.getTotalPeople());
+            vo.setGroupAmount(NumberUtil.add(vo.getGroupAmount(),tjTeamSettleTaskGroupVo.getGroupAmount()));
+        }
+        return vo;
     }
 
     /**
