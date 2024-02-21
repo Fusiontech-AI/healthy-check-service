@@ -6,6 +6,8 @@ import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 import org.fxkc.common.excel.annotation.ExcelDictFormat;
 import org.fxkc.common.excel.convert.ExcelDictConvert;
+import org.fxkc.common.translation.annotation.Translation;
+import org.fxkc.common.translation.constant.TransConstant;
 import org.fxkc.peis.domain.TjRegister;
 
 import java.io.Serial;
@@ -181,10 +183,22 @@ public class TjRegisterVo implements Serializable {
     private Long teamId;
 
     /**
+     * 单位名称
+     */
+    @Translation(type = TransConstant.TEAM_ID_TO_NAME, mapper = "teamId")
+    private String teamName;
+
+    /**
      * 单位分组id
      */
     @ExcelProperty(value = "单位分组id")
     private Long teamGroupId;
+
+    /**
+     * 分组名称
+     */
+    @Translation(type = TransConstant.TEAM_GROUP_ID_TO_NAME, mapper = "teamGroupId")
+    private String groupName;
 
     /**
      * 单位部门id
@@ -534,4 +548,16 @@ public class TjRegisterVo implements Serializable {
      */
     @ExcelProperty(value = "任务id")
     private Long taskId;
+
+    /**
+     * 创建人id
+     */
+    private Long createBy;
+
+    /**
+     * 创建人名称
+     */
+    @Translation(type = TransConstant.USER_ID_TO_NAME, mapper = "createBy")
+    private String createByName;
+
 }

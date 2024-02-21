@@ -157,7 +157,7 @@ public class TjTeamTaskController extends BaseController {
     @Log(title = "团检任务导入人员", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping("/insertRegisterData")
-    public R<Void> insertRegisterData(@RequestBody TjRegisterImportBo bo) {
+    public R<Void> insertRegisterData(@RequestBody @Valid TjRegisterImportBo bo) {
         tjTeamTaskService.insertRegisterData(bo);
         return R.ok();
     }

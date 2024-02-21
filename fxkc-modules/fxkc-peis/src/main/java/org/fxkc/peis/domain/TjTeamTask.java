@@ -1,8 +1,10 @@
 package org.fxkc.peis.domain;
 
+import cn.hutool.core.date.DatePattern;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -51,16 +53,19 @@ public class TjTeamTask extends TenantEntity {
     /**
      * 签订日期
      */
+    @JsonFormat(pattern = DatePattern.NORM_DATE_PATTERN, timezone = "GMT+8")
     private Date signDate;
 
     /**
      * 开始日期
      */
+    @JsonFormat(pattern = DatePattern.NORM_DATE_PATTERN, timezone = "GMT+8")
     private Date beginDate;
 
     /**
      * 结束日期
      */
+    @JsonFormat(pattern = DatePattern.NORM_DATE_PATTERN, timezone = "GMT+8")
     private Date endDate;
 
     /**

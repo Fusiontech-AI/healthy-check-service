@@ -401,6 +401,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
 
     @Override
     public void insertRegisterData(TjRegisterImportBo bo) {
+        TjTeamTask tjTeamTask = baseMapper.selectById(bo.getTaskId());
         //是否为职业病
         String occupationalType = PhysicalTypeEnum.isOccupational(bo.getPhysicalType()) ?
             CommonConstants.NORMAL : CommonConstants.DISABLE;
@@ -417,8 +418,9 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
         List<TjRegisterAddBo> addBoList = CollUtil.newArrayList();
         registerList.forEach(k -> {
             TjRegisterAddBo addBo = MapstructUtils.convert(k, TjRegisterAddBo.class);
+            addBo.setPhysicalType(bo.getPhysicalType());
             addBo.setTaskId(bo.getTaskId());
-            addBo.setTeamId(bo.getTeamId());
+            addBo.setTeamId(tjTeamTask.getTeamId());
             addBo.setBusinessCategory("2");
             addBo.setHealthyCheckStatus(HealthyCheckTypeEnum.预约.getCode());
             addBo.setOccupationalType(occupationalType);

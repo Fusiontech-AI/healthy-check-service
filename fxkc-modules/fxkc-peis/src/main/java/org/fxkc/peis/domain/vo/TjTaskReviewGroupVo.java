@@ -36,7 +36,7 @@ public class TjTaskReviewGroupVo {
     private String groupType;
 
     /**
-     * 性别
+     * 性别sys_dict_type(bus_gender)
      */
     private String gender;
 

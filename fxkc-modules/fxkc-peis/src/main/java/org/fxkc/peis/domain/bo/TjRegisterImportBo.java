@@ -12,12 +12,6 @@ import java.util.List;
 public class TjRegisterImportBo {
 
     /**
-     * 单位id
-     */
-    @NotNull(message = "单位id不能为空")
-    private Long teamId;
-
-    /**
      * 任务id
      */
     @NotNull(message = "任务id不能为空")
