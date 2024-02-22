@@ -44,19 +44,19 @@ public class TjTeamSettleTaskGroupVo implements Serializable {
      * 单位应收金额
      */
     @ExcelProperty(value = "单位应收金额")
-    private BigDecimal teamReceiveAmount = BigDecimal.ZERO;
+    private BigDecimal teamReceiveAmount;
 
     /**
      * 累计人数
      */
     @ExcelProperty(value = "累计人数")
-    private Long totalPeople = 0L;
+    private Long totalPeople;
 
     /**
      * 分组金额
      */
     @ExcelProperty(value = "分组金额")
-    private BigDecimal groupAmount = BigDecimal.ZERO;
+    private BigDecimal groupAmount;
 
     /**
      * 分组支付方式sys_dict_type(bus_group_pay_type)0:个人1:单位
@@ -70,13 +70,13 @@ public class TjTeamSettleTaskGroupVo implements Serializable {
      * 加项人数
      */
     @ExcelProperty(value = "加项人数")
-    private Long addPeople = 0L;
+    private Long addPeople;
 
     /**
      * 加项金额
      */
     @ExcelProperty(value = "加项金额")
-    private BigDecimal addAmount = BigDecimal.ZERO;
+    private BigDecimal addAmount;
 
     /**
      * 加项支付方式sys_dict_type(bus_group_pay_type)0:个人1:单位
