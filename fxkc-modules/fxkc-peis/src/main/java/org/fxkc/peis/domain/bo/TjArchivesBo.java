@@ -1,5 +1,6 @@
 package org.fxkc.peis.domain.bo;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
@@ -31,6 +32,7 @@ public class TjArchivesBo {
         /**
          * 档案号
          */
+        @NotBlank(message = "档案号不能为空")
         private String recordCode;
 
         /**
