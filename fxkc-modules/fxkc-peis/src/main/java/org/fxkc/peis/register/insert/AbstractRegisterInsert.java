@@ -126,6 +126,7 @@ public abstract class AbstractRegisterInsert implements RegisterInsertService{
             resp.setName(tjRegister.getName());
             resp.setCredentialType(tjRegister.getCredentialType());
             resp.setCredentialNumber(tjRegister.getCredentialNumber());
+            tjRegister.setRecordCode(resp.getArchivesNo());
             tjArchivesList.add(resp);
         }
     }
