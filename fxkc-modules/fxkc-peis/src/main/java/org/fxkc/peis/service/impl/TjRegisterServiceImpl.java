@@ -301,6 +301,7 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
         tjRegister.setTotalStandardAmount(bo.getStandardAmount());
         tjRegister.setTotalAmount(bo.getReceivableAmount());
         tjRegister.setPersonAmount(bo.getPersonAmount());
+        tjRegister.setDiscount(bo.getDiscount());
         tjRegister.setTeamAmount(bo.getTeamAmount());
         tjRegister.setPaidTotalAmount(bo.getPaidTotalAmount());
         tjRegister.setPaidPersonAmount(bo.getPaidPersonAmount());

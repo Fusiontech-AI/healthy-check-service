@@ -297,6 +297,11 @@ public class TjRegisterVo implements Serializable {
     private BigDecimal totalStandardAmount;
 
     /**
+     * 总计项折扣
+     */
+    private BigDecimal discount;
+
+    /**
      * 总费用
      */
     @ExcelProperty(value = "总费用")

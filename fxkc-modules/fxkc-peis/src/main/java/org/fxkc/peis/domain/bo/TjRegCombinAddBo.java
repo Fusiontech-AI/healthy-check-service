@@ -31,6 +31,12 @@ public class TjRegCombinAddBo {
     private BigDecimal standardAmount;
 
     /**
+     * 总计项折扣
+     */
+    @NotNull(message = "总计项折扣不能为空")
+    private BigDecimal discount;
+
+    /**
      * 总计项应收金额
      */
     @NotNull(message = "总计项应收金额不能为空")

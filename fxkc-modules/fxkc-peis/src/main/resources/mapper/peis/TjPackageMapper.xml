@@ -13,7 +13,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             t.receivable_amount,
             t.discount,
             t.package_sort as sort,
-            '1' as type
+            '1' as type,
+            null as checkType
             from tj_package t  where t.del_flag='0' and t.status='0'
             union all
             select m.id,
@@ -23,8 +24,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             m.standard_amount as receivableAmount,
             m.discount,
             m.project_sort as sort,
-            '2' as type
-            from tj_combination_project m where m.del_flag='0' and m.status='0'
+            '2' as type,
+            m.check_type
+        from tj_combination_project m where m.del_flag='0' and m.status='0'
         order by type, sort) temp
         <where>
             <if test='name != null and name != ""'>
@@ -43,7 +45,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                m.standard_amount as receivableAmount,
                m.discount,
                m.project_sort as sort,
-               '2' as type
+               '2' as type,
+               m.check_type
         from tj_combination_project m
         where m.del_flag = '0'
           and m.status = '0'
