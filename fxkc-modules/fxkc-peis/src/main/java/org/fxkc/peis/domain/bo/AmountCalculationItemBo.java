@@ -77,12 +77,6 @@ public class AmountCalculationItemBo {
     private String payStatus;
 
     /**
-     * 组合项目编码
-     */
-    @NotBlank(message = "组合项目编码不能为空")
-    private String combinProjectCode;
-
-    /**
      * 组合项目名称
      */
     @NotBlank(message = "组合项目名称不能为空")
