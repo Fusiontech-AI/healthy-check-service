@@ -216,4 +216,14 @@ public class TjRegisterController extends BaseController {
                           @PathVariable Long id) {
         return toAjax(tjRegisterService.deleteTaskRegister(id));
     }
+
+    /**
+     * 合并档案
+     */
+    @RepeatSubmit()
+    @PostMapping("/mergeArchives")
+    public R<Void> mergeArchives(@RequestBody @Valid TjArchivesBo bo) {
+        tjRegisterService.mergeArchives(bo);
+        return R.ok();
+    }
 }

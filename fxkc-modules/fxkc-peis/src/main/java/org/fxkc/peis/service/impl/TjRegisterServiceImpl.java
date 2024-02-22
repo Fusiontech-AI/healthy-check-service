@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.fxkc.common.core.constant.CommonConstants;
 import org.fxkc.common.core.exception.ServiceException;
 import org.fxkc.common.core.utils.MapstructUtils;
+import org.fxkc.common.core.utils.StreamUtils;
 import org.fxkc.common.core.utils.StringUtils;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
@@ -62,6 +63,9 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
     private final TjRegBasicProjectMapper tjRegBasicProjectMapper;
 
     private final TjCombinationProjectInfoMapper tjCombinationProjectInfoMapper;
+
+    private final TjArchivesMapper tjArchivesMapper;
+
     /**
      * 查询体检人员登记信息
      */
@@ -374,6 +378,35 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
             throw new PeisException(ErrorCodeConstants.PEIS_REGISTER_NOT_APPIONT);
         }
         return baseMapper.deleteById(id) > 0;
+    }
+
+    @Override
+    public void mergeArchives(TjArchivesBo bo) {
+        List<TjArchivesBo.TjArchivesData> dataList = bo.getDataList();
+        if(dataList.size() < 1) {
+            throw new PeisException(ErrorCodeConstants.PEIS_ARCHIVES_NOT_LESS);
+        }
+        TjArchivesBo.TjArchivesData tjArchivesData;
+        if(Objects.equals(CommonConstants.NORMAL, bo.getIsAuto())) {
+            tjArchivesData = dataList.get(0);
+        }else {
+            Optional<TjArchivesBo.TjArchivesData> optional = StreamUtils.filter(dataList, e -> Objects.equals(CommonConstants.NORMAL, e.getIsChoose()))
+                .stream().findFirst();
+            if(optional.isPresent()) {
+                tjArchivesData = optional.get();
+            }else {
+                throw new PeisException(ErrorCodeConstants.PEIS_ARCHIVES_PARAM_ERROR);
+            }
+        }
+        TjArchivesBo.TjArchivesData finalTjArchivesData = tjArchivesData;
+        List<TjArchivesBo.TjArchivesData> mergeList = StreamUtils.filter(dataList, e -> ObjectUtil.notEqual(e.getRecordCode(), finalTjArchivesData.getRecordCode()));
+        mergeList.forEach(k -> {
+            baseMapper.update(TjRegister.builder().recordCode(finalTjArchivesData.getRecordCode()).build(),
+                Wrappers.lambdaUpdate(TjRegister.class)
+                    .eq(TjRegister::getRecordCode, k.getRecordCode()));
+            tjArchivesMapper.delete(Wrappers.lambdaQuery(TjArchives.class)
+                .eq(TjArchives::getArchivesNo, k.getRecordCode()));
+        });
     }
 
     @Override

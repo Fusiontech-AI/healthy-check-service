@@ -72,4 +72,8 @@ public interface ErrorCodeConstants {
     String PEIS_PACKAGE_HAZARDS_NOT_EMPTY = "peis.package.hazards.not.empty";
 
     String PEIS_SHINE_NOT_EMPTY = "peis.shine.not.empty";
+
+    String PEIS_ARCHIVES_NOT_LESS = "peis.archives.not.less";
+
+    String PEIS_ARCHIVES_PARAM_ERROR = "peis.archives.param.error";
 }

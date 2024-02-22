@@ -81,4 +81,6 @@ public interface ITjRegisterService {
     Boolean saveDiagnosis(TjRegSaveDiagnosisBo bo);
 
     Boolean deleteTaskRegister(Long id);
+
+    void mergeArchives(TjArchivesBo bo);
 }
