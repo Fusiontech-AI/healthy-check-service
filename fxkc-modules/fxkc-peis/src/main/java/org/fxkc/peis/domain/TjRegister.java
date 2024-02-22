@@ -235,6 +235,11 @@ public class TjRegister extends TenantEntity {
     private String payType;
 
     /**
+     * 总计项折扣
+     */
+    private BigDecimal discount;
+
+    /**
      * 总标准费用(原始金额)
      */
     private BigDecimal totalStandardAmount;
@@ -474,5 +479,10 @@ public class TjRegister extends TenantEntity {
      * 单位结账时间
      */
     private Date teamSettleTime;
+
+    /**
+     * 单位结账金额
+     */
+    private BigDecimal teamSettleAmount;
 
 }

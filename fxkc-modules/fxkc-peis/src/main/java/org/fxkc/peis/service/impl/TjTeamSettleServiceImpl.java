@@ -277,18 +277,22 @@ public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
             throw new PeisException(ErrorCodeConstants.PEIS_TJTEAMSETTLE_CHECKED_REFRESH);
         }
         Date date = DateUtil.date();
-        List<TjRegister> tjRegisterList = tjRegisterMapper.selectList(new LambdaQueryWrapper<TjRegister>()
-            .eq(TjRegister::getTeamId,bo.getTeamId())
-            .eq(TjRegister::getTaskId,bo.getTeamTaskId())
-            .isNull(TjRegister::getTeamSettleId)
-            .eq(TjRegister::getHealthyCheckStatus,"5")
-            .eq(TjRegister::getDelFlag,CommonConstants.NORMAL));
+        TjTeamTask tjTeamTask = tjTeamTaskMapper.selectById(bo.getTeamTaskId());
+        List<TjRegister> tjRegisterList = Lists.newArrayList();
+        if(StrUtil.equals(tjTeamTask.getChargeType(),"3")){
+            tjRegisterList = tjRegisterMapper.selectTjRegisterByProjectChecked(bo);
+        }else{
+            tjRegisterList = tjRegisterMapper.selectList(new LambdaQueryWrapper<TjRegister>()
+                .eq(TjRegister::getTeamId,bo.getTeamId())
+                .eq(TjRegister::getTaskId,bo.getTeamTaskId())
+                .isNull(TjRegister::getTeamSettleId)
+                .eq(TjRegister::getHealthyCheckStatus,"5")
+                .eq(TjRegister::getDelFlag,CommonConstants.NORMAL));
+        }
         List<TjRegister> updateTjRegisterList = Lists.newArrayList();
+        List<TjRegister> finalTjRegisterList = tjRegisterList;
         tjTeamSettleList.stream().forEach(f ->
-            updateTjRegisterList.addAll(tjRegisterList.stream().filter(ff -> {
-                if(ObjectUtil.isNotNull(ff.getTeamSettleId())){
-                    return false;
-                }
+            updateTjRegisterList.addAll(finalTjRegisterList.stream().filter(ff -> {
                 BigDecimal balance = NumberUtil.sub(f.getReceivedAmount(),ff.getTeamAmount());
                 f.setReceivedAmount(balance);
                 return ObjectUtil.compare(f.getReceivedAmount(),BigDecimal.ZERO) >= 0;
@@ -297,6 +301,7 @@ public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
                 tjRegister.setTeamChargeStatus(CommonConstants.NORMAL);
                 tjRegister.setTeamSettleId(f.getId());
                 tjRegister.setTeamSettleTime(date);
+                tjRegister.setTeamSettleAmount(fff.getTeamAmount());
                 tjRegister.setId(fff.getId());
                 return tjRegister;
             }).collect(Collectors.toList()))
@@ -308,7 +313,8 @@ public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
                 new LambdaUpdateWrapper<TjRegCombinationProject>()
                     .in(TjRegCombinationProject::getRegisterId,regIds)
                     .eq(TjRegCombinationProject::getPayMode,"1")
-                    .eq(TjRegCombinationProject::getDelFlag,CommonConstants.NORMAL));
+                    .eq(TjRegCombinationProject::getDelFlag,CommonConstants.NORMAL)
+                    .eq(StrUtil.equals(tjTeamTask.getChargeType(),"3"),TjRegCombinationProject::getCheckStatus,"1"));
         }
         TjTeamSettle update = new TjTeamSettle();
         update.setAuditor(LoginHelper.getLoginUser().getUserId());

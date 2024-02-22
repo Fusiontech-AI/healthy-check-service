@@ -3,8 +3,6 @@ package org.fxkc.peis.domain.bo;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import org.fxkc.common.core.validate.AddGroup;
-import org.fxkc.common.core.validate.EditGroup;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -21,7 +19,7 @@ public class TjRegCombinAddBo {
     /**
      * 体检人员id
      */
-    @NotNull(message = "体检人员id不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotNull(message = "体检人员id不能为空")
     private Long registerId;
 
     /**
@@ -29,6 +27,12 @@ public class TjRegCombinAddBo {
      */
     @NotNull(message = "总计项标准金额不能为空")
     private BigDecimal standardAmount;
+
+    /**
+     * 总计项折扣
+     */
+    @NotNull(message = "总计项折扣不能为空")
+    private BigDecimal discount;
 
     /**
      * 总计项应收金额

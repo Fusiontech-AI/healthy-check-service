@@ -48,4 +48,8 @@ public class PackageAndProjectVo {
      */
     private BigDecimal receivableAmount;
 
+    /**
+     * 检查类型0检查项目 1化验项目 2功能项目
+     */
+    private String checkType;
 }
