@@ -72,6 +72,8 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
 
     private final TjTeamGroupHazardsMapper tjTeamGroupHazardsMapper;
 
+    private final TjRegCombinationProjectMapper tjRegCombinationProjectMapper;
+
     /**
      * 查询团检任务管理
      */
@@ -400,6 +402,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void insertRegisterData(TjRegisterImportBo bo) {
         TjTeamTask tjTeamTask = baseMapper.selectById(bo.getTaskId());
         //是否为职业病
@@ -407,8 +410,8 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
             CommonConstants.NORMAL : CommonConstants.DISABLE;
         List<TjRegisterImportDetailBo> registerList = bo.getRegisterList();
         Map<Long, List<TjTeamGroupHazardsVo>> hazardMap = MapUtil.newHashMap();
+        List<Long> groupIdList = StreamUtils.toList(registerList, TjRegisterImportDetailBo::getTeamGroupId);
         if(Objects.equals(occupationalType, CommonConstants.NORMAL)) {
-            List<Long> groupIdList = StreamUtils.toList(registerList, TjRegisterImportDetailBo::getTeamGroupId);
             if(CollUtil.isNotEmpty(groupIdList)) {
                 List<TjTeamGroupHazardsVo> hazardsList = tjTeamGroupHazardsMapper.selectVoList(Wrappers.lambdaQuery(TjTeamGroupHazards.class)
                     .in(TjTeamGroupHazards::getGroupId, groupIdList));
@@ -438,7 +441,48 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
             addBoList.add(addBo);
         });
         RegisterInsertService registerInsertService = registerInsertHolder.selectBuilder("2".concat(occupationalType));
-        registerInsertService.RegisterInsert(addBoList);
+        List<TjRegister> registers = registerInsertService.RegisterInsert(addBoList);
+        if(CollUtil.isNotEmpty(groupIdList)) {
+            List<TjTeamGroupItem> itemList = tjTeamGroupItemMapper.selectList(Wrappers.lambdaQuery(TjTeamGroupItem.class)
+                .in(TjTeamGroupItem::getGroupId, groupIdList));
+            Map<Long, List<TjTeamGroupItem>> itemMap = StreamUtils.groupByKey(itemList, TjTeamGroupItem::getGroupId);
+            List<TjRegCombinationProject> projectList = CollUtil.newArrayList();
+            List<TjRegister> priceRegisters = CollUtil.newArrayList();
+            registers.forEach(k -> {
+                List<TjTeamGroupItem> groupItemList = itemMap.get(k.getTeamGroupId());
+                if(CollUtil.isNotEmpty(groupItemList)) {
+                    groupItemList.forEach(s ->
+                        projectList.add(TjRegCombinationProject.builder()
+                            .registerId(k.getId())
+                            .combinationProjectId(s.getItemId())
+                            .projectType(s.getInclude())
+                            .standardAmount(s.getStandardPrice())
+                            .discount(s.getDiscount())
+                            .receivableAmount(s.getActualPrice())
+                            .payStatus("1")
+                            .payMode("1")
+                            .projectRequiredType(s.getIsRequired() ? "1" : "0")
+                            .teamAmount(s.getActualPrice())
+                            .build()));
+                    BigDecimal price = groupItemList.stream().map(TjTeamGroupItem::getActualPrice)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    priceRegisters.add(TjRegister.builder().id(k.getId())
+                        .totalAmount(price)
+                        .teamAmount(price)
+                        .build());
+                }
+
+            });
+            //项目分组生成项目
+            if(CollUtil.isNotEmpty(projectList)) {
+                tjRegCombinationProjectMapper.insertBatch(projectList);
+            }
+            //更新项目分组金额
+            if(CollUtil.isNotEmpty(priceRegisters)) {
+                tjRegisterMapper.updateBatchById(priceRegisters);
+            }
+        }
+
     }
 
     @Override
