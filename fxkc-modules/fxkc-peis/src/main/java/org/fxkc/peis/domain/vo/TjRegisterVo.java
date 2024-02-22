@@ -292,6 +292,11 @@ public class TjRegisterVo implements Serializable {
     private String payType;
 
     /**
+     * 总标准费用(原始金额)
+     */
+    private BigDecimal totalStandardAmount;
+
+    /**
      * 总费用
      */
     @ExcelProperty(value = "总费用")
@@ -422,6 +427,16 @@ public class TjRegisterVo implements Serializable {
      */
     @ExcelProperty(value = "体检预约时间")
     private Date healthyReserveTime;
+
+    /**
+     * 体检预约开始时间段
+     */
+    private String reserveStartTime;
+
+    /**
+     * 体检预约结束时间段
+     */
+    private String reserveEndTime;
 
     /**
      * 单位是否收费(0是 1否)

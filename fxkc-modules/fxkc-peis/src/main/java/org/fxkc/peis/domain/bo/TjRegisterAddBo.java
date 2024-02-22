@@ -146,6 +146,16 @@ public class TjRegisterAddBo {
     private Date healthyReserveTime;
 
     /**
+     * 体检预约开始时间段
+     */
+    private String reserveStartTime;
+
+    /**
+     * 体检预约结束时间段
+     */
+    private String reserveEndTime;
+
+    /**
      * 患者id
      */
     private String patientId;

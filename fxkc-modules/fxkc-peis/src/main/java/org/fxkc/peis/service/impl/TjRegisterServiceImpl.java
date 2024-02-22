@@ -295,7 +295,18 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
 
             }
 
-        return true;
+        //更新体检记录的金额相关信息
+        TjRegister tjRegister = new TjRegister();
+        tjRegister.setId(bo.getRegisterId());
+        tjRegister.setTotalStandardAmount(bo.getStandardAmount());
+        tjRegister.setTotalAmount(bo.getReceivableAmount());
+        tjRegister.setPersonAmount(bo.getPersonAmount());
+        tjRegister.setTeamAmount(bo.getTeamAmount());
+        tjRegister.setPaidTotalAmount(bo.getPaidTotalAmount());
+        tjRegister.setPaidPersonAmount(bo.getPaidPersonAmount());
+        tjRegister.setPaidTeamAmount(bo.getPaidTeamAmount());
+        int i = baseMapper.updateById(tjRegister);
+        return i>0 ? true : false;
     }
 
     @Override

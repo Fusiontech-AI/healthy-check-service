@@ -235,6 +235,12 @@ public class TjRegister extends TenantEntity {
     private String payType;
 
     /**
+     * 总标准费用(原始金额)
+     */
+    private BigDecimal totalStandardAmount;
+
+
+    /**
      * 总费用
      */
     private BigDecimal totalAmount;
@@ -343,6 +349,16 @@ public class TjRegister extends TenantEntity {
      * 体检预约时间
      */
     private Date healthyReserveTime;
+
+    /**
+     * 体检预约开始时间段
+     */
+    private String reserveStartTime;
+
+    /**
+     * 体检预约结束时间段
+     */
+    private String reserveEndTime;
 
     /**
      * 单位是否收费(0是 1否)

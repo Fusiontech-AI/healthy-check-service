@@ -164,4 +164,8 @@ public class TjRegCombinationProjectVo implements Serializable {
      */
     private String addFlag;
 
+    /**
+     * 检查类型0检查项目 1化验项目 2功能项目
+     */
+    private String checkType;
 }
