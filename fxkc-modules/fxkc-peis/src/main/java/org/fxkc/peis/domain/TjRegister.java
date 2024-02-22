@@ -345,6 +345,16 @@ public class TjRegister extends TenantEntity {
     private Date healthyReserveTime;
 
     /**
+     * 体检预约开始时间段
+     */
+    private String reserveStartTime;
+
+    /**
+     * 体检预约结束时间段
+     */
+    private String reserveEndTime;
+
+    /**
      * 单位是否收费(0是 1否)
      */
     private String teamChargeStatus;
