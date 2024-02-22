@@ -35,13 +35,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                                    t1.id,
                                    t1.team_group_id,
                                    t1.total_amount,
-                                   sum(t2.receivable_amount) team_amount
+                                   sum(case when t2.check_status = '1' then t2.receivable_amount else 0 end) team_amount
                             from tj_register t1
                             left join tj_reg_combination_project t2 on t1.id = t2.register_id
                             where t1.del_flag = '0'
                                 and t2.del_flag = '0'
                                 and t2.check_status = '1'
-                            group by t1.id,t1.team_group_id,t1.total_amount
+                            group by t1.id,t1.team_group_id,t1.total_amount,t2.check_status
                         ) b on a.id = b.team_group_id
                     </if>
                where a.del_flag = '0'
@@ -60,8 +60,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 nvl(sum(a.team_amount),0) groupAmount,
             </if>
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.chargeType) and bo.chargeType == '3'.toString()">
-                nvl(sum(b.receivable_amount),0) teamReceiveAmount,
-                nvl(sum(b.receivable_amount),0) groupAmount,
+                sum(case when t2.check_status = '1' then t2.receivable_amount else 0 end) teamReceiveAmount,
+                sum(case when t2.check_status = '1' then t2.receivable_amount else 0 end) groupAmount,
             </if>
             null group_pay_type,
             0 addPeople,
@@ -80,7 +80,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             </if>
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.chargeType) and bo.chargeType == '3'.toString()">
                 and b.del_flag = '0'
-                and b.check_status = '1'
             </if>
     </select>
 
@@ -90,8 +89,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                nvl(sum(aaa.groupAmount),0) groupAmount,
                nvl(sum(aaa.addPeople),0) addPeople,
                nvl(sum(aaa.addAmount),0) addAmount,
-               nvl(sum(case when aaa.add_pay_type = '0' then aaa.addAmount else 0 end),0) personAddAmount,
-               nvl(sum(case when aaa.add_pay_type = '1' then aaa.addAmount else 0 end),0) teamAddAmount
+               sum(case when aaa.add_pay_type = '0' then aaa.addAmount else 0 end) personAddAmount,
+               sum(case when aaa.add_pay_type = '1' then aaa.addAmount else 0 end) teamAddAmount
         from (
                 select aa.id,
                        aa.group_name,
@@ -122,18 +121,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                                     select t1.id,
                                            t1.team_group_id,
                                            t1.total_amount,
-                                           sum(t2.receivable_amount) team_amount
+                                           sum(case when t2.check_status = '1' then t2.receivable_amount else 0 end) team_amount
                                     from tj_register t1
                                         left join tj_reg_combination_project t2 on t1.id = t2.register_id
                                     where t1.del_flag = '0'
                                         and t2.del_flag = '0'
-                                        and t2.check_status = '1'
-                                    group by t1.id,t1.team_group_id,t1.total_amount
+                                    group by t1.id,t1.team_group_id,t1.total_amount,t2.check_status
                                 ) b on a.id = b.team_group_id
                             </if>
                        where a.del_flag = '0'
                            and a.team_id = #{bo.teamId}
                            and a.task_id = #{bo.teamTaskId}
+                           <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.teamGroupId)">
+                               and a.id = #{bo.teamGroupId}
+                           </if>
                        group by a.id,a.group_name,b.team_amount,a.price,a.group_pay_type,a.add_pay_type
                 ) aa
         ) aaa
@@ -145,7 +146,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                (aa.receivedAmount - aa.settledAmount) balance
         from (
             select nvl(sum(a.received_amount),0) receivedAmount,
-                   nvl(sum(b.team_amount),0) settledAmount
+                   nvl(sum(b.team_settle_amount),0) settledAmount
             from tj_team_settle a
                 left join tj_register b on a.id = b.team_settle_id
             where a.del_flag = '0'

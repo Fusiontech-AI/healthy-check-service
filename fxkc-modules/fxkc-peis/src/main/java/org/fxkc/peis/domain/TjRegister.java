@@ -475,4 +475,9 @@ public class TjRegister extends TenantEntity {
      */
     private Date teamSettleTime;
 
+    /**
+     * 单位结账金额
+     */
+    private BigDecimal teamSettleAmount;
+
 }
