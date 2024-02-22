@@ -264,6 +264,11 @@ public class TjRegisterBo extends BaseEntity {
     private String payType;
 
     /**
+     * 总标准费用(原始金额)
+     */
+    private BigDecimal totalStandardAmount;
+
+    /**
      * 总费用
      */
     private BigDecimal totalAmount;

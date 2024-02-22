@@ -24,6 +24,6 @@ public interface TjRegCombinationProjectMapper extends BaseMapperPlus<TjRegCombi
 
     List<GuideSheetItemVo> queryGuideItemByIds(@Param("regIdList")List<Long> regIdList);
 
-    @Select("select t1.* from tj_reg_combination_project t1 left join tj_combination_project t2 on t1.combination_project_id=t2.id where t1.del_flag='0' and t1.register_id= #{id} order by t2.project_sort")
+    @Select("select t1.*,t2.check_type from tj_reg_combination_project t1 left join tj_combination_project t2 on t1.combination_project_id=t2.id where t1.del_flag='0' and t1.register_id= #{id} order by t2.project_sort")
     List<TjRegCombinationProjectVo> queryRegCombinProjectList(@Param("id") Long id);
 }

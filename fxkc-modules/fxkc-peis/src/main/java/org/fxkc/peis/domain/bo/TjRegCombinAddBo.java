@@ -6,6 +6,7 @@ import lombok.Data;
 import org.fxkc.common.core.validate.AddGroup;
 import org.fxkc.common.core.validate.EditGroup;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -22,6 +23,48 @@ public class TjRegCombinAddBo {
      */
     @NotNull(message = "体检人员id不能为空", groups = { AddGroup.class, EditGroup.class })
     private Long registerId;
+
+    /**
+     * 总计项标准价格
+     */
+    @NotNull(message = "总计项标准金额不能为空")
+    private BigDecimal standardAmount;
+
+    /**
+     * 总计项应收金额
+     */
+    @NotNull(message = "总计项应收金额不能为空")
+    private BigDecimal receivableAmount;
+
+    /**
+     * 个人应收金额总计
+     */
+    @NotNull(message = "个人应收金额总计不能为空")
+    private BigDecimal personAmount;
+
+    /**
+     * 单位应收金额总计
+     */
+    @NotNull(message = "单位应收金额总计不能为空")
+    private BigDecimal teamAmount;
+
+    /**
+     * 已缴总费用
+     */
+    @NotNull(message = "已缴总费用不能为空")
+    private BigDecimal paidTotalAmount;
+
+    /**
+     * 已缴个人费用
+     */
+    @NotNull(message = "已缴个人费用不能为空")
+    private BigDecimal paidPersonAmount;
+
+    /**
+     * 已缴单位费用
+     */
+    @NotNull(message = "已缴单位费用不能为空")
+    private BigDecimal paidTeamAmount;
 
     @Valid
     private List<TjRegCombinItemBo> tjRegCombinItemBos;
