@@ -471,7 +471,6 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
                         .teamAmount(price)
                         .build());
                 }
-
             });
             //项目分组生成项目
             if(CollUtil.isNotEmpty(projectList)) {
