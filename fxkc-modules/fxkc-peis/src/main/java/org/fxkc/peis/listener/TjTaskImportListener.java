@@ -82,11 +82,12 @@ public class TjTaskImportListener extends AnalysisEventListener<TjTaskOccupation
                 .eq(TjTeamGroup::getGroupName, tjTaskOccupationalExportVo.getGroupName()));
             if(Objects.isNull(group)) {
                 failureMsg.append("所选分组不存在或已删除,");
+            }else {
+                tjTaskOccupationalExportVo.setDutyStatus(group.getDutyStatus());
+                tjTaskOccupationalExportVo.setTeamGroupId(group.getId());
+                tjTaskOccupationalExportVo.setIlluminationSource(group.getShineSource());
+                tjTaskOccupationalExportVo.setJobIlluminationType(group.getShineType());
             }
-            tjTaskOccupationalExportVo.setDutyStatus(group.getDutyStatus());
-            tjTaskOccupationalExportVo.setTeamGroupId(group.getId());
-            tjTaskOccupationalExportVo.setIlluminationSource(group.getShineSource());
-            tjTaskOccupationalExportVo.setJobIlluminationType(group.getShineType());
         }
         if(isOccupational &&  otherJobCode.contains(tjTaskOccupationalExportVo.getJobCode())
             && StrUtil.isBlank(tjTaskOccupationalExportVo.getOtherJobName())) {
