@@ -61,11 +61,10 @@ public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
      */
     @Override
     public TableDataInfo<TjTeamSettleTaskGroupVo> teamSettleTaskGroupList(TjTeamSettleBo bo, PageQuery pageQuery) {
-        TjTeamTask tjTeamTask = tjTeamTaskMapper.selectById(bo.getTeamTaskId());
-        bo.setHealthyCheckStatus(StrUtil.equals(tjTeamTask.getChargeType(),"1") ? "1" : StrUtil.equals(tjTeamTask.getChargeType(),"2") ? "0" : null);
+        setTeamSettleTaskGroupQueryWrapper(bo);
         Page<TjTeamSettleTaskGroupVo> result = baseMapper.teamSettleTaskGroupList(pageQuery.build(),bo);
         TjTeamSettleTaskGroupVo tjTeamSettleTaskGroupVo = baseMapper.teamSettleTaskNoGroup(bo);
-        if(ObjectUtil.isNotNull(tjTeamSettleTaskGroupVo)){
+        if(ObjectUtil.isNotNull(tjTeamSettleTaskGroupVo) && tjTeamSettleTaskGroupVo.getTotalPeople() > 0){
             List<TjTeamSettleTaskGroupVo> newRecords = Lists.newArrayList(result.getRecords());
             newRecords.add(tjTeamSettleTaskGroupVo);
             result.setRecords(newRecords);
@@ -79,19 +78,24 @@ public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
      */
     @Override
     public TjTeamSettleTaskGroupStatisticsVo teamSettleTaskGroupStatistics(TjTeamSettleBo bo) {
-        TjTeamTask tjTeamTask = tjTeamTaskMapper.selectById(bo.getTeamTaskId());
-        bo.setHealthyCheckStatus(StrUtil.equals(tjTeamTask.getChargeType(),"1") ? "1" : StrUtil.equals(tjTeamTask.getChargeType(),"2") ? "0" : null);
+        setTeamSettleTaskGroupQueryWrapper(bo);
         if(ObjectUtil.equal(bo.getTeamGroupId(),0L)){
             return MapstructUtils.convert(baseMapper.teamSettleTaskNoGroup(bo), TjTeamSettleTaskGroupStatisticsVo.class);
         }
         TjTeamSettleTaskGroupStatisticsVo vo = baseMapper.teamSettleTaskGroupStatistics(bo);
-        if(ObjectUtil.isNull(bo.getTeamGroupId())){
+        if(ObjectUtil.isNotNull(vo) && ObjectUtil.isNull(bo.getTeamGroupId())){
             TjTeamSettleTaskGroupVo tjTeamSettleTaskGroupVo = baseMapper.teamSettleTaskNoGroup(bo);
             vo.setTeamReceiveAmount(NumberUtil.add(vo.getTeamReceiveAmount(),tjTeamSettleTaskGroupVo.getTeamReceiveAmount()));
             vo.setTotalPeople(vo.getTotalPeople() + tjTeamSettleTaskGroupVo.getTotalPeople());
             vo.setGroupAmount(NumberUtil.add(vo.getGroupAmount(),tjTeamSettleTaskGroupVo.getGroupAmount()));
         }
         return vo;
+    }
+
+    private void setTeamSettleTaskGroupQueryWrapper(TjTeamSettleBo bo) {
+        TjTeamTask tjTeamTask = tjTeamTaskMapper.selectById(bo.getTeamTaskId());
+        bo.setChargeType(StrUtil.isBlank(tjTeamTask.getChargeType()) ? "2" : tjTeamTask.getChargeType());
+        bo.setHealthyCheckStatus(StrUtil.equals(bo.getChargeType(),"1") ? "1" : "0");
     }
 
     /**
@@ -223,19 +227,7 @@ public class TjTeamSettleServiceImpl implements ITjTeamSettleService {
      */
     @Override
     public TjTeamSettleAmountStatisticsVo teamSettleAmountStatistics(TjTeamSettleBo bo) {
-        TjTeamSettleAmountStatisticsVo vo = new TjTeamSettleAmountStatisticsVo();
-        BigDecimal receivedAmount = baseMapper.selectObjs(new LambdaQueryWrapper<TjTeamSettle>()
-            .select(TjTeamSettle::getReceivedAmount)
-            .eq(TjTeamSettle::getTeamId,bo.getTeamId())
-            .eq(TjTeamSettle::getTeamTaskId,bo.getTeamTaskId())
-            .eq(TjTeamSettle::getDelFlag,CommonConstants.NORMAL)
-            .eq(TjTeamSettle::getStatus,CommonConstants.NORMAL))
-            .stream().map(m -> NumberUtil.toBigDecimal((Number) m))
-            .reduce(BigDecimal.ZERO,BigDecimal::add);
-        vo.setReceivedAmount(receivedAmount);
-        vo.setSettledAmount(baseMapper.teamSettledAmount(bo));
-        vo.setBalance(NumberUtil.sub(vo.getReceivedAmount(),vo.getSettledAmount()));
-        return vo;
+        return baseMapper.teamSettledAmount(bo);
     }
 
     /**

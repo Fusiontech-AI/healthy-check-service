@@ -25,13 +25,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                       sum(case when b.total_amount - a.price > 0 then b.total_amount - a.price else 0 end) addAmount,
                       a.add_pay_type
                from tj_team_group a
-                    <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.healthyCheckStatus)">
+                    <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.chargeType) and (bo.chargeType == '1'.toString() or bo.chargeType == '2'.toString())">
                         left join tj_register b on a.id = b.team_group_id and b.del_flag = '0'
-                        and b.healthy_check_status = #{bo.healthyCheckStatus}
+                        and b.healthy_check_status &gt;= #{bo.healthyCheckStatus}
                     </if>
-                    <if test="@org.fxkc.common.mybatis.helper.Ognl@isEmpty(bo.healthyCheckStatus)">
+                    <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.chargeType) and bo.chargeType == '3'.toString()">
                         left join (
-                            select t1.id,t1.team_group_id,t1.total_amount,sum(t2.receivable_amount) team_amount
+                            select
+                                   t1.id,
+                                   t1.team_group_id,
+                                   t1.total_amount,
+                                   sum(t2.receivable_amount) team_amount
                             from tj_register t1
                             left join tj_reg_combination_project t2 on t1.id = t2.register_id
                             where t1.del_flag = '0'
@@ -49,41 +53,45 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="teamSettleTaskNoGroup" resultType="org.fxkc.peis.domain.vo.TjTeamSettleTaskGroupVo">
         select 0 id,
-               '无分组' group_name,
-               nvl(sum(case when b.team_amount > 0 then b.team_amount else a.price end),0) teamReceiveAmount,
-               count(b.id) totalPeople,
-               nvl(sum(case when b.team_amount > 0 then b.team_amount else a.price end),0) groupAmount,
-               null group_pay_type,
-               0 addPeople,
-               0 addAmount,
-               null add_pay_type
-        from tj_team_group a
-            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.healthyCheckStatus)">
-                left join tj_register b on a.id = b.team_group_id and b.del_flag = '0'
-                and b.healthy_check_status = #{bo.healthyCheckStatus}
+            '无分组' group_name,
+            count(a.id) totalPeople,
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.chargeType) and (bo.chargeType == '1'.toString() or bo.chargeType == '2'.toString())">
+                nvl(sum(a.team_amount),0) teamReceiveAmount,
+                nvl(sum(a.team_amount),0) groupAmount,
             </if>
-            <if test="@org.fxkc.common.mybatis.helper.Ognl@isEmpty(bo.healthyCheckStatus)">
-                left join (
-                select t1.id,t1.team_group_id,t1.total_amount,sum(t2.receivable_amount) team_amount
-                from tj_register t1
-                left join tj_reg_combination_project t2 on t1.id = t2.register_id
-                where t1.del_flag = '0'
-                and t2.del_flag = '0'
-                and t2.check_status = '1'
-                group by t1.id,t1.team_group_id,t1.total_amount
-                ) b on a.id = b.team_group_id
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.chargeType) and bo.chargeType == '3'.toString()">
+                nvl(sum(b.receivable_amount),0) teamReceiveAmount,
+                nvl(sum(b.receivable_amount),0) groupAmount,
             </if>
+            null group_pay_type,
+            0 addPeople,
+            0 addAmount,
+            null add_pay_type
+        from tj_register a
+        <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.chargeType) and bo.chargeType == '3'.toString()">
+            left join tj_reg_combination_project b on a.id = b.register_id
+        </if>
         where a.del_flag = '0'
-          and a.team_id = #{bo.teamId}
-          and a.task_id = #{bo.teamTaskId}
-          and b.team_group_id is null
+            and a.team_id = #{bo.teamId}
+            and a.task_id = #{bo.teamTaskId}
+            and a.team_group_id is null
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.chargeType) and (bo.chargeType == '1'.toString() or bo.chargeType == '2'.toString())">
+                and a.healthy_check_status &gt;= #{bo.healthyCheckStatus}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.chargeType) and bo.chargeType == '3'.toString()">
+                and b.del_flag = '0'
+                and b.check_status = '1'
+            </if>
     </select>
 
     <select id="teamSettleTaskGroupStatistics" resultType="org.fxkc.peis.domain.vo.TjTeamSettleTaskGroupStatisticsVo">
-        select sum(teamReceiveAmount) teamReceiveAmount,sum(totalPeople) totalPeople,sum(groupAmount) groupAmount,
-               sum(addPeople) addPeople,sum(addAmount) addAmount,
-               sum(case when add_pay_type = '0' then addAmount else 0 end) personAddAmount,
-               sum(case when add_pay_type = '1' then addAmount else 0 end) teamAddAmount
+        select nvl(sum(aaa.teamReceiveAmount),0) teamReceiveAmount,
+               nvl(sum(aaa.totalPeople),0) totalPeople,
+               nvl(sum(aaa.groupAmount),0) groupAmount,
+               nvl(sum(aaa.addPeople),0) addPeople,
+               nvl(sum(aaa.addAmount),0) addAmount,
+               nvl(sum(case when aaa.add_pay_type = '0' then aaa.addAmount else 0 end),0) personAddAmount,
+               nvl(sum(case when aaa.add_pay_type = '1' then aaa.addAmount else 0 end),0) teamAddAmount
         from (
                 select aa.id,
                        aa.group_name,
@@ -105,19 +113,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                               sum(case when b.total_amount - a.price > 0 then b.total_amount - a.price else 0 end) addAmount,
                               a.add_pay_type
                        from tj_team_group a
-                            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.healthyCheckStatus)">
+                            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.chargeType) and (bo.chargeType == '1'.toString() or bo.chargeType == '2'.toString())">
                                 left join tj_register b on a.id = b.team_group_id and b.del_flag = '0'
-                                and b.healthy_check_status = #{bo.healthyCheckStatus}
+                                and b.healthy_check_status &gt;= #{bo.healthyCheckStatus}
                             </if>
-                            <if test="@org.fxkc.common.mybatis.helper.Ognl@isEmpty(bo.healthyCheckStatus)">
+                            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.chargeType) and bo.chargeType == '3'.toString()">
                                 left join (
-                                select t1.id,t1.team_group_id,t1.total_amount,sum(t2.receivable_amount) team_amount
-                                from tj_register t1
-                                left join tj_reg_combination_project t2 on t1.id = t2.register_id
-                                where t1.del_flag = '0'
-                                and t2.del_flag = '0'
-                                and t2.check_status = '1'
-                                group by t1.id,t1.team_group_id,t1.total_amount
+                                    select t1.id,
+                                           t1.team_group_id,
+                                           t1.total_amount,
+                                           sum(t2.receivable_amount) team_amount
+                                    from tj_register t1
+                                        left join tj_reg_combination_project t2 on t1.id = t2.register_id
+                                    where t1.del_flag = '0'
+                                        and t2.del_flag = '0'
+                                        and t2.check_status = '1'
+                                    group by t1.id,t1.team_group_id,t1.total_amount
                                 ) b on a.id = b.team_group_id
                             </if>
                        where a.del_flag = '0'
@@ -125,19 +136,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                            and a.task_id = #{bo.teamTaskId}
                        group by a.id,a.group_name,b.team_amount,a.price,a.group_pay_type,a.add_pay_type
                 ) aa
-        ) aaaa
+        ) aaa
     </select>
 
-    <select id="teamSettledAmount" resultType="java.math.BigDecimal">
-        select nvl(sum(b.TEAM_AMOUNT),0)
-        from TJ_TEAM_SETTLE a
-            left join TJ_REGISTER b on a.id = b.TEAM_SETTLE_ID
-        where a.del_flag = '0'
-            and b.del_flag = '0'
-            and a.status = '0'
-            and a.check_status = '1'
-            and a.team_id = #{bo.teamId}
-            and a.team_task_id = #{bo.teamTaskId}
+    <select id="teamSettledAmount" resultType="org.fxkc.peis.domain.vo.TjTeamSettleAmountStatisticsVo">
+        select aa.receivedAmount,
+               aa.settledAmount,
+               (aa.receivedAmount - aa.settledAmount) balance
+        from (
+            select nvl(sum(a.received_amount),0) receivedAmount,
+                   nvl(sum(b.team_amount),0) settledAmount
+            from tj_team_settle a
+                left join tj_register b on a.id = b.team_settle_id
+            where a.del_flag = '0'
+                and b.del_flag = '0'
+                and a.status = '0'
+                and a.check_status = '1'
+                and a.team_id = #{bo.teamId}
+                and a.team_task_id = #{bo.teamTaskId}
+        ) aa
     </select>
 
 </mapper>
