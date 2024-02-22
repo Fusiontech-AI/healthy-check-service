@@ -381,6 +381,7 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void mergeArchives(TjArchivesBo bo) {
         List<TjArchivesBo.TjArchivesData> dataList = bo.getDataList();
         if(dataList.size() < 1) {
