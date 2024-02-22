@@ -184,7 +184,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="queryTaskRegisterExportById" resultType="org.fxkc.peis.domain.vo.TjTaskRegisterExportVo">
-        select a.name,
+        select a.id,
+            a.name,
             a.gender,
             a.age,
             a.credential_number,

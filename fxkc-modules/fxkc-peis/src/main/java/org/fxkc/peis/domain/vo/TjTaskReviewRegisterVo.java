@@ -8,9 +8,7 @@ import lombok.experimental.Accessors;
 import org.fxkc.common.translation.annotation.Translation;
 import org.fxkc.common.translation.constant.TransConstant;
 import org.fxkc.peis.domain.TjRegister;
-import org.fxkc.peis.domain.TjTeamGroup;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 @Data

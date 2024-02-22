@@ -1,13 +1,10 @@
 package org.fxkc.peis.domain.bo;
 
-import org.fxkc.common.core.validate.AddGroup;
-import org.fxkc.common.core.validate.EditGroup;
-import org.fxkc.peis.domain.TjTeamGroupHazards;
-import org.fxkc.common.mybatis.core.domain.BaseEntity;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import jakarta.validation.constraints.*;
+import org.fxkc.common.mybatis.core.domain.BaseEntity;
+import org.fxkc.peis.domain.TjTeamGroupHazards;
 
 /**
  * 单位分组危害因素业务对象 tj_team_group_hazards

@@ -1,14 +1,9 @@
 package org.fxkc.peis.domain.vo;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import org.fxkc.peis.domain.TjTeamGroupItem;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
-import com.alibaba.excel.annotation.ExcelProperty;
-import org.fxkc.common.excel.annotation.ExcelDictFormat;
-import org.fxkc.common.excel.convert.ExcelDictConvert;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
+import org.fxkc.peis.domain.TjTeamGroupItem;
 
 import java.io.Serial;
 import java.io.Serializable;

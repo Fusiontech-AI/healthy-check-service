@@ -1,7 +1,6 @@
 package org.fxkc.peis.domain.vo;
 
 import cn.hutool.core.date.DatePattern;
-import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.write.style.ColumnWidth;
@@ -17,7 +16,6 @@ import org.fxkc.common.core.validate.AddGroup;
 import org.fxkc.common.core.validate.EditGroup;
 import org.fxkc.common.excel.annotation.ExcelDictFormat;
 import org.fxkc.common.excel.convert.ExcelDictConvert;
-import org.hibernate.validator.constraints.Length;
 
 import java.util.Date;
 

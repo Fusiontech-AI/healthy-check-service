@@ -1,14 +1,15 @@
 package org.fxkc.peis.domain.vo;
 
 import cn.hutool.core.collection.CollUtil;
-import lombok.*;
-import lombok.experimental.Accessors;
-import org.fxkc.peis.domain.TjTeamGroup;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
-import org.fxkc.common.excel.annotation.ExcelDictFormat;
-import org.fxkc.common.excel.convert.ExcelDictConvert;
 import io.github.linpeilie.annotations.AutoMapper;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
+import org.fxkc.peis.domain.TjTeamGroup;
 
 import java.io.Serial;
 import java.io.Serializable;

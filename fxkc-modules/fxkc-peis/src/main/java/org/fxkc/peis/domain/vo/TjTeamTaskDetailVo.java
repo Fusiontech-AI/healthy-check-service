@@ -3,7 +3,6 @@ package org.fxkc.peis.domain.vo;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 import org.fxkc.peis.domain.TjTeamTask;
-import org.fxkc.peis.domain.bo.TjTeamGroupBo;
 
 import java.util.List;
 

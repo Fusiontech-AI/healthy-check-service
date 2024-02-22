@@ -394,10 +394,9 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
         String teamName = iTjTeamInfoService.selectTeamNameById(tjTeamTask.getTeamId());
         bo.setTaskName(tjTeamTask.getTaskName());
         bo.setTeamName(teamName);
-        ExcelResult<TjTaskOccupationalExportVo> result = ExcelUtil.importExcel(file.getInputStream(),
+        return ExcelUtil.importExcel(file.getInputStream(),
             TjTaskOccupationalExportVo.class,
             new TjTaskImportListener(bo));
-        return result;
     }
 
     @Override

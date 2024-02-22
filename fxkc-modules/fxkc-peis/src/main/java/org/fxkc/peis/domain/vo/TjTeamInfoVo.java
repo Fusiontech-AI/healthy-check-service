@@ -1,19 +1,16 @@
 package org.fxkc.peis.domain.vo;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
-import org.fxkc.common.translation.annotation.Translation;
-import org.fxkc.common.translation.constant.TransConstant;
-import org.fxkc.peis.constant.DictTypeConstants;
-import org.fxkc.peis.domain.TjTeamInfo;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
+import io.github.linpeilie.annotations.AutoMapper;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 import org.fxkc.common.excel.annotation.ExcelDictFormat;
 import org.fxkc.common.excel.convert.ExcelDictConvert;
-import io.github.linpeilie.annotations.AutoMapper;
-import lombok.Data;
+import org.fxkc.peis.domain.TjTeamInfo;
 
 import java.io.Serial;
 import java.io.Serializable;
