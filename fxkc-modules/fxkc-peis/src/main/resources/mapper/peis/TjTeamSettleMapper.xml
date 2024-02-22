@@ -60,8 +60,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 nvl(sum(a.team_amount),0) groupAmount,
             </if>
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.chargeType) and bo.chargeType == '3'.toString()">
-                sum(case when t2.check_status = '1' then t2.receivable_amount else 0 end) teamReceiveAmount,
-                sum(case when t2.check_status = '1' then t2.receivable_amount else 0 end) groupAmount,
+                sum(case when b.check_status = '1' then b.receivable_amount else 0 end) teamReceiveAmount,
+                sum(case when b.check_status = '1' then b.receivable_amount else 0 end) groupAmount,
             </if>
             null group_pay_type,
             0 addPeople,
