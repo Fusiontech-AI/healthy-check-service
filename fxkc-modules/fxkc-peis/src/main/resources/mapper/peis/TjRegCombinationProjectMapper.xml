@@ -41,4 +41,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
         ORDER BY cp.PROJECT_SORT
     </select>
+
+    <select id="queryReportModel" resultType="org.fxkc.peis.domain.vo.ftlModel.CheckItemResultVo">
+
+    </select>
+
+    <select id="queryByTxmModel" resultType="org.fxkc.peis.domain.vo.ftlModel.TxmModel">
+        select
+            r.ID,
+            r.COMBINATION_PROJECT_ID as itemName
+        from TJ_REG_COMBINATION_PROJECT r where REGISTER_ID  = #{regId}
+    </select>
 </mapper>

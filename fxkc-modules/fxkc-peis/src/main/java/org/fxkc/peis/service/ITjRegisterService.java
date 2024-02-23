@@ -83,4 +83,6 @@ public interface ITjRegisterService {
     Boolean deleteTaskRegister(Long id);
 
     void mergeArchives(TjArchivesBo bo);
+
+    void updatePersonalReportPrint(ReportPrintBO bo);
 }

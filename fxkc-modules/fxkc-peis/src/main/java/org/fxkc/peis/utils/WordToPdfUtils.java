@@ -9,6 +9,7 @@ import freemarker.template.Template;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -227,6 +228,9 @@ public class WordToPdfUtils {
      * 获取网络图片
      */
     public static String getImageFromNetByUrl(String strUrl) {
+        if(StringUtils.isNotBlank(strUrl)){
+            return null;
+        }
         InputStream inStream =null;
         try {
             URL url = new URI(strUrl).toURL();

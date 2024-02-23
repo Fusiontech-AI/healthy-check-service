@@ -423,6 +423,11 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
     }
 
     @Override
+    public void updatePersonalReportPrint(ReportPrintBO bo) {
+        baseMapper.updatePersonalReportPrint(bo);
+    }
+
+    @Override
     public List<TjRegisterVo> getByIds(List<Long> regIdList) {
         return this.baseMapper.getByIds(regIdList);
     }

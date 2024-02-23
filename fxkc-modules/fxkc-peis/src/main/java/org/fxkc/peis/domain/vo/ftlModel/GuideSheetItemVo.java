@@ -12,7 +12,7 @@ import java.io.Serializable;
 public class GuideSheetItemVo implements Serializable {
 
     /**
-     * 检查类型名称
+     * 记录Id
      */
     private Long regId;
 

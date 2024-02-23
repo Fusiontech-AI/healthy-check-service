@@ -1,6 +1,5 @@
 package org.fxkc.peis.reportPrint.impl;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +16,7 @@ import org.fxkc.peis.domain.vo.TjRegisterVo;
 import org.fxkc.peis.domain.vo.TjTeamInfoVo;
 import org.fxkc.peis.domain.vo.ftlModel.GuideSheetItemVo;
 import org.fxkc.peis.domain.vo.ftlModel.GuideSheetTypeVo;
-import org.fxkc.peis.domain.vo.ftlModel.GuideSheetVo;
+import org.fxkc.peis.domain.vo.ftlModel.GuideSheetModel;
 import org.fxkc.peis.domain.vo.template.TjTemplateExtendVo;
 import org.fxkc.peis.domain.vo.template.TjTemplateVo;
 import org.fxkc.peis.exception.PeisException;
@@ -35,7 +34,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -153,7 +151,7 @@ public class GuideSheetServiceImpl extends AbstractReportPrint {
     private void printGuideSheet001(TjRegisterVo s, TjTemplateVo templateVo,List<GuideSheetItemVo> itemVoList, Map<Long, String> teamInfoMap, Map<Long, String> packageMap, Map<String, String> sexMap, Map<String, String> guideItemTypeMap, Map<Long, String> userMap, String userName, OutputStream outputStream ){
         List<TjTemplateExtendVo> extendList = templateVo.getExtendList();
         Map<String, String> extendMap = extendList.stream().collect(Collectors.toMap(TjTemplateExtendVo::getExtendType, TjTemplateExtendVo::getContent));
-        GuideSheetVo guideSheetVo = new GuideSheetVo();
+        GuideSheetModel guideSheetVo = new GuideSheetModel();
         guideSheetVo.setAge(String.valueOf(s.getAge()));
         guideSheetVo.setGender(sexMap.get(s.getGender()));
         guideSheetVo.setRegisterTime(DateUtils.dateTime(s.getRegisterTime()));
@@ -167,6 +165,7 @@ public class GuideSheetServiceImpl extends AbstractReportPrint {
         guideSheetVo.setTeamName(teamInfoMap.getOrDefault(s.getTeamId(),"个人体检"));
         guideSheetVo.setPeTimes(String.valueOf(s.getPeTimes()));
         guideSheetVo.setPrintTime(DateUtils.getDate());
+        guideSheetVo.setHospitalName(extendMap.get(ExtendTypeEnum.HOSPITAL_NAME.getCode()));
         guideSheetVo.setTjAddress(extendMap.get(ExtendTypeEnum.TJ_ADDRESS.getCode()));
         guideSheetVo.setTjPhone(extendMap.get(ExtendTypeEnum.TJ_PHONE.getCode()));
         guideSheetVo.setWarmTips(extendMap.get(ExtendTypeEnum.WARM_TIPS.getCode()));
@@ -178,9 +177,7 @@ public class GuideSheetServiceImpl extends AbstractReportPrint {
         guideSheetVo.setGeneralReviewDoctor(userMap.get(s.getGeneralReviewDoctor()));
         guideSheetVo.setIsReprint((null!=s.getGuidePrintTimes() && s.getGuidePrintTimes()>0)?"1":"0");
         //渲染用户图像
-        if(StringUtils.isNotBlank(s.getUserImage())){
-            guideSheetVo.setUserImage(WordToPdfUtils.getImageFromNetByUrl(s.getUserImage()));
-        }
+        guideSheetVo.setUserImage(WordToPdfUtils.getImageFromNetByUrl(s.getUserImage()));
         //渲染条形码
         guideSheetVo.setHealthyBarCode(this.getBarCodeBase64(s.getHealthyCheckCode()));
         //guideSheetVo.setPayQrCode(`s.getUserImage());
@@ -207,20 +204,5 @@ public class GuideSheetServiceImpl extends AbstractReportPrint {
             this.registerService.updateGuideSheetPrint(bo);
         }
 
-    }
-
-    /**
-     * 生成条形码图片
-     * @param number 内容
-     */
-    private String getBarCodeBase64(String number) {
-        try {
-            //生成条形码图片，然后转换成base64
-            BufferedImage img = BarCodeUtils.insertWords(BarCodeUtils.getBarCode(number), number);
-            return WordToPdfUtils.getBufferedImageToBase64(img);
-        }catch (Exception e){
-            log.error("生成条形码失败：",e);
-        }
-        return null;
     }
 }

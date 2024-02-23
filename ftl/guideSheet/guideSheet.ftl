@@ -756,7 +756,7 @@
                                         <w:sz w:val="34"/>
                                         <w:szCs w:val="34"/>
                                     </w:rPr>
-                                    <w:t>枝江市人民医院体检指引单</w:t>
+                                    <w:t>${hospitalName!'XXXXX医院'}体检指引单</w:t>
                                 </w:r>
                             </w:p>
                         </w:tc>

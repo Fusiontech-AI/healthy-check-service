@@ -209,7 +209,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="updateGuideSheetPrint">
-        update TJ_REGISTER set GUIDE_PRINT_TIMES = GUIDE_PRINT_TIMES +1
+        update TJ_REGISTER set GUIDE_PRINT_TIMES = GUIDE_PRINT_TIMES +1,HEALTHY_CHECK_STATUS = decode(HEALTHY_CHECK_STATUS,1, 2 , HEALTHY_CHECK_STATUS)
+        where ID in
+        <foreach collection="bo.regIdList" item="regId" open="(" separator="," close=")">
+            #{regId}
+        </foreach>
+    </update>
+
+    <update id="updatePersonalReportPrint">
+        update TJ_REGISTER set REPORT_PRINT_FLAG = 1 ,REPORT_PRINT_TIME = sysdate,REPORT_PRINT_TIMES = REPORT_PRINT_TIMES+1
         where ID in
         <foreach collection="bo.regIdList" item="regId" open="(" separator="," close=")">
             #{regId}
