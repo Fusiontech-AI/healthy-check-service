@@ -43,13 +43,11 @@ public class TjCombinationProjectAddBo {
     /**
      * 组合项目简称
      */
-    @NotBlank(message = "组合项目简称不能为空", groups = { AddGroup.class, EditGroup.class })
     private String combinSimpleName;
 
     /**
      * 拼音简码
      */
-    @NotBlank(message = "拼音简码不能为空", groups = { AddGroup.class, EditGroup.class })
     private String pySimpleCode;
 
     /**
@@ -67,7 +65,6 @@ public class TjCombinationProjectAddBo {
     /**
      * 样本类型 0类型1
      */
-    @NotBlank(message = "样本类型 0类型1不能为空", groups = { AddGroup.class, EditGroup.class })
     private String sampleType;
 
     /**
