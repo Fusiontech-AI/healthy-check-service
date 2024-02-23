@@ -459,7 +459,6 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
                             .standardAmount(s.getStandardPrice())
                             .discount(s.getDiscount())
                             .receivableAmount(s.getActualPrice())
-                            .payStatus("1")
                             .payMode("1")
                             .projectRequiredType(s.getIsRequired() ? "1" : "0")
                             .teamAmount(s.getActualPrice())

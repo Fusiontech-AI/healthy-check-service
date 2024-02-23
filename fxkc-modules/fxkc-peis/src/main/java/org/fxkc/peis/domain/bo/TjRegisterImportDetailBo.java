@@ -1,10 +1,14 @@
 package org.fxkc.peis.domain.bo;
 
+import cn.hutool.core.date.DatePattern;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.fxkc.common.core.validate.AddGroup;
+import org.fxkc.common.core.validate.EditGroup;
 
 import java.util.Date;
 
@@ -35,6 +39,13 @@ public class TjRegisterImportDetailBo {
      */
     @NotNull(message = "年龄不能为空")
     private Integer age;
+
+    /**
+     * 生日
+     */
+    @NotNull(message = "生日不能为空")
+    @JsonFormat(pattern = DatePattern.NORM_DATE_PATTERN, timezone = "GMT+8")
+    private Date birthday;
 
     /**
      * 婚否
