@@ -339,4 +339,9 @@ public class TjRegisterPageVo implements Serializable {
     @Translation(type = TransConstant.TEAM_TASK_ID_TO_NAME,mapper = "taskId")
     private String taskName;
 
+    /**
+     * 体检次数
+     */
+    private Long peTimes;
+
 }

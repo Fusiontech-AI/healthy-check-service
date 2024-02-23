@@ -44,7 +44,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             t1.TASK_ID,
             t1.TEAM_SETTLE_TIME,
             t1.PAID_TOTAL_AMOUNT,
-            t1.TOTAL_AMOUNT - PAID_TOTAL_AMOUNT as unPaidTotalAmount
+            t1.TOTAL_AMOUNT - PAID_TOTAL_AMOUNT as unPaidTotalAmount,
+            t1.PE_TIMES
         FROM
             TJ_REGISTER t1
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.createByName)">
