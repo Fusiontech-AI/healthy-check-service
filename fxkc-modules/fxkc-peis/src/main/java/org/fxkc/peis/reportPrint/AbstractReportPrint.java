@@ -6,9 +6,12 @@ import org.fxkc.peis.domain.vo.TjRegisterVo;
 import org.fxkc.peis.domain.vo.template.TjTemplateVo;
 import org.fxkc.peis.exception.PeisException;
 import org.fxkc.peis.service.*;
+import org.fxkc.peis.utils.BarCodeUtils;
+import org.fxkc.peis.utils.WordToPdfUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
+import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -50,5 +53,20 @@ public abstract class AbstractReportPrint implements ReportPrintService {
             map.put(s.getId(),tjTemplateVo);
         }
         return map;
+    }
+
+    /**
+     * 生成条形码图片
+     * @param number 内容
+     */
+    protected String getBarCodeBase64(String number) {
+        try {
+            //生成条形码图片，然后转换成base64
+            BufferedImage img = BarCodeUtils.insertWords(BarCodeUtils.getBarCode(number), number);
+            return WordToPdfUtils.getBufferedImageToBase64(img);
+        }catch (Exception e){
+            log.error("生成条形码失败：",e);
+        }
+        return null;
     }
 }

@@ -31,5 +31,21 @@ public class TjReportPrintController extends BaseController {
         printService.print(bo,response);
     }
 
+    /**
+     * 打印个人报告
+     */
+    @PostMapping("/printPersonalReport")
+    public void printPersonalReport(@RequestBody ReportPrintBO bo,HttpServletResponse response) throws Exception {
+        ReportPrintService printService = reportPrintHandler.getHandler(ReportTypeEnum.PERSONAL.getCode());
+        printService.print(bo,response);
+    }
 
+    /**
+     * 打印条形码
+     */
+    @PostMapping("/printTxm")
+    public void printTxm(@RequestBody ReportPrintBO bo,HttpServletResponse response) throws Exception {
+        ReportPrintService printService = reportPrintHandler.getHandler(ReportTypeEnum.TXM.getCode());
+        printService.print(bo,response);
+    }
 }

@@ -8,7 +8,10 @@ import org.fxkc.peis.domain.TjRegCombinationProject;
 import org.fxkc.peis.domain.bo.TjRegCombinationProjectListBo;
 import org.fxkc.peis.domain.vo.TjRegCombinationProjectListVo;
 import org.fxkc.peis.domain.vo.TjRegCombinationProjectVo;
+import org.fxkc.common.mybatis.core.mapper.BaseMapperPlus;
+import org.fxkc.peis.domain.vo.ftlModel.CheckItemResultVo;
 import org.fxkc.peis.domain.vo.ftlModel.GuideSheetItemVo;
+import org.fxkc.peis.domain.vo.ftlModel.TxmModel;
 
 import java.util.List;
 
@@ -23,6 +26,10 @@ public interface TjRegCombinationProjectMapper extends BaseMapperPlus<TjRegCombi
     Page<TjRegCombinationProjectListVo> selectPage(@Param("page")Page<TjRegCombinationProjectListVo> page, @Param("bo")TjRegCombinationProjectListBo bo);
 
     List<GuideSheetItemVo> queryGuideItemByIds(@Param("regIdList")List<Long> regIdList);
+
+    List<CheckItemResultVo> queryReportModel(@Param("regId") Long regId);
+
+    List<TxmModel> queryByTxmModel(@Param("regId") Long regId);
 
     @Select("select t1.*,t2.check_type from tj_reg_combination_project t1 left join tj_combination_project t2 on t1.combination_project_id=t2.id where t1.del_flag='0' and t1.register_id= #{id} order by t2.project_sort")
     List<TjRegCombinationProjectVo> queryRegCombinProjectList(@Param("id") Long id);

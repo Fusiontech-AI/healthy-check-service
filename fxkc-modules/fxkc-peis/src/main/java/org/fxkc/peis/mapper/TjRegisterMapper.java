@@ -37,4 +37,6 @@ public interface TjRegisterMapper extends BaseMapperPlus<TjRegister, TjRegisterV
 
     List<TjRegister> selectTjRegisterByProjectChecked(@Param("bo") TjTeamSettleBo bo);
 
+
+    void updatePersonalReportPrint(@Param("bo") ReportPrintBO bo);
 }

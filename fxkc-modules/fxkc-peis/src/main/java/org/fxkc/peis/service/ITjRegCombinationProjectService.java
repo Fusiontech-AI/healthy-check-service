@@ -7,7 +7,12 @@ import org.fxkc.peis.domain.bo.TjRegCombinationProjectListBo;
 import org.fxkc.peis.domain.vo.TjRegBasicProjectVo;
 import org.fxkc.peis.domain.vo.TjRegCombinationProjectListVo;
 import org.fxkc.peis.domain.vo.TjRegCombinationProjectVo;
+import org.fxkc.peis.domain.bo.TjRegCombinationProjectBo;
+import org.fxkc.common.mybatis.core.page.TableDataInfo;
+import org.fxkc.common.mybatis.core.page.PageQuery;
+import org.fxkc.peis.domain.vo.ftlModel.CheckItemResultVo;
 import org.fxkc.peis.domain.vo.ftlModel.GuideSheetItemVo;
+import org.fxkc.peis.domain.vo.ftlModel.TxmModel;
 
 import java.util.Collection;
 import java.util.List;
@@ -41,4 +46,8 @@ public interface ITjRegCombinationProjectService {
     List<TjRegBasicProjectVo> queryRegBasicProjectList(Long id);
 
     List<TjRegCombinationProjectVo> queryRegCombinProjectList(Long id);
+
+    List<CheckItemResultVo> queryReportModel(Long regId);
+
+    List<TxmModel> queryByTxmModel(Long id);
 }

@@ -16,8 +16,10 @@ import org.fxkc.peis.domain.bo.TjRegCombinationProjectDelayBo;
 import org.fxkc.peis.domain.bo.TjRegCombinationProjectListBo;
 import org.fxkc.peis.domain.vo.TjRegBasicProjectVo;
 import org.fxkc.peis.domain.vo.TjRegCombinationProjectListVo;
+import org.fxkc.peis.domain.vo.ftlModel.CheckItemResultVo;
 import org.fxkc.peis.domain.vo.TjRegCombinationProjectVo;
 import org.fxkc.peis.domain.vo.ftlModel.GuideSheetItemVo;
+import org.fxkc.peis.domain.vo.ftlModel.TxmModel;
 import org.fxkc.peis.enums.CheckStatusEnum;
 import org.fxkc.peis.mapper.TjRegBasicProjectMapper;
 import org.fxkc.peis.mapper.TjRegCombinationProjectMapper;
@@ -135,5 +137,15 @@ public class TjRegCombinationProjectServiceImpl implements ITjRegCombinationProj
     @Override
     public List<TjRegCombinationProjectVo> queryRegCombinProjectList(Long id) {
         return baseMapper.queryRegCombinProjectList(id);
+    }
+
+    @Override
+    public List<CheckItemResultVo> queryReportModel(Long regId) {
+        return this.baseMapper.queryReportModel(regId);
+    }
+
+    @Override
+    public List<TxmModel> queryByTxmModel(Long regId) {
+        return this.baseMapper.queryByTxmModel(regId);
     }
 }

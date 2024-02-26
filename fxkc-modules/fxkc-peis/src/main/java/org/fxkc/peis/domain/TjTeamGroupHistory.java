@@ -115,5 +115,13 @@ public class TjTeamGroupHistory extends TenantEntity {
     @TableLogic
     private String delFlag;
 
+    /**
+     * 照射源sys_dict_type(bus_shine_source)
+     */
+    private String shineSource;
 
+    /**
+     * 照射源种类sys_dict_type(bus_job_illumination_source)
+     */
+    private String shineType;
 }
