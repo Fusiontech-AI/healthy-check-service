@@ -218,4 +218,15 @@ public class TjTeamTaskController extends BaseController {
                                                                          PageQuery pageQuery) {
         return tjTeamTaskService.queryTaskRegisterExportById(taskId, pageQuery);
     }
+
+    /**
+     * 团检任务项目分组信息
+     * @param id 任务id
+     * @param physicalType 体检类型
+     */
+    @GetMapping("/getTaskItemGroupInfo")
+    public R<List<TjTeamGroupVo>> getTaskItemGroupInfo(@RequestParam("id") @NotNull(message = "任务id不能为空") Long id,
+                                                       @RequestParam("physicalType") @NotBlank(message = "体检类型不能为空") String physicalType) {
+        return R.ok(tjTeamTaskService.getTaskItemGroupInfo(id, physicalType));
+    }
 }
