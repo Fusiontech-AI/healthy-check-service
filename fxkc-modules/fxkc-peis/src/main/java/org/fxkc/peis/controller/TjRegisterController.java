@@ -166,9 +166,9 @@ public class TjRegisterController extends BaseController {
     }
 
     /**
-     * 体检项目登记(或变更)
+     * 体检项目登记,报道,暂存(或变更)
      */
-    @Log(title = "体检项目登记保存或变更", businessType = BusinessType.INSERT)
+    @Log(title = "体检项目登记保存,报道,暂存或变更", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping("/changeRegCombin")
     public R<Void> changeRegCombin(@Valid @RequestBody TjRegCombinAddBo bo) {
