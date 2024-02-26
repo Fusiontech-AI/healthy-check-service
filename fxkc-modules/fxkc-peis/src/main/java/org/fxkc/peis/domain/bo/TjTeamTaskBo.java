@@ -104,7 +104,7 @@ public class TjTeamTaskBo extends BaseEntity {
     private String saleHead;
 
     /**
-     * 是否审核(0:是1:否)
+     * 编制人
      */
     private String preparedName;
 }
