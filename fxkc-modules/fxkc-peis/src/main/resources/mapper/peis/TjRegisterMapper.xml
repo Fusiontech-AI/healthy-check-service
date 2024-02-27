@@ -174,6 +174,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.createByName)">
                 AND t2.USER_NAME LIKE CONCAT('%',CONCAT(#{bo.createByName},'%'))
             </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.createTimeStart)">
+                AND t1.CREATE_TIME >= #{bo.createTimeStart}
+            </if>
+            <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.createTimeEnd)">
+                AND t1.CREATE_TIME &lt; TRUNC(#{bo.createTimeEnd})+1
+            </if>
         </where>
     </select>
 
