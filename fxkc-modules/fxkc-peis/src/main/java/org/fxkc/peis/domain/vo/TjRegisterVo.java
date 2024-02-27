@@ -580,4 +580,14 @@ public class TjRegisterVo implements Serializable {
     @Translation(type = TransConstant.USER_ID_TO_NAME, mapper = "createBy")
     private String createByName;
 
+
+    /**
+     * 职业病关联响应信息
+     */
+    private TjRegisterZybVo tjRegisterZybVo;
+
+    /**
+     * 分组相关信息
+     */
+    private TjTeamGroupVo tjTeamGroupVo;
 }
