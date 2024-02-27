@@ -348,6 +348,12 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
         String teamName = iTjTeamInfoService.selectTeamNameById(tjTeamTask.getTeamId());
         List<TjTeamGroup> groupList = tjTeamGroupMapper.selectList(Wrappers.lambdaQuery(TjTeamGroup.class)
             .eq(TjTeamGroup::getTaskId, taskId));
+        List<TjTeamGroupItem> itemList = tjTeamGroupItemMapper.selectList(Wrappers.lambdaQuery(TjTeamGroupItem.class)
+            .in(TjTeamGroupItem::getGroupId, StreamUtils.toList(groupList, TjTeamGroup::getId)));
+        Set<Long> groupNewIdList = itemList.stream().map(TjTeamGroupItem::getGroupId).collect(Collectors.toSet());
+        groupList= StreamUtils.filter(groupList,
+            e -> ObjectUtil.notEqual(e.getGroupType(), GroupTypeEnum.ITEM.getCode())
+                || groupNewIdList.contains(e.getId()));
         DropDownOptions options = new DropDownOptions(6, StreamUtils.toList(groupList, TjTeamGroup::getGroupName));
         List<DropDownOptions> optionsList = CollUtil.newArrayList(options);
         //如有其他类型再添加

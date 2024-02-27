@@ -1,5 +1,6 @@
 package org.fxkc.peis.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import org.fxkc.peis.domain.TjTeamGroupItem;
 import org.fxkc.peis.domain.vo.TjTeamGroupItemVo;
 import org.fxkc.peis.domain.bo.TjTeamGroupItemBo;
@@ -15,7 +16,7 @@ import java.util.List;
  * @author JunBaiChen
  * @date 2024-01-17
  */
-public interface ITjTeamGroupItemService {
+public interface ITjTeamGroupItemService extends IService<TjTeamGroupItem> {
 
     /**
      * 查询团检分组对应项目
