@@ -62,4 +62,14 @@ public interface TransConstant {
      * 组合项目id转项目编码
      */
     String COMBINATION_ID_TO_CODE = "combination_id_to_code";
+
+    /**
+     * 基础id转名称
+     */
+    String BASIC_ID_TO_NAME = "basic_id_to_name";
+
+    /**
+     * 套餐id转名称
+     */
+    String PACKAGE_ID_TO_NAME = "package_id_to_name";
 }

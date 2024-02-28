@@ -139,6 +139,7 @@ public abstract class AbstractRegisterChange implements RegisterChangeService {
         tjRegister.setPaidTotalAmount(bo.getPaidTotalAmount());
         tjRegister.setPaidPersonAmount(bo.getPaidPersonAmount());
         tjRegister.setPaidTeamAmount(bo.getPaidTeamAmount());
+        tjRegister.setPackageId(bo.getPackageId());
     };
 
 

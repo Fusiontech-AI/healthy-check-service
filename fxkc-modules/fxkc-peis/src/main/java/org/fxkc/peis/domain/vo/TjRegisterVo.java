@@ -392,6 +392,12 @@ public class TjRegisterVo implements Serializable {
     private Long packageId;
 
     /**
+     * 套餐名称
+     */
+    @Translation(type = TransConstant.TEAM_GROUP_ID_TO_NAME, mapper = "packageId")
+    private String packageName;
+
+    /**
      * 指引单打印次数
      */
     @ExcelProperty(value = "指引单打印次数")
