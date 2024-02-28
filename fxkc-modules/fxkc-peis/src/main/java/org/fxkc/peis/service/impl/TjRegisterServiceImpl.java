@@ -371,7 +371,10 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
         TjArchivesBo.TjArchivesData finalTjArchivesData = tjArchivesData;
         List<TjArchivesBo.TjArchivesData> mergeList = StreamUtils.filter(dataList, e -> ObjectUtil.notEqual(e.getRecordCode(), finalTjArchivesData.getRecordCode()));
         mergeList.forEach(k -> {
-            baseMapper.update(TjRegister.builder().recordCode(finalTjArchivesData.getRecordCode()).build(),
+            baseMapper.update(TjRegister.builder().recordCode(finalTjArchivesData.getRecordCode())
+                .oldRecordCode(k.getRecordCode())
+                .mergeRecordBy(LoginHelper.getUserId())
+                .mergeRecordTime(DateUtil.date()).build(),
                 Wrappers.lambdaUpdate(TjRegister.class)
                     .eq(TjRegister::getRecordCode, k.getRecordCode()));
             tjArchivesMapper.delete(Wrappers.lambdaQuery(TjArchives.class)

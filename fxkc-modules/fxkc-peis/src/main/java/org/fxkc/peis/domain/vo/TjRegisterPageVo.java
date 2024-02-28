@@ -344,4 +344,25 @@ public class TjRegisterPageVo implements Serializable {
      */
     private Long peTimes;
 
+    /**
+     * 旧档案号
+     */
+    private String oldRecordCode;
+
+    /**
+     * 合并档案人
+     */
+    private Long mergeRecordBy;
+
+    /**
+     * 合并档案人名称
+     */
+    @Translation(type = TransConstant.USER_ID_TO_NAME,mapper = "mergeRecordBy")
+    private String mergeRecordByName;
+
+    /**
+     * 合并档案时间
+     */
+    private Date mergeRecordTime;
+
 }

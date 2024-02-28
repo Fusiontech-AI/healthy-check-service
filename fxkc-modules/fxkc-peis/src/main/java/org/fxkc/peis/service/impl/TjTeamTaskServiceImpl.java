@@ -110,8 +110,16 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
         LambdaQueryWrapper<TjTeamTask> lqw = Wrappers.lambdaQuery();
         lqw.eq(Objects.nonNull(bo.getTeamId()), TjTeamTask::getTeamId, bo.getTeamId())
             .like(StrUtil.isNotBlank(bo.getTaskName()), TjTeamTask::getTaskName, bo.getTaskName())
-            .eq(StrUtil.isNotBlank(bo.getIsReview()), TjTeamTask::getIsReview, bo.getIsReview())
-            .eq(StrUtil.isNotBlank(bo.getReviewResult()), TjTeamTask::getReviewResult, bo.getReviewResult());
+            .eq(StrUtil.isNotBlank(bo.getIsReview()), TjTeamTask::getIsReview, bo.getIsReview());
+        if(Objects.equals(CommonConstants.NORMAL, bo.getPendingReview())) {
+            lqw.eq( TjTeamTask::getReviewResult, CommonConstants.NORMAL);
+        }else if(Objects.equals(CommonConstants.DISABLE, bo.getPendingReview())) {
+            lqw.in( TjTeamTask::getReviewResult, List.of("1","2"));
+        }
+        if(Objects.equals(CommonConstants.NORMAL, bo.getIsAccord())) {
+            lqw.eq(TjTeamTask::getIsReview, CommonConstants.NORMAL)
+                .or().eq(TjTeamTask::getReviewResult, "2");
+        }
         if(StrUtil.isNotBlank(bo.getSignBeginDate())) {
             lqw.ge(TjTeamTask::getSignDate, DateUtil.parseDate(bo.getSignBeginDate()));
         }
@@ -517,7 +525,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
             if(count == 0) {
                 throw new PeisException(ErrorCodeConstants.PEIS_CAN_REVIEW);
             }
-            baseMapper.updateById(new TjTeamTask().setId(bo.getId()).setIsReview(CommonConstants.NORMAL)
+            baseMapper.updateById(new TjTeamTask().setId(bo.getId())
                 .setReviewResult(bo.getReviewResult()).setReviewBy(userId));
         }else if(CollUtil.isNotEmpty(bo.getIdList())) {
             long count = baseMapper.selectCount(Wrappers.lambdaQuery(TjTeamTask.class).in(TjTeamTask::getId, bo.getIdList())
@@ -525,8 +533,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
             if(count > 0) {
                 throw new PeisException(ErrorCodeConstants.PEIS_CAN_REVIEW);
             }
-            bo.getIdList().forEach(k -> baseMapper.updateById(new TjTeamTask().setId(k)
-                .setIsReview(CommonConstants.NORMAL).setReviewResult(bo.getReviewResult()).setReviewBy(userId)));
+            bo.getIdList().forEach(k -> baseMapper.updateById(new TjTeamTask().setId(k).setReviewResult(bo.getReviewResult()).setReviewBy(userId)));
         }
     }
 

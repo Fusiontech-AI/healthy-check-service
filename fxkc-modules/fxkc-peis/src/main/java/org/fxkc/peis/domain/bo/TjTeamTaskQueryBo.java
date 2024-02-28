@@ -31,7 +31,12 @@ public class TjTeamTaskQueryBo {
     private String isReview;
 
     /**
-     * 审核结论(0:待审1:通过2:驳回)
+     * 是否待审(0:是1:否)
      */
-    private String reviewResult;
+    private String pendingReview;
+
+    /**
+     * 是否符合(0:是1:否)
+     */
+    private String isAccord;
 }

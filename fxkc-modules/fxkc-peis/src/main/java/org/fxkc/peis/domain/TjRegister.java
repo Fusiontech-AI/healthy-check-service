@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 import org.fxkc.common.tenant.core.TenantEntity;
+import org.fxkc.common.translation.annotation.Translation;
+import org.fxkc.common.translation.constant.TransConstant;
 
 import java.io.Serial;
 import java.math.BigDecimal;
@@ -484,5 +486,20 @@ public class TjRegister extends TenantEntity {
      * 单位结账金额
      */
     private BigDecimal teamSettleAmount;
+
+    /**
+     * 旧档案号
+     */
+    private String oldRecordCode;
+
+    /**
+     * 合并档案人
+     */
+    private Long mergeRecordBy;
+
+    /**
+     * 合并档案时间
+     */
+    private Date mergeRecordTime;
 
 }
