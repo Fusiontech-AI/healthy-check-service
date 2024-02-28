@@ -112,13 +112,13 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
             .like(StrUtil.isNotBlank(bo.getTaskName()), TjTeamTask::getTaskName, bo.getTaskName())
             .eq(StrUtil.isNotBlank(bo.getIsReview()), TjTeamTask::getIsReview, bo.getIsReview());
         if(Objects.equals(CommonConstants.NORMAL, bo.getPendingReview())) {
-            lqw.eq( TjTeamTask::getReviewResult, CommonConstants.NORMAL);
+            lqw.eq(TjTeamTask::getReviewResult, CommonConstants.NORMAL);
         }else if(Objects.equals(CommonConstants.DISABLE, bo.getPendingReview())) {
-            lqw.in( TjTeamTask::getReviewResult, List.of("1","2"));
+            lqw.in(TjTeamTask::getReviewResult, List.of("1","2"));
         }
         if(Objects.equals(CommonConstants.NORMAL, bo.getIsAccord())) {
-            lqw.eq(TjTeamTask::getIsReview, CommonConstants.NORMAL)
-                .or().eq(TjTeamTask::getReviewResult, "2");
+            lqw.and(wrapper -> wrapper.eq(TjTeamTask::getIsReview, CommonConstants.NORMAL)
+                .or().eq(TjTeamTask::getReviewResult, "1"));
         }
         if(StrUtil.isNotBlank(bo.getSignBeginDate())) {
             lqw.ge(TjTeamTask::getSignDate, DateUtil.parseDate(bo.getSignBeginDate()));
