@@ -40,7 +40,6 @@ public class TjRegisterBo extends BaseEntity {
     /**
      * 档案号
      */
-    @NotBlank(message = "档案号不能为空", groups = { AddGroup.class, EditGroup.class })
     private String recordCode;
 
     /**
@@ -106,19 +105,16 @@ public class TjRegisterBo extends BaseEntity {
     /**
      * 用户照片
      */
-    @NotBlank(message = "用户照片不能为空", groups = { AddGroup.class})
     private String userImage;
 
     /**
      * 是否需要总检（0：需要总检，1：无需总检）见字典bus_need_general_review
      */
-    @NotBlank(message = "是否需要总检（0：需要总检，1：无需总检）见字典bus_need_general_review不能为空", groups = { AddGroup.class, EditGroup.class })
     private String needGeneralReview;
 
     /**
      * 报告领取方式0邮寄 1自取,见字典bus_receive_way
      */
-    @NotBlank(message = "报告领取方式0邮寄 1自取不能为空", groups = { AddGroup.class})
     private String receiveWay;
 
     /**
@@ -142,25 +138,21 @@ public class TjRegisterBo extends BaseEntity {
     /**
      * 业务类别（1：个检，2：团检）见字典bus_category
      */
-    @NotBlank(message = "业务类别（1：个检，2：团检）见字典bus_category不能为空", groups = { AddGroup.class, EditGroup.class })
     private String businessCategory;
 
     /**
      * 是否回收指引单（0：是，1：否）
      */
-    @NotBlank(message = "是否回收指引单（0：是，1：否）不能为空", groups = { AddGroup.class, EditGroup.class })
     private String guideSheetReceived;
 
     /**
      * 是否冻结（0：是，1：否）
      */
-    @NotBlank(message = "是否冻结（0：是，1：否）不能为空", groups = { AddGroup.class, EditGroup.class })
     private String freezeStatus;
 
     /**
      * 体检状态（0：预约，1：登记，2：科室分检，3：分检完成，4：待总检，5：已终检）见字典bus_healthy_check_status
      */
-    @NotBlank(message = "体检状态（0：预约，1：登记，2：科室分检，3：分检完成，4：待总检，5：已终检）见字典bus_healthy_check_status不能为空", groups = { AddGroup.class, EditGroup.class })
     private String healthyCheckStatus;
 
     /**
