@@ -77,6 +77,11 @@ public class TjRegCombinAddBo {
     @NotNull(message = "已缴单位费用不能为空")
     private BigDecimal paidTeamAmount;
 
+    /**
+     * 套餐id
+     */
+    private Long packageId;
+
     @Valid
     private List<TjRegCombinItemBo> tjRegCombinItemBos;
 
