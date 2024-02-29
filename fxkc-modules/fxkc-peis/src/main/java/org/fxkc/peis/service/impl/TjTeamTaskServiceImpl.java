@@ -411,7 +411,6 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
             addBo.setTeamId(tjTeamTask.getTeamId());
             addBo.setBusinessCategory("2");
             addBo.setCredentialType(CertificateTypeEnum.身份证.getCode());
-            addBo.setHealthyCheckStatus(HealthyCheckTypeEnum.预约.getCode());
             addBo.setOccupationalType(occupationalType);
             if(Objects.equals(occupationalType, CommonConstants.NORMAL)) {
                 TjRegisterZybBo occupational = MapstructUtils.convert(k, TjRegisterZybBo.class);

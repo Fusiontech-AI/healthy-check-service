@@ -98,9 +98,6 @@ public abstract class AbstractRegisterInsert implements RegisterInsertService{
      */
     public void fillCommonField(TjRegister tjRegister){
         tjRegister.setNamePy(PinYinUtil.getPinyin(tjRegister.getName()));
-        if(StrUtil.isBlank(tjRegister.getHealthyCheckStatus())) {
-            tjRegister.setHealthyCheckStatus("1");//登记状态
-        }
         tjRegister.setHealthyCheckCode(SequenceNoUtils.padl(tjRegisterMapper.nextHealthyCode(),6,'0'));
         Long count = tjRegisterMapper.selectCount(new LambdaQueryWrapper<TjRegister>().eq(TjRegister::getCredentialNumber, tjRegister.getCredentialNumber()));
         tjRegister.setPeTimes(count + 1);
