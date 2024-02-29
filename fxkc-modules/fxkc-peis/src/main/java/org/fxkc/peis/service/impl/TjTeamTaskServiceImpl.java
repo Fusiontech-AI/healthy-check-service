@@ -117,7 +117,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
             lqw.in(TjTeamTask::getReviewResult, List.of("1","2"));
         }
         if(Objects.equals(CommonConstants.NORMAL, bo.getIsAccord())) {
-            lqw.and(wrapper -> wrapper.eq(TjTeamTask::getIsReview, CommonConstants.NORMAL)
+            lqw.and(wrapper -> wrapper.eq(TjTeamTask::getIsReview, CommonConstants.DISABLE)
                 .or().eq(TjTeamTask::getReviewResult, "1"));
         }
         if(StrUtil.isNotBlank(bo.getSignBeginDate())) {
