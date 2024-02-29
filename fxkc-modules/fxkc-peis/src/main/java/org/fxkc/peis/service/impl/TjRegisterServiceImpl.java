@@ -85,7 +85,7 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
     public TjRegisterVo queryById(Long id){
         TjRegisterVo tjRegisterVo = baseMapper.selectVoById(id);
         if(tjRegisterVo.getTeamGroupId()!=null){
-            TjTeamGroupVo teamGroupVo = getTjTeamGroupVoById(tjRegisterVo.getTeamGroupId(), id);
+            TjTeamGroupVo teamGroupVo = getTjTeamGroupVoById(tjRegisterVo.getTeamGroupId(), id,tjRegisterVo.getHealthyCheckStatus());
             //填充分组响应内容到前端
             tjRegisterVo.setTjTeamGroupVo(teamGroupVo);
         }
@@ -467,7 +467,7 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
         if(tjRegister.getTeamGroupId()!=null){
             //组装算费的分组请求信息
             amountCalculationBo.setGroupFlag("1");
-            TjTeamGroupVo teamGroupVo = getTjTeamGroupVoById(tjRegister.getTeamGroupId(), tjRegister.getId());
+            TjTeamGroupVo teamGroupVo = getTjTeamGroupVoById(tjRegister.getTeamGroupId(), tjRegister.getId(),tjRegister.getHealthyCheckStatus());
             AmountCalGroupBo amountCalGroupBo = new AmountCalGroupBo(teamGroupVo.getGroupType(),teamGroupVo.getPrice(),teamGroupVo.getGroupPayType(),teamGroupVo.getAddPayType(),teamGroupVo.getItemDiscount(),teamGroupVo.getAddDiscount());
             amountCalculationBo.setAmountCalGroupBo(amountCalGroupBo);
         }
@@ -492,11 +492,11 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
     }
 
     @Override
-    public TjTeamGroupVo getTjTeamGroupVoById(Long teamGroupId,Long regId) {
+    public TjTeamGroupVo getTjTeamGroupVoById(Long teamGroupId,Long regId,String healthyCheckStatus) {
         //查询分组信息
         TjTeamGroupVo teamGroupVo = tjTeamGroupMapper.selectVoById(teamGroupId);
         Assert.notNull(teamGroupVo,"根据分组id["+teamGroupId+"],未找到对应分组记录!");
-        if(Objects.equals("1",teamGroupVo.getIsSyncProject())|| !Objects.equals(HealthyCheckTypeEnum.预约.getCode(), tjRegisterVo.getHealthyCheckStatus())){
+        if(Objects.equals("1",teamGroupVo.getIsSyncProject())|| !Objects.equals(HealthyCheckTypeEnum.预约.getCode(), healthyCheckStatus)){
             //是否同步为否时  需要取groupHis记录中信息
             TjTeamGroupHistoryVo tjTeamGroupHistoryVo = tjTeamGroupHistoryMapper.selectVoOne(new LambdaQueryWrapper<TjTeamGroupHistory>()
                 .eq(TjTeamGroupHistory::getRegId, regId));

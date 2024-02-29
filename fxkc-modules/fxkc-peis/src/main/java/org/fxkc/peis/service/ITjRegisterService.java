@@ -105,6 +105,6 @@ public interface ITjRegisterService {
      * @param teamGroupId
      * @return
      */
-    TjTeamGroupVo getTjTeamGroupVoById(Long teamGroupId,Long regId);
+    TjTeamGroupVo getTjTeamGroupVoById(Long teamGroupId,Long regId,String healthyCheckStatus);
 
 }
