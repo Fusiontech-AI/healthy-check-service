@@ -114,4 +114,28 @@ public class TjTeamTaskVo implements Serializable {
      */
     private String reviewResult;
 
+    /**
+     * 任务编号
+     */
+    private String taskNo;
+
+    /**
+     * 联系人姓名
+     */
+    private String contactName;
+
+    /**
+     * 体检联系人电话
+     */
+    private String contactPhone;
+
+    /**
+     * 销售负责人
+     */
+    private String saleHead;
+
+    /**
+     * 编制人
+     */
+    private String preparedName;
 }
