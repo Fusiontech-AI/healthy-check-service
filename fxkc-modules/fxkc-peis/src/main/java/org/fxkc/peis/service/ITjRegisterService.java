@@ -107,4 +107,5 @@ public interface ITjRegisterService {
      */
     TjTeamGroupVo getTjTeamGroupVoById(Long teamGroupId,Long regId,String healthyCheckStatus);
 
+    Long getPeTimes(TjRegPeTimesBo bo);
 }

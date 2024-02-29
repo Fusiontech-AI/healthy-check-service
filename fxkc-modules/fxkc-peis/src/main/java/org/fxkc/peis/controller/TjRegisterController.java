@@ -227,6 +227,10 @@ public class TjRegisterController extends BaseController {
         return R.ok();
     }
 
+
+    /**
+     * 团转个接口
+     */
     @Log(title = "团转个", businessType = BusinessType.UPDATE)
     @PostMapping("/teamToPerson")
     @RepeatSubmit()
@@ -234,10 +238,21 @@ public class TjRegisterController extends BaseController {
         return toAjax(tjRegisterService.teamToPerson(bo));
     }
 
+    /**
+     * 个转团接口
+     */
     @Log(title = "个转团", businessType = BusinessType.UPDATE)
     @PostMapping("/personToTeam")
     @RepeatSubmit()
     public R<Void> personToTeam(@RequestBody TjRegPersonToTeamBo bo){
         return toAjax(tjRegisterService.personToTeam(bo));
+    }
+
+    /**
+     * 查询该证件号第几次体检
+     */
+    @PostMapping("/getPeTimes")
+    public R<Long> getPeTimes(@RequestBody TjRegPeTimesBo bo){
+        return R.ok(tjRegisterService.getPeTimes(bo));
     }
 }

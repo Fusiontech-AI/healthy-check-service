@@ -517,6 +517,15 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
     }
 
     @Override
+    public Long getPeTimes(TjRegPeTimesBo bo) {
+        Long count = baseMapper.selectCount(new LambdaQueryWrapper<TjRegister>()
+            .eq(TjRegister::getCredentialNumber, bo.getCredentialNumber())
+            .eq(TjRegister::getCredentialType,bo.getCredentialType())
+        );
+        return count+1;
+    }
+
+    @Override
     public List<TjRegisterVo> getByIds(List<Long> regIdList) {
         return this.baseMapper.getByIds(regIdList);
     }
