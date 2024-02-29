@@ -1,6 +1,7 @@
 package org.fxkc.peis.domain.vo;
 
 import cn.hutool.core.date.DatePattern;
+import com.alibaba.excel.annotation.ExcelProperty;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
@@ -103,4 +104,13 @@ public class TjTaskReviewRegisterVo {
      */
     private String reserveEndTime;
 
+    /**
+     * 单位部门id
+     */
+    private Long teamDeptId;
+
+    /**
+     * 单位部门名称
+     */
+    private String deptName;
 }

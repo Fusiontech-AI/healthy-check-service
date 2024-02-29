@@ -48,6 +48,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             t1.PE_TIMES
         FROM
             TJ_REGISTER t1
+            left join TJ_TEAM_TASK t3 on t1.TASK_ID = t3.ID and t3.DEL_FLAG = '0'
+                and (t3.IS_REVIEW = '1' or t3.REVIEW_RESULT = '1')
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.createByName)">
                 LEFT JOIN SYS_USER t2 on t1.CREATE_BY = t2.USER_ID
             </if>

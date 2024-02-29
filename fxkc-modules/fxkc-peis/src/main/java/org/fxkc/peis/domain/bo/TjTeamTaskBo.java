@@ -107,4 +107,9 @@ public class TjTeamTaskBo extends BaseEntity {
      * 编制人
      */
     private String preparedName;
+
+    /**
+     * 单位部门id
+     */
+    private Long teamDeptId;
 }

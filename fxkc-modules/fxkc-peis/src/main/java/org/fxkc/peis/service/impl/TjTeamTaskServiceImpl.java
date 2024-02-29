@@ -409,6 +409,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
             addBo.setPhysicalType(bo.getPhysicalType());
             addBo.setTaskId(bo.getTaskId());
             addBo.setTeamId(tjTeamTask.getTeamId());
+            addBo.setTeamDeptId(tjTeamTask.getTeamDeptId());
             addBo.setBusinessCategory("2");
             addBo.setCredentialType(CertificateTypeEnum.身份证.getCode());
             addBo.setOccupationalType(occupationalType);
