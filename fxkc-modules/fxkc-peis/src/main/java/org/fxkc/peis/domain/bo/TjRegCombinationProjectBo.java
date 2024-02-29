@@ -153,4 +153,19 @@ public class TjRegCombinationProjectBo extends BaseEntity {
      * 套餐id
      */
     private Long packageId;
+
+    /**
+     * 条码
+     */
+    private String barCode;
+
+    /**
+     * 条码打印次数
+     */
+    private Integer printCount;
+
+    /**
+     * 条码打印时间
+     */
+    private Date printTime;
 }
