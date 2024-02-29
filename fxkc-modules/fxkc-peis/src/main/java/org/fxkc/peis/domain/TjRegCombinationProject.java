@@ -134,6 +134,11 @@ public class TjRegCombinationProject extends TenantEntity {
     private String addFlag;
 
     /**
+     * 套餐id
+     */
+    private Long packageId;
+
+    /**
      * 删除标志（0代表存在 2代表删除）
      */
     @TableLogic

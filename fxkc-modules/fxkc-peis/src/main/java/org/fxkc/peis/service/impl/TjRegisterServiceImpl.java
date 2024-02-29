@@ -33,12 +33,15 @@ import org.fxkc.peis.register.change.RegisterChangeHolder;
 import org.fxkc.peis.register.change.RegisterChangeService;
 import org.fxkc.peis.register.insert.RegisterInsertHolder;
 import org.fxkc.peis.register.insert.RegisterInsertService;
+import org.fxkc.peis.service.ITjPackageService;
 import org.fxkc.peis.service.ITjRegisterService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 体检人员登记信息Service业务层处理
@@ -73,6 +76,7 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
 
     private final TjTeamGroupHistoryMapper tjTeamGroupHistoryMapper;
 
+    private final ITjPackageService tjPackageService;
 
     /**
      * 查询体检人员登记信息
@@ -81,26 +85,7 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
     public TjRegisterVo queryById(Long id){
         TjRegisterVo tjRegisterVo = baseMapper.selectVoById(id);
         if(tjRegisterVo.getTeamGroupId()!=null){
-            //查询分组信息
-            TjTeamGroupVo teamGroupVo = tjTeamGroupMapper.selectVoById(tjRegisterVo.getTeamGroupId());
-            Assert.notNull(teamGroupVo,"根据分组id["+tjRegisterVo.getTeamGroupId()+"],未找到对应分组记录!");
-            if(Objects.equals("1",teamGroupVo.getIsSyncProject())|| !Objects.equals(HealthyCheckTypeEnum.预约.getCode(), tjRegisterVo.getHealthyCheckStatus())){
-                //是否同步为否时  需要取groupHis记录中信息
-                TjTeamGroupHistoryVo tjTeamGroupHistoryVo = tjTeamGroupHistoryMapper.selectVoOne(new LambdaQueryWrapper<TjTeamGroupHistory>()
-                    .eq(TjTeamGroupHistory::getRegId, id));
-                if(tjTeamGroupHistoryVo!=null){
-                    teamGroupVo.setGroupName(tjTeamGroupHistoryVo.getGroupName());
-                    teamGroupVo.setDutyStatus(tjTeamGroupHistoryVo.getDutyStatus());
-                    teamGroupVo.setStartAge(tjTeamGroupHistoryVo.getStartAge());
-                    teamGroupVo.setEndAge(tjTeamGroupHistoryVo.getEndAge());
-                    teamGroupVo.setPrice(tjTeamGroupHistoryVo.getPrice());
-                    teamGroupVo.setGroupPayType(tjTeamGroupHistoryVo.getGroupPayType());
-                    teamGroupVo.setAddPayType(tjTeamGroupHistoryVo.getAddPayType());
-                    teamGroupVo.setItemDiscount(tjTeamGroupHistoryVo.getItemDiscount());
-                    teamGroupVo.setAddDiscount(tjTeamGroupHistoryVo.getAddDiscount());
-                    teamGroupVo.setGroupType(tjTeamGroupHistoryVo.getGroupPayType());
-                }
-            }
+            TjTeamGroupVo teamGroupVo = getTjTeamGroupVoById(tjRegisterVo.getTeamGroupId(), id);
             //填充分组响应内容到前端
             tjRegisterVo.setTjTeamGroupVo(teamGroupVo);
         }
@@ -385,6 +370,150 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
     @Override
     public void updatePersonalReportPrint(ReportPrintBO bo) {
         baseMapper.updatePersonalReportPrint(bo);
+    }
+
+    @Override
+    public Boolean teamToPerson(TjRegTeamToPersonBo bo) {
+        List<TjRegister> tjRegisters = baseMapper.selectBatchIds(bo.getRegIds());
+        //相关数据校验
+        tjRegisters.stream().forEach(tjRegister -> {
+            if(!Objects.equals("2",tjRegister.getBusinessCategory())){
+                throw new RuntimeException("存在非团检类型记录数据,不可变更!");
+            }
+            if(!Objects.equals("0",tjRegister.getChargeStatus())){
+                throw new RuntimeException("存在已缴费记录数据,不可变更!");
+            }
+        });
+
+
+        List<TjRegister> registers = tjRegisters.stream().map(tjRegister -> {
+            AmountCalculationVo amountCalculationVo = billingByRegister(tjRegister);
+            TjRegister register = new TjRegister();
+            register.setId(tjRegister.getId());
+            register.setBusinessCategory("1");
+            register.setTotalStandardAmount(amountCalculationVo.getStandardAmount());
+            register.setTotalAmount(amountCalculationVo.getReceivableAmount());
+            register.setPersonAmount(amountCalculationVo.getPersonAmount());
+            register.setDiscount(amountCalculationVo.getDiscount());
+            register.setTeamAmount(amountCalculationVo.getTeamAmount());
+            register.setPaidTotalAmount(amountCalculationVo.getPaidTotalAmount());
+            register.setPaidPersonAmount(amountCalculationVo.getPaidPersonAmount());
+            register.setPaidTeamAmount(amountCalculationVo.getPaidTeamAmount());
+            return register;
+        }).collect(Collectors.toList());
+
+        return baseMapper.updateBatchById(registers);
+    }
+
+    @Override
+    public Boolean personToTeam(TjRegPersonToTeamBo bo) {
+        List<TjRegister> tjRegisters = baseMapper.selectBatchIds(bo.getRegIds());
+        //相关数据校验
+        tjRegisters.stream().forEach(tjRegister -> {
+            if(!Objects.equals("1",tjRegister.getBusinessCategory())){
+                throw new RuntimeException("存在非个检类型记录数据,不可变更!");
+            }
+            if(!Objects.equals("0",tjRegister.getChargeStatus())){
+                throw new RuntimeException("存在已缴费记录数据,不可变更!");
+            }
+        });
+
+
+        List<TjRegister> registers = tjRegisters.stream().map(tjRegister -> {
+            tjRegister.setTeamGroupId(bo.getTeamGroupId());
+            AmountCalculationVo amountCalculationVo = billingByRegister(tjRegister);
+            TjRegister register = new TjRegister();
+            register.setId(tjRegister.getId());
+            register.setBusinessCategory("2");
+            register.setTotalStandardAmount(amountCalculationVo.getStandardAmount());
+            register.setTotalAmount(amountCalculationVo.getReceivableAmount());
+            register.setPersonAmount(amountCalculationVo.getPersonAmount());
+            register.setDiscount(amountCalculationVo.getDiscount());
+            register.setTeamAmount(amountCalculationVo.getTeamAmount());
+            register.setPaidTotalAmount(amountCalculationVo.getPaidTotalAmount());
+            register.setPaidPersonAmount(amountCalculationVo.getPaidPersonAmount());
+            register.setPaidTeamAmount(amountCalculationVo.getPaidTeamAmount());
+            register.setTeamId(bo.getTeamId());
+            register.setTeamGroupId(bo.getTeamGroupId());
+            register.setTaskId(bo.getTaskId());
+            return register;
+        }).collect(Collectors.toList());
+
+        return baseMapper.updateBatchById(registers);
+    }
+
+    @Override
+    public AmountCalculationVo billingByRegister(TjRegister tjRegister) {
+        //组装算费请求对象 重新计算相关费用情况并更新
+        List<TjRegCombinationProject> combinationProjects = tjRegCombinationProjectMapper.selectList(new LambdaQueryWrapper<TjRegCombinationProject>()
+            .eq(TjRegCombinationProject::getRegisterId, tjRegister.getId()));
+        if(CollUtil.isEmpty(combinationProjects)){
+            //直接返回都是金额0和折扣默认100的初始值信息。
+            AmountCalculationVo amountCalculationVo = new AmountCalculationVo();
+            amountCalculationVo.setTeamAmount(new BigDecimal("0"));
+            amountCalculationVo.setPersonAmount(new BigDecimal("0"));
+            amountCalculationVo.setUnPaidTotalAmount(new BigDecimal("0"));
+            amountCalculationVo.setReceivableAmount(new BigDecimal("0"));
+            amountCalculationVo.setPaidPersonAmount(new BigDecimal("0"));
+            amountCalculationVo.setPaidTeamAmount(new BigDecimal("0"));
+            amountCalculationVo.setPaidTotalAmount(new BigDecimal("0"));
+            amountCalculationVo.setStandardAmount(new BigDecimal("0"));
+            amountCalculationVo.setDiscount(new BigDecimal("100"));
+            return amountCalculationVo;
+        }
+        AmountCalculationBo amountCalculationBo = new AmountCalculationBo();
+        amountCalculationBo.setRegType(tjRegister.getBusinessCategory());
+        amountCalculationBo.setChangeType("3");//固定可以按照新增项目去计算
+        if(tjRegister.getTeamGroupId()!=null){
+            //组装算费的分组请求信息
+            amountCalculationBo.setGroupFlag("1");
+            TjTeamGroupVo teamGroupVo = getTjTeamGroupVoById(tjRegister.getTeamGroupId(), tjRegister.getId());
+            AmountCalGroupBo amountCalGroupBo = new AmountCalGroupBo(teamGroupVo.getGroupType(),teamGroupVo.getPrice(),teamGroupVo.getGroupPayType(),teamGroupVo.getAddPayType(),teamGroupVo.getItemDiscount(),teamGroupVo.getAddDiscount());
+            amountCalculationBo.setAmountCalGroupBo(amountCalGroupBo);
+        }
+        //组装算费新增的记录信息参数
+        List<AmountCalculationItemBo> amountCalculationItemBos = combinationProjects.stream().map(combinationProject -> {
+            AmountCalculationItemBo itemBo = new AmountCalculationItemBo();
+            itemBo.setId(combinationProject.getId());
+            itemBo.setCombinProjectId(combinationProject.getCombinationProjectId());
+            itemBo.setSort(1);
+            itemBo.setStandardAmount(combinationProject.getStandardAmount());
+            itemBo.setDiscount(combinationProject.getDiscount());
+            itemBo.setReceivableAmount(combinationProject.getReceivableAmount());
+            itemBo.setPersonAmount(combinationProject.getPersonAmount());
+            itemBo.setTeamAmount(combinationProject.getTeamAmount());
+            itemBo.setPayType(combinationProject.getPayMode());
+            itemBo.setPayStatus(combinationProject.getPayStatus());
+            itemBo.setTcFlag(combinationProject.getProjectType());
+            return itemBo;
+        }).collect(Collectors.toList());
+        amountCalculationBo.setAmountCalculationItemBos(amountCalculationItemBos);
+        return tjPackageService.commonDynamicBilling(amountCalculationBo);
+    }
+
+    @Override
+    public TjTeamGroupVo getTjTeamGroupVoById(Long teamGroupId,Long regId) {
+        //查询分组信息
+        TjTeamGroupVo teamGroupVo = tjTeamGroupMapper.selectVoById(teamGroupId);
+        Assert.notNull(teamGroupVo,"根据分组id["+teamGroupId+"],未找到对应分组记录!");
+        if(Objects.equals("1",teamGroupVo.getIsSyncProject())|| !Objects.equals(HealthyCheckTypeEnum.预约.getCode(), tjRegisterVo.getHealthyCheckStatus())){
+            //是否同步为否时  需要取groupHis记录中信息
+            TjTeamGroupHistoryVo tjTeamGroupHistoryVo = tjTeamGroupHistoryMapper.selectVoOne(new LambdaQueryWrapper<TjTeamGroupHistory>()
+                .eq(TjTeamGroupHistory::getRegId, regId));
+            if(tjTeamGroupHistoryVo!=null){
+                teamGroupVo.setGroupName(tjTeamGroupHistoryVo.getGroupName());
+                teamGroupVo.setDutyStatus(tjTeamGroupHistoryVo.getDutyStatus());
+                teamGroupVo.setStartAge(tjTeamGroupHistoryVo.getStartAge());
+                teamGroupVo.setEndAge(tjTeamGroupHistoryVo.getEndAge());
+                teamGroupVo.setPrice(tjTeamGroupHistoryVo.getPrice());
+                teamGroupVo.setGroupPayType(tjTeamGroupHistoryVo.getGroupPayType());
+                teamGroupVo.setAddPayType(tjTeamGroupHistoryVo.getAddPayType());
+                teamGroupVo.setItemDiscount(tjTeamGroupHistoryVo.getItemDiscount());
+                teamGroupVo.setAddDiscount(tjTeamGroupHistoryVo.getAddDiscount());
+                teamGroupVo.setGroupType(tjTeamGroupHistoryVo.getGroupPayType());
+            }
+        }
+        return teamGroupVo;
     }
 
     @Override

@@ -149,4 +149,8 @@ public class TjRegCombinationProjectBo extends BaseEntity {
      */
     private String addFlag;
 
+    /**
+     * 套餐id
+     */
+    private Long packageId;
 }

@@ -226,4 +226,18 @@ public class TjRegisterController extends BaseController {
         tjRegisterService.mergeArchives(bo);
         return R.ok();
     }
+
+    @Log(title = "团转个", businessType = BusinessType.UPDATE)
+    @PostMapping("/teamToPerson")
+    @RepeatSubmit()
+    public R<Void> teamToPerson(@RequestBody TjRegTeamToPersonBo bo){
+        return toAjax(tjRegisterService.teamToPerson(bo));
+    }
+
+    @Log(title = "个转团", businessType = BusinessType.UPDATE)
+    @PostMapping("/personToTeam")
+    @RepeatSubmit()
+    public R<Void> personToTeam(@RequestBody TjRegPersonToTeamBo bo){
+        return toAjax(tjRegisterService.personToTeam(bo));
+    }
 }
