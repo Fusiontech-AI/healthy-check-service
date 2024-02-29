@@ -90,4 +90,9 @@ public class TjRegCombinItemBo {
      * 加项标识:1个人加项 2团队加项
      */
     private String addFlag;
+
+    /**
+     * 套餐id
+     */
+    private Long packageId;
 }

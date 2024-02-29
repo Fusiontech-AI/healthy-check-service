@@ -165,6 +165,26 @@ public class TjRegCombinationProjectVo implements Serializable {
     private String addFlag;
 
     /**
+     * 套餐id
+     */
+    private Long packageId;
+
+    /**
+     * 条码
+     */
+    private String barCode;
+
+    /**
+     * 条码打印次数
+     */
+    private Integer printCount;
+
+    /**
+     * 条码打印时间
+     */
+    private Date printTime;
+
+    /**
      * 检查类型0检查项目 1化验项目 2功能项目
      */
     private String checkType;

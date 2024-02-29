@@ -79,7 +79,6 @@ public class AmountCalculationItemBo {
     /**
      * 组合项目名称
      */
-    @NotBlank(message = "组合项目名称不能为空")
     private String combinProjectName;
 
     /**
