@@ -9,6 +9,7 @@ import org.fxkc.peis.domain.TjRegisterZyb;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -120,6 +121,11 @@ public class TjRegisterZybVo implements Serializable {
      */
     @ExcelProperty(value = "定性结论")
     private String dxResult;
+
+    /**
+     * 职业病危害因素关联响应信息
+     */
+    private List<TjRegisterZybHazardVo> tjRegisterZybHazardVos;
 
 
 }

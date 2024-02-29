@@ -48,4 +48,12 @@ public class AmountCalGroupBo {
      */
     private BigDecimal addDiscount;
 
+    public AmountCalGroupBo(String groupType, BigDecimal price, String groupPayType, String addPayType, BigDecimal itemDiscount, BigDecimal addDiscount) {
+        this.groupType = groupType;
+        this.price = price;
+        this.groupPayType = groupPayType;
+        this.addPayType = addPayType;
+        this.itemDiscount = itemDiscount;
+        this.addDiscount = addDiscount;
+    }
 }

@@ -1,6 +1,7 @@
 package org.fxkc.peis.domain.bo;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -21,6 +22,12 @@ public class TjRegCombinAddBo {
      */
     @NotNull(message = "体检人员id不能为空")
     private Long registerId;
+
+    /**
+     * 操作类型（1:登记，2:报道 3:变更项目 4:暂存）
+     */
+    @NotBlank(message = "操作类型（1:登记，2:报道 3:变更项目 4:暂存）不能为空")
+    private String operationType;
 
     /**
      * 总计项标准价格
@@ -69,6 +76,11 @@ public class TjRegCombinAddBo {
      */
     @NotNull(message = "已缴单位费用不能为空")
     private BigDecimal paidTeamAmount;
+
+    /**
+     * 套餐id
+     */
+    private Long packageId;
 
     @Valid
     private List<TjRegCombinItemBo> tjRegCombinItemBos;

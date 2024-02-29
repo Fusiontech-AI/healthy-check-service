@@ -2,6 +2,7 @@ package org.fxkc.peis.listener;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.IdcardUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.excel.context.AnalysisContext;
@@ -15,10 +16,15 @@ import org.fxkc.common.core.validate.AddGroup;
 import org.fxkc.common.core.validate.EditGroup;
 import org.fxkc.common.excel.core.ExcelListener;
 import org.fxkc.common.excel.core.ExcelResult;
+import org.fxkc.peis.constant.ErrorCodeConstants;
 import org.fxkc.peis.domain.TjTeamGroup;
+import org.fxkc.peis.domain.TjTeamGroupItem;
 import org.fxkc.peis.domain.bo.TjTaskImportBo;
 import org.fxkc.peis.domain.vo.TjTaskOccupationalExportVo;
+import org.fxkc.peis.enums.GroupTypeEnum;
 import org.fxkc.peis.enums.PhysicalTypeEnum;
+import org.fxkc.peis.exception.PeisException;
+import org.fxkc.peis.service.ITjTeamGroupItemService;
 import org.fxkc.peis.service.ITjTeamGroupService;
 
 import java.util.Arrays;
@@ -26,6 +32,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 /**
  * 系统用户自定义导入
@@ -39,6 +46,8 @@ public class TjTaskImportListener extends AnalysisEventListener<TjTaskOccupation
 
     private final ITjTeamGroupService iTjTeamGroupService;
 
+    private final ITjTeamGroupItemService iTjTeamGroupItemService;
+
     private int index = 1;
 
     private final Set<String> idCardSet = CollUtil.newHashSet();
@@ -51,6 +60,7 @@ public class TjTaskImportListener extends AnalysisEventListener<TjTaskOccupation
     public TjTaskImportListener(TjTaskImportBo tjTaskImportBo) {
         this.tjTaskImportBo = tjTaskImportBo;
         this.iTjTeamGroupService = SpringUtils.getBean(ITjTeamGroupService.class);
+        this.iTjTeamGroupItemService = SpringUtils.getBean(ITjTeamGroupItemService.class);
     }
 
     @Override
@@ -117,6 +127,15 @@ public class TjTaskImportListener extends AnalysisEventListener<TjTaskOccupation
             if(autoGroup) {
                 List<TjTeamGroup> groupList = iTjTeamGroupService.list(Wrappers.lambdaQuery(TjTeamGroup.class)
                     .eq(TjTeamGroup::getTaskId, tjTaskImportBo.getTaskId()));
+                List<TjTeamGroupItem> itemList = iTjTeamGroupItemService.list(Wrappers.lambdaQuery(TjTeamGroupItem.class)
+                    .in(TjTeamGroupItem::getGroupId, StreamUtils.toList(groupList, TjTeamGroup::getId)));
+                Set<Long> groupNewIdList = itemList.stream().map(TjTeamGroupItem::getGroupId).collect(Collectors.toSet());
+                groupList = StreamUtils.filter(groupList,
+                    e -> ObjectUtil.notEqual(e.getGroupType(), GroupTypeEnum.ITEM.getCode())
+                        || groupNewIdList.contains(e.getId()));
+                if(CollUtil.isEmpty(groupList)) {
+                    throw new PeisException(ErrorCodeConstants.PEIS_GROUP_ITEM_ISEXIST);
+                }
                 Integer gender = IdcardUtil.getGenderByIdCard(tjTaskOccupationalExportVo.getCredentialNumber()) == 1 ? 0 : 1 ;
                 Integer age = IdcardUtil.getAgeByIdCard(tjTaskOccupationalExportVo.getCredentialNumber());
                 TjTeamGroup group;

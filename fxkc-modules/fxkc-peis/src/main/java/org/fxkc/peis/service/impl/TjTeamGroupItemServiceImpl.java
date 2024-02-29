@@ -1,6 +1,7 @@
 package org.fxkc.peis.service.impl;
 
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.fxkc.common.core.utils.MapstructUtils;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.mybatis.core.page.PageQuery;
@@ -27,9 +28,8 @@ import java.util.Collection;
  */
 @RequiredArgsConstructor
 @Service
-public class TjTeamGroupItemServiceImpl implements ITjTeamGroupItemService {
+public class TjTeamGroupItemServiceImpl extends ServiceImpl<TjTeamGroupItemMapper, TjTeamGroupItem> implements ITjTeamGroupItemService {
 
-    private final TjTeamGroupItemMapper baseMapper;
 
     /**
      * 查询团检分组对应项目

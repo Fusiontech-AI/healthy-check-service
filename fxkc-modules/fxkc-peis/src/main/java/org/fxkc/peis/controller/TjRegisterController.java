@@ -166,9 +166,9 @@ public class TjRegisterController extends BaseController {
     }
 
     /**
-     * 体检项目登记(或变更)
+     * 体检项目登记,报道,暂存(或变更)
      */
-    @Log(title = "体检项目登记保存或变更", businessType = BusinessType.INSERT)
+    @Log(title = "体检项目登记保存,报道,暂存或变更", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping("/changeRegCombin")
     public R<Void> changeRegCombin(@Valid @RequestBody TjRegCombinAddBo bo) {
@@ -225,5 +225,34 @@ public class TjRegisterController extends BaseController {
     public R<Void> mergeArchives(@RequestBody @Valid TjArchivesBo bo) {
         tjRegisterService.mergeArchives(bo);
         return R.ok();
+    }
+
+
+    /**
+     * 团转个接口
+     */
+    @Log(title = "团转个", businessType = BusinessType.UPDATE)
+    @PostMapping("/teamToPerson")
+    @RepeatSubmit()
+    public R<Void> teamToPerson(@RequestBody TjRegTeamToPersonBo bo){
+        return toAjax(tjRegisterService.teamToPerson(bo));
+    }
+
+    /**
+     * 个转团接口
+     */
+    @Log(title = "个转团", businessType = BusinessType.UPDATE)
+    @PostMapping("/personToTeam")
+    @RepeatSubmit()
+    public R<Void> personToTeam(@RequestBody TjRegPersonToTeamBo bo){
+        return toAjax(tjRegisterService.personToTeam(bo));
+    }
+
+    /**
+     * 查询该证件号第几次体检
+     */
+    @PostMapping("/getPeTimes")
+    public R<Long> getPeTimes(@RequestBody TjRegPeTimesBo bo){
+        return R.ok(tjRegisterService.getPeTimes(bo));
     }
 }

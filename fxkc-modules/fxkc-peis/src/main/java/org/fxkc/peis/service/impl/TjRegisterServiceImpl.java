@@ -24,20 +24,22 @@ import org.fxkc.peis.constant.ErrorCodeConstants;
 import org.fxkc.peis.domain.*;
 import org.fxkc.peis.domain.bo.*;
 import org.fxkc.peis.domain.bo.template.ReportPrintBO;
-import org.fxkc.peis.domain.vo.TjRegisterPageVo;
-import org.fxkc.peis.domain.vo.TjRegisterVo;
-import org.fxkc.peis.enums.CheckStatusEnum;
+import org.fxkc.peis.domain.vo.*;
 import org.fxkc.peis.enums.HealthyCheckTypeEnum;
 import org.fxkc.peis.enums.RegisterStatusEnum;
 import org.fxkc.peis.exception.PeisException;
 import org.fxkc.peis.mapper.*;
+import org.fxkc.peis.register.change.RegisterChangeHolder;
+import org.fxkc.peis.register.change.RegisterChangeService;
 import org.fxkc.peis.register.insert.RegisterInsertHolder;
 import org.fxkc.peis.register.insert.RegisterInsertService;
+import org.fxkc.peis.service.ITjPackageService;
 import org.fxkc.peis.service.ITjRegisterService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -56,7 +58,11 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
 
     private final RegisterInsertHolder registerInsertHolder;
 
+    private final RegisterChangeHolder registerChangeHolder;
+
     private final TjRegisterZybMapper tjRegisterZybMapper;
+
+    private final  TjRegisterZybHazardMapper tjRegisterZybHazardMapper;
 
     private final TjRegCombinationProjectMapper tjRegCombinationProjectMapper;
 
@@ -66,12 +72,35 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
 
     private final TjArchivesMapper tjArchivesMapper;
 
+    private final TjTeamGroupMapper tjTeamGroupMapper;
+
+    private final TjTeamGroupHistoryMapper tjTeamGroupHistoryMapper;
+
+    private final ITjPackageService tjPackageService;
+
     /**
      * 查询体检人员登记信息
      */
     @Override
     public TjRegisterVo queryById(Long id){
-        return baseMapper.selectVoById(id);
+        TjRegisterVo tjRegisterVo = baseMapper.selectVoById(id);
+        if(tjRegisterVo.getTeamGroupId()!=null){
+            TjTeamGroupVo teamGroupVo = getTjTeamGroupVoById(tjRegisterVo.getTeamGroupId(), id,tjRegisterVo.getHealthyCheckStatus());
+            //填充分组响应内容到前端
+            tjRegisterVo.setTjTeamGroupVo(teamGroupVo);
+        }
+
+        //职业病类型需要再关联查询职业病相关信息
+        if(Objects.equals(tjRegisterVo.getOccupationalType(),"0")){
+            TjRegisterZybVo tjRegisterZybVo = tjRegisterZybMapper.selectVoOne(new LambdaQueryWrapper<TjRegisterZyb>()
+                .eq(TjRegisterZyb::getRegId, tjRegisterVo.getId()));
+            List<TjRegisterZybHazardVo> tjRegisterZybHazardVos = tjRegisterZybHazardMapper.selectVoList(new LambdaQueryWrapper<TjRegisterZybHazard>()
+                .eq(TjRegisterZybHazard::getRegId, tjRegisterVo.getId()));
+            tjRegisterZybVo.setTjRegisterZybHazardVos(tjRegisterZybHazardVos);
+            tjRegisterVo.setTjRegisterZybVo(tjRegisterZybVo);
+        }
+
+        return tjRegisterVo;
     }
 
     /**
@@ -159,21 +188,12 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
         return baseMapper.updateById(update) > 0;
     }
 
-    /**
-     * 保存前的数据校验
-     */
-    private void validEntityBeforeSave(TjRegister entity){
-        //TODO 做一些数据校验,如唯一约束
-    }
 
     /**
      * 批量删除体检人员登记信息
      */
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
-        if(isValid){
-            //TODO 做一些业务上的校验,判断是否需要校验
-        }
         return baseMapper.deleteBatchIds(ids) > 0;
     }
 
@@ -227,87 +247,9 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean changeRegCombin(TjRegCombinAddBo bo) {
-        List<TjRegCombinItemBo> combinItemBos = bo.getTjRegCombinItemBos();
-        List<TjRegCombinationProject> tjRegCombinationProjects = tjRegCombinationProjectMapper.selectList(new LambdaQueryWrapper<TjRegCombinationProject>()
-            .eq(TjRegCombinationProject::getRegisterId, bo.getRegisterId()));
-        if(CollUtil.isNotEmpty(tjRegCombinationProjects)){
-            //筛选出需要删除的记录信息
-            List<TjRegCombinItemBo> comBinIds = combinItemBos.stream().filter(m -> Objects.nonNull(m.getId())).collect(Collectors.toList());
-            List<TjRegCombinationProject> deleteItems = tjRegCombinationProjects.stream().filter(m -> !comBinIds.contains(m.getId())).collect(Collectors.toList());
-            if(CollUtil.isNotEmpty(deleteItems)){
-                //待删除记录中，存在项目己检查的 无法删除 (后面还要除去 不显示的项目记录)
-                if(deleteItems.stream().anyMatch(m -> Objects.equals(CheckStatusEnum.已检查.getCode(), m.getCheckStatus()))){
-                   throw new RuntimeException("已检查的项目无法删除!");
-                }
-
-                //删除相关记录 并删除管理的子项记录
-                tjRegCombinationProjectMapper.deleteBatchIds(deleteItems);
-                tjRegBasicProjectMapper.delete(new LambdaQueryWrapper<TjRegBasicProject>()
-                    .in(TjRegBasicProject::getRegItemId,deleteItems.stream().map(m->m.getId()).collect(Collectors.toList())));
-            }
-
-        }else{
-            log.info("当前登记id{},为第一次添加项目信息！",bo.getRegisterId());
-        }
-
-        //筛选出需要变更的记录信息 这里做价格的更新
-        List<TjRegCombinItemBo> updateItems = combinItemBos.stream().filter(m -> Objects.nonNull(m.getId())).collect(Collectors.toList());
-        if(CollUtil.isNotEmpty(updateItems)){
-            List<TjRegCombinationProject> collect = updateItems.stream().map(m -> {
-                TjRegCombinationProject build = TjRegCombinationProject.builder()
-                    .id(m.getId())
-                    .standardAmount(m.getStandardAmount())
-                    .receivableAmount(m.getReceivableAmount())
-                    .discount(m.getDiscount()).build();
-                return build;
-            }).collect(Collectors.toList());
-            tjRegCombinationProjectMapper.updateBatchById(collect);
-        }
-
-        //筛选出需要新增的记录信息
-        List<TjRegCombinItemBo> addItems = combinItemBos.stream().filter(m -> Objects.isNull(m.getId())).collect(Collectors.toList());
-        if(CollUtil.isNotEmpty(addItems)){
-            List<TjRegCombinationProject> combinationProjects = MapstructUtils.convert(addItems, TjRegCombinationProject.class);
-            combinationProjects.stream().forEach(m->{
-                m.setRegisterId(bo.getRegisterId());
-            });
-            //这里需要针对于项目无需显示的项目信息 默认赋值已检查
-            tjRegCombinationProjectMapper.insertBatch(combinationProjects);
-            //需要根据组合项目id 关联查询出对应的基础项目信息 并插入
-            List<TjCombinationProjectInfo> tjCombinationProjectInfos = tjCombinationProjectInfoMapper.selectList(new LambdaQueryWrapper<TjCombinationProjectInfo>()
-                .in(TjCombinationProjectInfo::getCombinProjectId, combinationProjects.stream().map(m -> m.getCombinationProjectId()).collect(Collectors.toList())));
-
-            if(CollUtil.isNotEmpty(tjCombinationProjectInfos)){
-                combinationProjects.stream().forEach(m->{
-                    List<TjCombinationProjectInfo> infos = tjCombinationProjectInfos.stream().filter(f -> Objects.equals(f.getCombinProjectId(), m.getCombinationProjectId())).collect(Collectors.toList());
-                    List<TjRegBasicProject> tjRegBasicProjectList = infos.stream().map(f -> {
-                        TjRegBasicProject build = TjRegBasicProject.builder()
-                            .regId(bo.getRegisterId())
-                            .regItemId(m.getId())
-                            .combinationProjectId(m.getCombinationProjectId())
-                            .basicProjectId(f.getBasicProjectId()).build();
-                        return build;
-                    }).collect(Collectors.toList());
-                    tjRegBasicProjectMapper.insertBatch(tjRegBasicProjectList);
-                });
-
-            }
-
-            }
-
-        //更新体检记录的金额相关信息
-        TjRegister tjRegister = new TjRegister();
-        tjRegister.setId(bo.getRegisterId());
-        tjRegister.setTotalStandardAmount(bo.getStandardAmount());
-        tjRegister.setTotalAmount(bo.getReceivableAmount());
-        tjRegister.setPersonAmount(bo.getPersonAmount());
-        tjRegister.setDiscount(bo.getDiscount());
-        tjRegister.setTeamAmount(bo.getTeamAmount());
-        tjRegister.setPaidTotalAmount(bo.getPaidTotalAmount());
-        tjRegister.setPaidPersonAmount(bo.getPaidPersonAmount());
-        tjRegister.setPaidTeamAmount(bo.getPaidTeamAmount());
-        int i = baseMapper.updateById(tjRegister);
-        return i>0 ? true : false;
+        RegisterChangeService registerChangeService = registerChangeHolder.selectBuilder(bo.getOperationType());
+        registerChangeService.changeRegCombin(bo);
+        return true;
     }
 
     @Override
@@ -414,7 +356,10 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
         TjArchivesBo.TjArchivesData finalTjArchivesData = tjArchivesData;
         List<TjArchivesBo.TjArchivesData> mergeList = StreamUtils.filter(dataList, e -> ObjectUtil.notEqual(e.getRecordCode(), finalTjArchivesData.getRecordCode()));
         mergeList.forEach(k -> {
-            baseMapper.update(TjRegister.builder().recordCode(finalTjArchivesData.getRecordCode()).build(),
+            baseMapper.update(TjRegister.builder().recordCode(finalTjArchivesData.getRecordCode())
+                .oldRecordCode(k.getRecordCode())
+                .mergeRecordBy(LoginHelper.getUserId())
+                .mergeRecordTime(DateUtil.date()).build(),
                 Wrappers.lambdaUpdate(TjRegister.class)
                     .eq(TjRegister::getRecordCode, k.getRecordCode()));
             tjArchivesMapper.delete(Wrappers.lambdaQuery(TjArchives.class)
@@ -425,6 +370,159 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
     @Override
     public void updatePersonalReportPrint(ReportPrintBO bo) {
         baseMapper.updatePersonalReportPrint(bo);
+    }
+
+    @Override
+    public Boolean teamToPerson(TjRegTeamToPersonBo bo) {
+        List<TjRegister> tjRegisters = baseMapper.selectBatchIds(bo.getRegIds());
+        //相关数据校验
+        tjRegisters.stream().forEach(tjRegister -> {
+            if(!Objects.equals("2",tjRegister.getBusinessCategory())){
+                throw new RuntimeException("存在非团检类型记录数据,不可变更!");
+            }
+            if(!Objects.equals("0",tjRegister.getChargeStatus())){
+                throw new RuntimeException("存在已缴费记录数据,不可变更!");
+            }
+        });
+
+
+        List<TjRegister> registers = tjRegisters.stream().map(tjRegister -> {
+            AmountCalculationVo amountCalculationVo = billingByRegister(tjRegister);
+            TjRegister register = new TjRegister();
+            register.setId(tjRegister.getId());
+            register.setBusinessCategory("1");
+            register.setTotalStandardAmount(amountCalculationVo.getStandardAmount());
+            register.setTotalAmount(amountCalculationVo.getReceivableAmount());
+            register.setPersonAmount(amountCalculationVo.getPersonAmount());
+            register.setDiscount(amountCalculationVo.getDiscount());
+            register.setTeamAmount(amountCalculationVo.getTeamAmount());
+            register.setPaidTotalAmount(amountCalculationVo.getPaidTotalAmount());
+            register.setPaidPersonAmount(amountCalculationVo.getPaidPersonAmount());
+            register.setPaidTeamAmount(amountCalculationVo.getPaidTeamAmount());
+            return register;
+        }).collect(Collectors.toList());
+
+        return baseMapper.updateBatchById(registers);
+    }
+
+    @Override
+    public Boolean personToTeam(TjRegPersonToTeamBo bo) {
+        List<TjRegister> tjRegisters = baseMapper.selectBatchIds(bo.getRegIds());
+        //相关数据校验
+        tjRegisters.stream().forEach(tjRegister -> {
+            if(!Objects.equals("1",tjRegister.getBusinessCategory())){
+                throw new RuntimeException("存在非个检类型记录数据,不可变更!");
+            }
+            if(!Objects.equals("0",tjRegister.getChargeStatus())){
+                throw new RuntimeException("存在已缴费记录数据,不可变更!");
+            }
+        });
+
+
+        List<TjRegister> registers = tjRegisters.stream().map(tjRegister -> {
+            tjRegister.setTeamGroupId(bo.getTeamGroupId());
+            AmountCalculationVo amountCalculationVo = billingByRegister(tjRegister);
+            TjRegister register = new TjRegister();
+            register.setId(tjRegister.getId());
+            register.setBusinessCategory("2");
+            register.setTotalStandardAmount(amountCalculationVo.getStandardAmount());
+            register.setTotalAmount(amountCalculationVo.getReceivableAmount());
+            register.setPersonAmount(amountCalculationVo.getPersonAmount());
+            register.setDiscount(amountCalculationVo.getDiscount());
+            register.setTeamAmount(amountCalculationVo.getTeamAmount());
+            register.setPaidTotalAmount(amountCalculationVo.getPaidTotalAmount());
+            register.setPaidPersonAmount(amountCalculationVo.getPaidPersonAmount());
+            register.setPaidTeamAmount(amountCalculationVo.getPaidTeamAmount());
+            register.setTeamId(bo.getTeamId());
+            register.setTeamGroupId(bo.getTeamGroupId());
+            register.setTaskId(bo.getTaskId());
+            return register;
+        }).collect(Collectors.toList());
+
+        return baseMapper.updateBatchById(registers);
+    }
+
+    @Override
+    public AmountCalculationVo billingByRegister(TjRegister tjRegister) {
+        //组装算费请求对象 重新计算相关费用情况并更新
+        List<TjRegCombinationProject> combinationProjects = tjRegCombinationProjectMapper.selectList(new LambdaQueryWrapper<TjRegCombinationProject>()
+            .eq(TjRegCombinationProject::getRegisterId, tjRegister.getId()));
+        if(CollUtil.isEmpty(combinationProjects)){
+            //直接返回都是金额0和折扣默认100的初始值信息。
+            AmountCalculationVo amountCalculationVo = new AmountCalculationVo();
+            amountCalculationVo.setTeamAmount(new BigDecimal("0"));
+            amountCalculationVo.setPersonAmount(new BigDecimal("0"));
+            amountCalculationVo.setUnPaidTotalAmount(new BigDecimal("0"));
+            amountCalculationVo.setReceivableAmount(new BigDecimal("0"));
+            amountCalculationVo.setPaidPersonAmount(new BigDecimal("0"));
+            amountCalculationVo.setPaidTeamAmount(new BigDecimal("0"));
+            amountCalculationVo.setPaidTotalAmount(new BigDecimal("0"));
+            amountCalculationVo.setStandardAmount(new BigDecimal("0"));
+            amountCalculationVo.setDiscount(new BigDecimal("100"));
+            return amountCalculationVo;
+        }
+        AmountCalculationBo amountCalculationBo = new AmountCalculationBo();
+        amountCalculationBo.setRegType(tjRegister.getBusinessCategory());
+        amountCalculationBo.setChangeType("3");//固定可以按照新增项目去计算
+        if(tjRegister.getTeamGroupId()!=null){
+            //组装算费的分组请求信息
+            amountCalculationBo.setGroupFlag("1");
+            TjTeamGroupVo teamGroupVo = getTjTeamGroupVoById(tjRegister.getTeamGroupId(), tjRegister.getId(),tjRegister.getHealthyCheckStatus());
+            AmountCalGroupBo amountCalGroupBo = new AmountCalGroupBo(teamGroupVo.getGroupType(),teamGroupVo.getPrice(),teamGroupVo.getGroupPayType(),teamGroupVo.getAddPayType(),teamGroupVo.getItemDiscount(),teamGroupVo.getAddDiscount());
+            amountCalculationBo.setAmountCalGroupBo(amountCalGroupBo);
+        }
+        //组装算费新增的记录信息参数
+        List<AmountCalculationItemBo> amountCalculationItemBos = combinationProjects.stream().map(combinationProject -> {
+            AmountCalculationItemBo itemBo = new AmountCalculationItemBo();
+            itemBo.setId(combinationProject.getId());
+            itemBo.setCombinProjectId(combinationProject.getCombinationProjectId());
+            itemBo.setSort(1);
+            itemBo.setStandardAmount(combinationProject.getStandardAmount());
+            itemBo.setDiscount(combinationProject.getDiscount());
+            itemBo.setReceivableAmount(combinationProject.getReceivableAmount());
+            itemBo.setPersonAmount(combinationProject.getPersonAmount());
+            itemBo.setTeamAmount(combinationProject.getTeamAmount());
+            itemBo.setPayType(combinationProject.getPayMode());
+            itemBo.setPayStatus(combinationProject.getPayStatus());
+            itemBo.setTcFlag(combinationProject.getProjectType());
+            return itemBo;
+        }).collect(Collectors.toList());
+        amountCalculationBo.setAmountCalculationItemBos(amountCalculationItemBos);
+        return tjPackageService.commonDynamicBilling(amountCalculationBo);
+    }
+
+    @Override
+    public TjTeamGroupVo getTjTeamGroupVoById(Long teamGroupId,Long regId,String healthyCheckStatus) {
+        //查询分组信息
+        TjTeamGroupVo teamGroupVo = tjTeamGroupMapper.selectVoById(teamGroupId);
+        Assert.notNull(teamGroupVo,"根据分组id["+teamGroupId+"],未找到对应分组记录!");
+        if(Objects.equals("1",teamGroupVo.getIsSyncProject())|| !Objects.equals(HealthyCheckTypeEnum.预约.getCode(), healthyCheckStatus)){
+            //是否同步为否时  需要取groupHis记录中信息
+            TjTeamGroupHistoryVo tjTeamGroupHistoryVo = tjTeamGroupHistoryMapper.selectVoOne(new LambdaQueryWrapper<TjTeamGroupHistory>()
+                .eq(TjTeamGroupHistory::getRegId, regId));
+            if(tjTeamGroupHistoryVo!=null){
+                teamGroupVo.setGroupName(tjTeamGroupHistoryVo.getGroupName());
+                teamGroupVo.setDutyStatus(tjTeamGroupHistoryVo.getDutyStatus());
+                teamGroupVo.setStartAge(tjTeamGroupHistoryVo.getStartAge());
+                teamGroupVo.setEndAge(tjTeamGroupHistoryVo.getEndAge());
+                teamGroupVo.setPrice(tjTeamGroupHistoryVo.getPrice());
+                teamGroupVo.setGroupPayType(tjTeamGroupHistoryVo.getGroupPayType());
+                teamGroupVo.setAddPayType(tjTeamGroupHistoryVo.getAddPayType());
+                teamGroupVo.setItemDiscount(tjTeamGroupHistoryVo.getItemDiscount());
+                teamGroupVo.setAddDiscount(tjTeamGroupHistoryVo.getAddDiscount());
+                teamGroupVo.setGroupType(tjTeamGroupHistoryVo.getGroupPayType());
+            }
+        }
+        return teamGroupVo;
+    }
+
+    @Override
+    public Long getPeTimes(TjRegPeTimesBo bo) {
+        Long count = baseMapper.selectCount(new LambdaQueryWrapper<TjRegister>()
+            .eq(TjRegister::getCredentialNumber, bo.getCredentialNumber())
+            .eq(TjRegister::getCredentialType,bo.getCredentialType())
+        );
+        return count+1;
     }
 
     @Override

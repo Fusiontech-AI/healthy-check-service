@@ -71,4 +71,6 @@ public interface ITjTeamTaskService {
     void returnTask(List<Long> idList);
 
     TableDataInfo<TjTaskRegisterExportVo> queryTaskRegisterExportById(Long taskId,PageQuery pageQuery);
+
+    List<TjTeamGroupVo> getTaskItemGroupInfo(Long id, String physicalType);
 }

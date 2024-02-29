@@ -76,4 +76,6 @@ public interface ErrorCodeConstants {
     String PEIS_ARCHIVES_NOT_LESS = "peis.archives.not.less";
 
     String PEIS_ARCHIVES_PARAM_ERROR = "peis.archives.param.error";
+
+    String PEIS_NOT_AUTO_GROUP = "peis.not.auto.group";
 }

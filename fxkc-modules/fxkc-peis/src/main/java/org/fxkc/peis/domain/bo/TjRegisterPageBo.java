@@ -1,13 +1,8 @@
 package org.fxkc.peis.domain.bo;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.github.linpeilie.annotations.AutoMapper;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.fxkc.common.core.validate.AddGroup;
-import org.fxkc.common.core.validate.EditGroup;
 import org.fxkc.common.mybatis.core.domain.BaseEntity;
 import org.fxkc.peis.domain.TjRegister;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -238,4 +233,15 @@ public class TjRegisterPageBo extends BaseEntity {
      */
     private String createByName;
 
+    /**
+     * 体检登记创建时间开始
+     */
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date createTimeStart;
+
+    /**
+     * 体检登记创建时间开始
+     */
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date createTimeEnd;
 }

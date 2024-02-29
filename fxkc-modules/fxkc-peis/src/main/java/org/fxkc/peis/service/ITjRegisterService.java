@@ -2,10 +2,13 @@ package org.fxkc.peis.service;
 
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
+import org.fxkc.peis.domain.TjRegister;
 import org.fxkc.peis.domain.bo.*;
 import org.fxkc.peis.domain.bo.template.ReportPrintBO;
+import org.fxkc.peis.domain.vo.AmountCalculationVo;
 import org.fxkc.peis.domain.vo.TjRegisterPageVo;
 import org.fxkc.peis.domain.vo.TjRegisterVo;
+import org.fxkc.peis.domain.vo.TjTeamGroupVo;
 
 import java.util.Collection;
 import java.util.List;
@@ -85,4 +88,24 @@ public interface ITjRegisterService {
     void mergeArchives(TjArchivesBo bo);
 
     void updatePersonalReportPrint(ReportPrintBO bo);
+
+    Boolean teamToPerson(TjRegTeamToPersonBo bo);
+
+    Boolean personToTeam(TjRegPersonToTeamBo bo);
+
+    /**
+     * 根据体检登记记录算费(用于查已有记录计算)
+     * @param tjRegister
+     * @return
+     */
+    AmountCalculationVo billingByRegister(TjRegister tjRegister);
+
+    /**
+     * 根据分组id和登记id查询分组信息 其中区分了是否同步
+     * @param teamGroupId
+     * @return
+     */
+    TjTeamGroupVo getTjTeamGroupVoById(Long teamGroupId,Long regId,String healthyCheckStatus);
+
+    Long getPeTimes(TjRegPeTimesBo bo);
 }

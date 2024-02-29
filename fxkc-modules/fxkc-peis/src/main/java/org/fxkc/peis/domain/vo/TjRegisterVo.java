@@ -392,6 +392,12 @@ public class TjRegisterVo implements Serializable {
     private Long packageId;
 
     /**
+     * 套餐名称
+     */
+    @Translation(type = TransConstant.TEAM_GROUP_ID_TO_NAME, mapper = "packageId")
+    private String packageName;
+
+    /**
      * 指引单打印次数
      */
     @ExcelProperty(value = "指引单打印次数")
@@ -580,4 +586,14 @@ public class TjRegisterVo implements Serializable {
     @Translation(type = TransConstant.USER_ID_TO_NAME, mapper = "createBy")
     private String createByName;
 
+
+    /**
+     * 职业病关联响应信息
+     */
+    private TjRegisterZybVo tjRegisterZybVo;
+
+    /**
+     * 分组相关信息
+     */
+    private TjTeamGroupVo tjTeamGroupVo;
 }

@@ -1,8 +1,6 @@
 package org.fxkc.peis.register.insert;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.extern.slf4j.Slf4j;
 import org.fxkc.common.core.utils.MapstructUtils;
@@ -13,10 +11,12 @@ import org.fxkc.common.satoken.utils.LoginHelper;
 import org.fxkc.peis.constant.ErrorCodeConstants;
 import org.fxkc.peis.domain.TjArchives;
 import org.fxkc.peis.domain.TjRegister;
+import org.fxkc.peis.domain.bo.TjRegPeTimesBo;
 import org.fxkc.peis.domain.bo.TjRegisterAddBo;
 import org.fxkc.peis.exception.PeisException;
 import org.fxkc.peis.mapper.TjArchivesMapper;
 import org.fxkc.peis.mapper.TjRegisterMapper;
+import org.fxkc.peis.service.ITjRegisterService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
@@ -31,6 +31,8 @@ public abstract class AbstractRegisterInsert implements RegisterInsertService{
     @Autowired
     protected  TjRegisterMapper tjRegisterMapper;
 
+    @Autowired
+    protected ITjRegisterService tjRegisterService;
 
     @Autowired
     RegisterInsertHolder registerInsertHolder;
@@ -98,12 +100,9 @@ public abstract class AbstractRegisterInsert implements RegisterInsertService{
      */
     public void fillCommonField(TjRegister tjRegister){
         tjRegister.setNamePy(PinYinUtil.getPinyin(tjRegister.getName()));
-        if(StrUtil.isBlank(tjRegister.getHealthyCheckStatus())) {
-            tjRegister.setHealthyCheckStatus("1");//登记状态
-        }
         tjRegister.setHealthyCheckCode(SequenceNoUtils.padl(tjRegisterMapper.nextHealthyCode(),6,'0'));
-        Long count = tjRegisterMapper.selectCount(new LambdaQueryWrapper<TjRegister>().eq(TjRegister::getCredentialNumber, tjRegister.getCredentialNumber()));
-        tjRegister.setPeTimes(count + 1);
+        Long peTimes = tjRegisterService.getPeTimes(new TjRegPeTimesBo(tjRegister.getCredentialType(), tjRegister.getCredentialNumber()));
+        tjRegister.setPeTimes(peTimes);
     }
 
     public void fillArchives(TjRegister tjRegister, List<TjArchives> tjArchivesList) {
