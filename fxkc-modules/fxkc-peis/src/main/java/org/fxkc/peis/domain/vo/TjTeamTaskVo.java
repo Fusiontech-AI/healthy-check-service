@@ -148,5 +148,5 @@ public class TjTeamTaskVo implements Serializable {
      * 单位部门名称
      */
     @Translation(type = TransConstant.TEAM_DEPT_ID_TO_NAME, mapper = "teamDeptId")
-    private Long teamDeptName;
+    private String deptName;
 }
