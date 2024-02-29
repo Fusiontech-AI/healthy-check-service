@@ -207,6 +207,12 @@ public class TjRegisterVo implements Serializable {
     private Long teamDeptId;
 
     /**
+     * 单位部门名称
+     */
+    @Translation(type = TransConstant.TEAM_DEPT_ID_TO_NAME, mapper = "teamDeptId")
+    private String deptName;
+
+    /**
      * 介绍人
      */
     @ExcelProperty(value = "介绍人")
