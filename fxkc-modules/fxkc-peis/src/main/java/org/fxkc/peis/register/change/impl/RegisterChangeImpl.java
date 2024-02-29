@@ -2,11 +2,14 @@ package org.fxkc.peis.register.change.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.fxkc.common.satoken.utils.LoginHelper;
 import org.fxkc.peis.domain.TjRegister;
 import org.fxkc.peis.domain.bo.TjRegCombinAddBo;
 import org.fxkc.peis.enums.HealthyCheckTypeEnum;
 import org.fxkc.peis.register.change.AbstractRegisterChange;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 
 /**
  * 项目登记实现类
@@ -42,6 +45,8 @@ public class RegisterChangeImpl extends AbstractRegisterChange {
         super.changeAfterUpdate(tjRegCombinAddBo,tjRegister);
         //登记操作 还需要更新体检登记状态为 登记状态
         tjRegister.setHealthyCheckStatus(HealthyCheckTypeEnum.登记.getCode());
+        tjRegister.setRegisterTime(new Date());//更新登记时间
+        tjRegister.setRegisterDoctorId(LoginHelper.getUserId());//更新登记人id
         tjRegisterMapper.updateById(tjRegister);
     }
 }
