@@ -86,4 +86,9 @@ public class AmountCalculationItemBo {
      */
     @NotBlank(message = "是否套餐项目标志不能为空")
     private String tcFlag;
+
+    /**
+     * 加项标识:1个人加项 2团队加项
+     */
+    private String addFlag;
 }
