@@ -99,4 +99,20 @@ public class TjTeamGroupDetailVo {
      * 任务id
      */
     private Long taskId;
+
+    /**
+     * 金额
+     */
+    private BigDecimal price;
+
+    /**
+     * 分组支付方式sys_dict_type(bus_group_pay_type)0:个人1:单位
+     */
+    private String groupPayType;
+
+    /**
+     * 加项支付方式sys_dict_type(bus_group_pay_type)0:个人1:单位
+     */
+    private String addPayType;
+
 }
