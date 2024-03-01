@@ -42,12 +42,12 @@ public class TeamSingleUpdateCmp extends NodeComponent {
                  if(Objects.equals(inputType, InputTypeEnum.折扣.getCode())){
                      m.setReceivableAmount(tjPackageService.getReceivableAmountByDiscount(m.getStandardAmount(),m.getDiscount()));
                      //在修改单项折扣时，默认将费用给对应支付方式的那一边，混合支付就全部给单位费用那一边 自行修改
-                     fillSingle(m,inputType);
+                     //fillSingle(m,inputType);
                  }else if(Objects.equals(inputType, InputTypeEnum.应收金额.getCode())){
                      //目前界面没有直接改应收金额的入口，都是通过修改单项个费或团费
                      m.setDiscount(tjPackageService.getDiscountByReceivableAmount(m.getStandardAmount(),m.getReceivableAmount()));
                  }else if(Objects.equals(inputType, InputTypeEnum.收费方式.getCode())){
-                     //修改支付方式时 如果改为个人支付，需要将应收额全部赋值给个费 反之赋值给团费，混合支付不做赋值改变
+                     //修改支付方式时 如果改为个人支付，需要将应收额全部赋值给个费 反之赋值给团费，混合支付也默认给团费
                      fillSingle(m,inputType);
                  }else if(Objects.equals(inputType, InputTypeEnum.个人应收额.getCode())){
                      m.setTeamAmount(m.getReceivableAmount().subtract(m.getPersonAmount()));
@@ -71,15 +71,15 @@ public class TeamSingleUpdateCmp extends NodeComponent {
         if(Objects.equals("0",bo.getPayType())){
             bo.setPersonAmount(bo.getReceivableAmount());
             bo.setTeamAmount(new BigDecimal("0"));
-        }else if(Objects.equals("1",bo.getPayType())){
+        }else{
             bo.setTeamAmount(bo.getReceivableAmount());
             bo.setPersonAmount(new BigDecimal("0"));
         }
 
         //混合支付 且调整单笔折扣时 默认全部给到团检这边 用户自行分配
-        if(Objects.equals(inputType,InputTypeEnum.折扣.getCode()) && Objects.equals("2",bo.getPayType()) ){
+        /*if(Objects.equals(inputType,InputTypeEnum.折扣.getCode()) && Objects.equals("2",bo.getPayType()) ){
             bo.setTeamAmount(bo.getReceivableAmount());
             bo.setPersonAmount(new BigDecimal("0"));
-        }
+        }*/
     }
 }
