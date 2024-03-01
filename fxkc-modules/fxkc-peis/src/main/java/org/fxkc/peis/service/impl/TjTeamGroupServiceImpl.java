@@ -264,7 +264,7 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
         if(CollUtil.isNotEmpty(packageIds)) {
             List<TjPackage> packageList = tjPackageMapper.selectBatchIds(packageIds);
             Map<Long, String> packageMap = StreamUtils.toMap(packageList, TjPackage::getId, TjPackage::getPackageName);
-            groupList.forEach(k -> k.setPackageName(packageMap.getOrDefault(k.getId(), StrUtil.EMPTY)));
+            groupList.forEach(k -> k.setPackageName(packageMap.getOrDefault(k.getPackageId(), StrUtil.EMPTY)));
         }
         //每次保存都先根据groupId删除项目信息、职业病则需多删除危害因素
         List<Long> groupIds = StreamUtils.toList(groupList, TjTeamGroup::getId);
