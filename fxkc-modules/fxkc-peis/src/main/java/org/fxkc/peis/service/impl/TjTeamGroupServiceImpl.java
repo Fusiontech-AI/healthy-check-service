@@ -83,16 +83,18 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
     public TableDataInfo<TjTeamGroupVo> queryPageList(TjTeamGroupBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<TjTeamGroup> lqw = buildQueryWrapper(bo);
         Page<TjTeamGroupVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
-        if(Objects.equals(CommonConstants.NORMAL, bo.getFilterProject()) && CollUtil.isNotEmpty(result.getRecords())) {
+        if(Objects.equals(CommonConstants.NORMAL, bo.getFilterProject())) {
             List<Long> groupIdList = StreamUtils.toList(StreamUtils.filter(result.getRecords(),
                 e -> Objects.equals(e.getGroupType(), GroupTypeEnum.ITEM.getCode())), TjTeamGroupVo::getId);
-            List<TjTeamGroupItem> itemList = tjTeamGroupItemMapper.selectList(Wrappers.lambdaQuery(TjTeamGroupItem.class)
-                .in(TjTeamGroupItem::getGroupId, groupIdList));
-            Set<Long> groupNewIdList = itemList.stream().map(TjTeamGroupItem::getGroupId).collect(Collectors.toSet());
-            List<TjTeamGroupVo> voList = StreamUtils.filter(result.getRecords(),
-                e -> ObjectUtil.notEqual(e.getGroupType(), GroupTypeEnum.ITEM.getCode())
-                    || groupNewIdList.contains(e.getId()));
-            result.setRecords(voList).setTotal(voList.size());
+            if(CollUtil.isNotEmpty(groupIdList)) {
+                List<TjTeamGroupItem> itemList = tjTeamGroupItemMapper.selectList(Wrappers.lambdaQuery(TjTeamGroupItem.class)
+                    .in(TjTeamGroupItem::getGroupId, groupIdList));
+                Set<Long> groupNewIdList = itemList.stream().map(TjTeamGroupItem::getGroupId).collect(Collectors.toSet());
+                List<TjTeamGroupVo> voList = StreamUtils.filter(result.getRecords(),
+                    e -> ObjectUtil.notEqual(e.getGroupType(), GroupTypeEnum.ITEM.getCode())
+                        || groupNewIdList.contains(e.getId()));
+                result.setRecords(voList).setTotal(voList.size());
+            }
         }
         return TableDataInfo.build(result);
     }
