@@ -82,6 +82,11 @@ public class AmountCalculationItemBo {
     private String combinProjectName;
 
     /**
+     * 组合项目编码
+     */
+    private String combinProjectCode;
+
+    /**
      * 是否套餐项目标志
      */
     @NotBlank(message = "是否套餐项目标志不能为空")
