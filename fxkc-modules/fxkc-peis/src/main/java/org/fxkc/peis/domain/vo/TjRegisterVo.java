@@ -400,7 +400,7 @@ public class TjRegisterVo implements Serializable {
     /**
      * 套餐名称
      */
-    @Translation(type = TransConstant.TEAM_GROUP_ID_TO_NAME, mapper = "packageId")
+    @Translation(type = TransConstant.PACKAGE_ID_TO_NAME, mapper = "packageId")
     private String packageName;
 
     /**
