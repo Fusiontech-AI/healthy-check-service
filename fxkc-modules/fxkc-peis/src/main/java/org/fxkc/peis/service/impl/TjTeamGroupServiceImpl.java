@@ -1,6 +1,7 @@
 package org.fxkc.peis.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -82,7 +83,7 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
     public TableDataInfo<TjTeamGroupVo> queryPageList(TjTeamGroupBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<TjTeamGroup> lqw = buildQueryWrapper(bo);
         Page<TjTeamGroupVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
-        if(Objects.equals(CommonConstants.NORMAL, bo.getFilterProject())) {
+        if(Objects.equals(CommonConstants.NORMAL, bo.getFilterProject()) && CollUtil.isNotEmpty(result.getRecords())) {
             List<Long> groupIdList = StreamUtils.toList(StreamUtils.filter(result.getRecords(),
                 e -> Objects.equals(e.getGroupType(), GroupTypeEnum.ITEM.getCode())), TjTeamGroupVo::getId);
             List<TjTeamGroupItem> itemList = tjTeamGroupItemMapper.selectList(Wrappers.lambdaQuery(TjTeamGroupItem.class)
