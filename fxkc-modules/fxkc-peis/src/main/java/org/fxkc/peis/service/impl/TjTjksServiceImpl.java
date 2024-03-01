@@ -120,7 +120,6 @@ public class TjTjksServiceImpl implements ITjTjksService {
     private boolean checkKsCodeUnique(TjTjks entity) {
         long ksId = ObjectUtil.isNull(entity.getId()) ? -1L : entity.getId();
         TjTjks tjTjks = baseMapper.selectOne(new LambdaQueryWrapper<TjTjks>()
-            .eq(TjTjks::getDelFlag, CommonConstants.NORMAL)
             .eq(TjTjks::getKsCode, entity.getKsCode())
 
         );
@@ -136,7 +135,6 @@ public class TjTjksServiceImpl implements ITjTjksService {
     private boolean checkKsNameUnique(TjTjks entity) {
         long ksId = ObjectUtil.isNull(entity.getId()) ? -1L : entity.getId();
         TjTjks tjTjks = baseMapper.selectOne(new LambdaQueryWrapper<TjTjks>()
-            .eq(TjTjks::getDelFlag, CommonConstants.NORMAL)
             .eq(TjTjks::getKsName, entity.getKsName())
 
         );

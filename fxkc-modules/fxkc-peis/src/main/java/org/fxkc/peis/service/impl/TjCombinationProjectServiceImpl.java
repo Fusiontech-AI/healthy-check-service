@@ -183,7 +183,6 @@ public class TjCombinationProjectServiceImpl implements ITjCombinationProjectSer
     private boolean checkCodeUnique(TjCombinationProject entity) {
         long id = ObjectUtil.isNull(entity.getId()) ? -1L : entity.getId();
         TjCombinationProject tjCombinationProject = baseMapper.selectOne(new LambdaQueryWrapper<TjCombinationProject>()
-            .eq(TjCombinationProject::getDelFlag, CommonConstants.NORMAL)
             .eq(TjCombinationProject::getCombinProjectCode, entity.getCombinProjectCode())
 
         );
@@ -199,7 +198,6 @@ public class TjCombinationProjectServiceImpl implements ITjCombinationProjectSer
     private boolean checkNameUnique(TjCombinationProject entity) {
         long id = ObjectUtil.isNull(entity.getId()) ? -1L : entity.getId();
         TjCombinationProject tjCombinationProject = baseMapper.selectOne(new LambdaQueryWrapper<TjCombinationProject>()
-            .eq(TjCombinationProject::getDelFlag, CommonConstants.NORMAL)
             .eq(TjCombinationProject::getCombinProjectName, entity.getCombinProjectName())
 
         );

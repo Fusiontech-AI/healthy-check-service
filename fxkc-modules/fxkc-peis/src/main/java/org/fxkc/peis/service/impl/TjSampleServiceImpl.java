@@ -130,7 +130,6 @@ public class TjSampleServiceImpl implements ITjSampleService {
     private boolean checkCodeUnique(TjSample entity) {
         long id = ObjectUtil.isNull(entity.getId()) ? -1L : entity.getId();
         TjSample tjSample = baseMapper.selectOne(new LambdaQueryWrapper<TjSample>()
-            .eq(TjSample::getDelFlag, CommonConstants.NORMAL)
             .eq(TjSample::getSampleCode, entity.getSampleCode())
 
         );
@@ -146,7 +145,6 @@ public class TjSampleServiceImpl implements ITjSampleService {
     private boolean checkNameUnique(TjSample entity) {
         long id = ObjectUtil.isNull(entity.getId()) ? -1L : entity.getId();
         TjSample tjSample = baseMapper.selectOne(new LambdaQueryWrapper<TjSample>()
-            .eq(TjSample::getDelFlag, CommonConstants.NORMAL)
             .eq(TjSample::getSampleName, entity.getSampleName())
 
         );
@@ -176,7 +174,6 @@ public class TjSampleServiceImpl implements ITjSampleService {
     public Boolean updateCombinProjectBySampleId(TjSampleUpdateBo tjSampleUpdateBo) {
         //先根据样本主键id进行删除操作
         tjSampleInfoMapper.delete(new LambdaQueryWrapper<TjSampleInfo>()
-            .eq(TjSampleInfo::getDelFlag,CommonConstants.NORMAL)
             .eq(TjSampleInfo::getSampleId,tjSampleUpdateBo.getId())
         );
 
