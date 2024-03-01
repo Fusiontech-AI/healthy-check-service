@@ -60,6 +60,11 @@ public class TjTeamGroupDetailVo {
     private Long packageId;
 
     /**
+     * 套餐名称
+     */
+    private String packageName;
+
+    /**
      * 分组项目信息集合
      */
     private List<TjTeamGroupItemVo> groupItemList;
