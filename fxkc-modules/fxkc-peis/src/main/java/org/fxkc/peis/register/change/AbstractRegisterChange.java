@@ -90,7 +90,7 @@ public abstract class AbstractRegisterChange implements RegisterChangeService {
             .eq(TjRegCombinationProject::getRegisterId, bo.getRegisterId()));
         if(CollUtil.isNotEmpty(tjRegCombinationProjects)){
             //筛选出需要删除的记录信息
-            List<TjRegCombinItemBo> comBinIds = combinItemBos.stream().filter(m -> Objects.nonNull(m.getId())).collect(Collectors.toList());
+            List<Long> comBinIds = combinItemBos.stream().filter(m -> Objects.nonNull(m.getId())).map(m->m.getId()).collect(Collectors.toList());
             List<TjRegCombinationProject> deleteItems = tjRegCombinationProjects.stream().filter(m -> !comBinIds.contains(m.getId())).collect(Collectors.toList());
             if(CollUtil.isNotEmpty(deleteItems)){
                 //待删除记录中，存在项目己检查的 无法删除 (后面还要除去 不显示的项目记录)
