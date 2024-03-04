@@ -94,8 +94,9 @@ public abstract class AbstractRegisterChange implements RegisterChangeService {
             List<TjRegCombinationProject> deleteItems = tjRegCombinationProjects.stream().filter(m -> !comBinIds.contains(m.getId())).collect(Collectors.toList());
             if(CollUtil.isNotEmpty(deleteItems)){
                 //待删除记录中，存在项目己检查的 无法删除 (后面还要除去 不显示的项目记录)
-                if(deleteItems.stream().anyMatch(m -> Objects.equals(CheckStatusEnum.已检查.getCode(), m.getCheckStatus()))){
-                    throw new RuntimeException("已检查的项目无法删除!");
+                if(deleteItems.stream().anyMatch(m -> Objects.equals(CheckStatusEnum.已检查.getCode(), m.getCheckStatus())
+                  || Objects.equals("1", m.getPayStatus()))){
+                    throw new RuntimeException("已检查或已缴费的项目无法删除!");
                 }
                 //删除相关记录 并删除管理的子项记录
                 tjRegCombinationProjectMapper.deleteBatchIds(deleteItems);
