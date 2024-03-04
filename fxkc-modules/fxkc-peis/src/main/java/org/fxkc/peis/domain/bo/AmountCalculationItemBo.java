@@ -29,6 +29,11 @@ public class AmountCalculationItemBo {
     private Long combinProjectId;
 
     /**
+     * 原始主键id 用于暂存原始列表主键记录
+     */
+    private Long originId;
+
+    /**
      * 排列序号
      */
     @NotNull(message = "排列序号不能为空")
