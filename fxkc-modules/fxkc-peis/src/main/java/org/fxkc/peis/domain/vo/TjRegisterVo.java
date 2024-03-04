@@ -2,6 +2,7 @@ package org.fxkc.peis.domain.vo;
 
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 import org.fxkc.common.excel.annotation.ExcelDictFormat;
@@ -91,6 +92,7 @@ public class TjRegisterVo implements Serializable {
      * 生日
      */
     @ExcelProperty(value = "生日")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date birthday;
 
     /**
