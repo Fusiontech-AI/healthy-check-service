@@ -51,8 +51,10 @@ public class TeamSingleUpdateCmp extends NodeComponent {
                      fillSingle(m,inputType);
                  }else if(Objects.equals(inputType, InputTypeEnum.个人应收额.getCode())){
                      m.setTeamAmount(m.getReceivableAmount().subtract(m.getPersonAmount()));
+                     m.setDiscount(tjPackageService.getDiscountByReceivableAmount(m.getStandardAmount(),m.getReceivableAmount()));
                  }else if(Objects.equals(inputType, InputTypeEnum.单位应收额.getCode())){
                      m.setPersonAmount(m.getReceivableAmount().subtract(m.getTeamAmount()));
+                     m.setDiscount(tjPackageService.getDiscountByReceivableAmount(m.getStandardAmount(),m.getReceivableAmount()));
                  }
 
              }
