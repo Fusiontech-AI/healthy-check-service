@@ -42,7 +42,7 @@ public class TeamSingleUpdateCmp extends NodeComponent {
                  if(Objects.equals(inputType, InputTypeEnum.折扣.getCode())){
                      m.setReceivableAmount(tjPackageService.getReceivableAmountByDiscount(m.getStandardAmount(),m.getDiscount()));
                      //在修改单项折扣时，默认将费用给对应支付方式的那一边，混合支付就全部给单位费用那一边 自行修改
-                     //fillSingle(m,inputType);
+                     fillSingle(m,inputType);
                  }else if(Objects.equals(inputType, InputTypeEnum.应收金额.getCode())){
                      //目前界面没有直接改应收金额的入口，都是通过修改单项个费或团费
                      m.setDiscount(tjPackageService.getDiscountByReceivableAmount(m.getStandardAmount(),m.getReceivableAmount()));
