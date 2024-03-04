@@ -2,13 +2,16 @@ package org.fxkc.peis.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
+import org.fxkc.common.core.constant.CommonConstants;
 import org.fxkc.common.core.exception.ServiceException;
 import org.fxkc.common.core.utils.MapstructUtils;
 import org.fxkc.peis.domain.TjRegProjectSummary;
-import org.fxkc.peis.domain.bo.TjRegProjectSummaryBo;
+import org.fxkc.peis.domain.bo.TjRegProjectHistoryListBo;
 import org.fxkc.peis.domain.bo.TjRegProjectListBo;
+import org.fxkc.peis.domain.bo.TjRegProjectSummaryBo;
 import org.fxkc.peis.domain.vo.TjRegProjectSummaryVo;
 import org.fxkc.peis.mapper.TjRegProjectSummaryMapper;
 import org.fxkc.peis.service.ITjRegProjectSummaryService;
@@ -79,6 +82,17 @@ public class TjRegProjectSummaryServiceImpl implements ITjRegProjectSummaryServi
         return baseMapper.deleteBatchIds(ids) > 0;
     }
 
+    @Override
+    public List<TjRegProjectSummaryVo> summaryHistoryList(TjRegProjectHistoryListBo bo) {
+        List<TjRegProjectSummaryVo> tjRegProjectSummaryVos = baseMapper.summaryHistoryList(new QueryWrapper<TjRegProjectSummary>()
+            .eq("t.del_flag", CommonConstants.NORMAL)
+            .eq("t.combination_project_id", bo.getCombinationProjectId())
+            .exists("select 1 from tj_register m where  m.del_flag = '0' and m.credential_type = " + bo.getCredentialType() +
+                " and m.credential_number = " + bo.getCredentialNumber() + "  and m.id != " + bo.getRegId())
+        );
+
+        return tjRegProjectSummaryVos;
+    }
 
 
     /**

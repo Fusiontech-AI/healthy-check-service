@@ -1,5 +1,6 @@
 package org.fxkc.peis.service;
 
+import org.fxkc.peis.domain.bo.TjRegProjectHistoryListBo;
 import org.fxkc.peis.domain.bo.TjRegProjectSummaryBo;
 import org.fxkc.peis.domain.bo.TjRegProjectListBo;
 import org.fxkc.peis.domain.vo.TjRegProjectSummaryVo;
@@ -35,4 +36,5 @@ public interface ITjRegProjectSummaryService {
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
 
+    List<TjRegProjectSummaryVo> summaryHistoryList(TjRegProjectHistoryListBo bo);
 }

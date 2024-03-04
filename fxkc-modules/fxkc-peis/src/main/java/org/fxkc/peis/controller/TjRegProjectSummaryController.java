@@ -1,6 +1,7 @@
 package org.fxkc.peis.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.fxkc.common.core.domain.R;
@@ -10,8 +11,9 @@ import org.fxkc.common.idempotent.annotation.RepeatSubmit;
 import org.fxkc.common.log.annotation.Log;
 import org.fxkc.common.log.enums.BusinessType;
 import org.fxkc.common.web.core.BaseController;
-import org.fxkc.peis.domain.bo.TjRegProjectSummaryBo;
+import org.fxkc.peis.domain.bo.TjRegProjectHistoryListBo;
 import org.fxkc.peis.domain.bo.TjRegProjectListBo;
+import org.fxkc.peis.domain.bo.TjRegProjectSummaryBo;
 import org.fxkc.peis.domain.vo.TjRegProjectSummaryVo;
 import org.fxkc.peis.service.ITjRegProjectSummaryService;
 import org.springframework.validation.annotation.Validated;
@@ -40,6 +42,15 @@ public class TjRegProjectSummaryController extends BaseController {
     @PostMapping("/summaryList")
     public R<List<TjRegProjectSummaryVo>> summaryList(@RequestBody TjRegProjectListBo bo) {
         return R.ok(tjRegProjectSummaryService.summaryList(bo));
+    }
+
+
+    /**
+     * 查询历史本科小结列表
+     */
+    @PostMapping("/summaryHistoryList")
+    public R<List<TjRegProjectSummaryVo>> summaryHistoryList(@RequestBody @Valid TjRegProjectHistoryListBo bo) {
+        return R.ok(tjRegProjectSummaryService.summaryHistoryList(bo));
     }
 
 
