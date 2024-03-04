@@ -38,7 +38,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="queryProjectByPackageId" resultType="org.fxkc.peis.domain.vo.PackageAndProjectVo">
-        SELECT t1.id,
+        SELECT t2.id,
                t2.combin_project_name as name,
                t2.py_simple_code,
                t1.standard_amount,
