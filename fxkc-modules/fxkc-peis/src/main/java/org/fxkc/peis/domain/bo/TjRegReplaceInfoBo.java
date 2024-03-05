@@ -59,4 +59,8 @@ public class TjRegReplaceInfoBo {
     @NotNull(message = "被替检人年龄不能为空", groups = { AddGroup.class, EditGroup.class })
     private Integer replaceAge;
 
+    /**
+     * 被替检人电话
+     */
+    private String replacePhone;
 }

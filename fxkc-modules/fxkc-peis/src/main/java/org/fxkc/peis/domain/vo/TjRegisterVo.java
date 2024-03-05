@@ -536,6 +536,11 @@ public class TjRegisterVo implements Serializable {
     private String replaceGender;
 
     /**
+     * 被替检人电话
+     */
+    private String replacePhone;
+
+    /**
      * 被替检人年龄
      */
     @ExcelProperty(value = "被替检人年龄")

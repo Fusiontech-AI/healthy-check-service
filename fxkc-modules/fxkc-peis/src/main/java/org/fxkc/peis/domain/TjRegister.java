@@ -5,8 +5,6 @@ import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 import org.fxkc.common.tenant.core.TenantEntity;
-import org.fxkc.common.translation.annotation.Translation;
-import org.fxkc.common.translation.constant.TransConstant;
 
 import java.io.Serial;
 import java.math.BigDecimal;
@@ -431,6 +429,11 @@ public class TjRegister extends TenantEntity {
      * 被替检人性别
      */
     private String replaceGender;
+
+    /**
+     * 被替检人电话
+     */
+    private String replacePhone;
 
     /**
      * 被替检人年龄

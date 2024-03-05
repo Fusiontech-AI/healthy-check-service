@@ -267,6 +267,7 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
             updateEntity.setReplaceCredentialNumber(tjRegister.getCredentialNumber());
             updateEntity.setReplaceAge(tjRegister.getAge());
             updateEntity.setReplaceBirthday(tjRegister.getBirthday());
+            updateEntity.setReplacePhone(tjRegister.getPhone());
         }
         updateEntity.setReplaceFlag("0");
         updateEntity.setName(bo.getReplaceName());
@@ -275,6 +276,7 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
         updateEntity.setCredentialNumber(bo.getReplaceCredentialNumber());
         updateEntity.setAge(bo.getReplaceAge());
         updateEntity.setBirthday(bo.getReplaceBirthday());
+        updateEntity.setPhone(bo.getReplacePhone());
         return baseMapper.updateById(updateEntity)> 0;
     }
 

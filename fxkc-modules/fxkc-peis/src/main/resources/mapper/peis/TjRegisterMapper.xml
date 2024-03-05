@@ -32,6 +32,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             t1.TEAM_DEPT_ID,
             t1.INTRODUCER,
             t1.CREATE_BY,
+            t1.REPLACE_FLAG,
             t1.REGISTER_DOCTOR_ID,
             t1.GENERAL_REVIEW_DOCTOR,
             t1.GENERAL_REVIEW_TIME,
