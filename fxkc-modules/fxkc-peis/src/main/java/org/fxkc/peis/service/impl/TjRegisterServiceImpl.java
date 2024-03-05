@@ -264,7 +264,7 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
             updateEntity.setReplaceName(tjRegister.getName());
             updateEntity.setReplaceGender(tjRegister.getGender());
             updateEntity.setReplaceCredentialType(tjRegister.getCredentialType());
-            updateEntity.setReplaceCredentialNumber(tjRegister.getReplaceCredentialNumber());
+            updateEntity.setReplaceCredentialNumber(tjRegister.getCredentialNumber());
             updateEntity.setReplaceAge(tjRegister.getAge());
             updateEntity.setReplaceBirthday(tjRegister.getBirthday());
         }
