@@ -134,7 +134,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<TjTeamGroupVo> insertByBo(TjTeamTaskBo bo) {
+    public TjTeamTaskCommonVo insertByBo(TjTeamTaskBo bo) {
         validEntityBeforeSave(bo, Boolean.TRUE);
         TjTeamTask add = MapstructUtils.convert(bo, TjTeamTask.class);
         String taskNumber = baseMapper.queryTaskNumber();
@@ -145,7 +145,8 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
         groupList.forEach(k -> k.setTaskId(add.getId()).setTaskName(add.getTaskName())
             .setTeamId(add.getTeamId()).setTeamName(teamName));
         tjTeamGroupMapper.insertBatch(groupList);
-        return getTaskItemGroupInfo(add.getId(), bo.getPhysicalType());
+        return new TjTeamTaskCommonVo().setTaskId(add.getId())
+            .setGroupList(getTaskItemGroupInfo(add.getId(), bo.getPhysicalType()));
     }
 
     /**
@@ -153,7 +154,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<TjTeamGroupVo> updateByBo(TjTeamTaskBo bo) {
+    public TjTeamTaskCommonVo updateByBo(TjTeamTaskBo bo) {
         validEntityBeforeSave(bo, Boolean.FALSE);
         TjTeamTask update = MapstructUtils.convert(bo, TjTeamTask.class);
         baseMapper.updateById(update);
@@ -165,7 +166,8 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
         List<TjTeamGroup> recordList = StreamUtils.filter(groupList, e -> Objects.nonNull(e.getId()));
         iTjTeamGroupService.recordGroupInfo(recordList);
         tjTeamGroupMapper.insertOrUpdateBatch(groupList);
-        return getTaskItemGroupInfo(bo.getId(), bo.getPhysicalType());
+        return new TjTeamTaskCommonVo().setTaskId(bo.getId())
+            .setGroupList(getTaskItemGroupInfo(bo.getId(), bo.getPhysicalType()));
     }
 
     /**
@@ -432,6 +434,10 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
         if(CollUtil.isNotEmpty(groupIdList)) {
             List<TjTeamGroupItem> itemList = tjTeamGroupItemMapper.selectList(Wrappers.lambdaQuery(TjTeamGroupItem.class)
                 .in(TjTeamGroupItem::getGroupId, groupIdList));
+            List<TjTeamGroup> groups = tjTeamGroupMapper.selectList(Wrappers.lambdaQuery(TjTeamGroup.class)
+                .in(TjTeamGroup::getId, groupIdList)
+                .eq(TjTeamGroup::getGroupType, GroupTypeEnum.ITEM.getCode()));
+            Map<Long, TjTeamGroup> groupMap = StreamUtils.toMap(groups, TjTeamGroup::getId, e -> e);
             Map<Long, List<TjTeamGroupItem>> itemMap = StreamUtils.groupByKey(itemList, TjTeamGroupItem::getGroupId);
             List<TjRegCombinationProject> projectList = CollUtil.newArrayList();
             List<TjRegister> priceRegisters = CollUtil.newArrayList();
@@ -452,9 +458,14 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
                             .build()));
                     BigDecimal price = groupItemList.stream().map(TjTeamGroupItem::getActualPrice)
                         .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    BigDecimal standardPrice = groupItemList.stream().map(TjTeamGroupItem::getStandardPrice)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    TjTeamGroup group = groupMap.getOrDefault(k.getTeamGroupId(), null);
                     priceRegisters.add(TjRegister.builder().id(k.getId())
                         .totalAmount(price)
                         .teamAmount(price)
+                        .totalStandardAmount(standardPrice)
+                        .discount(Objects.nonNull(group) ? group.getItemDiscount() : new BigDecimal(100))
                         .build());
                 }
             });

@@ -84,7 +84,7 @@ public class TjTeamTaskController extends BaseController {
     @Log(title = "团检任务管理", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
-    public R<List<TjTeamGroupVo>> add(@Validated(AddGroup.class) @RequestBody TjTeamTaskBo bo) {
+    public R<TjTeamTaskCommonVo> add(@Validated(AddGroup.class) @RequestBody TjTeamTaskBo bo) {
         return R.ok(tjTeamTaskService.insertByBo(bo));
     }
 
@@ -95,7 +95,7 @@ public class TjTeamTaskController extends BaseController {
     @Log(title = "团检任务管理", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
-    public R<List<TjTeamGroupVo>> edit(@Validated(EditGroup.class) @RequestBody TjTeamTaskBo bo) {
+    public R<TjTeamTaskCommonVo> edit(@Validated(EditGroup.class) @RequestBody TjTeamTaskBo bo) {
         return R.ok(tjTeamTaskService.updateByBo(bo));
     }
 

@@ -38,12 +38,12 @@ public interface ITjTeamTaskService {
     /**
      * 新增团检任务管理
      */
-    List<TjTeamGroupVo> insertByBo(TjTeamTaskBo bo);
+    TjTeamTaskCommonVo insertByBo(TjTeamTaskBo bo);
 
     /**
      * 修改团检任务管理
      */
-    List<TjTeamGroupVo> updateByBo(TjTeamTaskBo bo);
+    TjTeamTaskCommonVo updateByBo(TjTeamTaskBo bo);
 
     /**
      * 校验并批量删除团检任务管理信息
