@@ -80,7 +80,6 @@ public class TjCombinationProjectBo extends BaseEntity {
     /**
      * 标本类型 0类型1
      */
-    @NotBlank(message = "标本类型 0类型1不能为空", groups = { AddGroup.class, EditGroup.class })
     private String specimenType;
 
     /**
