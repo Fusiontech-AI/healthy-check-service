@@ -258,7 +258,6 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
         TjRegister tjRegister = baseMapper.selectById(bo.getRegisterId());
         Assert.notNull(tjRegister,"根据登记id["+bo.getRegisterId()+"],未找到登录记录!");
         TjRegister updateEntity = new TjRegister();
-        updateEntity.setReplaceFlag("0");
         updateEntity.setId(bo.getRegisterId());
         //不等于0是的时候 初次将原体检人信息存入 replace相关字段。
         if(!Objects.equals("0",tjRegister.getReplaceFlag())){
@@ -269,6 +268,7 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
             updateEntity.setReplaceAge(tjRegister.getAge());
             updateEntity.setReplaceBirthday(tjRegister.getBirthday());
         }
+        updateEntity.setReplaceFlag("0");
         updateEntity.setName(bo.getReplaceName());
         updateEntity.setGender(bo.getReplaceGender());
         updateEntity.setCredentialType(bo.getReplaceCredentialType());
