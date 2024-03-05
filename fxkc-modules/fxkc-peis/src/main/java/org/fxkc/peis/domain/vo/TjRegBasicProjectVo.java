@@ -1,12 +1,14 @@
 package org.fxkc.peis.domain.vo;
 
-import org.fxkc.peis.domain.TjRegBasicProject;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
-import org.fxkc.common.excel.annotation.ExcelDictFormat;
-import org.fxkc.common.excel.convert.ExcelDictConvert;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
+import org.fxkc.common.excel.annotation.ExcelDictFormat;
+import org.fxkc.common.excel.convert.ExcelDictConvert;
+import org.fxkc.common.translation.annotation.Translation;
+import org.fxkc.common.translation.constant.TransConstant;
+import org.fxkc.peis.domain.TjRegBasicProject;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -55,6 +57,12 @@ public class TjRegBasicProjectVo implements Serializable {
      */
     @ExcelProperty(value = "基础项目id")
     private Long basicProjectId;
+
+    /**
+     * 基础项目名称
+     */
+    @Translation(type = TransConstant.BASIC_ID_TO_NAME,mapper = "basicProjectId")
+    private String basicProjectName;
 
     /**
      * 检查部位
