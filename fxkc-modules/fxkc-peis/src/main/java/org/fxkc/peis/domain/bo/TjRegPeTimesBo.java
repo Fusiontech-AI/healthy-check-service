@@ -28,4 +28,7 @@ public class TjRegPeTimesBo {
         this.credentialType = credentialType;
         this.credentialNumber = credentialNumber;
     }
+
+    public TjRegPeTimesBo() {
+    }
 }
