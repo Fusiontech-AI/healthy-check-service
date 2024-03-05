@@ -314,9 +314,9 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
             tjRegBasicProjectMapper.updateBatchById(tjRegBasicProjects);
         }
         //修改组合项目结果内容
-        tjRegCombinationProject.setCheckDoctor(bo.getCheckDoctor());
-        tjRegCombinationProject.setCheckDoctorName(bo.getCheckDoctorName());
-        tjRegCombinationProject.setCheckTime(bo.getCheckTime());
+        tjRegCombinationProject.setCheckDoctor(bo.getCheckDoctor()==null ? LoginHelper.getUserId():bo.getCheckDoctor());
+        tjRegCombinationProject.setCheckDoctorName(StringUtils.isEmpty(bo.getCheckDoctorName())? LoginHelper.getUsername(): bo.getCheckDoctorName());
+        tjRegCombinationProject.setCheckTime(bo.getCheckTime()==null ? DateUtil.date() : bo.getCheckTime());
         tjRegCombinationProject.setCheckStatus(StringUtils.isEmpty(bo.getCheckStatus())
             ? "1" : bo.getCheckStatus());//已检查
         tjRegCombinationProjectMapper.updateById(tjRegCombinationProject);

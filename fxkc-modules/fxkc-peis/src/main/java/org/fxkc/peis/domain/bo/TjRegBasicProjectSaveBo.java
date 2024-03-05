@@ -61,5 +61,13 @@ public class TjRegBasicProjectSaveBo {
      */
     private String lowLimit;
 
+    /**
+     * pacs图片标识
+     */
+    private String checkResultImg;
 
+    /**
+     * 常见结果id,多个之间逗号分割
+     */
+    private String commonResultIds;
 }

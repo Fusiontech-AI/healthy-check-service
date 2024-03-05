@@ -12,6 +12,7 @@ import org.fxkc.peis.domain.TjRegBasicProject;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 
 /**
@@ -113,5 +114,26 @@ public class TjRegBasicProjectVo implements Serializable {
     @ExcelProperty(value = "数值下限")
     private String lowLimit;
 
+
+    /**
+     * pacs图片标识
+     */
+    private String checkResultImg;
+
+    /**
+     * 常见结果id,多个之间逗号分割
+     */
+    private String commonResultIds;
+
+    /**
+     * 是否下拉选择框(有常见结果选项就是下拉框，无常见结果为输入框) 0:输入款，1：下拉框
+     */
+    @ExcelProperty(value = "是否下拉选择框(有常见结果选项就是下拉框，无常见结果为输入框) 0:输入款，1：下拉框")
+    private String  selectFlag;
+
+    /**
+     * 常见结果选项list信息
+     */
+    private List<TjBasicCommonResultVo> basicCommonResultVos;
 
 }

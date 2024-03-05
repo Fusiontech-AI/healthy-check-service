@@ -31,19 +31,16 @@ public class TjRegSaveDiagnosisBo {
     /**
      * 检查医生
      */
-    @NotNull(message = "检查医生不能为空")
     private Long checkDoctor;
 
     /**
      * 检查医生姓名
      */
-    @NotNull(message = "检查医生姓名不能为空")
     private String checkDoctorName;
 
     /**
      * 检查时间
      */
-    @NotNull(message = "检查时间不能为空")
     private Date checkTime;
 
     /**
