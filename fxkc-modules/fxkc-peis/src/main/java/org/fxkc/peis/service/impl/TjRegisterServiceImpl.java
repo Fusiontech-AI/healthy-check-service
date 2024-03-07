@@ -538,7 +538,7 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
             registerChangeService.changeRegCombin(bo);
         });
 
-        return null;
+        return true;
     }
 
     @Override
