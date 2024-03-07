@@ -527,6 +527,7 @@ public class TjRegisterVo implements Serializable {
      * 被替检人生日
      */
     @ExcelProperty(value = "被替检人生日")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date replaceBirthday;
 
     /**

@@ -446,6 +446,7 @@ public class TjRegisterBo extends BaseEntity {
     /**
      * 被替检人生日
      */
+    @JsonFormat(pattern = DatePattern.NORM_DATE_PATTERN, timezone = "GMT+8")
     private Date replaceBirthday;
 
     /**

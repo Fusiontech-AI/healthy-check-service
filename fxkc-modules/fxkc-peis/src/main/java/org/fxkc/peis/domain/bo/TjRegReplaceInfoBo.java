@@ -1,5 +1,7 @@
 package org.fxkc.peis.domain.bo;
 
+import cn.hutool.core.date.DatePattern;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -45,6 +47,7 @@ public class TjRegReplaceInfoBo {
      * 被替检人生日
      */
     @NotNull(message = "被替检人生日不能为空", groups = { AddGroup.class, EditGroup.class })
+    @JsonFormat(pattern = DatePattern.NORM_DATE_PATTERN, timezone = "GMT+8")
     private Date replaceBirthday;
 
     /**
