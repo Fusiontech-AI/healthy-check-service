@@ -533,6 +533,7 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
             //组装报到请求参数对象
             TjRegCombinAddBo bo = new TjRegCombinAddBo();
             bo.setBatchFlag("0");//设置批量标志
+            bo.setRegisterId(regId);
             RegisterChangeService registerChangeService = registerChangeHolder.selectBuilder("2");
             registerChangeService.changeRegCombin(bo);
         });
