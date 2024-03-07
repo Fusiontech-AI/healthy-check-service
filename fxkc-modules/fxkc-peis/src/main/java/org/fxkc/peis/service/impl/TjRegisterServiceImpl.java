@@ -528,6 +528,19 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
     }
 
     @Override
+    public Boolean batchReport(List<Long> regIds) {
+        regIds.stream().forEach(regId->{
+            //组装报到请求参数对象
+            TjRegCombinAddBo bo = new TjRegCombinAddBo();
+            bo.setBatchFlag("0");//设置批量标志
+            RegisterChangeService registerChangeService = registerChangeHolder.selectBuilder("2");
+            registerChangeService.changeRegCombin(bo);
+        });
+
+        return null;
+    }
+
+    @Override
     public List<TjRegisterVo> getByIds(List<Long> regIdList) {
         return this.baseMapper.getByIds(regIdList);
     }
