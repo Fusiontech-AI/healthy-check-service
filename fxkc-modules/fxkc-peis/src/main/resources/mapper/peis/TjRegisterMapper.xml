@@ -54,7 +54,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.createByName)">
                 LEFT JOIN SYS_USER t2 on t1.CREATE_BY = t2.USER_ID
             </if>
-        <where>
+        where  t1.del_flag = '0'
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.delFlag)">
                 AND t1.DEL_FLAG = #{bo.delFlag}
             </if>
@@ -183,7 +183,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.createTimeEnd)">
                 AND t1.CREATE_TIME &lt; TRUNC(#{bo.createTimeEnd})+1
             </if>
-        </where>
     </select>
 
     <select id="getByIds" resultType="org.fxkc.peis.domain.vo.TjRegisterVo">
