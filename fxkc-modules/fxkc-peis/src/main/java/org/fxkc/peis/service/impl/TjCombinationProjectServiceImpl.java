@@ -238,7 +238,7 @@ public class TjCombinationProjectServiceImpl implements ITjCombinationProjectSer
                 .sorted(Comparator.comparing(entry -> entry.getValue().size()))
                 .forEachOrdered(entry -> sortedMap.put(entry.getKey(), entry.getValue()));
             List<Long> respCombinIds = findMinCompositeProjects(bo.getItemIdList(), sortedMap);
-            convert.forEach(k -> k.setIsRequired(respCombinIds.contains(k.getId()))
+            convert.forEach(k -> k.setRequired(respCombinIds.contains(k.getId()))
                 .setInfoItemBos(listMap.get(k.getId())));
         }
         return convert;

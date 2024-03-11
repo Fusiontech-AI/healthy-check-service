@@ -453,7 +453,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
                             .discount(s.getDiscount())
                             .receivableAmount(s.getActualPrice())
                             .payMode("1")
-                            .projectRequiredType(s.getIsRequired() ? "1" : "0")
+                            .projectRequiredType(s.getRequired() ? "1" : "0")
                             .teamAmount(s.getActualPrice())
                             .build()));
                     BigDecimal price = groupItemList.stream().map(TjTeamGroupItem::getActualPrice)

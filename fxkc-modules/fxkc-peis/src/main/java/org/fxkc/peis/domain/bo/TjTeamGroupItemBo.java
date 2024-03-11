@@ -67,7 +67,7 @@ public class TjTeamGroupItemBo extends BaseEntity {
      * 是否必选(1:是0否)
      */
     @NotNull(message = "是否必选(true:是false否)不能为空")
-    private Boolean isRequired;
+    private Boolean required;
 
     /**
      * 项目编码

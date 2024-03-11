@@ -92,5 +92,5 @@ public class AmountCalculationItemVo {
     /**
      * 是否必选(1:是0否)
      */
-    private Boolean isRequired;
+    private Boolean required;
 }

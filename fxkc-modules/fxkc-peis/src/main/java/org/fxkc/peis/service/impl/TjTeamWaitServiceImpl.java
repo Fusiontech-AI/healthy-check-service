@@ -89,7 +89,7 @@ public class TjTeamWaitServiceImpl implements ITjTeamWaitService {
                                 .payStatus("0")
                                 .payMode(tjTeamGroup.getGroupPayType())
                                 .checkStatus("0")
-                                .projectRequiredType(m.getIsRequired() ? "1" : "0")
+                                .projectRequiredType(m.getRequired() ? "1" : "0")
                                 .delFlag("0")
                                 .build()
                         ).collect(Collectors.toList()));

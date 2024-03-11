@@ -221,7 +221,7 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
                                     .payStatus(isTeamPay ? CheckStatusEnum.已检查.getCode() : CheckStatusEnum.未检查.getCode())
                                     .projectType(d.getInclude())
                                     .discount(d.getDiscount())
-                                    .projectRequiredType(d.getIsRequired() ?  "1" : "0")
+                                    .projectRequiredType(d.getRequired() ?  "1" : "0")
                                     .build()));
                             }
                         });
