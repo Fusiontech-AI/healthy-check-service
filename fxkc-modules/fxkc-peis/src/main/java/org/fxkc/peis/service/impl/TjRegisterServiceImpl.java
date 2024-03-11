@@ -324,7 +324,7 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
         tjRegCombinationProjectMapper.updateById(tjRegCombinationProject);
 
         //这里需要更改登记记录允许总检状态  以及对诊断明细相关记录的保存
-        return null;
+        return true;
     }
 
     @Override
