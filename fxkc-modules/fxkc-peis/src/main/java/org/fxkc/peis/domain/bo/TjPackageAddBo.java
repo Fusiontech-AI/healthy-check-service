@@ -108,4 +108,9 @@ public class TjPackageAddBo {
      * 照射源种类sys_dict_type(bus_job_illumination_source)
      */
     private String shineType;
+
+    /**
+     * 是否必选(1:是0否)
+     */
+    private Boolean required;
 }

@@ -3,6 +3,7 @@ package org.fxkc.peis.domain.vo;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import io.github.linpeilie.annotations.AutoMapper;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.fxkc.common.translation.annotation.Translation;
 import org.fxkc.common.translation.constant.TransConstant;
@@ -74,6 +75,12 @@ public class TjPackageInfoVo implements Serializable {
      */
     @ExcelProperty(value = "应收金额")
     private BigDecimal receivableAmount;
+
+    /**
+     * 是否必选(1:是0否)
+     */
+    @NotNull(message = "是否必选(true:是false否)不能为空")
+    private Boolean required;
 
 
 }
