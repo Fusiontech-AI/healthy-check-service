@@ -88,4 +88,9 @@ public class AmountCalculationItemVo {
      * 加项标识:1个人加项 2团队加项
      */
     private String addFlag;
+
+    /**
+     * 是否必选(1:是0否)
+     */
+    private Boolean isRequired;
 }
