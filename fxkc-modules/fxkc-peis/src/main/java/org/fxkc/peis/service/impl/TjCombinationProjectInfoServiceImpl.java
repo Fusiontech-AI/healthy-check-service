@@ -106,4 +106,11 @@ public class TjCombinationProjectInfoServiceImpl implements ITjCombinationProjec
         }
         return baseMapper.deleteBatchIds(ids) > 0;
     }
+
+    @Override
+    public List<TjCombinationProjectInfoVo> queryBasicListByCombinIds(List<Long> combinIds) {
+        List<TjCombinationProjectInfoVo> tjCombinationProjectInfoVos = baseMapper.selectVoList(new LambdaQueryWrapper<TjCombinationProjectInfo>()
+            .in(TjCombinationProjectInfo::getCombinProjectId, combinIds));
+        return tjCombinationProjectInfoVos;
+    }
 }
