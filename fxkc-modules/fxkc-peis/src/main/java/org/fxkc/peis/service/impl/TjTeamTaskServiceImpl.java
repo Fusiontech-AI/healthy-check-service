@@ -572,7 +572,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
                 .in(TjTeamGroupItem::getGroupId, groupIds));
             if(PhysicalTypeEnum.isOccupational(physicalType)) {
                 List<TjTeamGroupHazardsVo> groupHazardsList = tjTeamGroupHazardsMapper.selectVoList(Wrappers.lambdaQuery(TjTeamGroupHazards.class)
-                    .eq(TjTeamGroupHazards::getGroupId, groupIds));
+                    .in(TjTeamGroupHazards::getGroupId, groupIds));
                 voList.forEach(k -> k.setGroupHazardsList(StreamUtils.filter(groupHazardsList, e -> Objects.equals(e.getGroupId(),k.getId()))));
             }
             voList.forEach(k -> k.setGroupItemList(StreamUtils.filter(groupItemList, e -> Objects.equals(e.getGroupId(),k.getId()))));
