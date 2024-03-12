@@ -109,8 +109,4 @@ public class TjPackageAddBo {
      */
     private String shineType;
 
-    /**
-     * 是否必选(1:是0否)
-     */
-    private Boolean required;
 }
