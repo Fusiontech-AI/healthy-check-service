@@ -277,6 +277,7 @@ public class TjCombinationProjectServiceImpl implements ITjCombinationProjectSer
         if(CollUtil.isEmpty(convert)) {
             throw new PeisException(ErrorCodeConstants.PEIS_COMBINATION_NOT_EXIST);
         }
+        convert.forEach(k -> k.setRequired(Boolean.TRUE));
         return convert;
     }
 
