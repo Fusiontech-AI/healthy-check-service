@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.fxkc.peis.domain.bo.TjHazardFactorsCodeBo;
+import org.fxkc.peis.domain.bo.TjTeamGroupProjectBo;
 import org.fxkc.peis.domain.bo.TjTeamGroupUpdateBo;
 import org.fxkc.peis.domain.vo.TjHazardFactorsRequireVo;
 import org.fxkc.peis.domain.vo.TjTeamGroupDetailVo;
@@ -90,7 +91,7 @@ public class TjTeamGroupController extends BaseController {
      * 修改任务项目分组信息
      */
     @PostMapping(value = "/updateGroupProjectInfo")
-    public R<Void> updateGroupProjectInfo(@RequestBody @Valid List<TjTeamGroupUpdateBo> list)  {
-        return toAjax(tjTeamGroupService.updateGroupProjectInfo(list));
+    public R<Void> updateGroupProjectInfo(@RequestBody @Valid TjTeamGroupProjectBo bo)  {
+        return toAjax(tjTeamGroupService.updateGroupProjectInfo(bo));
     }
 }

@@ -2,6 +2,7 @@ package org.fxkc.peis.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -18,6 +19,7 @@ import org.fxkc.peis.constant.ErrorCodeConstants;
 import org.fxkc.peis.domain.*;
 import org.fxkc.peis.domain.bo.TjTeamGroupBo;
 import org.fxkc.peis.domain.bo.TjTeamGroupItemBo;
+import org.fxkc.peis.domain.bo.TjTeamGroupProjectBo;
 import org.fxkc.peis.domain.bo.TjTeamGroupUpdateBo;
 import org.fxkc.peis.domain.vo.TjTeamGroupDetailVo;
 import org.fxkc.peis.domain.vo.TjTeamGroupHazardsVo;
@@ -26,6 +28,7 @@ import org.fxkc.peis.domain.vo.TjTeamGroupVo;
 import org.fxkc.peis.enums.CheckStatusEnum;
 import org.fxkc.peis.enums.GroupTypeEnum;
 import org.fxkc.peis.enums.HealthyCheckTypeEnum;
+import org.fxkc.peis.enums.PhysicalTypeEnum;
 import org.fxkc.peis.exception.PeisException;
 import org.fxkc.peis.mapper.*;
 import org.fxkc.peis.service.ITjTeamGroupService;
@@ -246,8 +249,37 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean updateGroupProjectInfo(List<TjTeamGroupUpdateBo> list) {
+    public Boolean updateGroupProjectInfo(TjTeamGroupProjectBo bo) {
         StringBuffer buffer = new StringBuffer();
+        List<TjTeamGroupUpdateBo> list = bo.getList();
+        if(PhysicalTypeEnum.isOccupational(bo.getPhysicalType())) {
+            Map<String, Object> enumMap = EnumUtil.getNameFieldMap(PhysicalTypeEnum.class, "desc");
+            StringBuffer str = new StringBuffer();
+            list.stream().filter(e -> StrUtil.isBlank(e.getDutyStatus())).forEach(k -> {
+                str.append(k.getGroupName()).append("、");
+            });
+            if(str.length() > 0) {
+                throw new PeisException(ErrorCodeConstants.PEIS_GROUP_DUTY_STATUS_NOT_EMPTY,
+                    new Object[]{enumMap.get(bo.getPhysicalType()),  str.deleteCharAt(str.length() - 1)});
+            }
+            list.stream().filter(e -> CollUtil.isEmpty(e.getGroupHazardsList())).forEach(k -> {
+                str.append(k.getGroupName()).append("、");
+            });
+            if(str.length() > 0) {
+                throw new PeisException(ErrorCodeConstants.PEIS_GROUP_HAZARD_NOT_EMPTY,
+                    new Object[]{enumMap.get(bo.getPhysicalType()),  str.deleteCharAt(str.length() - 1)});
+            }
+            if(Objects.equals(bo.getPhysicalType(), PhysicalTypeEnum.FSTJ.name())) {
+                list.stream().filter(e -> StrUtil.isBlank(e.getShineSource()) ||
+                    StrUtil.isBlank(e.getShineType())).forEach(k -> {
+                    str.append(k.getGroupName()).append("、");
+                });
+                if(str.length() > 0) {
+                    throw new PeisException(ErrorCodeConstants.PEIS_GROUP_SHINE_NOT_EMPTY, str.deleteCharAt(str.length() - 1));
+                }
+            }
+        }
+
         list.forEach(k -> {
             List<TjTeamGroupItemBo> itemBoList = k.getGroupItemList();
             Map<Long, Long> itemMap = itemBoList.stream().collect(Collectors.groupingBy(

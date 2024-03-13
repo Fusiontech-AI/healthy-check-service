@@ -78,4 +78,11 @@ public interface ErrorCodeConstants {
     String PEIS_ARCHIVES_PARAM_ERROR = "peis.archives.param.error";
 
     String PEIS_NOT_AUTO_GROUP = "peis.not.auto.group";
+
+    String PEIS_GROUP_DUTY_STATUS_NOT_EMPTY = "peis.group.duty.status.not.empty";
+
+    String PEIS_GROUP_HAZARD_NOT_EMPTY = "peis.group.hazard.not.empty";
+
+    String PEIS_GROUP_SHINE_NOT_EMPTY = "peis.group.shine.not.empty";
+
 }

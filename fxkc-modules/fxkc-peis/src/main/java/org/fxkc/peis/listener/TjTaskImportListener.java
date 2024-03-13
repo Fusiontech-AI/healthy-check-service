@@ -136,7 +136,7 @@ public class TjTaskImportListener extends AnalysisEventListener<TjTaskOccupation
                             || groupNewIdList.contains(e.getId()));
                 }
                 if(CollUtil.isEmpty(groupList)) {
-                    throw new PeisException(ErrorCodeConstants.PEIS_GROUP_ITEM_ISEXIST);
+                    throw new PeisException(ErrorCodeConstants.PEIS_NOT_AUTO_GROUP);
                 }
                 Integer gender = IdcardUtil.getGenderByIdCard(tjTaskOccupationalExportVo.getCredentialNumber()) == 1 ? 0 : 1 ;
                 int age = IdcardUtil.getAgeByIdCard(tjTaskOccupationalExportVo.getCredentialNumber());

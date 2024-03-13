@@ -5,6 +5,7 @@ import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.peis.domain.TjTeamGroup;
 import org.fxkc.peis.domain.bo.TjTeamGroupBo;
+import org.fxkc.peis.domain.bo.TjTeamGroupProjectBo;
 import org.fxkc.peis.domain.bo.TjTeamGroupUpdateBo;
 import org.fxkc.peis.domain.vo.TjTeamGroupDetailVo;
 import org.fxkc.peis.domain.vo.TjTeamGroupVo;
@@ -52,5 +53,5 @@ public interface ITjTeamGroupService extends IService<TjTeamGroup> {
 
     void recordGroupInfo(List<TjTeamGroup> groupList);
 
-    Boolean updateGroupProjectInfo(List<TjTeamGroupUpdateBo> list);
+    Boolean updateGroupProjectInfo(TjTeamGroupProjectBo bo);
 }
