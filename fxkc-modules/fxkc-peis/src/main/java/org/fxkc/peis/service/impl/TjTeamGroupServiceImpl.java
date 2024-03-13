@@ -17,10 +17,7 @@ import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.peis.constant.ErrorCodeConstants;
 import org.fxkc.peis.domain.*;
-import org.fxkc.peis.domain.bo.TjTeamGroupBo;
-import org.fxkc.peis.domain.bo.TjTeamGroupItemBo;
-import org.fxkc.peis.domain.bo.TjTeamGroupProjectBo;
-import org.fxkc.peis.domain.bo.TjTeamGroupUpdateBo;
+import org.fxkc.peis.domain.bo.*;
 import org.fxkc.peis.domain.vo.TjTeamGroupDetailVo;
 import org.fxkc.peis.domain.vo.TjTeamGroupHazardsVo;
 import org.fxkc.peis.domain.vo.TjTeamGroupItemVo;
@@ -38,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 团检分组信息Service业务层处理
@@ -60,6 +58,8 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
     private final TjRegCombinationProjectMapper tjRegCombinationProjectMapper;
 
     private final TjPackageMapper tjPackageMapper;
+
+    private final List<String> otherHazardCode =  Arrays.asList("14999", "15999", "12999", "13999", "11999");
 
     /**
      * 查询团检分组信息
@@ -255,25 +255,28 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
         if(PhysicalTypeEnum.isOccupational(bo.getPhysicalType())) {
             Map<String, Object> enumMap = EnumUtil.getNameFieldMap(PhysicalTypeEnum.class, "desc");
             StringBuffer str = new StringBuffer();
-            list.stream().filter(e -> StrUtil.isBlank(e.getDutyStatus())).forEach(k -> {
-                str.append(k.getGroupName()).append("、");
-            });
+            list.stream().filter(e -> StrUtil.isBlank(e.getDutyStatus())).forEach(k ->
+                str.append(k.getGroupName()).append("、"));
             if(str.length() > 0) {
                 throw new PeisException(ErrorCodeConstants.PEIS_GROUP_DUTY_STATUS_NOT_EMPTY,
                     enumMap.get(bo.getPhysicalType()), str.deleteCharAt(str.length() - 1));
             }
-            list.stream().filter(e -> CollUtil.isEmpty(e.getGroupHazardsList())).forEach(k -> {
-                str.append(k.getGroupName()).append("、");
-            });
+            list.stream().filter(e -> CollUtil.isEmpty(e.getGroupHazardsList())).forEach(k ->
+                str.append(k.getGroupName()).append("、"));
             if(str.length() > 0) {
                 throw new PeisException(ErrorCodeConstants.PEIS_GROUP_HAZARD_NOT_EMPTY,
                     enumMap.get(bo.getPhysicalType()), str.deleteCharAt(str.length() - 1));
             }
+            list.stream().filter(e -> e.getGroupHazardsList().stream().anyMatch(s ->
+                    otherHazardCode.contains(s.getHazardFactorsCode()) && StrUtil.isBlank(s.getHazardFactorsOther())))
+                .distinct().forEach(k -> str.append(k.getGroupName()).append("、"));
+            if(str.length() > 0) {
+                throw new PeisException(ErrorCodeConstants.PEIS_GROUP_OTHER_HAZARD_NOT_EMPTY,
+                    enumMap.get(bo.getPhysicalType()), str.deleteCharAt(str.length() - 1));
+            }
             if(Objects.equals(bo.getPhysicalType(), PhysicalTypeEnum.FSTJ.name())) {
                 list.stream().filter(e -> StrUtil.isBlank(e.getShineSource()) ||
-                    StrUtil.isBlank(e.getShineType())).forEach(k -> {
-                    str.append(k.getGroupName()).append("、");
-                });
+                    StrUtil.isBlank(e.getShineType())).forEach(k -> str.append(k.getGroupName()).append("、"));
                 if(str.length() > 0) {
                     throw new PeisException(ErrorCodeConstants.PEIS_GROUP_SHINE_NOT_EMPTY, str.deleteCharAt(str.length() - 1));
                 }
@@ -319,4 +322,5 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
         }
         return baseMapper.updateBatchById(groupList);
     }
+
 }

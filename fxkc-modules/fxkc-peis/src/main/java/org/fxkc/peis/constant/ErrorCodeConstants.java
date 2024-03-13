@@ -85,4 +85,7 @@ public interface ErrorCodeConstants {
 
     String PEIS_GROUP_SHINE_NOT_EMPTY = "peis.group.shine.not.empty";
 
+
+    String PEIS_GROUP_OTHER_HAZARD_NOT_EMPTY = "peis.group.other.hazard.not.empty";
+
 }
