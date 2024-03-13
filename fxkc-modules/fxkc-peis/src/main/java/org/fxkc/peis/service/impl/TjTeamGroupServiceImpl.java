@@ -260,14 +260,14 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
             });
             if(str.length() > 0) {
                 throw new PeisException(ErrorCodeConstants.PEIS_GROUP_DUTY_STATUS_NOT_EMPTY,
-                    new Object[]{enumMap.get(bo.getPhysicalType()),  str.deleteCharAt(str.length() - 1)});
+                    enumMap.get(bo.getPhysicalType()), str.deleteCharAt(str.length() - 1));
             }
             list.stream().filter(e -> CollUtil.isEmpty(e.getGroupHazardsList())).forEach(k -> {
                 str.append(k.getGroupName()).append("、");
             });
             if(str.length() > 0) {
                 throw new PeisException(ErrorCodeConstants.PEIS_GROUP_HAZARD_NOT_EMPTY,
-                    new Object[]{enumMap.get(bo.getPhysicalType()),  str.deleteCharAt(str.length() - 1)});
+                    enumMap.get(bo.getPhysicalType()), str.deleteCharAt(str.length() - 1));
             }
             if(Objects.equals(bo.getPhysicalType(), PhysicalTypeEnum.FSTJ.name())) {
                 list.stream().filter(e -> StrUtil.isBlank(e.getShineSource()) ||
