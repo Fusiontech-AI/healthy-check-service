@@ -182,6 +182,13 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
             TjRegisterZyb tjRegisterZyb = MapstructUtils.convert(bo.getTjRegisterZybBo(), TjRegisterZyb.class);
             tjRegisterZybMapper.updateById(tjRegisterZyb);
         }
+
+        if(CollUtil.isNotEmpty(bo.getTjRegisterZybHazardBos())){
+            tjRegisterZybHazardMapper.delete(new LambdaQueryWrapper<TjRegisterZybHazard>()
+                .eq(TjRegisterZybHazard::getRegId,bo.getId()));
+            List<TjRegisterZybHazard> tjRegisterZybHazardList = MapstructUtils.convert(bo.getTjRegisterZybHazardBos(), TjRegisterZybHazard.class);
+            tjRegisterZybHazardMapper.insertBatch(tjRegisterZybHazardList);
+        }
         //不应在这里修改体检人员照片信息
         update.setUserImage(null);
 

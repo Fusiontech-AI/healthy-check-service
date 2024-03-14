@@ -15,6 +15,7 @@ import org.fxkc.peis.domain.TjRegister;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 体检人员登记信息业务对象 tj_register
@@ -501,4 +502,9 @@ public class TjRegisterBo extends BaseEntity {
      */
     @Valid
     private TjRegisterZybBo tjRegisterZybBo;
+
+    /**
+     * 职业病关联危害因素
+     */
+    private List<TjRegisterZybHazardBo> tjRegisterZybHazardBos;
 }
