@@ -1,5 +1,6 @@
 package org.fxkc.peis.domain.vo;
 
+import cn.hutool.core.date.DatePattern;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -445,6 +446,7 @@ public class TjRegisterVo implements Serializable {
      * 体检预约时间
      */
     @ExcelProperty(value = "体检预约时间")
+    @JsonFormat(pattern = DatePattern.NORM_DATE_PATTERN, timezone = "GMT+8")
     private Date healthyReserveTime;
 
     /**

@@ -1,7 +1,6 @@
 package org.fxkc.peis.domain.vo;
 
 import cn.hutool.core.date.DatePattern;
-import com.alibaba.excel.annotation.ExcelProperty;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
@@ -90,7 +89,7 @@ public class TjTaskReviewRegisterVo {
     /**
      * 体检预约时间
      */
-    @JsonFormat(pattern = DatePattern.NORM_DATE_PATTERN)
+    @JsonFormat(pattern = DatePattern.NORM_DATE_PATTERN, timezone = "GMT+8")
     private Date healthyReserveTime;
 
 

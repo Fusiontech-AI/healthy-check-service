@@ -143,6 +143,7 @@ public class TjRegisterAddBo {
     /**
      * 体检预约时间
      */
+    @JsonFormat(pattern = DatePattern.NORM_DATE_PATTERN, timezone = "GMT+8")
     private Date healthyReserveTime;
 
     /**
