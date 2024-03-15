@@ -42,19 +42,16 @@ public class RuleTjSetBo extends BaseEntity {
     /**
      * 适用项目规则类型 1功能检查
      */
-    @NotBlank(message = "适用项目规则类型 1功能检查不能为空", groups = { AddGroup.class, EditGroup.class })
     private String xmRuleType;
 
     /**
      * 规则表达式
      */
-    @NotBlank(message = "规则表达式不能为空", groups = { AddGroup.class, EditGroup.class })
     private String expression;
 
     /**
      * 分割符号(多个之间采用和字分割)
      */
-    @NotBlank(message = "分割符号(多个之间采用和字分割)不能为空", groups = { AddGroup.class, EditGroup.class })
     private String splitSymbol;
 
     /**
