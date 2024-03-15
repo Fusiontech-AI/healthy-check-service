@@ -180,7 +180,17 @@ public class TjTjksServiceImpl implements ITjTjksService {
             Map<Long, List<TjBasicProjectVo>> ksGroup = tjBasicProjects.stream().collect(Collectors.groupingBy(TjBasicProjectVo::getKsId));
 
             tjTjksBasicNameVos.stream().forEach(m->{
-                m.setBasicProjectVos(ksGroup.get(m.getId()));
+                List<TjBasicProjectVo> tjBasicProjectVos = ksGroup.get(m.getId());
+                if(CollUtil.isNotEmpty(tjBasicProjectVos)){
+                    List<TjTjksBasicNameVo> collect = tjBasicProjectVos.stream().map(basicProjectVo -> {
+                        TjTjksBasicNameVo vo = new TjTjksBasicNameVo();
+                        vo.setId(basicProjectVo.getId());
+                        vo.setKsCode(basicProjectVo.getBasicProjectCode());
+                        vo.setKsName(basicProjectVo.getBasicProjectName());
+                        return vo;
+                    }).collect(Collectors.toList());
+                    m.setChildren(collect);
+                }
             });
         };
         return tjTjksBasicNameVos;

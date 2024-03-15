@@ -41,6 +41,6 @@ public class TjTjksBasicNameVo implements Serializable {
     private String ksName;
 
 
-    private List<TjBasicProjectVo> basicProjectVos;
+    private List<TjTjksBasicNameVo> children;
 
 }
