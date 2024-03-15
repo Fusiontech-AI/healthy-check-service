@@ -15,6 +15,8 @@ import org.fxkc.common.core.exception.ServiceException;
 import org.fxkc.common.core.utils.MapstructUtils;
 import org.fxkc.common.core.utils.StreamUtils;
 import org.fxkc.common.core.utils.StringUtils;
+import org.fxkc.common.log.enums.TjRecordLogEnum;
+import org.fxkc.common.log.event.TjRecordLogEvent;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.oss.core.OssClient;
@@ -35,6 +37,7 @@ import org.fxkc.peis.register.insert.RegisterInsertHolder;
 import org.fxkc.peis.register.insert.RegisterInsertService;
 import org.fxkc.peis.service.ITjPackageService;
 import org.fxkc.peis.service.ITjRegisterService;
+import org.fxkc.peis.utils.TjLogUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -78,6 +81,7 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
 
     private final ITjPackageService tjPackageService;
 
+    protected final TjLogUtils tjLogUtils;
     /**
      * 查询体检人员登记信息
      */
@@ -192,6 +196,13 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
         //不应在这里修改体检人员照片信息
         update.setUserImage(null);
 
+        TjRecordLogEvent recordLogEvent = TjRecordLogEvent.builder().healthyCheckCode(update.getHealthyCheckCode())
+            .credentialNumber(update.getCredentialNumber())
+            .name(update.getName())
+            .operType(TjRecordLogEnum.OPER_TYPE_RYXG.getDesc())
+            .operDesc(TjRecordLogEnum.OPER_TYPE_RYXG.getDesc()).build();
+        tjLogUtils.print(recordLogEvent);
+
         return baseMapper.updateById(update) > 0;
     }
 
@@ -201,6 +212,15 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
      */
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
+        List<TjRegister> tjRegisters = baseMapper.selectBatchIds(ids);
+        tjRegisters.stream().forEach(register->{
+            TjRecordLogEvent recordLogEvent = TjRecordLogEvent.builder().healthyCheckCode(register.getHealthyCheckCode())
+                .credentialNumber(register.getCredentialNumber())
+                .name(register.getName())
+                .operType(TjRecordLogEnum.OPER_TYPE_RYSC.getDesc())
+                .operDesc(TjRecordLogEnum.OPER_TYPE_RYSC.getDesc()).build();
+            tjLogUtils.print(recordLogEvent);
+        });
         return baseMapper.deleteBatchIds(ids) > 0;
     }
 

@@ -3,6 +3,8 @@ package org.fxkc.peis.register.change.impl;
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.fxkc.common.log.enums.TjRecordLogEnum;
+import org.fxkc.common.log.event.TjRecordLogEvent;
 import org.fxkc.common.satoken.utils.LoginHelper;
 import org.fxkc.peis.domain.TjRegCombinationProject;
 import org.fxkc.peis.domain.TjRegister;
@@ -64,5 +66,12 @@ public class ReportChangeImpl extends AbstractRegisterChange {
         tjRegister.setRegisterTime(new Date());//更新登记时间
         tjRegister.setRegisterDoctorId(LoginHelper.getUserId());//更新登记人id
         tjRegisterMapper.updateById(tjRegister);
+
+        TjRecordLogEvent recordLogEvent = TjRecordLogEvent.builder().healthyCheckCode(tjRegister.getHealthyCheckCode())
+            .credentialNumber(tjRegister.getCredentialNumber())
+            .name(tjRegister.getName())
+            .operType(TjRecordLogEnum.OPER_TYPE_RYBD.getDesc())
+            .operDesc(TjRecordLogEnum.OPER_TYPE_RYBD.getDesc()).build();
+        tjLogUtils.print(recordLogEvent);
     }
 }

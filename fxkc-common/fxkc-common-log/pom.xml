@@ -37,6 +37,10 @@
             <artifactId>dubbo-spring-boot-starter</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.fxkc</groupId>
+            <artifactId>fxkc-api-peis</artifactId>
+        </dependency>
 
     </dependencies>
 

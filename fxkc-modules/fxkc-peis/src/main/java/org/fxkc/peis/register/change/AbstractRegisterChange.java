@@ -10,6 +10,7 @@ import org.fxkc.peis.domain.bo.TjRegCombinAddBo;
 import org.fxkc.peis.domain.bo.TjRegCombinItemBo;
 import org.fxkc.peis.enums.CheckStatusEnum;
 import org.fxkc.peis.mapper.*;
+import org.fxkc.peis.utils.TjLogUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
@@ -41,6 +42,10 @@ public abstract class AbstractRegisterChange implements RegisterChangeService {
 
     @Autowired
     protected TjCombinationProjectMapper tjCombinationProjectMapper;
+
+    @Autowired
+    protected TjLogUtils tjLogUtils;
+
     @PostConstruct
     public void init() {
         registerChangeHolder.putBuilder(operateCode, this);

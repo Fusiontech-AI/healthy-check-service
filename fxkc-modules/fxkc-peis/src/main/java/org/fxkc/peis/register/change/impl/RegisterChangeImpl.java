@@ -2,6 +2,8 @@ package org.fxkc.peis.register.change.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.fxkc.common.log.enums.TjRecordLogEnum;
+import org.fxkc.common.log.event.TjRecordLogEvent;
 import org.fxkc.common.satoken.utils.LoginHelper;
 import org.fxkc.peis.domain.TjRegister;
 import org.fxkc.peis.domain.bo.TjRegCombinAddBo;
@@ -48,5 +50,11 @@ public class RegisterChangeImpl extends AbstractRegisterChange {
         tjRegister.setRegisterTime(new Date());//更新登记时间
         tjRegister.setRegisterDoctorId(LoginHelper.getUserId());//更新登记人id
         tjRegisterMapper.updateById(tjRegister);
+        TjRecordLogEvent recordLogEvent = TjRecordLogEvent.builder().healthyCheckCode(tjRegister.getHealthyCheckCode())
+            .credentialNumber(tjRegister.getCredentialNumber())
+            .name(tjRegister.getName())
+            .operType(TjRecordLogEnum.OPER_TYPE_XMDJ.getDesc())
+            .operDesc(TjRecordLogEnum.OPER_TYPE_XMDJ.getDesc()).build();
+        tjLogUtils.print(recordLogEvent);
     }
 }

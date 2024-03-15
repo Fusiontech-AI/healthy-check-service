@@ -7,6 +7,8 @@ import org.fxkc.common.core.utils.MapstructUtils;
 import org.fxkc.common.core.utils.PinYinUtil;
 import org.fxkc.common.core.utils.SequenceNoUtils;
 import org.fxkc.common.core.utils.StringUtils;
+import org.fxkc.common.log.enums.TjRecordLogEnum;
+import org.fxkc.common.log.event.TjRecordLogEvent;
 import org.fxkc.common.satoken.utils.LoginHelper;
 import org.fxkc.peis.constant.ErrorCodeConstants;
 import org.fxkc.peis.domain.TjArchives;
@@ -17,6 +19,7 @@ import org.fxkc.peis.exception.PeisException;
 import org.fxkc.peis.mapper.TjArchivesMapper;
 import org.fxkc.peis.mapper.TjRegisterMapper;
 import org.fxkc.peis.service.ITjRegisterService;
+import org.fxkc.peis.utils.TjLogUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
@@ -40,6 +43,9 @@ public abstract class AbstractRegisterInsert implements RegisterInsertService{
     @Autowired
     protected TjArchivesMapper tjArchivesMapper;
 
+    @Autowired
+    protected TjLogUtils tjLogUtils;
+
     @PostConstruct
     public void init() {
         registerInsertHolder.putBuilder(operateCode, this);
@@ -53,6 +59,12 @@ public abstract class AbstractRegisterInsert implements RegisterInsertService{
         tjRegisters.stream().forEach(m->{
             fillArchives(m, tjArchivesList);
             fillCommonField(m);
+            TjRecordLogEvent recordLogEvent = TjRecordLogEvent.builder().healthyCheckCode(m.getHealthyCheckCode())
+                .credentialNumber(m.getCredentialNumber())
+                .name(m.getName())
+                .operType(TjRecordLogEnum.OPER_TYPE_RYDJ.getDesc())
+                .operDesc(TjRecordLogEnum.OPER_TYPE_RYDJ.getDesc()).build();
+            tjLogUtils.print(recordLogEvent);
         });
         tjRegisterMapper.insertBatch(tjRegisters);
         if(CollUtil.isNotEmpty(tjArchivesList)) {

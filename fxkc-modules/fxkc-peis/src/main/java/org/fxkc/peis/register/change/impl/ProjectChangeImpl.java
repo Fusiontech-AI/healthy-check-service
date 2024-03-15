@@ -1,6 +1,8 @@
 package org.fxkc.peis.register.change.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.fxkc.common.log.enums.TjRecordLogEnum;
+import org.fxkc.common.log.event.TjRecordLogEvent;
 import org.fxkc.peis.domain.TjRegister;
 import org.fxkc.peis.domain.bo.TjRegCombinAddBo;
 import org.fxkc.peis.enums.HealthyCheckTypeEnum;
@@ -35,5 +37,11 @@ public class ProjectChangeImpl extends AbstractRegisterChange {
     public void changeAfterUpdate(TjRegCombinAddBo tjRegCombinAddBo,TjRegister tjRegister) {
         super.changeAfterUpdate(tjRegCombinAddBo,tjRegister);
         tjRegisterMapper.updateById(tjRegister);
+        TjRecordLogEvent recordLogEvent = TjRecordLogEvent.builder().healthyCheckCode(tjRegister.getHealthyCheckCode())
+            .credentialNumber(tjRegister.getCredentialNumber())
+            .name(tjRegister.getName())
+            .operType(TjRecordLogEnum.OPER_TYPE_XMBG.getDesc())
+            .operDesc(TjRecordLogEnum.OPER_TYPE_XMBG.getDesc()).build();
+        tjLogUtils.print(recordLogEvent);
     }
 }

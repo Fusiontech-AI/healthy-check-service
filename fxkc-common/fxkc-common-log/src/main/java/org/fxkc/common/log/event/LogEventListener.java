@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.http.useragent.UserAgent;
 import cn.hutool.http.useragent.UserAgentUtil;
+import domain.RemoteTjRecordLogBo;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -12,6 +13,7 @@ import org.fxkc.common.core.utils.ServletUtils;
 import org.fxkc.common.core.utils.StringUtils;
 import org.fxkc.common.core.utils.ip.AddressUtils;
 import org.fxkc.common.satoken.utils.LoginHelper;
+import org.fxkc.peis.api.RemoteTjRecordLogService;
 import org.fxkc.system.api.RemoteClientService;
 import org.fxkc.system.api.RemoteLogService;
 import org.fxkc.system.api.domain.bo.RemoteLogininforBo;
@@ -34,6 +36,9 @@ public class LogEventListener {
     private RemoteLogService remoteLogService;
     @DubboReference
     private RemoteClientService remoteClientService;
+    @DubboReference
+    private RemoteTjRecordLogService remoteTjRecordLogService;
+
 
     /**
      * 保存系统日志记录
@@ -91,6 +96,16 @@ public class LogEventListener {
             logininfor.setStatus(Constants.FAIL);
         }
         remoteLogService.saveLogininfor(logininfor);
+    }
+
+    /**
+     * 保存体检操作记录日志
+     */
+    @Async
+    @EventListener
+    public void saveTjRecordLog(TjRecordLogEvent tjRecordLogEvent) {
+        RemoteTjRecordLogBo recordLogBo = BeanUtil.toBean(tjRecordLogEvent, RemoteTjRecordLogBo.class);
+        remoteTjRecordLogService.saveTjRecordLog(recordLogBo);
     }
 
     private String getBlock(Object msg) {
