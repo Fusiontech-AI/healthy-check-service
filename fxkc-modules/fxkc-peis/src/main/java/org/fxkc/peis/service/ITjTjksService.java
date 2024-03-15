@@ -3,6 +3,7 @@ package org.fxkc.peis.service;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.peis.domain.bo.TjTjksBo;
+import org.fxkc.peis.domain.vo.TjTjksBasicNameVo;
 import org.fxkc.peis.domain.vo.TjTjksVo;
 
 import java.util.Collection;
@@ -47,4 +48,6 @@ public interface ITjTjksService {
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
 
     String getKsCode();
+
+    List<TjTjksBasicNameVo> queryTjKsListByBasicName(String basicProjectName);
 }

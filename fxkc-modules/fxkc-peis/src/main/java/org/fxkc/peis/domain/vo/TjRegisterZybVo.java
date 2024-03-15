@@ -123,6 +123,11 @@ public class TjRegisterZybVo implements Serializable {
     private String dxResult;
 
     /**
+     * 其他工种名称
+     */
+    private String otherJobName;
+
+    /**
      * 职业病危害因素关联响应信息
      */
     private List<TjRegisterZybHazardVo> tjRegisterZybHazardVos;
