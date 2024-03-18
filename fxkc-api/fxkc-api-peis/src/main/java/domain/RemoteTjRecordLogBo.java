@@ -59,4 +59,13 @@ public class RemoteTjRecordLogBo implements Serializable {
      */
     private String createName;
 
+    /**
+     * 创建部门
+     */
+    private Long createDept;
+
+    /**
+     * 创建者
+     */
+    private Long createBy;
 }
