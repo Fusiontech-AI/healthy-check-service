@@ -76,8 +76,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where a.del_flag = '0'
         and a.status = '0'
         <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.name)">
-            and a.package_name like concat(concat('%',#{name}),'%')  or
-            a.py_simple_code like concat(concat('%',#{name}),'%')
+            and a.package_name like concat(concat('%',#{bo.name}),'%')  or
+            a.py_simple_code like concat(concat('%',#{bo.name}),'%')
         </if>
         <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.physicalType)">
             and a.tj_type = #{bo.physicalType}
