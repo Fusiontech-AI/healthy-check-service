@@ -294,6 +294,31 @@ public class TjCombinationProjectServiceImpl implements ITjCombinationProjectSer
 
     }
 
+    @Override
+    public TableDataInfo<TjCombinationProjectListVo> queryOccupationalProject(TjCompulsoryInspectionProjectBo bo) {
+        Page<TjCombinationProjectVo> result = baseMapper.selectVoPage(bo.build(), Wrappers.lambdaQuery(TjCombinationProject.class)
+            .eq(TjCombinationProject::getStatus, CommonConstants.NORMAL)
+            .like(StrUtil.isNotBlank(bo.getCombinProjectName()), TjCombinationProject::getCombinProjectName, bo.getCombinProjectName()));
+        List<TjCombinationProjectInfo> infoList = combinationProjectInfoMapper.selectList(Wrappers.lambdaQuery(TjCombinationProjectInfo.class)
+            .in(TjCombinationProjectInfo::getBasicProjectId, bo.getItemIdList()));
+        List<Long> combinIds = infoList.stream().map(TjCombinationProjectInfo::getCombinProjectId).distinct().toList();
+        List<TjCombinationProjectListVo> voList = MapstructUtils.convert(result.getRecords(),
+            TjCombinationProjectListVo.class);
+        if(CollUtil.isNotEmpty(result.getRecords())) {
+            List<TjCombinationProjectInfoItemBo> basicProjectBycombinIds = baseMapper.getBasicProjectBycombinIds(
+                StreamUtils.toList(result.getRecords(), TjCombinationProjectVo::getId));
+            Map<Long, List<TjCombinationProjectInfoItemBo>> listMap = basicProjectBycombinIds.stream().collect(
+                Collectors.groupingBy(TjCombinationProjectInfoItemBo::getCombinProjectId,
+                Collectors.mapping(Function.identity(), Collectors.toList())));
+            voList.forEach(k -> k.setInfoItemBos(listMap.get(k.getId())));
+        }
+        voList.forEach(k -> k.setRequired(combinIds.contains(k.getId())));
+        Page<TjCombinationProjectListVo> page = new Page<>();
+        page.setRecords(voList);
+        page.setTotal(result.getTotal());
+        return TableDataInfo.build(page);
+    }
+
     private static List<Long> findMinCompositeProjects(List<Long> baseProjects, Map<Long, List<Long>> compositeProjects) {
         List<Long> minCompositeProjects = CollUtil.newArrayList();
         Set<Long> remainingBaseProjects = CollUtil.newHashSet(baseProjects);

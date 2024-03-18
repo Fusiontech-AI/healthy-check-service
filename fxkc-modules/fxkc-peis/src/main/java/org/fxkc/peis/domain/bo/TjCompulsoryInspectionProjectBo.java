@@ -2,11 +2,12 @@ package org.fxkc.peis.domain.bo;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
+import org.fxkc.common.mybatis.core.page.PageQuery;
 
 import java.util.List;
 
 @Data
-public class TjCompulsoryInspectionProjectBo {
+public class TjCompulsoryInspectionProjectBo extends PageQuery {
 
 
     /**
@@ -20,8 +21,4 @@ public class TjCompulsoryInspectionProjectBo {
      */
     private String combinProjectName;
 
-    /**
-     * 是否为最小组合项目
-     */
-    private String isMin;
 }
