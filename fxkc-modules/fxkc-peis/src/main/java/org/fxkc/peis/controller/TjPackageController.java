@@ -16,9 +16,7 @@ import org.fxkc.common.log.enums.BusinessType;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.web.core.BaseController;
-import org.fxkc.peis.domain.bo.AmountCalculationBo;
-import org.fxkc.peis.domain.bo.TjPackageAddBo;
-import org.fxkc.peis.domain.bo.TjPackageBo;
+import org.fxkc.peis.domain.bo.*;
 import org.fxkc.peis.domain.vo.AmountCalculationVo;
 import org.fxkc.peis.domain.vo.PackageAndProjectVo;
 import org.fxkc.peis.domain.vo.TjPackageVo;
@@ -153,8 +151,17 @@ public class TjPackageController extends BaseController {
     /**
      * 套餐下项目信息查询
      */
-    @GetMapping("queryProjectByPackageId")
-    public R<List<PackageAndProjectVo>> queryProjectByPackageId(@RequestParam("packageId")@NotNull(message = "套餐id不能为空") Long packageId) {
-        return R.ok(tjPackageService.queryProjectByPackageId(packageId));
+    @PostMapping("queryProjectByPackageId")
+    public R<List<PackageAndProjectVo>> queryProjectByPackageId(@RequestBody @Valid TjProjectPackageBo bo) {
+        return R.ok(tjPackageService.queryProjectByPackageId(bo));
     }
+
+    /**
+     * 查询职业病推荐套餐和职业病项目套餐
+     */
+    @PostMapping("/queryOccupationalPackage")
+    public TableDataInfo<PackageAndProjectVo> queryOccupationalPackage(@RequestBody @Valid TjOccupationalPackageBo bo) {
+        return tjPackageService.queryOccupationalPackage(bo);
+    }
+
 }

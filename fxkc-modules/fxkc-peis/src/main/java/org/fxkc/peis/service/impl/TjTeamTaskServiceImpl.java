@@ -124,7 +124,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
             lqw.ge(TjTeamTask::getSignDate, DateUtil.parseDate(bo.getSignBeginDate()));
         }
         if(StrUtil.isNotBlank(bo.getSignEndDate())) {
-            lqw.le(TjTeamTask::getSignDate, DateUtil.parseDate(bo.getSignBeginDate()));
+            lqw.le(TjTeamTask::getSignDate, DateUtil.parseDate(bo.getSignEndDate()));
         }
         return lqw;
     }

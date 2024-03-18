@@ -15,9 +15,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.fxkc.common.core.constant.CommonConstants;
 import org.fxkc.common.core.exception.ServiceException;
 import org.fxkc.common.core.utils.MapstructUtils;
+import org.fxkc.common.core.utils.StreamUtils;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.peis.constant.ErrorCodeConstants;
+import org.fxkc.peis.domain.TjCombinationProjectInfo;
 import org.fxkc.peis.domain.TjPackage;
 import org.fxkc.peis.domain.TjPackageHazards;
 import org.fxkc.peis.domain.TjPackageInfo;
@@ -29,6 +31,7 @@ import org.fxkc.peis.domain.vo.TjPackageVo;
 import org.fxkc.peis.enums.PhysicalTypeEnum;
 import org.fxkc.peis.exception.PeisException;
 import org.fxkc.peis.liteflow.context.AmountCalculationContext;
+import org.fxkc.peis.mapper.TjCombinationProjectInfoMapper;
 import org.fxkc.peis.mapper.TjPackageHazardsMapper;
 import org.fxkc.peis.mapper.TjPackageInfoMapper;
 import org.fxkc.peis.mapper.TjPackageMapper;
@@ -57,6 +60,8 @@ public class TjPackageServiceImpl implements ITjPackageService {
     private final FlowExecutor flowExecutor;
 
     private final TjPackageHazardsMapper tjPackageHazardsMapper;
+
+    private final TjCombinationProjectInfoMapper tjCombinationProjectInfoMapper;
 
     /**
      * 查询体检套餐
@@ -369,8 +374,14 @@ public class TjPackageServiceImpl implements ITjPackageService {
     }
 
     @Override
-    public List<PackageAndProjectVo> queryProjectByPackageId(Long packageId) {
-        List<PackageAndProjectVo> projectVos = baseMapper.queryProjectByPackageId(packageId);
+    public List<PackageAndProjectVo> queryProjectByPackageId(TjProjectPackageBo bo) {
+        List<PackageAndProjectVo> projectVos = baseMapper.queryProjectByPackageId(bo.getPackageId());
+        if(CollUtil.isNotEmpty(bo.getBasicProjectId())) {
+            List<TjCombinationProjectInfo> combinationList = tjCombinationProjectInfoMapper.selectList(Wrappers.lambdaQuery(TjCombinationProjectInfo.class)
+                .in(TjCombinationProjectInfo::getBasicProjectId, bo.getBasicProjectId()));
+            List<Long> combinationIds = StreamUtils.toList(combinationList, TjCombinationProjectInfo::getId);
+            projectVos.forEach(k -> k.setRequired(combinationIds.contains(k.getId())));
+        }
         return projectVos;
     }
 
@@ -380,6 +391,11 @@ public class TjPackageServiceImpl implements ITjPackageService {
             return new ArrayList<>();
         }
         return this.baseMapper.queryListByIds(packageList);
+    }
+
+    @Override
+    public TableDataInfo<PackageAndProjectVo> queryOccupationalPackage(TjOccupationalPackageBo bo) {
+        return TableDataInfo.build(baseMapper.queryOccupationalPackage(bo.build(), bo));
     }
 
 

@@ -1,6 +1,5 @@
 package org.fxkc.peis.domain.bo;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
@@ -20,4 +19,9 @@ public class TjCompulsoryInspectionProjectBo {
      * 组合项目名称
      */
     private String combinProjectName;
+
+    /**
+     * 是否为最小组合项目
+     */
+    private String isMin;
 }
