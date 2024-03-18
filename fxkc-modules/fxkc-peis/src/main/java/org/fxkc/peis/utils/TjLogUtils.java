@@ -22,6 +22,9 @@ public class TjLogUtils  {
     public void print(TjRecordLogEvent tjRecordLogEvent) {
         LoginUser loginUser = LoginHelper.getLoginUser();
         tjRecordLogEvent.setCreateName(loginUser.getUsername());
+        tjRecordLogEvent.setCreateBy(loginUser.getUserId());
+        tjRecordLogEvent.setCreateDept(loginUser.getDeptId());
+        tjRecordLogEvent.setTenantId(loginUser.getTenantId());
         // 发布事件保存数据库
         SpringUtils.context().publishEvent(tjRecordLogEvent);
     }
