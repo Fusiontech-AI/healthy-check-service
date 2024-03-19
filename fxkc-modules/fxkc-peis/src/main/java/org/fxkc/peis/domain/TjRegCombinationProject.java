@@ -3,8 +3,10 @@ package org.fxkc.peis.domain;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.github.linpeilie.annotations.AutoMapper;
 import lombok.*;
 import org.fxkc.common.tenant.core.TenantEntity;
+import org.fxkc.peis.domain.bo.TjRegCombinItemBo;
 
 import java.io.Serial;
 import java.math.BigDecimal;
@@ -22,6 +24,7 @@ import java.util.Date;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @TableName("tj_reg_combination_project")
+@AutoMapper(target = TjRegCombinItemBo.class, reverseConvertGenerate = false)
 public class TjRegCombinationProject extends TenantEntity {
 
     @Serial

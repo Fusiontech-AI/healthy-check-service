@@ -33,8 +33,11 @@ import org.fxkc.peis.enums.PhysicalTypeEnum;
 import org.fxkc.peis.exception.PeisException;
 import org.fxkc.peis.listener.TjTaskImportListener;
 import org.fxkc.peis.mapper.*;
+import org.fxkc.peis.register.change.RegisterChangeHolder;
+import org.fxkc.peis.register.change.RegisterChangeService;
 import org.fxkc.peis.register.insert.RegisterInsertHolder;
 import org.fxkc.peis.register.insert.RegisterInsertService;
+import org.fxkc.peis.service.ITjRegisterService;
 import org.fxkc.peis.service.ITjTeamGroupService;
 import org.fxkc.peis.service.ITjTeamInfoService;
 import org.fxkc.peis.service.ITjTeamTaskService;
@@ -64,6 +67,8 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
 
     private final TjRegisterMapper tjRegisterMapper;
 
+    private final ITjRegisterService tjRegisterService;
+
     private final ITjTeamGroupService iTjTeamGroupService;
 
     private final RegisterInsertHolder registerInsertHolder;
@@ -74,6 +79,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
 
     private final TjRegCombinationProjectMapper tjRegCombinationProjectMapper;
 
+    private final RegisterChangeHolder registerChangeHolder;
     /**
      * 查询团检任务管理
      */
@@ -434,16 +440,11 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
         if(CollUtil.isNotEmpty(groupIdList)) {
             List<TjTeamGroupItem> itemList = tjTeamGroupItemMapper.selectList(Wrappers.lambdaQuery(TjTeamGroupItem.class)
                 .in(TjTeamGroupItem::getGroupId, groupIdList));
-            List<TjTeamGroup> groups = tjTeamGroupMapper.selectList(Wrappers.lambdaQuery(TjTeamGroup.class)
-                .in(TjTeamGroup::getId, groupIdList)
-                .eq(TjTeamGroup::getGroupType, GroupTypeEnum.ITEM.getCode()));
-            Map<Long, TjTeamGroup> groupMap = StreamUtils.toMap(groups, TjTeamGroup::getId, e -> e);
             Map<Long, List<TjTeamGroupItem>> itemMap = StreamUtils.groupByKey(itemList, TjTeamGroupItem::getGroupId);
-            List<TjRegCombinationProject> projectList = CollUtil.newArrayList();
-            List<TjRegister> priceRegisters = CollUtil.newArrayList();
             registers.forEach(k -> {
                 List<TjTeamGroupItem> groupItemList = itemMap.get(k.getTeamGroupId());
                 if(CollUtil.isNotEmpty(groupItemList)) {
+                    List<TjRegCombinationProject> projectList = CollUtil.newArrayList();
                     groupItemList.forEach(s ->
                         projectList.add(TjRegCombinationProject.builder()
                             .registerId(k.getId())
@@ -454,29 +455,26 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
                             .receivableAmount(s.getActualPrice())
                             .payMode("1")
                             .projectRequiredType(s.getRequired() ? "1" : "0")
-                            .teamAmount(s.getActualPrice())
+                            //.teamAmount(s.getActualPrice())
                             .build()));
-                    BigDecimal price = groupItemList.stream().map(TjTeamGroupItem::getActualPrice)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add);
-                    BigDecimal standardPrice = groupItemList.stream().map(TjTeamGroupItem::getStandardPrice)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add);
-                    TjTeamGroup group = groupMap.getOrDefault(k.getTeamGroupId(), null);
-                    priceRegisters.add(TjRegister.builder().id(k.getId())
-                        .totalAmount(price)
-                        .teamAmount(price)
-                        .totalStandardAmount(standardPrice)
-                        .discount(Objects.nonNull(group) ? group.getItemDiscount() : new BigDecimal(100))
-                        .build());
+                    AmountCalculationVo amountCalculationVo = tjRegisterService.billingByRegister(k, projectList);
+                    TjRegCombinAddBo addBo = new TjRegCombinAddBo();
+                    addBo.setRegisterId(k.getId());
+                    addBo.setStandardAmount(amountCalculationVo.getStandardAmount());
+                    addBo.setReceivableAmount(amountCalculationVo.getReceivableAmount());
+                    addBo.setPersonAmount(amountCalculationVo.getPersonAmount());
+                    addBo.setDiscount(amountCalculationVo.getDiscount());
+                    addBo.setTeamAmount(amountCalculationVo.getTeamAmount());
+                    addBo.setPaidTotalAmount(amountCalculationVo.getPaidTotalAmount());
+                    addBo.setPaidPersonAmount(amountCalculationVo.getPaidPersonAmount());
+                    addBo.setPaidTeamAmount(amountCalculationVo.getPaidTeamAmount());
+                    List<TjRegCombinItemBo> tjRegCombinItemBos = MapstructUtils.convert(projectList,TjRegCombinItemBo.class);
+                    addBo.setTjRegCombinItemBos(tjRegCombinItemBos);
+                    RegisterChangeService registerChangeService = registerChangeHolder.selectBuilder("4");//暂存
+                    registerChangeService.changeRegCombin(addBo);
                 }
             });
-            //项目分组生成项目
-            if(CollUtil.isNotEmpty(projectList)) {
-                tjRegCombinationProjectMapper.insertBatch(projectList);
-            }
-            //更新项目分组金额
-            if(CollUtil.isNotEmpty(priceRegisters)) {
-                tjRegisterMapper.updateBatchById(priceRegisters);
-            }
+
         }
 
     }

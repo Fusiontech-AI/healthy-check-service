@@ -414,9 +414,13 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
             }
         });
 
+        List<TjRegCombinationProject> combinationProjects = tjRegCombinationProjectMapper.selectList(new LambdaQueryWrapper<TjRegCombinationProject>()
+            .in(TjRegCombinationProject::getRegisterId, bo.getRegIds()));
+
+        Map<Long, List<TjRegCombinationProject>> listMap = combinationProjects.stream().collect(Collectors.groupingBy(TjRegCombinationProject::getRegisterId));
 
         List<TjRegister> registers = tjRegisters.stream().map(tjRegister -> {
-            AmountCalculationVo amountCalculationVo = billingByRegister(tjRegister);
+            AmountCalculationVo amountCalculationVo = billingByRegister(tjRegister,listMap.get(tjRegister.getId()));
             TjRegister register = new TjRegister();
             register.setId(tjRegister.getId());
             register.setBusinessCategory("1");
@@ -447,10 +451,14 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
             }
         });
 
+        List<TjRegCombinationProject> combinationProjects = tjRegCombinationProjectMapper.selectList(new LambdaQueryWrapper<TjRegCombinationProject>()
+            .in(TjRegCombinationProject::getRegisterId, bo.getRegIds()));
+
+        Map<Long, List<TjRegCombinationProject>> listMap = combinationProjects.stream().collect(Collectors.groupingBy(TjRegCombinationProject::getRegisterId));
 
         List<TjRegister> registers = tjRegisters.stream().map(tjRegister -> {
             tjRegister.setTeamGroupId(bo.getTeamGroupId());
-            AmountCalculationVo amountCalculationVo = billingByRegister(tjRegister);
+            AmountCalculationVo amountCalculationVo = billingByRegister(tjRegister,listMap.get(tjRegister.getId()));
             TjRegister register = new TjRegister();
             register.setId(tjRegister.getId());
             register.setBusinessCategory("2");
@@ -472,10 +480,8 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
     }
 
     @Override
-    public AmountCalculationVo billingByRegister(TjRegister tjRegister) {
+    public AmountCalculationVo billingByRegister(TjRegister tjRegister,List<TjRegCombinationProject> combinationProjects) {
         //组装算费请求对象 重新计算相关费用情况并更新
-        List<TjRegCombinationProject> combinationProjects = tjRegCombinationProjectMapper.selectList(new LambdaQueryWrapper<TjRegCombinationProject>()
-            .eq(TjRegCombinationProject::getRegisterId, tjRegister.getId()));
         if(CollUtil.isEmpty(combinationProjects)){
             //直接返回都是金额0和折扣默认100的初始值信息。
             AmountCalculationVo amountCalculationVo = new AmountCalculationVo();

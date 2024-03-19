@@ -62,6 +62,9 @@ public abstract class AbstractRegisterChange implements RegisterChangeService {
         //后置信息更新
         TjRegister updateRegister = new TjRegister();
         updateRegister.setId(tjRegCombinAddBo.getRegisterId());
+        updateRegister.setHealthyCheckCode(tjRegister.getHealthyCheckCode());
+        updateRegister.setCredentialNumber(tjRegister.getCredentialNumber());
+        updateRegister.setName(tjRegister.getName());
         changeAfterUpdate(tjRegCombinAddBo,updateRegister);
     }
 
