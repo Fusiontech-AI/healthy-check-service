@@ -36,6 +36,11 @@ public class TjGroupVerifyPackageBo {
     private BigDecimal addDiscount;
 
     /**
+     * 实际折扣
+     */
+    private BigDecimal discount;
+
+    /**
      * 是否同步项目(0:是1:否)
      */
     @NotBlank(message = "是否同步项目不能为空")

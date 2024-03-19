@@ -1,18 +1,15 @@
 package org.fxkc.peis.domain.bo;
 
-import cn.hutool.core.collection.CollUtil;
-import org.fxkc.common.core.validate.AddGroup;
-import org.fxkc.common.core.validate.EditGroup;
-import org.fxkc.peis.domain.TjTeamGroup;
-import org.fxkc.common.mybatis.core.domain.BaseEntity;
 import io.github.linpeilie.annotations.AutoMapper;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import jakarta.validation.constraints.*;
-import org.fxkc.peis.domain.TjTeamGroupItem;
+import org.fxkc.common.core.validate.EditGroup;
+import org.fxkc.common.mybatis.core.domain.BaseEntity;
+import org.fxkc.peis.domain.TjTeamGroup;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * 团检分组信息业务对象 tj_team_group
@@ -99,6 +96,11 @@ public class TjTeamGroupBo extends BaseEntity {
      * 加项折扣
      */
     private BigDecimal addDiscount;
+
+    /**
+     * 实际折扣
+     */
+    private BigDecimal discount;
 
     /**
      * 是否同步项目(0:是1:否)

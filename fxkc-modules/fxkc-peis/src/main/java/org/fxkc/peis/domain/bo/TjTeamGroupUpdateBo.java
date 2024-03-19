@@ -1,14 +1,10 @@
 package org.fxkc.peis.domain.bo;
 
-import cn.hutool.core.collection.CollUtil;
 import io.github.linpeilie.annotations.AutoMapper;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import org.fxkc.common.core.validate.EditGroup;
-import org.fxkc.common.mybatis.core.domain.BaseEntity;
 import org.fxkc.peis.domain.TjTeamGroup;
 
 import java.math.BigDecimal;
@@ -58,6 +54,11 @@ public class TjTeamGroupUpdateBo {
      */
     @NotNull(message = "加项折扣不能为空")
     private BigDecimal addDiscount;
+
+    /**
+     * 实际折扣
+     */
+    private BigDecimal discount;
 
     /**
      * 是否同步项目(0:是1:否)
