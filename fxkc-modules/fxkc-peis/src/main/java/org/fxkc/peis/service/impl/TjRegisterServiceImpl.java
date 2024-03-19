@@ -420,7 +420,7 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
         Map<Long, List<TjRegCombinationProject>> listMap = combinationProjects.stream().collect(Collectors.groupingBy(TjRegCombinationProject::getRegisterId));
 
         List<TjRegister> registers = tjRegisters.stream().map(tjRegister -> {
-            AmountCalculationVo amountCalculationVo = billingByRegister(tjRegister,listMap.get(tjRegister.getId()));
+            AmountCalculationVo amountCalculationVo = billingByRegister(tjRegister,listMap.get(tjRegister.getId()),"1");
             TjRegister register = new TjRegister();
             register.setId(tjRegister.getId());
             register.setBusinessCategory("1");
@@ -458,7 +458,7 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
 
         List<TjRegister> registers = tjRegisters.stream().map(tjRegister -> {
             tjRegister.setTeamGroupId(bo.getTeamGroupId());
-            AmountCalculationVo amountCalculationVo = billingByRegister(tjRegister,listMap.get(tjRegister.getId()));
+            AmountCalculationVo amountCalculationVo = billingByRegister(tjRegister,listMap.get(tjRegister.getId()),"1");
             TjRegister register = new TjRegister();
             register.setId(tjRegister.getId());
             register.setBusinessCategory("2");
@@ -480,7 +480,7 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
     }
 
     @Override
-    public AmountCalculationVo billingByRegister(TjRegister tjRegister,List<TjRegCombinationProject> combinationProjects) {
+    public AmountCalculationVo billingByRegister(TjRegister tjRegister,List<TjRegCombinationProject> combinationProjects,String initFlag) {
         //组装算费请求对象 重新计算相关费用情况并更新
         if(CollUtil.isEmpty(combinationProjects)){
             //直接返回都是金额0和折扣默认100的初始值信息。
@@ -504,6 +504,7 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
             amountCalculationBo.setGroupFlag("1");
             TjTeamGroupVo teamGroupVo = getTjTeamGroupVoById(tjRegister.getTeamGroupId(), tjRegister.getId(),tjRegister.getHealthyCheckStatus());
             AmountCalGroupBo amountCalGroupBo = new AmountCalGroupBo(teamGroupVo.getGroupType(),teamGroupVo.getPrice(),teamGroupVo.getGroupPayType(),teamGroupVo.getAddPayType(),teamGroupVo.getItemDiscount(),teamGroupVo.getAddDiscount());
+            amountCalGroupBo.setInitFlag(initFlag);
             amountCalculationBo.setAmountCalGroupBo(amountCalGroupBo);
         }
         //组装算费新增的记录信息参数

@@ -99,7 +99,7 @@ public interface ITjRegisterService {
      * @param tjRegister
      * @return
      */
-    AmountCalculationVo billingByRegister(TjRegister tjRegister,List<TjRegCombinationProject> combinationProjects);
+    AmountCalculationVo billingByRegister(TjRegister tjRegister,List<TjRegCombinationProject> combinationProjects,String initFlag);
 
     /**
      * 根据分组id和登记id查询分组信息 其中区分了是否同步

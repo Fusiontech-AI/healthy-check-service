@@ -338,28 +338,34 @@ public class TjPackageServiceImpl implements ITjPackageService {
         }
         for (int i = 0; i < addItems.size() ; i++) {
             AmountCalculationItemBo bo = addItems.get(i);
-            if(reduce.compareTo(amountCalGroupBo.getPrice())>=0){
-                //初始化计算前就超过了分组金额  当前和之后的全部走加项
-                addItems.get(i).setPayType(amountCalGroupBo.getAddPayType());
-                addItems.get(i).setDiscount(amountCalGroupBo.getAddDiscount());
+            if(Objects.equals("1",amountCalGroupBo.getInitFlag())){
+                //当前为初始化分组计费  不取分组信息的折扣信息 直接取子项即可
+                addItems.get(i).setPayType(amountCalGroupBo.getGroupPayType());
             }else{
-                reduce = reduce.add(bo.getReceivableAmount());
-                //存量的金额小于分组内金额 从当前和后续的支付方式 全部为分组内支付方式,分组内折扣
-                if(reduce.compareTo(amountCalGroupBo.getPrice())<=0){
-                    addItems.get(i).setPayType(amountCalGroupBo.getGroupPayType());
-                    addItems.get(i).setDiscount(amountCalGroupBo.getItemDiscount());
-                }else{
-                    //组内 和 组外支付方式不一样 才会有混合支付赋值
-                    if(i==0 && !Objects.equals(amountCalGroupBo.getAddPayType(),amountCalGroupBo.getGroupPayType())){
-                        addItems.get(i).setPayType("2");
-                        //混合支付时,需要把当前多余的金额计算出来当做加项支付。
-                        leftAmount = reduce.subtract(amountCalGroupBo.getPrice());
-                    }else{
-                        addItems.get(i).setPayType(amountCalGroupBo.getAddPayType());
-                    }
+                if(reduce.compareTo(amountCalGroupBo.getPrice())>=0){
+                    //初始化计算前就超过了分组金额  当前和之后的全部走加项
+                    addItems.get(i).setPayType(amountCalGroupBo.getAddPayType());
                     addItems.get(i).setDiscount(amountCalGroupBo.getAddDiscount());
+                }else{
+                    reduce = reduce.add(bo.getReceivableAmount());
+                    //存量的金额小于分组内金额 从当前和后续的支付方式 全部为分组内支付方式,分组内折扣
+                    if(reduce.compareTo(amountCalGroupBo.getPrice())<=0){
+                        addItems.get(i).setPayType(amountCalGroupBo.getGroupPayType());
+                        addItems.get(i).setDiscount(amountCalGroupBo.getItemDiscount());
+                    }else{
+                        //组内 和 组外支付方式不一样 才会有混合支付赋值
+                        if(i==0 && !Objects.equals(amountCalGroupBo.getAddPayType(),amountCalGroupBo.getGroupPayType())){
+                            addItems.get(i).setPayType("2");
+                            //混合支付时,需要把当前多余的金额计算出来当做加项支付。
+                            leftAmount = reduce.subtract(amountCalGroupBo.getPrice());
+                        }else{
+                            addItems.get(i).setPayType(amountCalGroupBo.getAddPayType());
+                        }
+                        addItems.get(i).setDiscount(amountCalGroupBo.getAddDiscount());
+                    }
                 }
             }
+
             fillSingleAmount(addItems.get(i),leftAmount,amountCalGroupBo);
 
         }
