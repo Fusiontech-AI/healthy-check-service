@@ -72,7 +72,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         a.receivable_amount,
         a.discount,
         a.package_sort as sort,
-        '2' as type
+        '1' as type
         from tj_package a left join tj_package_hazards b on a.id = b.package_id
         where a.del_flag = '0'
         and a.status = '0'
