@@ -36,7 +36,6 @@ public class RuleTjSetBo extends BaseEntity {
     /**
      * 是否职业病(0：职业，1：健康  2老年人)
      */
-    @NotBlank(message = "是否职业病(0：职业，1：健康  2老年人)不能为空", groups = { AddGroup.class, EditGroup.class })
     private String occupationalType;
 
     /**
