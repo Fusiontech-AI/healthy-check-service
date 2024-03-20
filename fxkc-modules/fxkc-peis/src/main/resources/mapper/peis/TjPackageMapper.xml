@@ -31,7 +31,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             <if test='name != null and name != ""'>
                 temp.name like CONCAT(CONCAT('%',#{name}),'%')  or
-                temp.py_simple_code like CONCAT(CONCAT('%',#{name}),'%')
+                UPPER(temp.py_simple_code) like CONCAT(CONCAT('%', UPPER(#{name})),'%')
             </if>
         </where>
 
