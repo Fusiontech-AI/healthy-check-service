@@ -13,6 +13,7 @@ import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.peis.domain.TjBasicCommonResult;
 import org.fxkc.peis.domain.TjRegCombinationProject;
+import org.fxkc.peis.domain.TjRegister;
 import org.fxkc.peis.domain.bo.TjRegCombinationProjectBo;
 import org.fxkc.peis.domain.bo.TjRegCombinationProjectDelayBo;
 import org.fxkc.peis.domain.bo.TjRegCombinationProjectListBo;
@@ -27,6 +28,7 @@ import org.fxkc.peis.enums.CheckStatusEnum;
 import org.fxkc.peis.mapper.TjBasicCommonResultMapper;
 import org.fxkc.peis.mapper.TjRegBasicProjectMapper;
 import org.fxkc.peis.mapper.TjRegCombinationProjectMapper;
+import org.fxkc.peis.mapper.TjRegisterMapper;
 import org.fxkc.peis.service.ITjRegCombinationProjectService;
 import org.springframework.stereotype.Service;
 
@@ -52,14 +54,23 @@ public class TjRegCombinationProjectServiceImpl implements ITjRegCombinationProj
 
     private final TjBasicCommonResultMapper tjBasicCommonResultMapper;
 
+    private final TjRegisterMapper registerMapper;
+
 
     /**
      * 查询体检人员综合项目信息列表
      */
     @Override
     public TableDataInfo<TjRegCombinationProjectListVo> queryPageList(TjRegCombinationProjectListBo bo, PageQuery pageQuery) {
-        Page<TjRegCombinationProjectListVo> page = baseMapper.selectPage(pageQuery.build(), bo);
-        return TableDataInfo.build(page);
+        List<TjRegister> tjRegisters = registerMapper.selectList(Wrappers.lambdaQuery(TjRegister.class)
+            .eq(TjRegister::getHealthyCheckCode, bo.getRegisterId())
+            .eq(TjRegister::getDelFlag, CommonConstants.NORMAL));
+        if(CollUtil.isNotEmpty(tjRegisters)){
+            bo.setRegisterId(tjRegisters.get(0).getId());
+            Page<TjRegCombinationProjectListVo> page = baseMapper.selectPage(pageQuery.build(), bo);
+            return TableDataInfo.build(page);
+        }
+        return null;
     }
 
 
