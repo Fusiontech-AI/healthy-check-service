@@ -1,5 +1,6 @@
 package org.fxkc.peis.domain.bo;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
@@ -24,6 +25,7 @@ public class TjTeamGroupProjectBo {
     /**
      * 项目分组集合
      */
+    @Valid
     @NotEmpty(message = "项目分组集合不能为空")
     private List<TjTeamGroupUpdateBo> list;
 

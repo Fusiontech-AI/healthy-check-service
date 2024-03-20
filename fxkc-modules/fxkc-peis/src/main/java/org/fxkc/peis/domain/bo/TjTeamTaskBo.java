@@ -87,6 +87,7 @@ public class TjTeamTaskBo extends BaseEntity {
      * 分组信息
      */
     @Valid
+    @NotEmpty(message = "分组信息不能为空", groups = { AddGroup.class, EditGroup.class })
     private List<TjTeamGroupBo> groupList;
 
     /**
