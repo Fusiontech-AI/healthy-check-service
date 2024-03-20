@@ -5,8 +5,6 @@ import com.alibaba.excel.annotation.ExcelProperty;
 import io.github.linpeilie.annotations.AutoMapper;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import org.fxkc.common.translation.annotation.Translation;
-import org.fxkc.common.translation.constant.TransConstant;
 import org.fxkc.peis.domain.TjPackageInfo;
 
 import java.io.Serial;
@@ -49,14 +47,18 @@ public class TjPackageInfoVo implements Serializable {
     /**
      * 组合项目名称
      */
-    @Translation(type = TransConstant.COMBINATION_ID_TO_NAME,mapper = "combinProjectId")
     private String combinProjectName;
 
     /**
      * 组合项目编码
      */
-    @Translation(type = TransConstant.COMBINATION_ID_TO_CODE,mapper = "combinProjectId")
     private String combinProjectCode;
+
+    /**
+     * 检查类型0检查项目 1化验项目 2功能项目
+     */
+    @ExcelProperty(value = "检查类型0检查项目 1化验项目 2功能项目")
+    private String checkType;
 
     /**
      * 标准价格
