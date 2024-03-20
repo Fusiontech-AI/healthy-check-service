@@ -163,12 +163,24 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
     @Transactional(rollbackFor = Exception.class)
     public TjTeamTaskCommonVo updateByBo(TjTeamTaskBo bo) {
         validEntityBeforeSave(bo, Boolean.FALSE);
+        TjTeamTask query = baseMapper.selectById(bo.getId());
         TjTeamTask update = MapstructUtils.convert(bo, TjTeamTask.class);
         baseMapper.updateById(update);
         List<TjTeamGroup> groupList = MapstructUtils.convert(bo.getGroupList(), TjTeamGroup.class);
         String teamName = iTjTeamInfoService.selectTeamNameById(update.getTeamId());
-        groupList.forEach(k -> k.setTaskId(update.getId()).setTaskName(update.getTaskName())
-            .setTeamId(update.getTeamId()).setTeamName(teamName));
+        //职业病、放射修改成其他在岗状态、照射源、照射源种类更新为空
+        groupList.forEach(k -> {
+            k.setTaskId(update.getId()).setTaskName(update.getTaskName())
+            .setTeamId(update.getTeamId()).setTeamName(teamName);
+            if(Objects.equals(PhysicalTypeEnum.FSTJ.name(), query.getPhysicalType()) &&
+                !Objects.equals(PhysicalTypeEnum.FSTJ.name(), bo.getPhysicalType())) {
+                k.setShineSource(StrUtil.EMPTY).setShineType(StrUtil.EMPTY);
+            }
+            if(PhysicalTypeEnum.isOccupational(query.getPhysicalType()) &&
+                !PhysicalTypeEnum.isOccupational(bo.getPhysicalType())) {
+                k.setDutyStatus(StrUtil.EMPTY);
+            }
+        });
         //修改任务分组记录分组人员分组信息
         List<TjTeamGroup> recordList = StreamUtils.filter(groupList, e -> Objects.nonNull(e.getId()));
         iTjTeamGroupService.recordGroupInfo(recordList);
