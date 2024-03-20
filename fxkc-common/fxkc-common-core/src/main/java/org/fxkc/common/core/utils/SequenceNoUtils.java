@@ -177,5 +177,29 @@ public class SequenceNoUtils {
         return sb.toString();
     }
 
+
+    /**
+     * 字符串左补齐。如果原始字符串s长度大于size，则全部显示size个字符。
+     *
+     * @param s    原始字符串
+     * @param size 字符串指定长度
+     * @param c    用于补齐的字符
+     * @return 返回指定长度的字符串，由原字符串左补齐或截取得到。
+     */
+    public static String createNo(final String s, final int size, final char c) {
+        final StringBuilder sb = new StringBuilder(size);
+        if (s != null) {
+            final int len = s.length();
+            if (s.length() <= size) {
+                sb.append(String.valueOf(c).repeat(size - len));
+                sb.append(s);
+            } else {
+                return s;
+            }
+        } else {
+            sb.append(String.valueOf(c).repeat(Math.max(0, size)));
+        }
+        return sb.toString();
+    }
 }
 

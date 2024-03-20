@@ -48,6 +48,11 @@ public class AmountCalGroupBo {
      */
     private BigDecimal addDiscount;
 
+    /**
+     * 初始化方式1:第一次添加(用于项目分组添加 和 导入人员算费 默认和都是项目金额  特殊场景)
+     */
+    private String initFlag;
+
     public AmountCalGroupBo() {
     }
 

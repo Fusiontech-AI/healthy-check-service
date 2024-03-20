@@ -458,7 +458,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
                             .projectRequiredType(s.getRequired() ? "1" : "0")
                             //.teamAmount(s.getActualPrice())
                             .build()));
-                    AmountCalculationVo amountCalculationVo = tjRegisterService.billingByRegister(k, projectList);
+                    AmountCalculationVo amountCalculationVo = tjRegisterService.billingByRegister(k, projectList,"1");
                     TjRegCombinAddBo addBo = new TjRegCombinAddBo();
                     addBo.setRegisterId(k.getId());
                     addBo.setStandardAmount(amountCalculationVo.getStandardAmount());

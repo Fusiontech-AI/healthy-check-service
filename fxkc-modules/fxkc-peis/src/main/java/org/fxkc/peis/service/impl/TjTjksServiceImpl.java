@@ -165,7 +165,7 @@ public class TjTjksServiceImpl implements ITjTjksService {
     @Override
     public String getKsCode() {
         String ksCode = baseMapper.nextTjKsCode();
-        return SequenceNoUtils.padl(ksCode,3,'0');
+        return SequenceNoUtils.createNo(ksCode,3,'0');
     }
 
     @Override
