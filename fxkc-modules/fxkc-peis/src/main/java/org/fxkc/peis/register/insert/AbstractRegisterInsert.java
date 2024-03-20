@@ -112,7 +112,7 @@ public abstract class AbstractRegisterInsert implements RegisterInsertService{
      */
     public void fillCommonField(TjRegister tjRegister){
         tjRegister.setNamePy(PinYinUtil.getPinyin(tjRegister.getName()));
-        tjRegister.setHealthyCheckCode(SequenceNoUtils.padl(tjRegisterMapper.nextHealthyCode(),6,'0'));
+        tjRegister.setHealthyCheckCode(SequenceNoUtils.createNo(tjRegisterMapper.nextHealthyCode(),6,'0'));
         Long peTimes = tjRegisterService.getPeTimes(new TjRegPeTimesBo(tjRegister.getCredentialType(), tjRegister.getCredentialNumber()));
         tjRegister.setPeTimes(peTimes);
     }
