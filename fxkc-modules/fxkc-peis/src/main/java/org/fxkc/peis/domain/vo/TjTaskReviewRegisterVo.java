@@ -112,4 +112,9 @@ public class TjTaskReviewRegisterVo {
      * 单位部门名称
      */
     private String deptName;
+
+    /**
+     * 在岗状态
+     */
+    private String dutyStatus;
 }

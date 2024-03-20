@@ -77,9 +77,10 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
 
     private final TjTeamGroupHazardsMapper tjTeamGroupHazardsMapper;
 
-    private final TjRegCombinationProjectMapper tjRegCombinationProjectMapper;
-
     private final RegisterChangeHolder registerChangeHolder;
+
+    private final TjRegisterZybMapper tjRegisterZybMapper;
+
     /**
      * 查询团检任务管理
      */
@@ -518,6 +519,15 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
         Page<TjRegister> page = tjRegisterMapper.selectPage(pageQuery.build(), Wrappers.lambdaQuery(TjRegister.class)
             .eq(TjRegister::getTaskId, taskId));
         List<TjTaskReviewRegisterVo> voList = MapstructUtils.convert(page.getRecords(), TjTaskReviewRegisterVo.class);
+        List<Long> ids = StreamUtils.toList(voList, TjTaskReviewRegisterVo::getId);
+        if(CollUtil.isNotEmpty(ids)) {
+            List<TjRegisterZyb> zybList = tjRegisterZybMapper.selectList(Wrappers.lambdaQuery(TjRegisterZyb.class)
+                .in(TjRegisterZyb::getRegId, ids));
+            if(CollUtil.isNotEmpty(zybList)) {
+                Map<Long, String> map = StreamUtils.toMap(zybList, TjRegisterZyb::getId, TjRegisterZyb::getDutyStatus);
+                voList.forEach(k -> k.setDutyStatus(map.getOrDefault(k.getId(), StrUtil.EMPTY)));
+            }
+        }
         return TableDataInfo.build(new Page<TjTaskReviewRegisterVo>().setRecords(voList).setTotal(page.getTotal()));
     }
 
