@@ -371,4 +371,8 @@ public class TjRegisterPageVo implements Serializable {
      */
     private Date mergeRecordTime;
 
+    /**
+     * 备注
+     */
+    private String remark;
 }
