@@ -524,7 +524,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
             List<TjRegisterZyb> zybList = tjRegisterZybMapper.selectList(Wrappers.lambdaQuery(TjRegisterZyb.class)
                 .in(TjRegisterZyb::getRegId, ids));
             if(CollUtil.isNotEmpty(zybList)) {
-                Map<Long, String> map = StreamUtils.toMap(zybList, TjRegisterZyb::getId, TjRegisterZyb::getDutyStatus);
+                Map<Long, String> map = StreamUtils.toMap(zybList, TjRegisterZyb::getRegId, TjRegisterZyb::getDutyStatus);
                 voList.forEach(k -> k.setDutyStatus(map.getOrDefault(k.getId(), StrUtil.EMPTY)));
             }
         }
