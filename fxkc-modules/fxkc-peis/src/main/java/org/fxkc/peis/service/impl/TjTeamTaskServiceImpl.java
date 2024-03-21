@@ -242,6 +242,31 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
         if(isValid){
             //TODO 做一些业务上的校验,判断是否需要校验
+            long count = tjRegisterMapper.selectCount(Wrappers.lambdaQuery(TjRegister.class)
+                .in(TjRegister::getTaskId, ids)
+                .gt(TjRegister::getHealthyCheckStatus, HealthyCheckTypeEnum.预约.getCode()));
+            if(count > 0) {
+                throw new PeisException(ErrorCodeConstants.PEIS_TASK_NOT_APPIONT);
+            }
+        }
+        List<TjTeamGroup> groupList = tjTeamGroupMapper.selectList(Wrappers.lambdaQuery(TjTeamGroup.class)
+            .in(TjTeamGroup::getTaskId, ids));
+        if(CollUtil.isNotEmpty(groupList)) {
+            List<Long> groupIds = StreamUtils.toList(groupList, TjTeamGroup::getId);
+            tjTeamGroupMapper.deleteBatchIds(groupIds);
+            tjTeamGroupItemMapper.delete(Wrappers.lambdaQuery(TjTeamGroupItem.class)
+                .in(TjTeamGroupItem::getGroupId, groupIds));
+            tjTeamGroupHazardsMapper.delete(Wrappers.lambdaQuery(TjTeamGroupHazards.class)
+                .in(TjTeamGroupHazards::getGroupId, groupIds));
+        }
+        List<TjRegister> tjRegisterList = tjRegisterMapper.selectList(Wrappers.lambdaQuery(TjRegister.class)
+            .in(TjRegister::getTaskId, ids)
+            .eq(TjRegister::getHealthyCheckStatus, HealthyCheckTypeEnum.预约.getCode()));
+        if(CollUtil.isNotEmpty(tjRegisterList)) {
+            List<Long> registerIds = StreamUtils.toList(tjRegisterList, TjRegister::getId);
+            tjRegisterMapper.deleteBatchIds(registerIds);
+            tjRegisterZybMapper.delete(Wrappers.lambdaQuery(TjRegisterZyb.class)
+                .in(TjRegisterZyb::getRegId, registerIds));
         }
         return baseMapper.deleteBatchIds(ids) > 0;
     }

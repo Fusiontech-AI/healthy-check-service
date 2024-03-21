@@ -88,4 +88,6 @@ public interface ErrorCodeConstants {
 
     String PEIS_GROUP_OTHER_HAZARD_NOT_EMPTY = "peis.group.other.hazard.not.empty";
 
+    String PEIS_TASK_NOT_APPIONT = "peis.task.not.appiont";
+
 }
