@@ -592,6 +592,13 @@ public class TjRegisterVo implements Serializable {
     private Long taskId;
 
     /**
+     * 单位任务名称
+     */
+    @ExcelProperty(value = "单位任务名称")
+    @Translation(type = TransConstant.TEAM_TASK_ID_TO_NAME,mapper = "taskId")
+    private String taskName;
+
+    /**
      * 创建人id
      */
     private Long createBy;
