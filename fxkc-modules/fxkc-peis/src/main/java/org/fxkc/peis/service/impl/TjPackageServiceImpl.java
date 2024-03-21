@@ -336,6 +336,7 @@ public class TjPackageServiceImpl implements ITjPackageService {
         if(CollUtil.isNotEmpty(haveItems)){
            reduce = haveItems.stream().filter(m -> Objects.equals(amountCalGroupBo.getGroupPayType(), m.getPayType())).map(m -> m.getReceivableAmount()).reduce(BigDecimal.ZERO, BigDecimal::add);
         }
+        int num = 0;
         for (int i = 0; i < addItems.size() ; i++) {
             AmountCalculationItemBo bo = addItems.get(i);
             if(Objects.equals("1",amountCalGroupBo.getInitFlag())){
@@ -343,9 +344,17 @@ public class TjPackageServiceImpl implements ITjPackageService {
                 addItems.get(i).setPayType(amountCalGroupBo.getGroupPayType());
             }else{
                 if(reduce.compareTo(amountCalGroupBo.getPrice())>=0){
-                    //初始化计算前就超过了分组金额  当前和之后的全部走加项
-                    addItems.get(i).setPayType(amountCalGroupBo.getAddPayType());
-                    addItems.get(i).setDiscount(amountCalGroupBo.getAddDiscount());
+                    num++;
+                    if(num==1){
+                        //第一次时 取项目组内支付方式和 组内折扣
+                        addItems.get(i).setPayType(amountCalGroupBo.getGroupPayType());
+                        addItems.get(i).setDiscount(amountCalGroupBo.getItemDiscount());
+                    }else{
+                        //初始化计算前就超过了分组金额  当前和之后的全部走加项
+                        addItems.get(i).setPayType(amountCalGroupBo.getAddPayType());
+                        addItems.get(i).setDiscount(amountCalGroupBo.getAddDiscount());
+                    }
+
                 }else{
                     reduce = reduce.add(bo.getReceivableAmount());
                     //存量的金额小于分组内金额 从当前和后续的支付方式 全部为分组内支付方式,分组内折扣
