@@ -84,9 +84,9 @@ public class RuleTjInfoServiceImpl implements IRuleTjInfoService {
 
     @Override
     public Boolean deleteRuleTjInfo(RuleTjInfoBo dto) {
+        RuleTjInfo tjInfo = baseMapper.selectById(dto.getId());
         int i = baseMapper.deleteById(dto.getId());
         if(i>0){
-            RuleTjInfo tjInfo = baseMapper.selectById(dto.getId());
             ruleTjSetService.refreshRuleTjSet(tjInfo.getRulesetId());
         }
         return true ;

@@ -58,7 +58,7 @@ public class RuleTjInfoController extends BaseController {
      *规则项删除
      */
     @PostMapping("/deleteRuleTjInfo")
-    public R<Boolean> deleteRuleTjInfo(@RequestBody @Validated(EditGroup.class) RuleTjInfoBo dto) {
+    public R<Boolean> deleteRuleTjInfo(@RequestBody RuleTjInfoBo dto) {
         return R.ok(ruleTjInfoService.deleteRuleTjInfo(dto));
     }
 }
