@@ -5,7 +5,7 @@ import org.apache.dubbo.config.annotation.DubboReference;
 import org.fxkc.common.translation.annotation.TranslationType;
 import org.fxkc.common.translation.constant.TransConstant;
 import org.fxkc.common.translation.core.TranslationInterface;
-import org.fxkc.peis.api.RemoteTjPackageService;
+import org.fxkc.peis.api.RemoteTjZdjyService;
 
 /**
  * 套餐翻译实现
@@ -17,10 +17,10 @@ import org.fxkc.peis.api.RemoteTjPackageService;
 public class ZdjyNameTranslationImpl implements TranslationInterface<String> {
 
     @DubboReference
-    private RemoteTjPackageService remoteTjPackageService;
+    private RemoteTjZdjyService zdjyService;
 
     @Override
     public String translation(Object key, String other) {
-        return remoteTjPackageService.selectPackageNameById((Long) key);
+        return zdjyService.selectZdjyNameById((Long) key);
     }
 }
