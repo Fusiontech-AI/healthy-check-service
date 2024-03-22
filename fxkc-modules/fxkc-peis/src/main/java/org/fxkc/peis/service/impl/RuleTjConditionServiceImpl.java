@@ -61,9 +61,9 @@ public class RuleTjConditionServiceImpl implements IRuleTjConditionService {
 
     @Override
     public Boolean deleteRuleTjCondition(RuleTjCondition dto) {
+        RuleTjCondition tjCondition = baseMapper.selectById(dto.getId());
         int i = baseMapper.deleteById(dto.getId());
         if(i>0){
-            RuleTjCondition tjCondition = baseMapper.selectById(dto.getId());
             RuleTjInfo ruleTjInfo = getRuleTjInfoByRuleId(tjCondition.getRuleId());
             ruleTjSetService.refreshRuleTjSet(ruleTjInfo.getRulesetId());
         }
