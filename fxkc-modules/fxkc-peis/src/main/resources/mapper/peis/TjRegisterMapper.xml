@@ -184,6 +184,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.createTimeEnd)">
                 AND t1.CREATE_TIME &lt; TRUNC(#{bo.createTimeEnd})+1
             </if>
+        order by t1.HEALTHY_CHECK_CODE desc
     </select>
 
     <select id="getByIds" resultType="org.fxkc.peis.domain.vo.TjRegisterVo">

@@ -1,5 +1,7 @@
 package org.fxkc.peis.domain.vo;
 
+import org.fxkc.common.translation.annotation.Translation;
+import org.fxkc.common.translation.constant.TransConstant;
 import org.fxkc.peis.domain.RuleTjInfo;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
@@ -62,6 +64,13 @@ public class RuleTjInfoVo implements Serializable {
      */
     @ExcelProperty(value = "诊断建议主键id")
     private Long zdjyId;
+
+    /**
+     * 建议名称
+     */
+    @ExcelProperty(value = "建议名称")
+    @Translation(type = TransConstant.ZDJY_ID_TO_NAME,mapper = "zdjyId")
+    private String jymc;
 
     /**
      * 重要程度（特别重要 重要）

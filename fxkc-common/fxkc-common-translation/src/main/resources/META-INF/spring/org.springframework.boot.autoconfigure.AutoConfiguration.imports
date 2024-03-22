@@ -12,4 +12,5 @@ org.fxkc.common.translation.core.impl.CombinationNameTranslationImpl
 org.fxkc.common.translation.core.impl.CombinationCodeTranslationImpl
 org.fxkc.common.translation.core.impl.BasicNameTranslationImpl
 org.fxkc.common.translation.core.impl.PackageNameTranslationImpl
+org.fxkc.common.translation.core.impl.ZdjyNameTranslationImpl
 
