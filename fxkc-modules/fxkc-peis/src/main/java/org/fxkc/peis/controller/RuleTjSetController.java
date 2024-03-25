@@ -1,9 +1,12 @@
 package org.fxkc.peis.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.fxkc.common.core.domain.R;
 import org.fxkc.common.core.validate.AddGroup;
+import org.fxkc.common.log.annotation.Log;
+import org.fxkc.common.log.enums.BusinessType;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.web.core.BaseController;
@@ -120,4 +123,16 @@ public class RuleTjSetController extends BaseController {
         return R.ok(ruleTjSetService.executeRule(ruleExecuteRequestBo));
     }
 
+
+    /**
+     * 删除体检项目规则集
+     *
+     * @param ids 主键串
+     */
+    @Log(title = "体检项目规则集", businessType = BusinessType.DELETE)
+    @DeleteMapping("/{ids}")
+    public R<Void> remove(@NotEmpty(message = "主键不能为空")
+                          @PathVariable Long[] ids) {
+        return toAjax(ruleTjSetService.deleteWithValidByIds(List.of(ids), true));
+    }
 }
