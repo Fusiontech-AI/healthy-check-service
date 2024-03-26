@@ -419,7 +419,9 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
 
         Map<Long, List<TjRegCombinationProject>> listMap = combinationProjects.stream().collect(Collectors.groupingBy(TjRegCombinationProject::getRegisterId));
 
-        List<TjRegister> registers = tjRegisters.stream().map(tjRegister -> {
+        List<TjRegCombinationProject> updateRegCombinationProjects = new ArrayList<>();
+        tjRegisters.stream().forEach(tjRegister -> {
+            tjRegister.setTeamGroupId(null);//团转个时 分组id应置空去修改
             List<TjRegCombinationProject> regCombinationProjects = listMap.get(tjRegister.getId());
             //将子项目中支付方式变更成为个人  团检金额放到个检金额中
             regCombinationProjects.stream().forEach(project->{
@@ -428,21 +430,27 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
                 project.setTeamAmount(new BigDecimal("0"));
             });
             AmountCalculationVo amountCalculationVo = billingByRegister(tjRegister,regCombinationProjects,"1");
-            TjRegister register = new TjRegister();
-            register.setId(tjRegister.getId());
-            register.setBusinessCategory("1");
-            register.setTotalStandardAmount(amountCalculationVo.getStandardAmount());
-            register.setTotalAmount(amountCalculationVo.getReceivableAmount());
-            register.setPersonAmount(amountCalculationVo.getPersonAmount());
-            register.setDiscount(amountCalculationVo.getDiscount());
-            register.setTeamAmount(amountCalculationVo.getTeamAmount());
-            register.setPaidTotalAmount(amountCalculationVo.getPaidTotalAmount());
-            register.setPaidPersonAmount(amountCalculationVo.getPaidPersonAmount());
-            register.setPaidTeamAmount(amountCalculationVo.getPaidTeamAmount());
-            return register;
-        }).collect(Collectors.toList());
+            baseMapper.update(null,Wrappers.<TjRegister>lambdaUpdate()
+                .set(TjRegister::getBusinessCategory,"1")
+                .set(TjRegister::getTotalStandardAmount,amountCalculationVo.getStandardAmount())
+                .set(TjRegister::getTotalAmount,amountCalculationVo.getReceivableAmount())
+                .set(TjRegister::getPersonAmount,amountCalculationVo.getPersonAmount())
+                .set(TjRegister::getDiscount,amountCalculationVo.getDiscount())
+                .set(TjRegister::getTeamAmount,amountCalculationVo.getTeamAmount())
+                .set(TjRegister::getPaidTotalAmount,amountCalculationVo.getPaidTotalAmount())
+                .set(TjRegister::getPaidTeamAmount,amountCalculationVo.getPaidPersonAmount())
+                .set(TjRegister::getPaidPersonAmount,amountCalculationVo.getPaidTeamAmount())
+                .set(TjRegister::getTaskId,null)
+                .set(TjRegister::getTeamId,null)
+                .set(TjRegister::getTeamGroupId,null)
+                .eq(TjRegister::getId,tjRegister.getId())
+            );
+            //将子项 价格信息 修改为算费后的价格信息  并进行更新
+            List<TjRegCombinationProject> toBeUpdateList = fillUpdateList(amountCalculationVo);
+            updateRegCombinationProjects.addAll(toBeUpdateList);
+        });
 
-        return baseMapper.updateBatchById(registers);
+        return tjRegCombinationProjectMapper.updateBatchById(updateRegCombinationProjects);
     }
 
     @Override
@@ -462,6 +470,8 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
             .in(TjRegCombinationProject::getRegisterId, bo.getRegIds()));
 
         Map<Long, List<TjRegCombinationProject>> listMap = combinationProjects.stream().collect(Collectors.groupingBy(TjRegCombinationProject::getRegisterId));
+
+        List<TjRegCombinationProject> updateRegCombinationProjects = new ArrayList<>();
 
         List<TjRegister> registers = tjRegisters.stream().map(tjRegister -> {
             tjRegister.setTeamGroupId(bo.getTeamGroupId());
@@ -487,10 +497,30 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
             register.setTeamId(bo.getTeamId());
             register.setTeamGroupId(bo.getTeamGroupId());
             register.setTaskId(bo.getTaskId());
+
+            //将子项 价格信息 修改为算费后的价格信息  并进行更新
+            List<TjRegCombinationProject> toBeUpdateList = fillUpdateList(amountCalculationVo);
+            updateRegCombinationProjects.addAll(toBeUpdateList);
             return register;
         }).collect(Collectors.toList());
-
+        tjRegCombinationProjectMapper.updateBatchById(updateRegCombinationProjects);
         return baseMapper.updateBatchById(registers);
+    }
+
+    private List<TjRegCombinationProject> fillUpdateList(AmountCalculationVo amountCalculationVo) {
+        //将子项 价格信息 修改为算费后的价格信息  并进行更新
+        return amountCalculationVo.getAmountCalculationItemVos().stream().map(vo -> {
+            TjRegCombinationProject regCombinationProject = new TjRegCombinationProject();
+            regCombinationProject.setId(vo.getId());
+            regCombinationProject.setDiscount(vo.getDiscount());
+            regCombinationProject.setTeamAmount(vo.getTeamAmount());
+            regCombinationProject.setPersonAmount(vo.getPersonAmount());
+            regCombinationProject.setStandardAmount(vo.getStandardAmount());
+            regCombinationProject.setReceivableAmount(vo.getReceivableAmount());
+            regCombinationProject.setCombinationProjectId(vo.getCombinProjectId());
+            regCombinationProject.setPayMode(vo.getPayType());
+            return regCombinationProject;
+        }).collect(Collectors.toList());
     }
 
     @Override

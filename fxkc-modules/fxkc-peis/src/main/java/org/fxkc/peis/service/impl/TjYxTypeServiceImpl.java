@@ -56,7 +56,7 @@ public class TjYxTypeServiceImpl implements ITjYxTypeService {
         if(CollUtil.isNotEmpty(twoLevelList)){
             List<Long> parentIds = twoLevelList.stream().map(m -> m.getParentId()).collect(Collectors.toList());
             List<TjYxTypeVo> oneLevelList2 = baseMapper.selectVoBatchIds(parentIds);
-            oneLevelList.addAll(oneLevelList2);
+            oneLevelList.addAll(oneLevelList2.stream().filter(m -> Objects.equals(1L, m.getParentId())).collect(Collectors.toList()));
         }
 
         //开始渲染响应的树结构信息
@@ -134,24 +134,26 @@ public class TjYxTypeServiceImpl implements ITjYxTypeService {
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
         List<TjYxType> tjYxTypeList = baseMapper.selectBatchIds(ids);
+        List<Long> deleteIds = new ArrayList<>();
+        deleteIds.addAll(ids);
         tjYxTypeList.stream().forEach(oldTjYxTypeByName->{
             //这里需要判断当前修改的id是否为一级目录  如果是 且做删除动作时则对应下面的二级目录都需要删除
             if(Objects.equals(1L,oldTjYxTypeByName.getParentId())){
                 List<TjYxType> tjYxTypes = baseMapper.selectAllType(oldTjYxTypeByName.getId());
                 List<Long> typeIds = tjYxTypes.stream().map(m -> m.getId()).collect(Collectors.toList());
-                ids.addAll(typeIds);
+                deleteIds.addAll(typeIds);
             }
         });
 
-        return baseMapper.deleteBatchIds(ids) > 0;
+        return baseMapper.deleteBatchIds(deleteIds) > 0;
     }
 
     @Override
     public List<TjYxType> getTjYxTypedList(TjYxTypeListQueryBo bo) {
         return baseMapper.selectList(new LambdaQueryWrapper<TjYxType>()
             .eq(bo.getParentId()!=null,TjYxType::getParentId,bo.getParentId())
-            .eq(Objects.equals(bo.getLevel(),1L),TjYxType::getParentId,1L)
-            .ne(Objects.equals(bo.getLevel(),1L),TjYxType::getParentId,1L)
+            .eq(Objects.equals(bo.getLevel(),"1"),TjYxType::getParentId,1L)
+            .ne(Objects.equals(bo.getLevel(),"2"),TjYxType::getParentId,1L)
         );
     }
 
