@@ -50,9 +50,9 @@ public class TjYxTypeServiceImpl implements ITjYxTypeService {
         LambdaQueryWrapper<TjYxType> lqw = buildQueryWrapper(bo);
         List<TjYxTypeVo> oldTjYxTypeVos = baseMapper.selectVoList(lqw);
         //拿出一级分类
-        List<TjYxTypeVo> oneLevelList = oldTjYxTypeVos.stream().filter(m -> Objects.equals("1", m.getParentId())).collect(Collectors.toList());
+        List<TjYxTypeVo> oneLevelList = oldTjYxTypeVos.stream().filter(m -> Objects.equals(1L, m.getParentId())).collect(Collectors.toList());
         //拿出二级分类
-        List<TjYxTypeVo> twoLevelList = oldTjYxTypeVos.stream().filter(m -> !Objects.equals("1", m.getParentId())).collect(Collectors.toList());
+        List<TjYxTypeVo> twoLevelList = oldTjYxTypeVos.stream().filter(m -> !Objects.equals(1L, m.getParentId())).collect(Collectors.toList());
         if(CollUtil.isNotEmpty(twoLevelList)){
             List<Long> parentIds = twoLevelList.stream().map(m -> m.getParentId()).collect(Collectors.toList());
             List<TjYxTypeVo> oneLevelList2 = baseMapper.selectVoBatchIds(parentIds);
@@ -136,7 +136,7 @@ public class TjYxTypeServiceImpl implements ITjYxTypeService {
         List<TjYxType> tjYxTypeList = baseMapper.selectBatchIds(ids);
         tjYxTypeList.stream().forEach(oldTjYxTypeByName->{
             //这里需要判断当前修改的id是否为一级目录  如果是 且做删除动作时则对应下面的二级目录都需要删除
-            if(Objects.equals("1",oldTjYxTypeByName.getParentId())){
+            if(Objects.equals(1L,oldTjYxTypeByName.getParentId())){
                 List<TjYxType> tjYxTypes = baseMapper.selectAllType(oldTjYxTypeByName.getId());
                 List<Long> typeIds = tjYxTypes.stream().map(m -> m.getId()).collect(Collectors.toList());
                 ids.addAll(typeIds);
@@ -150,8 +150,8 @@ public class TjYxTypeServiceImpl implements ITjYxTypeService {
     public List<TjYxType> getTjYxTypedList(TjYxTypeListQueryBo bo) {
         return baseMapper.selectList(new LambdaQueryWrapper<TjYxType>()
             .eq(bo.getParentId()!=null,TjYxType::getParentId,bo.getParentId())
-            .eq(Objects.equals(bo.getLevel(),"1"),TjYxType::getParentId,"1")
-            .ne(Objects.equals(bo.getLevel(),"2"),TjYxType::getParentId,"1")
+            .eq(Objects.equals(bo.getLevel(),1L),TjYxType::getParentId,1L)
+            .ne(Objects.equals(bo.getLevel(),1L),TjYxType::getParentId,1L)
         );
     }
 

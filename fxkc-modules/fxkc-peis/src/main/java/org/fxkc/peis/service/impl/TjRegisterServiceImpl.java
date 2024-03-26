@@ -420,7 +420,14 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
         Map<Long, List<TjRegCombinationProject>> listMap = combinationProjects.stream().collect(Collectors.groupingBy(TjRegCombinationProject::getRegisterId));
 
         List<TjRegister> registers = tjRegisters.stream().map(tjRegister -> {
-            AmountCalculationVo amountCalculationVo = billingByRegister(tjRegister,listMap.get(tjRegister.getId()),"1");
+            List<TjRegCombinationProject> regCombinationProjects = listMap.get(tjRegister.getId());
+            //将子项目中支付方式变更成为个人  团检金额放到个检金额中
+            regCombinationProjects.stream().forEach(project->{
+                project.setPayMode("0");//个人
+                project.setPersonAmount(project.getPersonAmount().add(project.getTeamAmount()));
+                project.setTeamAmount(new BigDecimal("0"));
+            });
+            AmountCalculationVo amountCalculationVo = billingByRegister(tjRegister,regCombinationProjects,"1");
             TjRegister register = new TjRegister();
             register.setId(tjRegister.getId());
             register.setBusinessCategory("1");
@@ -458,7 +465,14 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
 
         List<TjRegister> registers = tjRegisters.stream().map(tjRegister -> {
             tjRegister.setTeamGroupId(bo.getTeamGroupId());
-            AmountCalculationVo amountCalculationVo = billingByRegister(tjRegister,listMap.get(tjRegister.getId()),"1");
+            List<TjRegCombinationProject> regCombinationProjects = listMap.get(tjRegister.getId());
+            //将子项目中支付方式变更成为单位  个检金额放到团检金额中
+            regCombinationProjects.stream().forEach(project->{
+                project.setPayMode("1");//团队
+                project.setTeamAmount(project.getPersonAmount().add(project.getTeamAmount()));
+                project.setPersonAmount(new BigDecimal("0"));
+            });
+            AmountCalculationVo amountCalculationVo = billingByRegister(tjRegister,regCombinationProjects,"1");
             TjRegister register = new TjRegister();
             register.setId(tjRegister.getId());
             register.setBusinessCategory("2");
