@@ -111,4 +111,14 @@ public class AmountCalculationItemBo {
      * 检查类型0检查项目 1化验项目 2功能项目
      */
     private String checkType;
+
+    /**
+     * 项目属性（0：选检项目，1：必检项目）见字典bus_project_required_type
+     */
+    private String projectRequiredType;
+
+    /**
+     * 项目类型（1：套餐项目，2：加项项目）见字典bus_combination_project_type
+     */
+    private String projectType;
 }

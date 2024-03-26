@@ -521,6 +521,8 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
             itemBo.setPayType(combinationProject.getPayMode());
             itemBo.setPayStatus(combinationProject.getPayStatus());
             itemBo.setTcFlag(combinationProject.getProjectType());
+            itemBo.setProjectRequiredType(combinationProject.getProjectRequiredType());
+            itemBo.setProjectType(combinationProject.getProjectType());
             return itemBo;
         }).collect(Collectors.toList());
         amountCalculationBo.setAmountCalculationItemBos(amountCalculationItemBos);

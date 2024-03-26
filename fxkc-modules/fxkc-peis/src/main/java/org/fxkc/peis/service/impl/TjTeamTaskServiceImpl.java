@@ -506,7 +506,21 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
                     addBo.setPaidTotalAmount(amountCalculationVo.getPaidTotalAmount());
                     addBo.setPaidPersonAmount(amountCalculationVo.getPaidPersonAmount());
                     addBo.setPaidTeamAmount(amountCalculationVo.getPaidTeamAmount());
-                    List<TjRegCombinItemBo> tjRegCombinItemBos = MapstructUtils.convert(projectList,TjRegCombinItemBo.class);
+                    List<AmountCalculationItemVo> amountCalculationItemVos = amountCalculationVo.getAmountCalculationItemVos();
+                    List<TjRegCombinItemBo> tjRegCombinItemBos = amountCalculationItemVos.stream().map(vo->{
+                        TjRegCombinItemBo itemBo = new TjRegCombinItemBo();
+                        itemBo.setDiscount(vo.getDiscount());
+                        itemBo.setTeamAmount(vo.getTeamAmount());
+                        itemBo.setPersonAmount(vo.getPersonAmount());
+                        itemBo.setStandardAmount(vo.getStandardAmount());
+                        itemBo.setReceivableAmount(vo.getReceivableAmount());
+                        itemBo.setCombinationProjectId(vo.getCombinProjectId());
+                        itemBo.setPayMode(vo.getPayType());
+                        itemBo.setProjectRequiredType(vo.getProjectRequiredType());
+                        itemBo.setProjectType(vo.getProjectType());
+                        return itemBo;
+                    }).collect(Collectors.toList());
+                    //List<TjRegCombinItemBo> tjRegCombinItemBos = MapstructUtils.convert(projectList,TjRegCombinItemBo.class);
                     addBo.setTjRegCombinItemBos(tjRegCombinItemBos);
                     RegisterChangeService registerChangeService = registerChangeHolder.selectBuilder("4");//暂存
                     registerChangeService.changeRegCombin(addBo);
