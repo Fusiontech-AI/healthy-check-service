@@ -347,6 +347,14 @@ public class RuleTjSetServiceImpl implements IRuleTjSetService {
     }
 
 
+    /**
+     * 批量删除体检项目规则集
+     */
+    @Override
+    public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
+        return baseMapper.deleteBatchIds(ids) > 0;
+    }
+
     public RuleTjSet getRuleTjSet(Long basicProjectId, String occupationalType,String ruleType){
         List<RuleTjSet> ruleTjSets = baseMapper.selectList(new LambdaQueryWrapper<RuleTjSet>()
             .eq(RuleTjSet::getBasicProjectId, basicProjectId)

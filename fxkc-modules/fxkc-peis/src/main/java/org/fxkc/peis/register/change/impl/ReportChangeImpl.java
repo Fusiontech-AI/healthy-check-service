@@ -1,12 +1,9 @@
 package org.fxkc.peis.register.change.impl;
 
-import cn.hutool.core.collection.CollUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.fxkc.common.log.enums.TjRecordLogEnum;
 import org.fxkc.common.log.event.TjRecordLogEvent;
 import org.fxkc.common.satoken.utils.LoginHelper;
-import org.fxkc.peis.domain.TjRegCombinationProject;
 import org.fxkc.peis.domain.TjRegister;
 import org.fxkc.peis.domain.bo.TjRegCombinAddBo;
 import org.fxkc.peis.enums.HealthyCheckTypeEnum;
@@ -14,7 +11,6 @@ import org.fxkc.peis.register.change.AbstractRegisterChange;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -36,12 +32,12 @@ public class ReportChangeImpl extends AbstractRegisterChange {
             throw new RuntimeException("当前体检记录非预约状态，不能操作报到功能!");
         }
 
-        //报道需要校验是否已有项目信息记录
+        /*//报道需要校验是否已有项目信息记录
         List<TjRegCombinationProject> tjRegCombinationProjects = tjRegCombinationProjectMapper.selectList(new LambdaQueryWrapper<TjRegCombinationProject>()
             .eq(TjRegCombinationProject::getRegisterId, tjRegCombinAddBo.getRegisterId()));
         if(CollUtil.isEmpty(tjRegCombinationProjects)){
             throw new RuntimeException("当前体检记录未选择项目信息，不能操作报到功能!");
-        }
+        }*/
         //进行公共的性别符合要求的校验
         super.changeBeforeCheck(tjRegCombinAddBo,tjRegister);
     }

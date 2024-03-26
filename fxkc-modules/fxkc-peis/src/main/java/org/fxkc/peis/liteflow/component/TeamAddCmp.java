@@ -13,6 +13,7 @@ import org.fxkc.peis.liteflow.context.AmountCalculationContext;
 import org.fxkc.peis.service.ITjPackageService;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -45,6 +46,8 @@ public class TeamAddCmp extends NodeComponent {
             //将新增记录全部赋值为项目折扣
             amountCalculationItemBos.stream().forEach(m->{
                 m.setDiscount(amountCalGroupBo.getItemDiscount());
+                m.setReceivableAmount(tjPackageService.getReceivableAmountByDiscount(m.getStandardAmount(),m.getDiscount()));
+                fillDiscountSingleAmount(m);
             });
         }else{
             //除了折扣分组特殊性之外 其他分组都包含了分组金额 分组折扣 分组外折扣 对应支付方式
@@ -58,5 +61,20 @@ public class TeamAddCmp extends NodeComponent {
         }
 
         contextBean.setFinalAmountCalculationItemBos(finalAmountCalculationItemBos);
+    }
+
+
+    /**
+     * 处理折扣 个费 和 团费的金额 根据支付类型来处理
+     * @param bo
+     */
+    public void fillDiscountSingleAmount(AmountCalculationItemBo bo){
+        if(Objects.equals("0",bo.getPayType())){
+            bo.setPersonAmount(bo.getReceivableAmount());
+            bo.setTeamAmount(new BigDecimal("0"));
+        }else if(Objects.equals("1",bo.getPayType())){
+            bo.setTeamAmount(bo.getReceivableAmount());
+            bo.setPersonAmount(new BigDecimal("0"));
+        }
     }
 }

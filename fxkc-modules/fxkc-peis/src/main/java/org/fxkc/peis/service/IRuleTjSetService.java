@@ -8,6 +8,7 @@ import org.fxkc.peis.domain.bo.RuleTjSetQueryBo;
 import org.fxkc.peis.domain.vo.RuleTjInfoExcuteResultVo;
 import org.fxkc.peis.domain.vo.RuleTjSetVo;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -29,4 +30,9 @@ public interface IRuleTjSetService {
     /*List<RuleTjInfoExcuteResultVo> executeRuleTjSet(RuleTjSetExecuteBo dto);*/
 
     List<RuleTjInfoExcuteResultVo> executeRule(RuleExecuteRequestBo ruleExecuteRequestBo);
+
+    /**
+     * 校验并批量删除体检项目规则集信息
+     */
+    Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
 }
