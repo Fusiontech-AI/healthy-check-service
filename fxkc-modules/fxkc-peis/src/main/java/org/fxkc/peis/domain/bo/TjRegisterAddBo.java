@@ -116,7 +116,6 @@ public class TjRegisterAddBo {
     /**
      * 体检日期
      */
-    @NotNull(message = "体检日期不能为空", groups = { AddGroup.class, EditGroup.class })
     private Date healthyCheckTime;
 
 
