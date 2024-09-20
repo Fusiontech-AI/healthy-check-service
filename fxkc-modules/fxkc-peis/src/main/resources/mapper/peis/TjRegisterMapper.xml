@@ -52,6 +52,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 LEFT JOIN SYS_USER t2 on t1.CREATE_BY = t2.USER_ID
             </if>
         <where>
+            and t1.del_flag = '0'
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.delFlag)">
                 AND t1.DEL_FLAG = #{bo.delFlag}
             </if>
