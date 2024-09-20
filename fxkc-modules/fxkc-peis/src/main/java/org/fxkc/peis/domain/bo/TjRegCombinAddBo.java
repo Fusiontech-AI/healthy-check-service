@@ -82,6 +82,11 @@ public class TjRegCombinAddBo {
      */
     private Long packageId;
 
+    /**
+     * 批量标志（0:是）
+     */
+    private String batchFlag;
+
     @Valid
     private List<TjRegCombinItemBo> tjRegCombinItemBos;
 

@@ -125,4 +125,12 @@ public class TjCombinationProjectController extends BaseController {
     public R<List<TjCombinationProjectListVo>> queryOtherCompulsoryInspection(@RequestBody @Valid TjOtherCompulsoryInspectionBo bo) {
         return R.ok(tjCombinationProjectService.queryOtherCompulsoryInspection(bo));
     }
+
+    /**
+     * 分页查询职业病组合项目
+     */
+    @PostMapping("/queryOccupationalProject")
+    public TableDataInfo<TjCombinationProjectListVo> queryOccupationalProject(@RequestBody @Valid TjCompulsoryInspectionProjectBo bo) {
+        return tjCombinationProjectService.queryOccupationalProject(bo);
+    }
 }

@@ -2,6 +2,7 @@ package org.fxkc.peis.service;
 
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
+import org.fxkc.peis.domain.TjRegCombinationProject;
 import org.fxkc.peis.domain.TjRegister;
 import org.fxkc.peis.domain.bo.*;
 import org.fxkc.peis.domain.bo.template.ReportPrintBO;
@@ -98,7 +99,7 @@ public interface ITjRegisterService {
      * @param tjRegister
      * @return
      */
-    AmountCalculationVo billingByRegister(TjRegister tjRegister);
+    AmountCalculationVo billingByRegister(TjRegister tjRegister,List<TjRegCombinationProject> combinationProjects,String initFlag);
 
     /**
      * 根据分组id和登记id查询分组信息 其中区分了是否同步
@@ -108,4 +109,6 @@ public interface ITjRegisterService {
     TjTeamGroupVo getTjTeamGroupVoById(Long teamGroupId,Long regId,String healthyCheckStatus);
 
     Long getPeTimes(TjRegPeTimesBo bo);
+
+    Boolean batchReport(List<Long> regIds);
 }

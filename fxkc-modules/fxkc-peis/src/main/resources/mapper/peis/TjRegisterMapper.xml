@@ -17,6 +17,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             t1.MARRIAGE_STATUS,
             t1.AGE,
             t1.GENDER,
+            t1.REMARK,
             t1.PHONE,
             t1.HEALTHY_CHECK_TIME,
             t1.GUIDE_SHEET_RECEIVED,
@@ -32,6 +33,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             t1.TEAM_DEPT_ID,
             t1.INTRODUCER,
             t1.CREATE_BY,
+            t1.REPLACE_FLAG,
             t1.REGISTER_DOCTOR_ID,
             t1.GENERAL_REVIEW_DOCTOR,
             t1.GENERAL_REVIEW_TIME,
@@ -48,11 +50,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             t1.PE_TIMES
         FROM
             TJ_REGISTER t1
+            left join TJ_TEAM_TASK t3 on t1.TASK_ID = t3.ID and t3.DEL_FLAG = '0'
+                and (t3.IS_REVIEW = '1' or t3.REVIEW_RESULT = '1')
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.createByName)">
                 LEFT JOIN SYS_USER t2 on t1.CREATE_BY = t2.USER_ID
             </if>
-        <where>
-            and t1.del_flag = '0'
+        where  t1.del_flag = '0'
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.delFlag)">
                 AND t1.DEL_FLAG = #{bo.delFlag}
             </if>
@@ -181,7 +184,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.createTimeEnd)">
                 AND t1.CREATE_TIME &lt; TRUNC(#{bo.createTimeEnd})+1
             </if>
-        </where>
+        order by t1.HEALTHY_CHECK_CODE desc
     </select>
 
     <select id="getByIds" resultType="org.fxkc.peis.domain.vo.TjRegisterVo">

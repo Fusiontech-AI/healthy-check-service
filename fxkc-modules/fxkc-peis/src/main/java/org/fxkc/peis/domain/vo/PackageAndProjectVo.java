@@ -52,4 +52,9 @@ public class PackageAndProjectVo {
      * 检查类型0检查项目 1化验项目 2功能项目
      */
     private String checkType;
+
+    /**
+     * 是否必选(1:是0否)
+     */
+    private Boolean required;
 }

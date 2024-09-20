@@ -57,4 +57,6 @@ public interface ITjCombinationProjectService {
     String selectCombinationNameById(Long id);
 
     String selectCombinationCodeById(Long id);
+
+    TableDataInfo<TjCombinationProjectListVo> queryOccupationalProject(TjCompulsoryInspectionProjectBo bo);
 }

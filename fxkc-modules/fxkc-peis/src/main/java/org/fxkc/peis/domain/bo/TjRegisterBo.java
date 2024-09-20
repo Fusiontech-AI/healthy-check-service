@@ -1,5 +1,7 @@
 package org.fxkc.peis.domain.bo;
 
+import cn.hutool.core.date.DatePattern;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.github.linpeilie.annotations.AutoMapper;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -13,6 +15,7 @@ import org.fxkc.peis.domain.TjRegister;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 体检人员登记信息业务对象 tj_register
@@ -82,6 +85,7 @@ public class TjRegisterBo extends BaseEntity {
      * 生日
      */
     @NotNull(message = "生日不能为空", groups = { AddGroup.class})
+    @JsonFormat(pattern = DatePattern.NORM_DATE_PATTERN, timezone = "GMT+8")
     private Date birthday;
 
     /**
@@ -373,6 +377,7 @@ public class TjRegisterBo extends BaseEntity {
     /**
      * 体检预约时间
      */
+    @JsonFormat(pattern = DatePattern.NORM_DATE_PATTERN, timezone = "GMT+8")
     private Date healthyReserveTime;
 
     /**
@@ -443,6 +448,7 @@ public class TjRegisterBo extends BaseEntity {
     /**
      * 被替检人生日
      */
+    @JsonFormat(pattern = DatePattern.NORM_DATE_PATTERN, timezone = "GMT+8")
     private Date replaceBirthday;
 
     /**
@@ -496,4 +502,9 @@ public class TjRegisterBo extends BaseEntity {
      */
     @Valid
     private TjRegisterZybBo tjRegisterZybBo;
+
+    /**
+     * 职业病关联危害因素
+     */
+    private List<TjRegisterZybHazardBo> tjRegisterZybHazardBos;
 }

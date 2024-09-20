@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.fxkc.common.core.utils.IDUtil;
 import org.fxkc.common.core.utils.MapstructUtils;
 import org.fxkc.common.core.utils.StringUtils;
+import org.fxkc.common.log.enums.TjRecordLogEnum;
+import org.fxkc.common.log.event.TjRecordLogEvent;
 import org.fxkc.peis.domain.TjArchives;
 import org.fxkc.peis.domain.TjRegister;
 import org.fxkc.peis.domain.TjRegisterZyb;
@@ -63,6 +65,13 @@ public class TeamOccuRegisterInsert extends AbstractRegisterInsert {
                 hazard.setRegId(tjRegister.getId());
             });
             tjRegisterZybHazards.addAll(tjRegisterZybHazardList);
+
+            TjRecordLogEvent recordLogEvent = TjRecordLogEvent.builder().healthyCheckCode(tjRegister.getHealthyCheckCode())
+                .credentialNumber(tjRegister.getCredentialNumber())
+                .name(tjRegister.getName())
+                .operType(TjRecordLogEnum.OPER_TYPE_RYDJ.getDesc())
+                .operDesc(TjRecordLogEnum.OPER_TYPE_RYDJ.getDesc()).build();
+            tjLogUtils.print(recordLogEvent);
         });
 
         tjRegisterMapper.insertBatch(tjRegisters);

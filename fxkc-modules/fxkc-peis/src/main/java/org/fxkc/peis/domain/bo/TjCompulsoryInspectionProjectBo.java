@@ -1,13 +1,13 @@
 package org.fxkc.peis.domain.bo;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
+import org.fxkc.common.mybatis.core.page.PageQuery;
 
 import java.util.List;
 
 @Data
-public class TjCompulsoryInspectionProjectBo {
+public class TjCompulsoryInspectionProjectBo extends PageQuery {
 
 
     /**
@@ -20,4 +20,5 @@ public class TjCompulsoryInspectionProjectBo {
      * 组合项目名称
      */
     private String combinProjectName;
+
 }

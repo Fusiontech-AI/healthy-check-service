@@ -1,7 +1,9 @@
 package org.fxkc.peis.domain.vo;
 
+import cn.hutool.core.date.DatePattern;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 import org.fxkc.common.excel.annotation.ExcelDictFormat;
@@ -91,6 +93,7 @@ public class TjRegisterVo implements Serializable {
      * 生日
      */
     @ExcelProperty(value = "生日")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date birthday;
 
     /**
@@ -205,6 +208,12 @@ public class TjRegisterVo implements Serializable {
      */
     @ExcelProperty(value = "单位部门id")
     private Long teamDeptId;
+
+    /**
+     * 单位部门名称
+     */
+    @Translation(type = TransConstant.TEAM_DEPT_ID_TO_NAME, mapper = "teamDeptId")
+    private String deptName;
 
     /**
      * 介绍人
@@ -394,7 +403,7 @@ public class TjRegisterVo implements Serializable {
     /**
      * 套餐名称
      */
-    @Translation(type = TransConstant.TEAM_GROUP_ID_TO_NAME, mapper = "packageId")
+    @Translation(type = TransConstant.PACKAGE_ID_TO_NAME, mapper = "packageId")
     private String packageName;
 
     /**
@@ -437,6 +446,7 @@ public class TjRegisterVo implements Serializable {
      * 体检预约时间
      */
     @ExcelProperty(value = "体检预约时间")
+    @JsonFormat(pattern = DatePattern.NORM_DATE_PATTERN, timezone = "GMT+8")
     private Date healthyReserveTime;
 
     /**
@@ -519,6 +529,7 @@ public class TjRegisterVo implements Serializable {
      * 被替检人生日
      */
     @ExcelProperty(value = "被替检人生日")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date replaceBirthday;
 
     /**
@@ -526,6 +537,11 @@ public class TjRegisterVo implements Serializable {
      */
     @ExcelProperty(value = "被替检人性别")
     private String replaceGender;
+
+    /**
+     * 被替检人电话
+     */
+    private String replacePhone;
 
     /**
      * 被替检人年龄
@@ -574,6 +590,13 @@ public class TjRegisterVo implements Serializable {
      */
     @ExcelProperty(value = "任务id")
     private Long taskId;
+
+    /**
+     * 单位任务名称
+     */
+    @ExcelProperty(value = "单位任务名称")
+    @Translation(type = TransConstant.TEAM_TASK_ID_TO_NAME,mapper = "taskId")
+    private String taskName;
 
     /**
      * 创建人id

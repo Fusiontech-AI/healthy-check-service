@@ -31,30 +31,30 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             <if test='name != null and name != ""'>
                 temp.name like CONCAT(CONCAT('%',#{name}),'%')  or
-                temp.py_simple_code like CONCAT(CONCAT('%',#{name}),'%')
+                UPPER(temp.py_simple_code) like CONCAT(CONCAT('%', UPPER(#{name})),'%')
             </if>
         </where>
 
     </select>
 
     <select id="queryProjectByPackageId" resultType="org.fxkc.peis.domain.vo.PackageAndProjectVo">
-        select m.id,
-               m.combin_project_name as name,
-               m.py_simple_code,
-               m.standard_amount,
-               m.standard_amount as receivableAmount,
-               m.discount,
-               m.project_sort as sort,
+        SELECT t2.id,
+               t2.combin_project_name as name,
+               t2.py_simple_code,
+               t1.standard_amount,
+               t1.receivable_amount as receivableAmount,
+               t1.discount,
+               t2.project_sort as sort,
                '2' as type,
-               m.check_type
-        from tj_combination_project m
-        where m.del_flag = '0'
-          and m.status = '0'
-          and m.id in (select f.combin_project_id
-                       from tj_package_info f
-                       where f.del_flag = '0'
-                         and f.package_id = #{packageId})
-        order by m.project_sort
+               t2.check_type,
+               t1.required
+        FROM tj_package_info t1
+                 left join tj_combination_project t2
+                           on t1.combin_project_id = t2.id
+        where t1.del_flag = '0'
+          and t1.package_id = #{packageId}
+        order by t2.project_sort
+
     </select>
 
     <select id="queryListByIds" resultType="org.fxkc.peis.domain.vo.TjPackageVo">
@@ -64,4 +64,39 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </select>
 
+    <select id="queryOccupationalPackage" resultType="org.fxkc.peis.domain.vo.PackageAndProjectVo">
+        select a.id,
+        a.package_name as name,
+        a.py_simple_code,
+        a.standard_amount,
+        a.receivable_amount,
+        a.discount,
+        a.package_sort as sort,
+        '1' as type
+        from tj_package a left join tj_package_hazards b on a.id = b.package_id
+        where a.del_flag = '0'
+        and a.status = '0'
+        <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.name)">
+            and a.package_name like concat(concat('%',#{bo.name}),'%')  or
+            a.py_simple_code like concat(concat('%',#{bo.name}),'%')
+        </if>
+        <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.physicalType)">
+            and a.tj_type = #{bo.physicalType}
+        </if>
+        <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.dutyStatus)">
+            and a.duty_status = #{bo.dutyStatus}
+        </if>
+        <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.shineSource)">
+            and a.shine_source = #{bo.shineSource}
+        </if>
+        <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.shineType)">
+            and a.shine_type = #{bo.shineType}
+        </if>
+        <if test="@org.fxkc.common.mybatis.helper.Ognl@isNotEmpty(bo.groupHazardsList)">
+            and b.hazard_factors_code in
+            <foreach collection="bo.groupHazardsList" item="z" open="(" separator="," close=")" >
+                #{z.hazardFactorsCode}
+            </foreach>
+        </if>
+    </select>
 </mapper>

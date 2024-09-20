@@ -33,8 +33,11 @@ import org.fxkc.peis.enums.PhysicalTypeEnum;
 import org.fxkc.peis.exception.PeisException;
 import org.fxkc.peis.listener.TjTaskImportListener;
 import org.fxkc.peis.mapper.*;
+import org.fxkc.peis.register.change.RegisterChangeHolder;
+import org.fxkc.peis.register.change.RegisterChangeService;
 import org.fxkc.peis.register.insert.RegisterInsertHolder;
 import org.fxkc.peis.register.insert.RegisterInsertService;
+import org.fxkc.peis.service.ITjRegisterService;
 import org.fxkc.peis.service.ITjTeamGroupService;
 import org.fxkc.peis.service.ITjTeamInfoService;
 import org.fxkc.peis.service.ITjTeamTaskService;
@@ -64,6 +67,8 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
 
     private final TjRegisterMapper tjRegisterMapper;
 
+    private final ITjRegisterService tjRegisterService;
+
     private final ITjTeamGroupService iTjTeamGroupService;
 
     private final RegisterInsertHolder registerInsertHolder;
@@ -72,7 +77,9 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
 
     private final TjTeamGroupHazardsMapper tjTeamGroupHazardsMapper;
 
-    private final TjRegCombinationProjectMapper tjRegCombinationProjectMapper;
+    private final RegisterChangeHolder registerChangeHolder;
+
+    private final TjRegisterZybMapper tjRegisterZybMapper;
 
     /**
      * 查询团检任务管理
@@ -124,7 +131,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
             lqw.ge(TjTeamTask::getSignDate, DateUtil.parseDate(bo.getSignBeginDate()));
         }
         if(StrUtil.isNotBlank(bo.getSignEndDate())) {
-            lqw.le(TjTeamTask::getSignDate, DateUtil.parseDate(bo.getSignBeginDate()));
+            lqw.le(TjTeamTask::getSignDate, DateUtil.parseDate(bo.getSignEndDate()));
         }
         return lqw;
     }
@@ -134,7 +141,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<TjTeamGroupVo> insertByBo(TjTeamTaskBo bo) {
+    public TjTeamTaskCommonVo insertByBo(TjTeamTaskBo bo) {
         validEntityBeforeSave(bo, Boolean.TRUE);
         TjTeamTask add = MapstructUtils.convert(bo, TjTeamTask.class);
         String taskNumber = baseMapper.queryTaskNumber();
@@ -145,7 +152,8 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
         groupList.forEach(k -> k.setTaskId(add.getId()).setTaskName(add.getTaskName())
             .setTeamId(add.getTeamId()).setTeamName(teamName));
         tjTeamGroupMapper.insertBatch(groupList);
-        return getTaskItemGroupInfo(add.getId(), bo.getPhysicalType());
+        return new TjTeamTaskCommonVo().setTaskId(add.getId())
+            .setGroupList(getTaskItemGroupInfo(add.getId(), bo.getPhysicalType()));
     }
 
     /**
@@ -153,19 +161,32 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<TjTeamGroupVo> updateByBo(TjTeamTaskBo bo) {
+    public TjTeamTaskCommonVo updateByBo(TjTeamTaskBo bo) {
         validEntityBeforeSave(bo, Boolean.FALSE);
+        TjTeamTask query = baseMapper.selectById(bo.getId());
         TjTeamTask update = MapstructUtils.convert(bo, TjTeamTask.class);
         baseMapper.updateById(update);
         List<TjTeamGroup> groupList = MapstructUtils.convert(bo.getGroupList(), TjTeamGroup.class);
         String teamName = iTjTeamInfoService.selectTeamNameById(update.getTeamId());
-        groupList.forEach(k -> k.setTaskId(update.getId()).setTaskName(update.getTaskName())
-            .setTeamId(update.getTeamId()).setTeamName(teamName));
+        //职业病、放射修改成其他在岗状态、照射源、照射源种类更新为空
+        groupList.forEach(k -> {
+            k.setTaskId(update.getId()).setTaskName(update.getTaskName())
+            .setTeamId(update.getTeamId()).setTeamName(teamName);
+            if(Objects.equals(PhysicalTypeEnum.FSTJ.name(), query.getPhysicalType()) &&
+                !Objects.equals(PhysicalTypeEnum.FSTJ.name(), bo.getPhysicalType())) {
+                k.setShineSource(StrUtil.EMPTY).setShineType(StrUtil.EMPTY);
+            }
+            if(PhysicalTypeEnum.isOccupational(query.getPhysicalType()) &&
+                !PhysicalTypeEnum.isOccupational(bo.getPhysicalType())) {
+                k.setDutyStatus(StrUtil.EMPTY);
+            }
+        });
         //修改任务分组记录分组人员分组信息
         List<TjTeamGroup> recordList = StreamUtils.filter(groupList, e -> Objects.nonNull(e.getId()));
         iTjTeamGroupService.recordGroupInfo(recordList);
         tjTeamGroupMapper.insertOrUpdateBatch(groupList);
-        return getTaskItemGroupInfo(bo.getId(), bo.getPhysicalType());
+        return new TjTeamTaskCommonVo().setTaskId(bo.getId())
+            .setGroupList(getTaskItemGroupInfo(bo.getId(), bo.getPhysicalType()));
     }
 
     /**
@@ -221,6 +242,31 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
         if(isValid){
             //TODO 做一些业务上的校验,判断是否需要校验
+            long count = tjRegisterMapper.selectCount(Wrappers.lambdaQuery(TjRegister.class)
+                .in(TjRegister::getTaskId, ids)
+                .gt(TjRegister::getHealthyCheckStatus, HealthyCheckTypeEnum.预约.getCode()));
+            if(count > 0) {
+                throw new PeisException(ErrorCodeConstants.PEIS_TASK_NOT_APPIONT);
+            }
+        }
+        List<TjTeamGroup> groupList = tjTeamGroupMapper.selectList(Wrappers.lambdaQuery(TjTeamGroup.class)
+            .in(TjTeamGroup::getTaskId, ids));
+        if(CollUtil.isNotEmpty(groupList)) {
+            List<Long> groupIds = StreamUtils.toList(groupList, TjTeamGroup::getId);
+            tjTeamGroupMapper.deleteBatchIds(groupIds);
+            tjTeamGroupItemMapper.delete(Wrappers.lambdaQuery(TjTeamGroupItem.class)
+                .in(TjTeamGroupItem::getGroupId, groupIds));
+            tjTeamGroupHazardsMapper.delete(Wrappers.lambdaQuery(TjTeamGroupHazards.class)
+                .in(TjTeamGroupHazards::getGroupId, groupIds));
+        }
+        List<TjRegister> tjRegisterList = tjRegisterMapper.selectList(Wrappers.lambdaQuery(TjRegister.class)
+            .in(TjRegister::getTaskId, ids)
+            .eq(TjRegister::getHealthyCheckStatus, HealthyCheckTypeEnum.预约.getCode()));
+        if(CollUtil.isNotEmpty(tjRegisterList)) {
+            List<Long> registerIds = StreamUtils.toList(tjRegisterList, TjRegister::getId);
+            tjRegisterMapper.deleteBatchIds(registerIds);
+            tjRegisterZybMapper.delete(Wrappers.lambdaQuery(TjRegisterZyb.class)
+                .in(TjRegisterZyb::getRegId, registerIds));
         }
         return baseMapper.deleteBatchIds(ids) > 0;
     }
@@ -356,12 +402,14 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
         String teamName = iTjTeamInfoService.selectTeamNameById(tjTeamTask.getTeamId());
         List<TjTeamGroup> groupList = tjTeamGroupMapper.selectList(Wrappers.lambdaQuery(TjTeamGroup.class)
             .eq(TjTeamGroup::getTaskId, taskId));
-        List<TjTeamGroupItem> itemList = tjTeamGroupItemMapper.selectList(Wrappers.lambdaQuery(TjTeamGroupItem.class)
-            .in(TjTeamGroupItem::getGroupId, StreamUtils.toList(groupList, TjTeamGroup::getId)));
-        Set<Long> groupNewIdList = itemList.stream().map(TjTeamGroupItem::getGroupId).collect(Collectors.toSet());
-        groupList= StreamUtils.filter(groupList,
-            e -> ObjectUtil.notEqual(e.getGroupType(), GroupTypeEnum.ITEM.getCode())
-                || groupNewIdList.contains(e.getId()));
+        if(CollUtil.isNotEmpty(groupList)) {
+            List<TjTeamGroupItem> itemList = tjTeamGroupItemMapper.selectList(Wrappers.lambdaQuery(TjTeamGroupItem.class)
+                .in(TjTeamGroupItem::getGroupId, StreamUtils.toList(groupList, TjTeamGroup::getId)));
+            Set<Long> groupNewIdList = itemList.stream().map(TjTeamGroupItem::getGroupId).collect(Collectors.toSet());
+            groupList= StreamUtils.filter(groupList,
+                e -> ObjectUtil.notEqual(e.getGroupType(), GroupTypeEnum.ITEM.getCode())
+                    || groupNewIdList.contains(e.getId()));
+        }
         DropDownOptions options = new DropDownOptions(6, StreamUtils.toList(groupList, TjTeamGroup::getGroupName));
         List<DropDownOptions> optionsList = CollUtil.newArrayList(options);
         //如有其他类型再添加
@@ -409,6 +457,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
             addBo.setPhysicalType(bo.getPhysicalType());
             addBo.setTaskId(bo.getTaskId());
             addBo.setTeamId(tjTeamTask.getTeamId());
+            addBo.setTeamDeptId(tjTeamTask.getTeamDeptId());
             addBo.setBusinessCategory("2");
             addBo.setCredentialType(CertificateTypeEnum.身份证.getCode());
             addBo.setOccupationalType(occupationalType);
@@ -430,11 +479,10 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
             List<TjTeamGroupItem> itemList = tjTeamGroupItemMapper.selectList(Wrappers.lambdaQuery(TjTeamGroupItem.class)
                 .in(TjTeamGroupItem::getGroupId, groupIdList));
             Map<Long, List<TjTeamGroupItem>> itemMap = StreamUtils.groupByKey(itemList, TjTeamGroupItem::getGroupId);
-            List<TjRegCombinationProject> projectList = CollUtil.newArrayList();
-            List<TjRegister> priceRegisters = CollUtil.newArrayList();
             registers.forEach(k -> {
                 List<TjTeamGroupItem> groupItemList = itemMap.get(k.getTeamGroupId());
                 if(CollUtil.isNotEmpty(groupItemList)) {
+                    List<TjRegCombinationProject> projectList = CollUtil.newArrayList();
                     groupItemList.forEach(s ->
                         projectList.add(TjRegCombinationProject.builder()
                             .registerId(k.getId())
@@ -444,25 +492,41 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
                             .discount(s.getDiscount())
                             .receivableAmount(s.getActualPrice())
                             .payMode("1")
-                            .projectRequiredType(s.getIsRequired() ? "1" : "0")
-                            .teamAmount(s.getActualPrice())
+                            .projectRequiredType(s.getRequired() ? "1" : "0")
+                            //.teamAmount(s.getActualPrice())
                             .build()));
-                    BigDecimal price = groupItemList.stream().map(TjTeamGroupItem::getActualPrice)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add);
-                    priceRegisters.add(TjRegister.builder().id(k.getId())
-                        .totalAmount(price)
-                        .teamAmount(price)
-                        .build());
+                    AmountCalculationVo amountCalculationVo = tjRegisterService.billingByRegister(k, projectList,"1");
+                    TjRegCombinAddBo addBo = new TjRegCombinAddBo();
+                    addBo.setRegisterId(k.getId());
+                    addBo.setStandardAmount(amountCalculationVo.getStandardAmount());
+                    addBo.setReceivableAmount(amountCalculationVo.getReceivableAmount());
+                    addBo.setPersonAmount(amountCalculationVo.getPersonAmount());
+                    addBo.setDiscount(amountCalculationVo.getDiscount());
+                    addBo.setTeamAmount(amountCalculationVo.getTeamAmount());
+                    addBo.setPaidTotalAmount(amountCalculationVo.getPaidTotalAmount());
+                    addBo.setPaidPersonAmount(amountCalculationVo.getPaidPersonAmount());
+                    addBo.setPaidTeamAmount(amountCalculationVo.getPaidTeamAmount());
+                    List<AmountCalculationItemVo> amountCalculationItemVos = amountCalculationVo.getAmountCalculationItemVos();
+                    List<TjRegCombinItemBo> tjRegCombinItemBos = amountCalculationItemVos.stream().map(vo->{
+                        TjRegCombinItemBo itemBo = new TjRegCombinItemBo();
+                        itemBo.setDiscount(vo.getDiscount());
+                        itemBo.setTeamAmount(vo.getTeamAmount());
+                        itemBo.setPersonAmount(vo.getPersonAmount());
+                        itemBo.setStandardAmount(vo.getStandardAmount());
+                        itemBo.setReceivableAmount(vo.getReceivableAmount());
+                        itemBo.setCombinationProjectId(vo.getCombinProjectId());
+                        itemBo.setPayMode(vo.getPayType());
+                        itemBo.setProjectRequiredType(vo.getProjectRequiredType());
+                        itemBo.setProjectType(vo.getProjectType());
+                        return itemBo;
+                    }).collect(Collectors.toList());
+                    //List<TjRegCombinItemBo> tjRegCombinItemBos = MapstructUtils.convert(projectList,TjRegCombinItemBo.class);
+                    addBo.setTjRegCombinItemBos(tjRegCombinItemBos);
+                    RegisterChangeService registerChangeService = registerChangeHolder.selectBuilder("4");//暂存
+                    registerChangeService.changeRegCombin(addBo);
                 }
             });
-            //项目分组生成项目
-            if(CollUtil.isNotEmpty(projectList)) {
-                tjRegCombinationProjectMapper.insertBatch(projectList);
-            }
-            //更新项目分组金额
-            if(CollUtil.isNotEmpty(priceRegisters)) {
-                tjRegisterMapper.updateBatchById(priceRegisters);
-            }
+
         }
 
     }
@@ -506,6 +570,15 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
         Page<TjRegister> page = tjRegisterMapper.selectPage(pageQuery.build(), Wrappers.lambdaQuery(TjRegister.class)
             .eq(TjRegister::getTaskId, taskId));
         List<TjTaskReviewRegisterVo> voList = MapstructUtils.convert(page.getRecords(), TjTaskReviewRegisterVo.class);
+        List<Long> ids = StreamUtils.toList(voList, TjTaskReviewRegisterVo::getId);
+        if(CollUtil.isNotEmpty(ids)) {
+            List<TjRegisterZyb> zybList = tjRegisterZybMapper.selectList(Wrappers.lambdaQuery(TjRegisterZyb.class)
+                .in(TjRegisterZyb::getRegId, ids));
+            if(CollUtil.isNotEmpty(zybList)) {
+                Map<Long, String> map = StreamUtils.toMap(zybList, TjRegisterZyb::getRegId, TjRegisterZyb::getDutyStatus);
+                voList.forEach(k -> k.setDutyStatus(map.getOrDefault(k.getId(), StrUtil.EMPTY)));
+            }
+        }
         return TableDataInfo.build(new Page<TjTaskReviewRegisterVo>().setRecords(voList).setTotal(page.getTotal()));
     }
 
@@ -558,7 +631,7 @@ public class TjTeamTaskServiceImpl extends ServiceImpl<TjTeamTaskMapper, TjTeamT
                 .in(TjTeamGroupItem::getGroupId, groupIds));
             if(PhysicalTypeEnum.isOccupational(physicalType)) {
                 List<TjTeamGroupHazardsVo> groupHazardsList = tjTeamGroupHazardsMapper.selectVoList(Wrappers.lambdaQuery(TjTeamGroupHazards.class)
-                    .eq(TjTeamGroupHazards::getGroupId, groupIds));
+                    .in(TjTeamGroupHazards::getGroupId, groupIds));
                 voList.forEach(k -> k.setGroupHazardsList(StreamUtils.filter(groupHazardsList, e -> Objects.equals(e.getGroupId(),k.getId()))));
             }
             voList.forEach(k -> k.setGroupItemList(StreamUtils.filter(groupItemList, e -> Objects.equals(e.getGroupId(),k.getId()))));

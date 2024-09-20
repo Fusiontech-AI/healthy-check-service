@@ -1,5 +1,6 @@
 package org.fxkc.peis.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -10,25 +11,32 @@ import org.fxkc.common.core.constant.CommonConstants;
 import org.fxkc.common.core.exception.ServiceException;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
+import org.fxkc.peis.domain.TjBasicCommonResult;
 import org.fxkc.peis.domain.TjRegCombinationProject;
+import org.fxkc.peis.domain.TjRegister;
 import org.fxkc.peis.domain.bo.TjRegCombinationProjectBo;
 import org.fxkc.peis.domain.bo.TjRegCombinationProjectDelayBo;
 import org.fxkc.peis.domain.bo.TjRegCombinationProjectListBo;
+import org.fxkc.peis.domain.vo.TjBasicCommonResultVo;
 import org.fxkc.peis.domain.vo.TjRegBasicProjectVo;
 import org.fxkc.peis.domain.vo.TjRegCombinationProjectListVo;
-import org.fxkc.peis.domain.vo.ftlModel.CheckItemResultVo;
 import org.fxkc.peis.domain.vo.TjRegCombinationProjectVo;
+import org.fxkc.peis.domain.vo.ftlModel.CheckItemResultVo;
 import org.fxkc.peis.domain.vo.ftlModel.GuideSheetItemVo;
 import org.fxkc.peis.domain.vo.ftlModel.TxmModel;
 import org.fxkc.peis.enums.CheckStatusEnum;
+import org.fxkc.peis.mapper.TjBasicCommonResultMapper;
 import org.fxkc.peis.mapper.TjRegBasicProjectMapper;
 import org.fxkc.peis.mapper.TjRegCombinationProjectMapper;
+import org.fxkc.peis.mapper.TjRegisterMapper;
 import org.fxkc.peis.service.ITjRegCombinationProjectService;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 体检人员综合项目信息Service业务层处理
@@ -44,6 +52,9 @@ public class TjRegCombinationProjectServiceImpl implements ITjRegCombinationProj
 
     private final TjRegBasicProjectMapper tjRegBasicProjectMapper;
 
+    private final TjBasicCommonResultMapper tjBasicCommonResultMapper;
+
+    private final TjRegisterMapper registerMapper;
 
 
     /**
@@ -51,8 +62,15 @@ public class TjRegCombinationProjectServiceImpl implements ITjRegCombinationProj
      */
     @Override
     public TableDataInfo<TjRegCombinationProjectListVo> queryPageList(TjRegCombinationProjectListBo bo, PageQuery pageQuery) {
-        Page<TjRegCombinationProjectListVo> page = baseMapper.selectPage(pageQuery.build(), bo);
-        return TableDataInfo.build(page);
+        List<TjRegister> tjRegisters = registerMapper.selectList(Wrappers.lambdaQuery(TjRegister.class)
+            .eq(TjRegister::getHealthyCheckCode, bo.getRegisterId())
+            .eq(TjRegister::getDelFlag, CommonConstants.NORMAL));
+        if(CollUtil.isNotEmpty(tjRegisters)){
+            bo.setRegisterId(tjRegisters.get(0).getId());
+            Page<TjRegCombinationProjectListVo> page = baseMapper.selectPage(pageQuery.build(), bo);
+            return TableDataInfo.build(page);
+        }
+        return null;
     }
 
 
@@ -131,7 +149,21 @@ public class TjRegCombinationProjectServiceImpl implements ITjRegCombinationProj
 
     @Override
     public List<TjRegBasicProjectVo> queryRegBasicProjectList(Long id) {
-        return tjRegBasicProjectMapper.queryRegBasicProjectList(id);
+        List<TjRegBasicProjectVo> tjRegBasicProjectVos = tjRegBasicProjectMapper.queryRegBasicProjectList(id);
+        if(CollUtil.isNotEmpty(tjRegBasicProjectVos)){
+            List<Long> basicIds = tjRegBasicProjectVos.stream().map(m -> m.getBasicProjectId()).collect(Collectors.toList());
+            List<TjBasicCommonResultVo> tjBasicCommonResultVos = tjBasicCommonResultMapper.selectVoList(new LambdaQueryWrapper<TjBasicCommonResult>()
+                .in(TjBasicCommonResult::getBasicProjectId, basicIds)
+                .orderByAsc(TjBasicCommonResult::getSort)
+            );
+            if(CollUtil.isNotEmpty(tjBasicCommonResultVos)){
+                tjRegBasicProjectVos.stream().forEach(m->{
+                    List<TjBasicCommonResultVo> vos = tjBasicCommonResultVos.stream().filter(f -> Objects.equals(m.getBasicProjectId(), f.getBasicProjectId())).collect(Collectors.toList());
+                    m.setBasicCommonResultVos(vos);
+                });
+            }
+        }
+        return tjRegBasicProjectVos;
     }
 
     @Override

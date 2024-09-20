@@ -68,7 +68,7 @@ public class TjTeamGroupItemServiceImpl extends ServiceImpl<TjTeamGroupItemMappe
         lqw.eq(bo.getActualPrice() != null, TjTeamGroupItem::getActualPrice, bo.getActualPrice());
         lqw.eq(bo.getDiscount() != null, TjTeamGroupItem::getDiscount, bo.getDiscount());
         lqw.eq(StrUtil.isNotBlank(bo.getInclude()), TjTeamGroupItem::getInclude, bo.getInclude());
-        lqw.eq(bo.getIsRequired() != null, TjTeamGroupItem::getIsRequired, bo.getIsRequired());
+        lqw.eq(bo.getRequired() != null, TjTeamGroupItem::getRequired, bo.getRequired());
         return lqw;
     }
 

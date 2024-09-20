@@ -49,4 +49,8 @@ public class TjPackageInfoItemBo {
     private BigDecimal receivableAmount;
 
 
+    /**
+     * 是否必选(1:是0否)
+     */
+    private Boolean required;
 }

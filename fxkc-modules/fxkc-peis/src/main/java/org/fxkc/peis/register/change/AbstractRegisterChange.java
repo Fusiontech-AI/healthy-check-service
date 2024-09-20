@@ -10,6 +10,7 @@ import org.fxkc.peis.domain.bo.TjRegCombinAddBo;
 import org.fxkc.peis.domain.bo.TjRegCombinItemBo;
 import org.fxkc.peis.enums.CheckStatusEnum;
 import org.fxkc.peis.mapper.*;
+import org.fxkc.peis.utils.TjLogUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
@@ -41,6 +42,10 @@ public abstract class AbstractRegisterChange implements RegisterChangeService {
 
     @Autowired
     protected TjCombinationProjectMapper tjCombinationProjectMapper;
+
+    @Autowired
+    protected TjLogUtils tjLogUtils;
+
     @PostConstruct
     public void init() {
         registerChangeHolder.putBuilder(operateCode, this);
@@ -57,6 +62,9 @@ public abstract class AbstractRegisterChange implements RegisterChangeService {
         //后置信息更新
         TjRegister updateRegister = new TjRegister();
         updateRegister.setId(tjRegCombinAddBo.getRegisterId());
+        updateRegister.setHealthyCheckCode(tjRegister.getHealthyCheckCode());
+        updateRegister.setCredentialNumber(tjRegister.getCredentialNumber());
+        updateRegister.setName(tjRegister.getName());
         changeAfterUpdate(tjRegCombinAddBo,updateRegister);
     }
 
@@ -90,12 +98,13 @@ public abstract class AbstractRegisterChange implements RegisterChangeService {
             .eq(TjRegCombinationProject::getRegisterId, bo.getRegisterId()));
         if(CollUtil.isNotEmpty(tjRegCombinationProjects)){
             //筛选出需要删除的记录信息
-            List<TjRegCombinItemBo> comBinIds = combinItemBos.stream().filter(m -> Objects.nonNull(m.getId())).collect(Collectors.toList());
+            List<Long> comBinIds = combinItemBos.stream().filter(m -> Objects.nonNull(m.getId())).map(m->m.getId()).collect(Collectors.toList());
             List<TjRegCombinationProject> deleteItems = tjRegCombinationProjects.stream().filter(m -> !comBinIds.contains(m.getId())).collect(Collectors.toList());
             if(CollUtil.isNotEmpty(deleteItems)){
                 //待删除记录中，存在项目己检查的 无法删除 (后面还要除去 不显示的项目记录)
-                if(deleteItems.stream().anyMatch(m -> Objects.equals(CheckStatusEnum.已检查.getCode(), m.getCheckStatus()))){
-                    throw new RuntimeException("已检查的项目无法删除!");
+                if(deleteItems.stream().anyMatch(m -> Objects.equals(CheckStatusEnum.已检查.getCode(), m.getCheckStatus())
+                  || Objects.equals("1", m.getPayStatus()))){
+                    throw new RuntimeException("已检查或已缴费的项目无法删除!");
                 }
                 //删除相关记录 并删除管理的子项记录
                 tjRegCombinationProjectMapper.deleteBatchIds(deleteItems);

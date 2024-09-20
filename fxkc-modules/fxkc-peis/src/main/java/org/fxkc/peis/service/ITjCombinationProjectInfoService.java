@@ -1,10 +1,9 @@
 package org.fxkc.peis.service;
 
-import org.fxkc.peis.domain.TjCombinationProjectInfo;
-import org.fxkc.peis.domain.vo.TjCombinationProjectInfoVo;
-import org.fxkc.peis.domain.bo.TjCombinationProjectInfoBo;
-import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.mybatis.core.page.PageQuery;
+import org.fxkc.common.mybatis.core.page.TableDataInfo;
+import org.fxkc.peis.domain.bo.TjCombinationProjectInfoBo;
+import org.fxkc.peis.domain.vo.TjCombinationProjectInfoVo;
 
 import java.util.Collection;
 import java.util.List;
@@ -46,4 +45,6 @@ public interface ITjCombinationProjectInfoService {
      * 校验并批量删除体检组合项目详细信息信息
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+
+    List<TjCombinationProjectInfoVo> queryBasicListByCombinIds(List<Long> combinIds);
 }

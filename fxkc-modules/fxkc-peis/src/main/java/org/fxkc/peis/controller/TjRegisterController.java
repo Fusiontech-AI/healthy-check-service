@@ -177,6 +177,16 @@ public class TjRegisterController extends BaseController {
 
 
     /**
+     * 体检项目批量报到
+     */
+    @Log(title = "体检项目批量报到", businessType = BusinessType.UPDATE)
+    @RepeatSubmit()
+    @PostMapping("/batchReport")
+    public R<Void> batchReport(@RequestBody List<Long> regIds) {
+        return  toAjax(tjRegisterService.batchReport(regIds));
+    }
+
+    /**
      * 体检项目诊断结果保存
      */
     @Log(title = "体检项目诊断结果保存", businessType = BusinessType.INSERT)

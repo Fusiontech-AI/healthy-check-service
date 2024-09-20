@@ -92,6 +92,11 @@ public class TjRegCombinItemBo {
     private String addFlag;
 
     /**
+     * 项目属性（0：选检项目，1：必检项目）见字典bus_project_required_type
+     */
+    private String projectRequiredType;
+
+    /**
      * 套餐id
      */
     private Long packageId;

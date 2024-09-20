@@ -72,4 +72,9 @@ public interface TransConstant {
      * 套餐id转名称
      */
     String PACKAGE_ID_TO_NAME = "package_id_to_name";
+
+    /**
+     * 诊断建议id转建议名称
+     */
+    String ZDJY_ID_TO_NAME = "zdjy_id_to_name";
 }

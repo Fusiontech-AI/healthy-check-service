@@ -67,7 +67,7 @@ public class TjTaskImportListener extends AnalysisEventListener<TjTaskOccupation
     public void invoke(TjTaskOccupationalExportVo tjTaskOccupationalExportVo, AnalysisContext context) {
         log.info("解析导入数据======={}", JSONUtil.toJsonStr(tjTaskOccupationalExportVo));
         int i = context.readRowHolder().getRowIndex();
-        Boolean isOccupational = PhysicalTypeEnum.isOccupational(tjTaskImportBo.getTemplateType());
+        boolean isOccupational = PhysicalTypeEnum.isOccupational(tjTaskImportBo.getTemplateType());
         Boolean autoGroup = tjTaskImportBo.getAutoGroup();
         String errorMsg;
         StringBuilder failureMsg = new StringBuilder();
@@ -127,17 +127,19 @@ public class TjTaskImportListener extends AnalysisEventListener<TjTaskOccupation
             if(autoGroup) {
                 List<TjTeamGroup> groupList = iTjTeamGroupService.list(Wrappers.lambdaQuery(TjTeamGroup.class)
                     .eq(TjTeamGroup::getTaskId, tjTaskImportBo.getTaskId()));
-                List<TjTeamGroupItem> itemList = iTjTeamGroupItemService.list(Wrappers.lambdaQuery(TjTeamGroupItem.class)
-                    .in(TjTeamGroupItem::getGroupId, StreamUtils.toList(groupList, TjTeamGroup::getId)));
-                Set<Long> groupNewIdList = itemList.stream().map(TjTeamGroupItem::getGroupId).collect(Collectors.toSet());
-                groupList = StreamUtils.filter(groupList,
-                    e -> ObjectUtil.notEqual(e.getGroupType(), GroupTypeEnum.ITEM.getCode())
-                        || groupNewIdList.contains(e.getId()));
+                if(CollUtil.isNotEmpty(groupList)) {
+                    List<TjTeamGroupItem> itemList = iTjTeamGroupItemService.list(Wrappers.lambdaQuery(TjTeamGroupItem.class)
+                        .in(TjTeamGroupItem::getGroupId, StreamUtils.toList(groupList, TjTeamGroup::getId)));
+                    Set<Long> groupNewIdList = itemList.stream().map(TjTeamGroupItem::getGroupId).collect(Collectors.toSet());
+                    groupList = StreamUtils.filter(groupList,
+                        e -> ObjectUtil.notEqual(e.getGroupType(), GroupTypeEnum.ITEM.getCode())
+                            || groupNewIdList.contains(e.getId()));
+                }
                 if(CollUtil.isEmpty(groupList)) {
-                    throw new PeisException(ErrorCodeConstants.PEIS_GROUP_ITEM_ISEXIST);
+                    throw new PeisException(ErrorCodeConstants.PEIS_NOT_AUTO_GROUP);
                 }
                 Integer gender = IdcardUtil.getGenderByIdCard(tjTaskOccupationalExportVo.getCredentialNumber()) == 1 ? 0 : 1 ;
-                Integer age = IdcardUtil.getAgeByIdCard(tjTaskOccupationalExportVo.getCredentialNumber());
+                int age = IdcardUtil.getAgeByIdCard(tjTaskOccupationalExportVo.getCredentialNumber());
                 TjTeamGroup group;
                 List<TjTeamGroup> conformList = StreamUtils.filter(groupList, e -> Objects.nonNull(e.getStartAge()) && Objects.nonNull(e.getEndAge())
                     && (Objects.equals(String.valueOf(gender), e.getGender()) || Objects.equals("2", e.getGender()))

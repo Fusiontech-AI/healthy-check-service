@@ -1,5 +1,6 @@
 package org.fxkc.peis.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -13,9 +14,13 @@ import org.fxkc.common.core.utils.MapstructUtils;
 import org.fxkc.common.core.utils.SequenceNoUtils;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
+import org.fxkc.peis.domain.TjBasicProject;
 import org.fxkc.peis.domain.TjTjks;
 import org.fxkc.peis.domain.bo.TjTjksBo;
+import org.fxkc.peis.domain.vo.TjBasicProjectVo;
+import org.fxkc.peis.domain.vo.TjTjksBasicNameVo;
 import org.fxkc.peis.domain.vo.TjTjksVo;
+import org.fxkc.peis.mapper.TjBasicProjectMapper;
 import org.fxkc.peis.mapper.TjTjksMapper;
 import org.fxkc.peis.service.ITjTjksService;
 import org.springframework.stereotype.Service;
@@ -23,6 +28,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 体检科室Service业务层处理
@@ -36,6 +42,8 @@ import java.util.Map;
 public class TjTjksServiceImpl implements ITjTjksService {
 
     private final TjTjksMapper baseMapper;
+
+    private final TjBasicProjectMapper basicProjectMapper;
 
     /**
      * 查询体检科室
@@ -120,7 +128,6 @@ public class TjTjksServiceImpl implements ITjTjksService {
     private boolean checkKsCodeUnique(TjTjks entity) {
         long ksId = ObjectUtil.isNull(entity.getId()) ? -1L : entity.getId();
         TjTjks tjTjks = baseMapper.selectOne(new LambdaQueryWrapper<TjTjks>()
-            .eq(TjTjks::getDelFlag, CommonConstants.NORMAL)
             .eq(TjTjks::getKsCode, entity.getKsCode())
 
         );
@@ -136,7 +143,6 @@ public class TjTjksServiceImpl implements ITjTjksService {
     private boolean checkKsNameUnique(TjTjks entity) {
         long ksId = ObjectUtil.isNull(entity.getId()) ? -1L : entity.getId();
         TjTjks tjTjks = baseMapper.selectOne(new LambdaQueryWrapper<TjTjks>()
-            .eq(TjTjks::getDelFlag, CommonConstants.NORMAL)
             .eq(TjTjks::getKsName, entity.getKsName())
 
         );
@@ -159,6 +165,34 @@ public class TjTjksServiceImpl implements ITjTjksService {
     @Override
     public String getKsCode() {
         String ksCode = baseMapper.nextTjKsCode();
-        return SequenceNoUtils.padl(ksCode,3,'0');
+        return SequenceNoUtils.createNo(ksCode,3,'0');
+    }
+
+    @Override
+    public List<TjTjksBasicNameVo> queryTjKsListByBasicName(String basicProjectName) {
+        List<TjTjksBasicNameVo> tjTjksBasicNameVos = baseMapper.queryTjKsListByBasicName(basicProjectName);
+        if(CollUtil.isNotEmpty(tjTjksBasicNameVos)){
+            List<Long> ksIds = tjTjksBasicNameVos.stream().map(m -> m.getId()).collect(Collectors.toList());
+            List<TjBasicProjectVo> tjBasicProjects = basicProjectMapper.selectVoList(new LambdaQueryWrapper<TjBasicProject>()
+                .in(TjBasicProject::getKsId, ksIds)
+                .like(StringUtils.isNotEmpty(basicProjectName),TjBasicProject::getBasicProjectName,basicProjectName)
+            );
+            Map<Long, List<TjBasicProjectVo>> ksGroup = tjBasicProjects.stream().collect(Collectors.groupingBy(TjBasicProjectVo::getKsId));
+
+            tjTjksBasicNameVos.stream().forEach(m->{
+                List<TjBasicProjectVo> tjBasicProjectVos = ksGroup.get(m.getId());
+                if(CollUtil.isNotEmpty(tjBasicProjectVos)){
+                    List<TjTjksBasicNameVo> collect = tjBasicProjectVos.stream().map(basicProjectVo -> {
+                        TjTjksBasicNameVo vo = new TjTjksBasicNameVo();
+                        vo.setId(basicProjectVo.getId());
+                        vo.setKsCode(basicProjectVo.getBasicProjectCode());
+                        vo.setKsName(basicProjectVo.getBasicProjectName());
+                        return vo;
+                    }).collect(Collectors.toList());
+                    m.setChildren(collect);
+                }
+            });
+        };
+        return tjTjksBasicNameVos;
     }
 }

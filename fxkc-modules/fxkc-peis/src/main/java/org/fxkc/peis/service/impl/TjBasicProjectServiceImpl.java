@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.fxkc.common.core.constant.CommonConstants;
 import org.fxkc.common.core.exception.ServiceException;
 import org.fxkc.common.core.utils.MapstructUtils;
 import org.fxkc.common.mybatis.core.page.PageQuery;
@@ -144,7 +143,6 @@ public class TjBasicProjectServiceImpl implements ITjBasicProjectService {
     private boolean checkNameUnique(TjBasicProject entity) {
         long id = ObjectUtil.isNull(entity.getId()) ? -1L : entity.getId();
         TjBasicProject tjBasicProject = baseMapper.selectOne(new LambdaQueryWrapper<TjBasicProject>()
-            .eq(TjBasicProject::getDelFlag, CommonConstants.NORMAL)
             .eq(TjBasicProject::getBasicProjectName, entity.getBasicProjectName())
 
         );

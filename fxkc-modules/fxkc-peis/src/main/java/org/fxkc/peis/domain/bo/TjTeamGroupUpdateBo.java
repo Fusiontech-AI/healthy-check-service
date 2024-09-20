@@ -1,14 +1,11 @@
 package org.fxkc.peis.domain.bo;
 
-import cn.hutool.core.collection.CollUtil;
 import io.github.linpeilie.annotations.AutoMapper;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import org.fxkc.common.core.validate.EditGroup;
-import org.fxkc.common.mybatis.core.domain.BaseEntity;
 import org.fxkc.peis.domain.TjTeamGroup;
 
 import java.math.BigDecimal;
@@ -60,6 +57,11 @@ public class TjTeamGroupUpdateBo {
     private BigDecimal addDiscount;
 
     /**
+     * 实际折扣
+     */
+    private BigDecimal discount;
+
+    /**
      * 是否同步项目(0:是1:否)
      */
     @NotBlank(message = "是否同步项目")
@@ -73,6 +75,7 @@ public class TjTeamGroupUpdateBo {
     /**
      * 分组项目信息集合
      */
+    @Valid
     @NotEmpty(message = "分组项目信息集合不能为空")
     private List<TjTeamGroupItemBo> groupItemList;
 

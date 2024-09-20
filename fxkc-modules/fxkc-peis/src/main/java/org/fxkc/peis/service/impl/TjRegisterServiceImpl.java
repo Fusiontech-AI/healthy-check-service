@@ -15,6 +15,8 @@ import org.fxkc.common.core.exception.ServiceException;
 import org.fxkc.common.core.utils.MapstructUtils;
 import org.fxkc.common.core.utils.StreamUtils;
 import org.fxkc.common.core.utils.StringUtils;
+import org.fxkc.common.log.enums.TjRecordLogEnum;
+import org.fxkc.common.log.event.TjRecordLogEvent;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.oss.core.OssClient;
@@ -35,6 +37,7 @@ import org.fxkc.peis.register.insert.RegisterInsertHolder;
 import org.fxkc.peis.register.insert.RegisterInsertService;
 import org.fxkc.peis.service.ITjPackageService;
 import org.fxkc.peis.service.ITjRegisterService;
+import org.fxkc.peis.utils.TjLogUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -78,6 +81,7 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
 
     private final ITjPackageService tjPackageService;
 
+    protected final TjLogUtils tjLogUtils;
     /**
      * 查询体检人员登记信息
      */
@@ -182,8 +186,22 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
             TjRegisterZyb tjRegisterZyb = MapstructUtils.convert(bo.getTjRegisterZybBo(), TjRegisterZyb.class);
             tjRegisterZybMapper.updateById(tjRegisterZyb);
         }
+
+        if(CollUtil.isNotEmpty(bo.getTjRegisterZybHazardBos())){
+            tjRegisterZybHazardMapper.delete(new LambdaQueryWrapper<TjRegisterZybHazard>()
+                .eq(TjRegisterZybHazard::getRegId,bo.getId()));
+            List<TjRegisterZybHazard> tjRegisterZybHazardList = MapstructUtils.convert(bo.getTjRegisterZybHazardBos(), TjRegisterZybHazard.class);
+            tjRegisterZybHazardMapper.insertBatch(tjRegisterZybHazardList);
+        }
         //不应在这里修改体检人员照片信息
         update.setUserImage(null);
+
+        TjRecordLogEvent recordLogEvent = TjRecordLogEvent.builder().healthyCheckCode(update.getHealthyCheckCode())
+            .credentialNumber(update.getCredentialNumber())
+            .name(update.getName())
+            .operType(TjRecordLogEnum.OPER_TYPE_RYXG.getDesc())
+            .operDesc(TjRecordLogEnum.OPER_TYPE_RYXG.getDesc()).build();
+        tjLogUtils.print(recordLogEvent);
 
         return baseMapper.updateById(update) > 0;
     }
@@ -194,6 +212,15 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
      */
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
+        List<TjRegister> tjRegisters = baseMapper.selectBatchIds(ids);
+        tjRegisters.stream().forEach(register->{
+            TjRecordLogEvent recordLogEvent = TjRecordLogEvent.builder().healthyCheckCode(register.getHealthyCheckCode())
+                .credentialNumber(register.getCredentialNumber())
+                .name(register.getName())
+                .operType(TjRecordLogEnum.OPER_TYPE_RYSC.getDesc())
+                .operDesc(TjRecordLogEnum.OPER_TYPE_RYSC.getDesc()).build();
+            tjLogUtils.print(recordLogEvent);
+        });
         return baseMapper.deleteBatchIds(ids) > 0;
     }
 
@@ -258,23 +285,25 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
         TjRegister tjRegister = baseMapper.selectById(bo.getRegisterId());
         Assert.notNull(tjRegister,"根据登记id["+bo.getRegisterId()+"],未找到登录记录!");
         TjRegister updateEntity = new TjRegister();
-        updateEntity.setReplaceFlag("0");
         updateEntity.setId(bo.getRegisterId());
         //不等于0是的时候 初次将原体检人信息存入 replace相关字段。
         if(!Objects.equals("0",tjRegister.getReplaceFlag())){
             updateEntity.setReplaceName(tjRegister.getName());
             updateEntity.setReplaceGender(tjRegister.getGender());
             updateEntity.setReplaceCredentialType(tjRegister.getCredentialType());
-            updateEntity.setReplaceCredentialNumber(tjRegister.getReplaceCredentialNumber());
+            updateEntity.setReplaceCredentialNumber(tjRegister.getCredentialNumber());
             updateEntity.setReplaceAge(tjRegister.getAge());
             updateEntity.setReplaceBirthday(tjRegister.getBirthday());
+            updateEntity.setReplacePhone(tjRegister.getPhone());
         }
+        updateEntity.setReplaceFlag("0");
         updateEntity.setName(bo.getReplaceName());
         updateEntity.setGender(bo.getReplaceGender());
         updateEntity.setCredentialType(bo.getReplaceCredentialType());
         updateEntity.setCredentialNumber(bo.getReplaceCredentialNumber());
         updateEntity.setAge(bo.getReplaceAge());
         updateEntity.setBirthday(bo.getReplaceBirthday());
+        updateEntity.setPhone(bo.getReplacePhone());
         return baseMapper.updateById(updateEntity)> 0;
     }
 
@@ -314,15 +343,15 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
             tjRegBasicProjectMapper.updateBatchById(tjRegBasicProjects);
         }
         //修改组合项目结果内容
-        tjRegCombinationProject.setCheckDoctor(bo.getCheckDoctor());
-        tjRegCombinationProject.setCheckDoctorName(bo.getCheckDoctorName());
-        tjRegCombinationProject.setCheckTime(bo.getCheckTime());
+        tjRegCombinationProject.setCheckDoctor(bo.getCheckDoctor()==null ? LoginHelper.getUserId():bo.getCheckDoctor());
+        tjRegCombinationProject.setCheckDoctorName(StringUtils.isEmpty(bo.getCheckDoctorName())? LoginHelper.getUsername(): bo.getCheckDoctorName());
+        tjRegCombinationProject.setCheckTime(bo.getCheckTime()==null ? DateUtil.date() : bo.getCheckTime());
         tjRegCombinationProject.setCheckStatus(StringUtils.isEmpty(bo.getCheckStatus())
             ? "1" : bo.getCheckStatus());//已检查
         tjRegCombinationProjectMapper.updateById(tjRegCombinationProject);
 
         //这里需要更改登记记录允许总检状态  以及对诊断明细相关记录的保存
-        return null;
+        return true;
     }
 
     @Override
@@ -385,24 +414,43 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
             }
         });
 
+        List<TjRegCombinationProject> combinationProjects = tjRegCombinationProjectMapper.selectList(new LambdaQueryWrapper<TjRegCombinationProject>()
+            .in(TjRegCombinationProject::getRegisterId, bo.getRegIds()));
 
-        List<TjRegister> registers = tjRegisters.stream().map(tjRegister -> {
-            AmountCalculationVo amountCalculationVo = billingByRegister(tjRegister);
-            TjRegister register = new TjRegister();
-            register.setId(tjRegister.getId());
-            register.setBusinessCategory("1");
-            register.setTotalStandardAmount(amountCalculationVo.getStandardAmount());
-            register.setTotalAmount(amountCalculationVo.getReceivableAmount());
-            register.setPersonAmount(amountCalculationVo.getPersonAmount());
-            register.setDiscount(amountCalculationVo.getDiscount());
-            register.setTeamAmount(amountCalculationVo.getTeamAmount());
-            register.setPaidTotalAmount(amountCalculationVo.getPaidTotalAmount());
-            register.setPaidPersonAmount(amountCalculationVo.getPaidPersonAmount());
-            register.setPaidTeamAmount(amountCalculationVo.getPaidTeamAmount());
-            return register;
-        }).collect(Collectors.toList());
+        Map<Long, List<TjRegCombinationProject>> listMap = combinationProjects.stream().collect(Collectors.groupingBy(TjRegCombinationProject::getRegisterId));
 
-        return baseMapper.updateBatchById(registers);
+        List<TjRegCombinationProject> updateRegCombinationProjects = new ArrayList<>();
+        tjRegisters.stream().forEach(tjRegister -> {
+            tjRegister.setTeamGroupId(null);//团转个时 分组id应置空去修改
+            List<TjRegCombinationProject> regCombinationProjects = listMap.get(tjRegister.getId());
+            //将子项目中支付方式变更成为个人  团检金额放到个检金额中
+            regCombinationProjects.stream().forEach(project->{
+                project.setPayMode("0");//个人
+                project.setPersonAmount(project.getPersonAmount().add(project.getTeamAmount()));
+                project.setTeamAmount(new BigDecimal("0"));
+            });
+            AmountCalculationVo amountCalculationVo = billingByRegister(tjRegister,regCombinationProjects,"1");
+            baseMapper.update(null,Wrappers.<TjRegister>lambdaUpdate()
+                .set(TjRegister::getBusinessCategory,"1")
+                .set(TjRegister::getTotalStandardAmount,amountCalculationVo.getStandardAmount())
+                .set(TjRegister::getTotalAmount,amountCalculationVo.getReceivableAmount())
+                .set(TjRegister::getPersonAmount,amountCalculationVo.getPersonAmount())
+                .set(TjRegister::getDiscount,amountCalculationVo.getDiscount())
+                .set(TjRegister::getTeamAmount,amountCalculationVo.getTeamAmount())
+                .set(TjRegister::getPaidTotalAmount,amountCalculationVo.getPaidTotalAmount())
+                .set(TjRegister::getPaidTeamAmount,amountCalculationVo.getPaidPersonAmount())
+                .set(TjRegister::getPaidPersonAmount,amountCalculationVo.getPaidTeamAmount())
+                .set(TjRegister::getTaskId,null)
+                .set(TjRegister::getTeamId,null)
+                .set(TjRegister::getTeamGroupId,null)
+                .eq(TjRegister::getId,tjRegister.getId())
+            );
+            //将子项 价格信息 修改为算费后的价格信息  并进行更新
+            List<TjRegCombinationProject> toBeUpdateList = fillUpdateList(amountCalculationVo);
+            updateRegCombinationProjects.addAll(toBeUpdateList);
+        });
+
+        return tjRegCombinationProjectMapper.updateBatchById(updateRegCombinationProjects);
     }
 
     @Override
@@ -418,10 +466,23 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
             }
         });
 
+        List<TjRegCombinationProject> combinationProjects = tjRegCombinationProjectMapper.selectList(new LambdaQueryWrapper<TjRegCombinationProject>()
+            .in(TjRegCombinationProject::getRegisterId, bo.getRegIds()));
+
+        Map<Long, List<TjRegCombinationProject>> listMap = combinationProjects.stream().collect(Collectors.groupingBy(TjRegCombinationProject::getRegisterId));
+
+        List<TjRegCombinationProject> updateRegCombinationProjects = new ArrayList<>();
 
         List<TjRegister> registers = tjRegisters.stream().map(tjRegister -> {
             tjRegister.setTeamGroupId(bo.getTeamGroupId());
-            AmountCalculationVo amountCalculationVo = billingByRegister(tjRegister);
+            List<TjRegCombinationProject> regCombinationProjects = listMap.get(tjRegister.getId());
+            //将子项目中支付方式变更成为单位  个检金额放到团检金额中
+            regCombinationProjects.stream().forEach(project->{
+                project.setPayMode("1");//团队
+                project.setTeamAmount(project.getPersonAmount().add(project.getTeamAmount()));
+                project.setPersonAmount(new BigDecimal("0"));
+            });
+            AmountCalculationVo amountCalculationVo = billingByRegister(tjRegister,regCombinationProjects,"1");
             TjRegister register = new TjRegister();
             register.setId(tjRegister.getId());
             register.setBusinessCategory("2");
@@ -436,17 +497,35 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
             register.setTeamId(bo.getTeamId());
             register.setTeamGroupId(bo.getTeamGroupId());
             register.setTaskId(bo.getTaskId());
+
+            //将子项 价格信息 修改为算费后的价格信息  并进行更新
+            List<TjRegCombinationProject> toBeUpdateList = fillUpdateList(amountCalculationVo);
+            updateRegCombinationProjects.addAll(toBeUpdateList);
             return register;
         }).collect(Collectors.toList());
-
+        tjRegCombinationProjectMapper.updateBatchById(updateRegCombinationProjects);
         return baseMapper.updateBatchById(registers);
     }
 
+    private List<TjRegCombinationProject> fillUpdateList(AmountCalculationVo amountCalculationVo) {
+        //将子项 价格信息 修改为算费后的价格信息  并进行更新
+        return amountCalculationVo.getAmountCalculationItemVos().stream().map(vo -> {
+            TjRegCombinationProject regCombinationProject = new TjRegCombinationProject();
+            regCombinationProject.setId(vo.getId());
+            regCombinationProject.setDiscount(vo.getDiscount());
+            regCombinationProject.setTeamAmount(vo.getTeamAmount());
+            regCombinationProject.setPersonAmount(vo.getPersonAmount());
+            regCombinationProject.setStandardAmount(vo.getStandardAmount());
+            regCombinationProject.setReceivableAmount(vo.getReceivableAmount());
+            regCombinationProject.setCombinationProjectId(vo.getCombinProjectId());
+            regCombinationProject.setPayMode(vo.getPayType());
+            return regCombinationProject;
+        }).collect(Collectors.toList());
+    }
+
     @Override
-    public AmountCalculationVo billingByRegister(TjRegister tjRegister) {
+    public AmountCalculationVo billingByRegister(TjRegister tjRegister,List<TjRegCombinationProject> combinationProjects,String initFlag) {
         //组装算费请求对象 重新计算相关费用情况并更新
-        List<TjRegCombinationProject> combinationProjects = tjRegCombinationProjectMapper.selectList(new LambdaQueryWrapper<TjRegCombinationProject>()
-            .eq(TjRegCombinationProject::getRegisterId, tjRegister.getId()));
         if(CollUtil.isEmpty(combinationProjects)){
             //直接返回都是金额0和折扣默认100的初始值信息。
             AmountCalculationVo amountCalculationVo = new AmountCalculationVo();
@@ -469,6 +548,7 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
             amountCalculationBo.setGroupFlag("1");
             TjTeamGroupVo teamGroupVo = getTjTeamGroupVoById(tjRegister.getTeamGroupId(), tjRegister.getId(),tjRegister.getHealthyCheckStatus());
             AmountCalGroupBo amountCalGroupBo = new AmountCalGroupBo(teamGroupVo.getGroupType(),teamGroupVo.getPrice(),teamGroupVo.getGroupPayType(),teamGroupVo.getAddPayType(),teamGroupVo.getItemDiscount(),teamGroupVo.getAddDiscount());
+            amountCalGroupBo.setInitFlag(initFlag);
             amountCalculationBo.setAmountCalGroupBo(amountCalGroupBo);
         }
         //组装算费新增的记录信息参数
@@ -485,6 +565,8 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
             itemBo.setPayType(combinationProject.getPayMode());
             itemBo.setPayStatus(combinationProject.getPayStatus());
             itemBo.setTcFlag(combinationProject.getProjectType());
+            itemBo.setProjectRequiredType(combinationProject.getProjectRequiredType());
+            itemBo.setProjectType(combinationProject.getProjectType());
             return itemBo;
         }).collect(Collectors.toList());
         amountCalculationBo.setAmountCalculationItemBos(amountCalculationItemBos);
@@ -523,6 +605,20 @@ public class TjRegisterServiceImpl implements ITjRegisterService {
             .eq(TjRegister::getCredentialType,bo.getCredentialType())
         );
         return count+1;
+    }
+
+    @Override
+    public Boolean batchReport(List<Long> regIds) {
+        regIds.stream().forEach(regId->{
+            //组装报到请求参数对象
+            TjRegCombinAddBo bo = new TjRegCombinAddBo();
+            bo.setBatchFlag("0");//设置批量标志
+            bo.setRegisterId(regId);
+            RegisterChangeService registerChangeService = registerChangeHolder.selectBuilder("2");
+            registerChangeService.changeRegCombin(bo);
+        });
+
+        return true;
     }
 
     @Override

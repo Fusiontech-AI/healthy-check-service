@@ -15,9 +15,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.fxkc.common.core.constant.CommonConstants;
 import org.fxkc.common.core.exception.ServiceException;
 import org.fxkc.common.core.utils.MapstructUtils;
+import org.fxkc.common.core.utils.StreamUtils;
 import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.peis.constant.ErrorCodeConstants;
+import org.fxkc.peis.domain.TjCombinationProjectInfo;
 import org.fxkc.peis.domain.TjPackage;
 import org.fxkc.peis.domain.TjPackageHazards;
 import org.fxkc.peis.domain.TjPackageInfo;
@@ -29,6 +31,7 @@ import org.fxkc.peis.domain.vo.TjPackageVo;
 import org.fxkc.peis.enums.PhysicalTypeEnum;
 import org.fxkc.peis.exception.PeisException;
 import org.fxkc.peis.liteflow.context.AmountCalculationContext;
+import org.fxkc.peis.mapper.TjCombinationProjectInfoMapper;
 import org.fxkc.peis.mapper.TjPackageHazardsMapper;
 import org.fxkc.peis.mapper.TjPackageInfoMapper;
 import org.fxkc.peis.mapper.TjPackageMapper;
@@ -57,6 +60,8 @@ public class TjPackageServiceImpl implements ITjPackageService {
     private final FlowExecutor flowExecutor;
 
     private final TjPackageHazardsMapper tjPackageHazardsMapper;
+
+    private final TjCombinationProjectInfoMapper tjCombinationProjectInfoMapper;
 
     /**
      * 查询体检套餐
@@ -328,31 +333,49 @@ public class TjPackageServiceImpl implements ITjPackageService {
         //获取默认分组支付方式应收金额累加的总和
         BigDecimal reduce = new BigDecimal("0");
         BigDecimal leftAmount = new BigDecimal("0");
+        BigDecimal outGroupAmount = new BigDecimal("0");
         if(CollUtil.isNotEmpty(haveItems)){
-           reduce = haveItems.stream().filter(m -> Objects.equals(amountCalGroupBo.getGroupPayType(), m.getPayType())).map(m -> m.getReceivableAmount()).reduce(BigDecimal.ZERO, BigDecimal::add);
+            reduce = haveItems.stream().map(m -> m.getReceivableAmount()).reduce(BigDecimal.ZERO, BigDecimal::add);
         }
         for (int i = 0; i < addItems.size() ; i++) {
             AmountCalculationItemBo bo = addItems.get(i);
-            if(reduce.compareTo(amountCalGroupBo.getPrice())>=0){
-                //初始化计算前就超过了分组金额  当前和之后的全部走加项
-                addItems.get(i).setPayType(amountCalGroupBo.getAddPayType());
-                addItems.get(i).setDiscount(amountCalGroupBo.getAddDiscount());
+            if(Objects.equals("1",amountCalGroupBo.getInitFlag())){
+                //当前为初始化分组计费  不取分组信息的折扣信息 直接取子项即可
+                addItems.get(i).setPayType(amountCalGroupBo.getGroupPayType());
             }else{
-                reduce = reduce.add(bo.getReceivableAmount());
-                //存量的金额小于分组内金额 从当前和后续的支付方式 全部为分组内支付方式,分组内折扣
-                if(reduce.compareTo(amountCalGroupBo.getPrice())<=0){
-                    addItems.get(i).setPayType(amountCalGroupBo.getGroupPayType());
-                    addItems.get(i).setDiscount(amountCalGroupBo.getItemDiscount());
-                }else{
-                    //组内 和 组外支付方式不一样 才会有混合支付赋值
-                    if(i==0 && !Objects.equals(amountCalGroupBo.getAddPayType(),amountCalGroupBo.getGroupPayType())){
-                        addItems.get(i).setPayType("2");
-                        //混合支付时,需要把当前多余的金额计算出来当做加项支付。
-                        leftAmount = reduce.subtract(amountCalGroupBo.getPrice());
-                    }else{
-                        addItems.get(i).setPayType(amountCalGroupBo.getAddPayType());
-                    }
+                if(reduce.compareTo(amountCalGroupBo.getPrice())>0){
+                    //初始化计算前就超过了分组金额  当前和之后的全部走加项
+                    addItems.get(i).setPayType(amountCalGroupBo.getAddPayType());
                     addItems.get(i).setDiscount(amountCalGroupBo.getAddDiscount());
+                    addItems.get(i).setReceivableAmount(getReceivableAmountByDiscount(addItems.get(i).getStandardAmount(), addItems.get(i).getDiscount()));
+                }else{
+                    //这里是还没到临界点，需要把当前标准金额按照组内折扣计算 应收金额  为该笔初始的应收金额
+                    BigDecimal initReceiverAmount = getReceivableAmountByDiscount(bo.getStandardAmount(), amountCalGroupBo.getItemDiscount());
+                    reduce = reduce.add(initReceiverAmount);//累加这笔初始的应收金额 得到实际的应收 然后和分组金额比较
+                    //存量的金额小于分组内金额 从当前和后续的支付方式 全部为分组内支付方式,分组内折扣
+                    if(reduce.compareTo(amountCalGroupBo.getPrice())<=0){
+                        addItems.get(i).setPayType(amountCalGroupBo.getGroupPayType());
+                        addItems.get(i).setDiscount(amountCalGroupBo.getItemDiscount());
+                        addItems.get(i).setReceivableAmount(initReceiverAmount);
+                    }else{
+                        //到这里时加项项目 处于分组金额的临界点  该笔项目金额需要暂时走组内折扣和组内支付方式
+                        //需要把当前剩余的金额计算出来当做组内折扣计算  剩下的当做加项支付。
+                        outGroupAmount = reduce.subtract(amountCalGroupBo.getPrice());
+                        //初始应收额 减去分组金额外超出部分，等于分组内剩下的金额额度
+                        BigDecimal inGroupAmount = initReceiverAmount.subtract(outGroupAmount);
+                        //剩余的金额是前面经过组内折扣计算所得，这里需要除以组内折扣，然后乘以加项折扣，得到实际的应收金额
+                        leftAmount = outGroupAmount.divide(amountCalGroupBo.getItemDiscount()).multiply(amountCalGroupBo.getAddDiscount()).setScale(2, BigDecimal.ROUND_HALF_UP);
+                        //赋值临界点的应收金额  并计算出临界点的实际折扣
+                        addItems.get(i).setReceivableAmount(inGroupAmount.add(leftAmount));
+                        addItems.get(i).setDiscount(getDiscountByReceivableAmount(addItems.get(i).getStandardAmount(),addItems.get(i).getReceivableAmount()));
+
+                        //处理混合支付赋值 组内 和 组外支付方式不一样 才会有混合支付赋值 且剩余加项金额大于0 才有意义
+                        if(!Objects.equals(amountCalGroupBo.getAddPayType(),amountCalGroupBo.getGroupPayType()) && leftAmount.compareTo(new BigDecimal("0"))>0){
+                            addItems.get(i).setPayType("2");
+                        }else{
+                            addItems.get(i).setPayType(amountCalGroupBo.getAddPayType());
+                        }
+                    }
                 }
             }
             fillSingleAmount(addItems.get(i),leftAmount,amountCalGroupBo);
@@ -369,8 +392,14 @@ public class TjPackageServiceImpl implements ITjPackageService {
     }
 
     @Override
-    public List<PackageAndProjectVo> queryProjectByPackageId(Long packageId) {
-        List<PackageAndProjectVo> projectVos = baseMapper.queryProjectByPackageId(packageId);
+    public List<PackageAndProjectVo> queryProjectByPackageId(TjProjectPackageBo bo) {
+        List<PackageAndProjectVo> projectVos = baseMapper.queryProjectByPackageId(bo.getPackageId());
+        if(CollUtil.isNotEmpty(bo.getBasicProjectId())) {
+            List<TjCombinationProjectInfo> combinationList = tjCombinationProjectInfoMapper.selectList(Wrappers.lambdaQuery(TjCombinationProjectInfo.class)
+                .in(TjCombinationProjectInfo::getBasicProjectId, bo.getBasicProjectId()));
+            List<Long> combinationIds = StreamUtils.toList(combinationList, TjCombinationProjectInfo::getId);
+            projectVos.forEach(k -> k.setRequired(combinationIds.contains(k.getId())));
+        }
         return projectVos;
     }
 
@@ -380,6 +409,11 @@ public class TjPackageServiceImpl implements ITjPackageService {
             return new ArrayList<>();
         }
         return this.baseMapper.queryListByIds(packageList);
+    }
+
+    @Override
+    public TableDataInfo<PackageAndProjectVo> queryOccupationalPackage(TjOccupationalPackageBo bo) {
+        return TableDataInfo.build(baseMapper.queryOccupationalPackage(bo.build(), bo));
     }
 
 

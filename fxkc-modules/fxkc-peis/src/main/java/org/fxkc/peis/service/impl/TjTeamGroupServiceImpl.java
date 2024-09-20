@@ -1,6 +1,8 @@
 package org.fxkc.peis.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -15,9 +17,7 @@ import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.peis.constant.ErrorCodeConstants;
 import org.fxkc.peis.domain.*;
-import org.fxkc.peis.domain.bo.TjTeamGroupBo;
-import org.fxkc.peis.domain.bo.TjTeamGroupItemBo;
-import org.fxkc.peis.domain.bo.TjTeamGroupUpdateBo;
+import org.fxkc.peis.domain.bo.*;
 import org.fxkc.peis.domain.vo.TjTeamGroupDetailVo;
 import org.fxkc.peis.domain.vo.TjTeamGroupHazardsVo;
 import org.fxkc.peis.domain.vo.TjTeamGroupItemVo;
@@ -25,6 +25,7 @@ import org.fxkc.peis.domain.vo.TjTeamGroupVo;
 import org.fxkc.peis.enums.CheckStatusEnum;
 import org.fxkc.peis.enums.GroupTypeEnum;
 import org.fxkc.peis.enums.HealthyCheckTypeEnum;
+import org.fxkc.peis.enums.PhysicalTypeEnum;
 import org.fxkc.peis.exception.PeisException;
 import org.fxkc.peis.mapper.*;
 import org.fxkc.peis.service.ITjTeamGroupService;
@@ -34,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 团检分组信息Service业务层处理
@@ -56,6 +58,8 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
     private final TjRegCombinationProjectMapper tjRegCombinationProjectMapper;
 
     private final TjPackageMapper tjPackageMapper;
+
+    private final List<String> otherHazardCode =  Arrays.asList("14999", "15999", "12999", "13999", "11999");
 
     /**
      * 查询团检分组信息
@@ -85,13 +89,15 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
         if(Objects.equals(CommonConstants.NORMAL, bo.getFilterProject())) {
             List<Long> groupIdList = StreamUtils.toList(StreamUtils.filter(result.getRecords(),
                 e -> Objects.equals(e.getGroupType(), GroupTypeEnum.ITEM.getCode())), TjTeamGroupVo::getId);
-            List<TjTeamGroupItem> itemList = tjTeamGroupItemMapper.selectList(Wrappers.lambdaQuery(TjTeamGroupItem.class)
-                .in(TjTeamGroupItem::getGroupId, groupIdList));
-            Set<Long> groupNewIdList = itemList.stream().map(TjTeamGroupItem::getGroupId).collect(Collectors.toSet());
-            List<TjTeamGroupVo> voList = StreamUtils.filter(result.getRecords(),
-                e -> ObjectUtil.notEqual(e.getGroupType(), GroupTypeEnum.ITEM.getCode())
-                    || groupNewIdList.contains(e.getId()));
-            result.setRecords(voList).setTotal(voList.size());
+            if(CollUtil.isNotEmpty(groupIdList)) {
+                List<TjTeamGroupItem> itemList = tjTeamGroupItemMapper.selectList(Wrappers.lambdaQuery(TjTeamGroupItem.class)
+                    .in(TjTeamGroupItem::getGroupId, groupIdList));
+                Set<Long> groupNewIdList = itemList.stream().map(TjTeamGroupItem::getGroupId).collect(Collectors.toSet());
+                List<TjTeamGroupVo> voList = StreamUtils.filter(result.getRecords(),
+                    e -> ObjectUtil.notEqual(e.getGroupType(), GroupTypeEnum.ITEM.getCode())
+                        || groupNewIdList.contains(e.getId()));
+                result.setRecords(voList).setTotal(voList.size());
+            }
         }
         return TableDataInfo.build(result);
     }
@@ -218,7 +224,7 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
                                     .payStatus(isTeamPay ? CheckStatusEnum.已检查.getCode() : CheckStatusEnum.未检查.getCode())
                                     .projectType(d.getInclude())
                                     .discount(d.getDiscount())
-                                    .projectRequiredType(d.getIsRequired() ?  "1" : "0")
+                                    .projectRequiredType(d.getRequired() ?  "1" : "0")
                                     .build()));
                             }
                         });
@@ -243,8 +249,40 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean updateGroupProjectInfo(List<TjTeamGroupUpdateBo> list) {
+    public Boolean updateGroupProjectInfo(TjTeamGroupProjectBo bo) {
         StringBuffer buffer = new StringBuffer();
+        List<TjTeamGroupUpdateBo> list = bo.getList();
+        if(PhysicalTypeEnum.isOccupational(bo.getPhysicalType())) {
+            Map<String, Object> enumMap = EnumUtil.getNameFieldMap(PhysicalTypeEnum.class, "desc");
+            StringBuffer str = new StringBuffer();
+            list.stream().filter(e -> StrUtil.isBlank(e.getDutyStatus())).forEach(k ->
+                str.append(k.getGroupName()).append("、"));
+            if(str.length() > 0) {
+                throw new PeisException(ErrorCodeConstants.PEIS_GROUP_DUTY_STATUS_NOT_EMPTY,
+                    enumMap.get(bo.getPhysicalType()), str.deleteCharAt(str.length() - 1));
+            }
+            list.stream().filter(e -> CollUtil.isEmpty(e.getGroupHazardsList())).forEach(k ->
+                str.append(k.getGroupName()).append("、"));
+            if(str.length() > 0) {
+                throw new PeisException(ErrorCodeConstants.PEIS_GROUP_HAZARD_NOT_EMPTY,
+                    enumMap.get(bo.getPhysicalType()), str.deleteCharAt(str.length() - 1));
+            }
+            list.stream().filter(e -> e.getGroupHazardsList().stream().anyMatch(s ->
+                    otherHazardCode.contains(s.getHazardFactorsCode()) && StrUtil.isBlank(s.getHazardFactorsOther())))
+                .distinct().forEach(k -> str.append(k.getGroupName()).append("、"));
+            if(str.length() > 0) {
+                throw new PeisException(ErrorCodeConstants.PEIS_GROUP_OTHER_HAZARD_NOT_EMPTY,
+                    enumMap.get(bo.getPhysicalType()), str.deleteCharAt(str.length() - 1));
+            }
+            if(Objects.equals(bo.getPhysicalType(), PhysicalTypeEnum.FSTJ.name())) {
+                list.stream().filter(e -> StrUtil.isBlank(e.getShineSource()) ||
+                    StrUtil.isBlank(e.getShineType())).forEach(k -> str.append(k.getGroupName()).append("、"));
+                if(str.length() > 0) {
+                    throw new PeisException(ErrorCodeConstants.PEIS_GROUP_SHINE_NOT_EMPTY, str.deleteCharAt(str.length() - 1));
+                }
+            }
+        }
+
         list.forEach(k -> {
             List<TjTeamGroupItemBo> itemBoList = k.getGroupItemList();
             Map<Long, Long> itemMap = itemBoList.stream().collect(Collectors.groupingBy(
@@ -264,7 +302,7 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
         if(CollUtil.isNotEmpty(packageIds)) {
             List<TjPackage> packageList = tjPackageMapper.selectBatchIds(packageIds);
             Map<Long, String> packageMap = StreamUtils.toMap(packageList, TjPackage::getId, TjPackage::getPackageName);
-            groupList.forEach(k -> k.setPackageName(packageMap.getOrDefault(k.getId(), StrUtil.EMPTY)));
+            groupList.forEach(k -> k.setPackageName(packageMap.getOrDefault(k.getPackageId(), StrUtil.EMPTY)));
         }
         //每次保存都先根据groupId删除项目信息、职业病则需多删除危害因素
         List<Long> groupIds = StreamUtils.toList(groupList, TjTeamGroup::getId);
@@ -284,4 +322,5 @@ public class TjTeamGroupServiceImpl extends ServiceImpl<TjTeamGroupMapper, TjTea
         }
         return baseMapper.updateBatchById(groupList);
     }
+
 }

@@ -3,6 +3,7 @@ package org.fxkc.peis.domain;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.fxkc.common.tenant.core.TenantEntity;
@@ -61,5 +62,8 @@ public class TjPackageInfo extends TenantEntity {
     @TableLogic
     private String delFlag;
 
-
+    /**
+     * 是否必选(1:是0否)
+     */
+    private Boolean required;
 }

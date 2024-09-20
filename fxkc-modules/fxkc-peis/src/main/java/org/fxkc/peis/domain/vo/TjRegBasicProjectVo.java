@@ -1,15 +1,19 @@
 package org.fxkc.peis.domain.vo;
 
-import org.fxkc.peis.domain.TjRegBasicProject;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
-import org.fxkc.common.excel.annotation.ExcelDictFormat;
-import org.fxkc.common.excel.convert.ExcelDictConvert;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
+import org.fxkc.common.excel.annotation.ExcelDictFormat;
+import org.fxkc.common.excel.convert.ExcelDictConvert;
+import org.fxkc.common.translation.annotation.Translation;
+import org.fxkc.common.translation.constant.TransConstant;
+import org.fxkc.peis.domain.TjRegBasicProject;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -51,10 +55,22 @@ public class TjRegBasicProjectVo implements Serializable {
     private Long combinationProjectId;
 
     /**
+     * 组合项目名称
+     */
+    @Translation(type = TransConstant.COMBINATION_ID_TO_NAME,mapper = "combinationProjectId")
+    private String combinProjectName;
+
+    /**
      * 基础项目id
      */
     @ExcelProperty(value = "基础项目id")
     private Long basicProjectId;
+
+    /**
+     * 基础项目名称
+     */
+    @Translation(type = TransConstant.BASIC_ID_TO_NAME,mapper = "basicProjectId")
+    private String basicProjectName;
 
     /**
      * 检查部位
@@ -105,5 +121,38 @@ public class TjRegBasicProjectVo implements Serializable {
     @ExcelProperty(value = "数值下限")
     private String lowLimit;
 
+
+    /**
+     * pacs图片标识
+     */
+    private String checkResultImg;
+
+    /**
+     * 常见结果id,多个之间逗号分割
+     */
+    private String commonResultIds;
+
+    /**
+     * 检查医生姓名
+     */
+    @ExcelProperty(value = "检查医生姓名")
+    private String checkDoctorName;
+
+    /**
+     * 检查时间
+     */
+    @ExcelProperty(value = "检查时间")
+    private Date checkTime;
+
+    /**
+     * 是否下拉选择框(有常见结果选项就是下拉框，无常见结果为输入框) 0:输入款，1：下拉框
+     */
+    @ExcelProperty(value = "是否下拉选择框(有常见结果选项就是下拉框，无常见结果为输入框) 0:输入款，1：下拉框")
+    private String  selectFlag;
+
+    /**
+     * 常见结果选项list信息
+     */
+    private List<TjBasicCommonResultVo> basicCommonResultVos;
 
 }

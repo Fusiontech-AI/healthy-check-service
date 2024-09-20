@@ -116,7 +116,6 @@ public class TjRegisterAddBo {
     /**
      * 体检日期
      */
-    @NotNull(message = "体检日期不能为空", groups = { AddGroup.class, EditGroup.class })
     private Date healthyCheckTime;
 
 
@@ -143,6 +142,7 @@ public class TjRegisterAddBo {
     /**
      * 体检预约时间
      */
+    @JsonFormat(pattern = DatePattern.NORM_DATE_PATTERN, timezone = "GMT+8")
     private Date healthyReserveTime;
 
     /**

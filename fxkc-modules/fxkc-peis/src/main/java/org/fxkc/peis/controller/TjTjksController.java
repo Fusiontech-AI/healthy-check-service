@@ -16,6 +16,7 @@ import org.fxkc.common.mybatis.core.page.PageQuery;
 import org.fxkc.common.mybatis.core.page.TableDataInfo;
 import org.fxkc.common.web.core.BaseController;
 import org.fxkc.peis.domain.bo.TjTjksBo;
+import org.fxkc.peis.domain.vo.TjTjksBasicNameVo;
 import org.fxkc.peis.domain.vo.TjTjksVo;
 import org.fxkc.peis.service.ITjTjksService;
 import org.springframework.validation.annotation.Validated;
@@ -112,5 +113,14 @@ public class TjTjksController extends BaseController {
     @GetMapping("/getKsCode")
     public R<String> getKsCode() {
         return R.ok("操作成功!",tjTjksService.getKsCode());
+    }
+
+
+    /**
+     * 根据基础项目查询相应科室列表信息
+     */
+    @GetMapping("queryTjKsListByBasicName")
+    public R<List<TjTjksBasicNameVo>> queryTjKsListByBasicName(@RequestParam(value = "basicProjectName",required = false) String basicProjectName) {
+        return R.ok(tjTjksService.queryTjKsListByBasicName(basicProjectName));
     }
 }

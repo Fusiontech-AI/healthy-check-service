@@ -183,7 +183,6 @@ public class TjCombinationProjectServiceImpl implements ITjCombinationProjectSer
     private boolean checkCodeUnique(TjCombinationProject entity) {
         long id = ObjectUtil.isNull(entity.getId()) ? -1L : entity.getId();
         TjCombinationProject tjCombinationProject = baseMapper.selectOne(new LambdaQueryWrapper<TjCombinationProject>()
-            .eq(TjCombinationProject::getDelFlag, CommonConstants.NORMAL)
             .eq(TjCombinationProject::getCombinProjectCode, entity.getCombinProjectCode())
 
         );
@@ -199,7 +198,6 @@ public class TjCombinationProjectServiceImpl implements ITjCombinationProjectSer
     private boolean checkNameUnique(TjCombinationProject entity) {
         long id = ObjectUtil.isNull(entity.getId()) ? -1L : entity.getId();
         TjCombinationProject tjCombinationProject = baseMapper.selectOne(new LambdaQueryWrapper<TjCombinationProject>()
-            .eq(TjCombinationProject::getDelFlag, CommonConstants.NORMAL)
             .eq(TjCombinationProject::getCombinProjectName, entity.getCombinProjectName())
 
         );
@@ -240,7 +238,7 @@ public class TjCombinationProjectServiceImpl implements ITjCombinationProjectSer
                 .sorted(Comparator.comparing(entry -> entry.getValue().size()))
                 .forEachOrdered(entry -> sortedMap.put(entry.getKey(), entry.getValue()));
             List<Long> respCombinIds = findMinCompositeProjects(bo.getItemIdList(), sortedMap);
-            convert.forEach(k -> k.setIsRequired(respCombinIds.contains(k.getId()))
+            convert.forEach(k -> k.setRequired(respCombinIds.contains(k.getId()))
                 .setInfoItemBos(listMap.get(k.getId())));
         }
         return convert;
@@ -279,6 +277,7 @@ public class TjCombinationProjectServiceImpl implements ITjCombinationProjectSer
         if(CollUtil.isEmpty(convert)) {
             throw new PeisException(ErrorCodeConstants.PEIS_COMBINATION_NOT_EXIST);
         }
+        convert.forEach(k -> k.setRequired(Boolean.TRUE));
         return convert;
     }
 
@@ -293,6 +292,31 @@ public class TjCombinationProjectServiceImpl implements ITjCombinationProjectSer
         TjCombinationProject tjCombinationProject = baseMapper.selectById(id);
         return Objects.isNull(tjCombinationProject) ? null : tjCombinationProject.getCombinProjectCode();
 
+    }
+
+    @Override
+    public TableDataInfo<TjCombinationProjectListVo> queryOccupationalProject(TjCompulsoryInspectionProjectBo bo) {
+        Page<TjCombinationProjectVo> result = baseMapper.selectVoPage(bo.build(), Wrappers.lambdaQuery(TjCombinationProject.class)
+            .eq(TjCombinationProject::getStatus, CommonConstants.NORMAL)
+            .like(StrUtil.isNotBlank(bo.getCombinProjectName()), TjCombinationProject::getCombinProjectName, bo.getCombinProjectName()));
+        List<TjCombinationProjectInfo> infoList = combinationProjectInfoMapper.selectList(Wrappers.lambdaQuery(TjCombinationProjectInfo.class)
+            .in(TjCombinationProjectInfo::getBasicProjectId, bo.getItemIdList()));
+        List<Long> combinIds = infoList.stream().map(TjCombinationProjectInfo::getCombinProjectId).distinct().toList();
+        List<TjCombinationProjectListVo> voList = MapstructUtils.convert(result.getRecords(),
+            TjCombinationProjectListVo.class);
+        if(CollUtil.isNotEmpty(result.getRecords())) {
+            List<TjCombinationProjectInfoItemBo> basicProjectBycombinIds = baseMapper.getBasicProjectBycombinIds(
+                StreamUtils.toList(result.getRecords(), TjCombinationProjectVo::getId));
+            Map<Long, List<TjCombinationProjectInfoItemBo>> listMap = basicProjectBycombinIds.stream().collect(
+                Collectors.groupingBy(TjCombinationProjectInfoItemBo::getCombinProjectId,
+                Collectors.mapping(Function.identity(), Collectors.toList())));
+            voList.forEach(k -> k.setInfoItemBos(listMap.get(k.getId())));
+        }
+        voList.forEach(k -> k.setRequired(combinIds.contains(k.getId())));
+        Page<TjCombinationProjectListVo> page = new Page<>();
+        page.setRecords(voList);
+        page.setTotal(result.getTotal());
+        return TableDataInfo.build(page);
     }
 
     private static List<Long> findMinCompositeProjects(List<Long> baseProjects, Map<Long, List<Long>> compositeProjects) {

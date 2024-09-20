@@ -43,8 +43,7 @@ public class TjPackageInfoServiceImpl implements ITjPackageInfoService {
      */
     @Override
     public TableDataInfo<TjPackageInfoVo> queryPageList(TjPackageInfoBo bo, PageQuery pageQuery) {
-        LambdaQueryWrapper<TjPackageInfo> lqw = buildQueryWrapper(bo);
-        Page<TjPackageInfoVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
+        Page<TjPackageInfoVo> result = baseMapper.queryPackageInfoPages(pageQuery.build(), bo);
         return TableDataInfo.build(result);
     }
 

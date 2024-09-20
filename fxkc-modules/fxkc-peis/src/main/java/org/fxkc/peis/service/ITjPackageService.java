@@ -68,7 +68,9 @@ public interface ITjPackageService {
 
     TableDataInfo<PackageAndProjectVo> queryPackageAndProjectPages(String name, PageQuery pageQuery);
 
-    List<PackageAndProjectVo> queryProjectByPackageId(Long packageId);
+    List<PackageAndProjectVo> queryProjectByPackageId(TjProjectPackageBo bo);
 
     List<TjPackageVo> queryListByIds(List<Long> packageList);
+
+    TableDataInfo<PackageAndProjectVo> queryOccupationalPackage(TjOccupationalPackageBo bo);
 }

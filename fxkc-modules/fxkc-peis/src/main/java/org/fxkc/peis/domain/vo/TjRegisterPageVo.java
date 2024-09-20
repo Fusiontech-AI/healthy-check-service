@@ -229,6 +229,12 @@ public class TjRegisterPageVo implements Serializable {
     private String createByName;
 
     /**
+     * 替检标志 0是 1否
+     */
+    @ExcelProperty(value = "替检标志 0是 1否")
+    private String replaceFlag;
+
+    /**
      * 体检登记(报道)医生id
      */
     private Long registerDoctorId;
@@ -365,4 +371,8 @@ public class TjRegisterPageVo implements Serializable {
      */
     private Date mergeRecordTime;
 
+    /**
+     * 备注
+     */
+    private String remark;
 }

@@ -1,18 +1,16 @@
 package org.fxkc.peis.domain.bo;
 
-import cn.hutool.core.collection.CollUtil;
-import org.fxkc.common.core.validate.AddGroup;
-import org.fxkc.common.core.validate.EditGroup;
-import org.fxkc.peis.domain.TjTeamGroup;
-import org.fxkc.common.mybatis.core.domain.BaseEntity;
 import io.github.linpeilie.annotations.AutoMapper;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import jakarta.validation.constraints.*;
-import org.fxkc.peis.domain.TjTeamGroupItem;
+import org.fxkc.common.core.validate.AddGroup;
+import org.fxkc.common.core.validate.EditGroup;
+import org.fxkc.common.mybatis.core.domain.BaseEntity;
+import org.fxkc.peis.domain.TjTeamGroup;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * 团检分组信息业务对象 tj_team_group
@@ -28,7 +26,6 @@ public class TjTeamGroupBo extends BaseEntity {
     /**
      * 主键id
      */
-    @NotNull(message = "主键id不能为空", groups = { EditGroup.class })
     private Long id;
 
     /**
@@ -39,7 +36,7 @@ public class TjTeamGroupBo extends BaseEntity {
     /**
      * 分组名称
      */
-    @NotBlank(message = "分组名称不能为空")
+    @NotBlank(message = "分组名称不能为空", groups = { AddGroup.class, EditGroup.class })
     private String groupName;
 
     /**
@@ -50,7 +47,7 @@ public class TjTeamGroupBo extends BaseEntity {
     /**
      * 分组方式sys_dict_type(bus_group_type)
      */
-    @NotBlank(message = "分组方式不能为空")
+    @NotBlank(message = "分组方式不能为空", groups = { AddGroup.class, EditGroup.class })
     private String groupType;
 
     /**
@@ -81,7 +78,7 @@ public class TjTeamGroupBo extends BaseEntity {
     /**
      * 分组支付方式sys_dict_type(bus_group_pay_type)0:个人1:单位
      */
-    @NotBlank(message = "分组支付方式不能为空")
+    @NotBlank(message = "分组支付方式不能为空", groups = { AddGroup.class, EditGroup.class })
     private String groupPayType;
 
     /**
@@ -92,7 +89,7 @@ public class TjTeamGroupBo extends BaseEntity {
     /**
      * 项目折扣
      */
-    @NotNull(message = "项目折扣不能为空")
+    @NotNull(message = "项目折扣不能为空", groups = { AddGroup.class, EditGroup.class })
     private BigDecimal itemDiscount;
 
     /**
@@ -101,9 +98,14 @@ public class TjTeamGroupBo extends BaseEntity {
     private BigDecimal addDiscount;
 
     /**
+     * 实际折扣
+     */
+    private BigDecimal discount;
+
+    /**
      * 是否同步项目(0:是1:否)
      */
-    @NotBlank(message = "是否同步项目")
+    @NotBlank(message = "是否同步项目不能为空", groups = { AddGroup.class, EditGroup.class })
     private String isSyncProject;
 
     /**

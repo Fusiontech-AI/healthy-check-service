@@ -1,6 +1,7 @@
 package org.fxkc.peis.domain.bo;
 
 import cn.hutool.core.date.DatePattern;
+import jakarta.validation.Valid;
 import lombok.experimental.Accessors;
 import org.fxkc.common.core.validate.AddGroup;
 import org.fxkc.common.core.validate.EditGroup;
@@ -85,6 +86,7 @@ public class TjTeamTaskBo extends BaseEntity {
     /**
      * 分组信息
      */
+    @Valid
     @NotEmpty(message = "分组信息不能为空", groups = { AddGroup.class, EditGroup.class })
     private List<TjTeamGroupBo> groupList;
 
@@ -107,4 +109,9 @@ public class TjTeamTaskBo extends BaseEntity {
      * 编制人
      */
     private String preparedName;
+
+    /**
+     * 单位部门id
+     */
+    private Long teamDeptId;
 }

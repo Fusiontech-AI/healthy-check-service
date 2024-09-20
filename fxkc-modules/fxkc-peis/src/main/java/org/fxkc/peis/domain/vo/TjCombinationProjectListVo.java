@@ -226,6 +226,6 @@ public class TjCombinationProjectListVo implements Serializable {
     /**
      * 是否必选
      */
-    private Boolean isRequired;
+    private Boolean required;
 
 }

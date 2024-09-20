@@ -3,9 +3,8 @@ package org.fxkc.peis.domain.vo;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import io.github.linpeilie.annotations.AutoMapper;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import org.fxkc.common.translation.annotation.Translation;
-import org.fxkc.common.translation.constant.TransConstant;
 import org.fxkc.peis.domain.TjPackageInfo;
 
 import java.io.Serial;
@@ -48,14 +47,18 @@ public class TjPackageInfoVo implements Serializable {
     /**
      * 组合项目名称
      */
-    @Translation(type = TransConstant.COMBINATION_ID_TO_NAME,mapper = "combinProjectId")
     private String combinProjectName;
 
     /**
      * 组合项目编码
      */
-    @Translation(type = TransConstant.COMBINATION_ID_TO_CODE,mapper = "combinProjectId")
     private String combinProjectCode;
+
+    /**
+     * 检查类型0检查项目 1化验项目 2功能项目
+     */
+    @ExcelProperty(value = "检查类型0检查项目 1化验项目 2功能项目")
+    private String checkType;
 
     /**
      * 标准价格
@@ -74,6 +77,12 @@ public class TjPackageInfoVo implements Serializable {
      */
     @ExcelProperty(value = "应收金额")
     private BigDecimal receivableAmount;
+
+    /**
+     * 是否必选(1:是0否)
+     */
+    @NotNull(message = "是否必选(true:是false否)不能为空")
+    private Boolean required;
 
 
 }

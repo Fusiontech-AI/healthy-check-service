@@ -63,4 +63,8 @@ public class TjGroupVerifyBo {
     private String isSyncProject;
 
 
+    /**
+     * 实际折扣
+     */
+    private BigDecimal discount;
 }

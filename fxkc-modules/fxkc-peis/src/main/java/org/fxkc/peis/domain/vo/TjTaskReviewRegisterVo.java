@@ -89,7 +89,7 @@ public class TjTaskReviewRegisterVo {
     /**
      * 体检预约时间
      */
-    @JsonFormat(pattern = DatePattern.NORM_DATE_PATTERN)
+    @JsonFormat(pattern = DatePattern.NORM_DATE_PATTERN, timezone = "GMT+8")
     private Date healthyReserveTime;
 
 
@@ -103,4 +103,18 @@ public class TjTaskReviewRegisterVo {
      */
     private String reserveEndTime;
 
+    /**
+     * 单位部门id
+     */
+    private Long teamDeptId;
+
+    /**
+     * 单位部门名称
+     */
+    private String deptName;
+
+    /**
+     * 在岗状态
+     */
+    private String dutyStatus;
 }

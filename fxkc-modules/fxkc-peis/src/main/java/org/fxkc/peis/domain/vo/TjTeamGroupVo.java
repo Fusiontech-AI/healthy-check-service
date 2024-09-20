@@ -108,6 +108,11 @@ public class TjTeamGroupVo implements Serializable {
     private BigDecimal addDiscount;
 
     /**
+     * 实际折扣
+     */
+    private BigDecimal discount;
+
+    /**
      * 是否同步项目(0:是1:否)
      */
     @ExcelProperty(value = "是否同步项目(0:是1:否)")
@@ -117,6 +122,11 @@ public class TjTeamGroupVo implements Serializable {
      * 套餐id
      */
     private Long packageId;
+
+    /**
+     * 套餐名称
+     */
+    private String packageName;
 
     /**
      * 分组项目信息集合

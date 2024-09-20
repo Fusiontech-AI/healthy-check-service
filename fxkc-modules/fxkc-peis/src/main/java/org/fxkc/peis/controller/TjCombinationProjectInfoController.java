@@ -104,4 +104,13 @@ public class TjCombinationProjectInfoController extends BaseController {
                           @PathVariable Long[] ids) {
         return toAjax(tjCombinationProjectInfoService.deleteWithValidByIds(List.of(ids), true));
     }
+
+
+    /**
+     * 查询组合项目下基础项目信息
+     */
+    @PostMapping("/queryBasicListByCombinIds")
+    public R<List<TjCombinationProjectInfoVo>> queryBasicListByCombinIds(@RequestBody List<Long> combinIds) {
+        return R.ok(tjCombinationProjectInfoService.queryBasicListByCombinIds(combinIds));
+    }
 }

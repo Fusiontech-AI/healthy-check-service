@@ -133,4 +133,9 @@ public class TjTeamTask extends TenantEntity {
      * 审核人
      */
     private Long reviewBy;
+
+    /**
+     * 单位部门id
+     */
+    private Long teamDeptId;
 }
