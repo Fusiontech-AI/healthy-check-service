@@ -206,10 +206,10 @@ SpringBoot去除内嵌Tomcat（PS：此步骤不重要，因为不排除也能�
 
 部署安装遇到问题或者想加入社区交流学习、或者是对社区有其他的想法参与等等，扫描下方二维码联系福小鑫获取帮助 
 
-![图片1](https://github.com/user-attachments/assets/b89df7ff-fd87-4289-a6ae-597cf84581fe)
+[![图片1](https://github.com/user-attachments/assets/b89df7ff-fd87-4289-a6ae-597cf84581fe)](https://github.com/Fusiontech-AI/healthy-check-service/blob/ce7d6bae00a09913d599b778e96efac7c1ad7aa6/%E5%9B%BE%E7%89%871.png)
 
 
 微信联系方式：15927241173
 若群满，则可添加个人微信进群
 
-![图片2](https://github.com/user-attachments/assets/3b896ffa-8280-4740-ab9a-aebc48dbc575)
+[![图片2](https://github.com/user-attachments/assets/3b896ffa-8280-4740-ab9a-aebc48dbc575)](https://github.com/Fusiontech-AI/healthy-check-service/blob/ce7d6bae00a09913d599b778e96efac7c1ad7aa6/%E5%9B%BE%E7%89%872.png)
